@@ -1,0 +1,16 @@
+name: SchematicBrushReborn
+version: 0.1-BETA
+api-version: "1.13"
+depend:
+  - "WorldEdit"
+main: de.eldoria.schematicbrush.SchematicBrushReborn
+authors: [Hadde, SirYwell]
+commands:
+  schematicbrush:
+    description: Create a new schematic brush
+    aliases:
+      - schbr
+  schematicpreset:
+    description: create or edit schematic brush presets
+    aliases:
+      - schpre
