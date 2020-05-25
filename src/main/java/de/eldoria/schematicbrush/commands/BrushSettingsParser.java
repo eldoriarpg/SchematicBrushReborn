@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class BrushSettingsParser {
     private static final String name = ".+?)";
@@ -56,7 +57,7 @@ public class BrushSettingsParser {
 
     public static Optional<BrushSettings> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
                                                      String[] args) {
-        Optional<BrushSettings.Builder> brushSettings = buildBrush(player, args[0], plugin, schematicCache);
+        Optional<BrushSettings.Builder> brushSettings = buildBrush(player, args, plugin, schematicCache);
 
         // Check if somethin went wrong while creating the brush.
         if (brushSettings.isEmpty()) return Optional.empty();
@@ -108,51 +109,63 @@ public class BrushSettingsParser {
 
     }
 
-    private static Optional<BrushSettings.Builder> buildBrush(Player player, String settingsString, Plugin plugin,
+    private static Optional<BrushSettings.Builder> buildBrush(Player player, String[] settingsString, Plugin plugin,
                                                               SchematicCache schematicCache) {
         List<Schematic> schematics;
 
-        // Check if its a name or regex lookup
-        Matcher nameMatcher = namePattern.matcher(settingsString);
-        if (nameMatcher.find()) {
-            Optional<BrushConfig> brushConfig = buildBrushConfig(player, settingsString, schematicCache);
-            if (brushConfig.isEmpty()) {
-                return Optional.empty();
-            }
-            return Optional.of(BrushSettings.newSingleBrushSettingsBuilder(brushConfig.get()));
-        }
+        List<String> brushStrings = Arrays.stream(settingsString)
+                .filter(s -> !s.startsWith("-"))
+                .collect(Collectors.toList());
 
-        // Check if its a directory lookup
-        nameMatcher = directoryPattern.matcher(settingsString);
-        if (nameMatcher.find()) {
-            Optional<BrushConfig> brushConfig = buildBrushConfig(player, settingsString, schematicCache);
-            if (brushConfig.isEmpty()) {
-                return Optional.empty();
-            }
-            return Optional.of(BrushSettings.newSingleBrushSettingsBuilder(brushConfig.get()));
-        }
+        BrushSettings.Builder brushSettingsBuilder = BrushSettings.newBrushSettingsBuilder();
 
-        // Check if its a preset
-        nameMatcher = presetPattern.matcher(settingsString);
-        if (nameMatcher.find()) {
-            BrushSettings.Builder brushSettings = BrushSettings.newBrushSettingsBuilder();
-            String presetName = nameMatcher.group(1);
-            List<String> brushConfigs = plugin.getConfig().getStringList("presets." + presetName);
-            if (brushConfigs.isEmpty()) return Optional.empty();
+        // Build Brush with all provided brush strings
+        for (String brushString : brushStrings) {
 
-            for (String settings : brushConfigs) {
-                Optional<BrushConfig> config = buildBrushConfig(player, settings, schematicCache);
-                if (config.isEmpty()) {
-                    MessageSender.sendError(player, settingsString + " is invalid");
+            // Check if its a name or regex lookup
+            Matcher nameMatcher = namePattern.matcher(brushString);
+            if (nameMatcher.find()) {
+                Optional<BrushConfig> brushConfig = buildBrushConfig(player, brushString, schematicCache);
+                if (brushConfig.isEmpty()) {
+                    MessageSender.sendError(player, brushString + " is invalid");
                     return Optional.empty();
                 }
-
-                brushSettings.addBrush(config.get());
+                brushSettingsBuilder.addBrush(brushConfig.get());
+                continue;
             }
-            return Optional.of(brushSettings);
+
+            // Check if its a directory lookup
+            nameMatcher = directoryPattern.matcher(brushString);
+            if (nameMatcher.find()) {
+                Optional<BrushConfig> brushConfig = buildBrushConfig(player, brushString, schematicCache);
+                if (brushConfig.isEmpty()) {
+                    MessageSender.sendError(player, brushString + " is invalid");
+                    return Optional.empty();
+                }
+                brushSettingsBuilder.addBrush(brushConfig.get());
+                continue;
+            }
+
+            // Check if its a preset
+            nameMatcher = presetPattern.matcher(brushString);
+            if (nameMatcher.find()) {
+                String presetName = nameMatcher.group(1);
+                List<String> brushConfigs = plugin.getConfig().getStringList("presets." + presetName);
+                if (brushConfigs.isEmpty()) return Optional.empty();
+
+                for (String settings : brushConfigs) {
+                    Optional<BrushConfig> config = buildBrushConfig(player, settings, schematicCache);
+                    if (config.isEmpty()) {
+                        MessageSender.sendError(player, brushString + " is invalid");
+                        return Optional.empty();
+                    }
+
+                    brushSettingsBuilder.addBrush(config.get());
+                }
+            }
         }
 
-        return Optional.empty();
+        return Optional.of(brushSettingsBuilder);
     }
 
     public static Optional<BrushConfig> buildBrushConfig(Player player, String settingsString, SchematicCache schematicCache) {
