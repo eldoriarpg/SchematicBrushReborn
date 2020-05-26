@@ -31,7 +31,7 @@ public class SchematicBrushReborn extends JavaPlugin {
         Plugin weCheck = this.getServer().getPluginManager().getPlugin("WorldEdit");
 
         if (weCheck == null) {
-            logger.info("WorldEdit is not installed on this Server!");
+            logger.warning("WorldEdit is not installed on this Server!");
             return;
         }
 
