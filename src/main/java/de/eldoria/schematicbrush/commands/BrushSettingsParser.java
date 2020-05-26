@@ -52,7 +52,7 @@ public class BrushSettingsParser {
      */
     private static final Pattern weightPattern = Pattern.compile(":([0-9]{1,3}|\\*)" + endings);
 
-    private static final Pattern yOffset = Pattern.compile("-(?:yoff)|(?:yoffset)|(?:y):-?([0-9]{1,3})", Pattern.CASE_INSENSITIVE);
+    private static final Pattern yOffset = Pattern.compile("-(?:yoff)|(?:yoffset)|(?:y):(-?[0-9]{1,3})", Pattern.CASE_INSENSITIVE);
     private static final Pattern placement = Pattern.compile("-(?:place)|(?:placement)|(?:p):([a-zA-Z]+?)", Pattern.CASE_INSENSITIVE);
 
     public static Optional<BrushSettings> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
@@ -73,8 +73,8 @@ public class BrushSettingsParser {
             brushSettingsBuilder.includeAir(true);
         }
 
-        if (Util.arrayContains(args, "-replaceall", "-repla", "-r")) {
-            brushSettingsBuilder.includeAir(true);
+        if (Util.arrayContains(args, "-replaceaironly", "-repla", "-r")) {
+            brushSettingsBuilder.replaceAirOnly(true);
         }
         Matcher matcher = Util.findInArray(args, yOffset);
 

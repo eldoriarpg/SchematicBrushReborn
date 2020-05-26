@@ -11,16 +11,16 @@ import java.util.List;
 public class BrushSettings implements Randomable {
     private final List<BrushConfig> brushes;
     private final boolean includeAir;
-    private final boolean replaceAll;
+    private final boolean replaceAirOnly;
     private final int yOffset;
     private final Placement placement;
     private final int totalWeight;
 
-    public BrushSettings(List<BrushConfig> brushes, boolean includeAir, boolean replaceAll, int yOffset,
+    public BrushSettings(List<BrushConfig> brushes, boolean includeAir, boolean replaceAirOnly, int yOffset,
                          Placement placement) {
         this.brushes = brushes;
         this.includeAir = includeAir;
-        this.replaceAll = replaceAll;
+        this.replaceAirOnly = replaceAirOnly;
         this.yOffset = yOffset;
         this.placement = placement;
 
@@ -64,7 +64,7 @@ public class BrushSettings implements Randomable {
     public static class Builder {
         private final List<BrushConfig> brushes;
         private boolean includeAir = false;
-        private boolean replaceAll = false;
+        private boolean replaceAirOnly = false;
         private int yOffset = 0;
         private Placement placement = Placement.DROP;
 
@@ -87,8 +87,8 @@ public class BrushSettings implements Randomable {
             return this;
         }
 
-        public Builder replaceAll(boolean replaceAll) {
-            this.replaceAll = replaceAll;
+        public Builder replaceAirOnly(boolean replaceAirOnly) {
+            this.replaceAirOnly = replaceAirOnly;
             return this;
         }
 
@@ -103,7 +103,7 @@ public class BrushSettings implements Randomable {
         }
 
         public BrushSettings build() {
-            return new BrushSettings(brushes, includeAir, replaceAll, yOffset, placement);
+            return new BrushSettings(brushes, includeAir, replaceAirOnly, yOffset, placement);
         }
 
     }
