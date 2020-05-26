@@ -10,7 +10,7 @@ public enum Placement {
     /**
      * Use the center of the schematic as origin
      */
-    CENTER(findCenter(), "c", "centerToTheMiddle"),
+    MIDDLE(findMiddle(), "c", "centerToTheMiddle"),
     /**
      * Use the lowest center point of the schematic as origin
      */
@@ -24,9 +24,17 @@ public enum Placement {
      */
     DROP(findDrop(), "d", "dropItLikeItsHot"),
     /**
-     * Use the highest  non air point of the schematic as origin
+     * Use the highest non air point of the schematic as origin
      */
     RAISE(findRaise(), "r", "raiseItToTheSky");
+    /**
+     * Use the lowest terrain point in the region where the brush should be pasted as y.
+     */
+    //FLOOR(findFloor(), "f", "sinkItInTheGround"),
+    /**
+     * Use the heighest terrain point in the region where the brush should be pasted as y.
+     */
+    //CEIL(findFloor(), "c");
 
     private final String[] alias;
     private final ToIntFunction<Clipboard> find;
@@ -51,7 +59,7 @@ public enum Placement {
         return this.find.applyAsInt(clipboard);
     }
 
-    private static ToIntFunction<Clipboard> findCenter() {
+    private static ToIntFunction<Clipboard> findMiddle() {
         return clipboard -> clipboard.getDimensions().getY() / 2;
     }
 
