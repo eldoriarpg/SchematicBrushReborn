@@ -8,6 +8,7 @@ import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
 import de.eldoria.schematicbrush.MessageSender;
+import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.brush.BrushSettings;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
