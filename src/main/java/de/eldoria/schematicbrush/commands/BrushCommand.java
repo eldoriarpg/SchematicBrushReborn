@@ -5,6 +5,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
+import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
 import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
@@ -57,7 +58,7 @@ public class BrushCommand implements CommandExecutor, Randomable {
             return true;
         }
 
-        SchematicBrush schematicBrush = new SchematicBrush(player, settings.get());
+        Brush schematicBrush = new SchematicBrush(player, settings.get());
 
         try {
             BrushTool brushTool = localSession.getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType()));
@@ -65,10 +66,7 @@ public class BrushCommand implements CommandExecutor, Randomable {
             player.sendMessage("Schematic brush set.");
         } catch (InvalidToolBindException e) {
             MessageSender.sendError(player, e.getMessage());
-            return true;
         }
-
-
         return true;
     }
 }
