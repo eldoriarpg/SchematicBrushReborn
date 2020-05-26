@@ -6,8 +6,6 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,17 +19,8 @@ public class Schematic {
     }
 
     public boolean isSchematic(Pattern pattern) {
-        Set<String> names = new HashSet<>(format.getAliases());
-        names.add(format.getName());
-
-        for (var name : names) {
-            Matcher matcher = pattern.matcher(name);
-            if (matcher.find()) {
-                return true;
-            }
-        }
-
-        return false;
+        Matcher matcher = pattern.matcher(file.toPath().getFileName().toString());
+        return matcher.find();
     }
 
     public Clipboard getSchematic() throws IOException {
