@@ -8,10 +8,10 @@ import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
 import de.eldoria.schematicbrush.MessageSender;
+import de.eldoria.schematicbrush.brush.SchematicBrush;
+import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import de.eldoria.schematicbrush.brush.BrushSettings;
-import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,7 +26,6 @@ public class BrushCommand implements CommandExecutor, Randomable {
     private final JavaPlugin plugin;
     private final WorldEdit we;
     private final SchematicCache schematicCache;
-
 
     public BrushCommand(JavaPlugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
@@ -53,14 +52,13 @@ public class BrushCommand implements CommandExecutor, Randomable {
         LocalSession localSession = we.getSessionManager().get(actor);
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
 
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
+        Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
         if (settings.isEmpty()) {
             return true;
         }
 
         Brush schematicBrush = new SchematicBrush(player, settings.get());
-
         try {
             BrushTool brushTool = localSession.getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType()));
             brushTool.setBrush(schematicBrush, "schematicbrush.brush.use");

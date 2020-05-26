@@ -2,7 +2,9 @@ package de.eldoria.schematicbrush;
 
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import de.eldoria.schematicbrush.commands.BrushAppendCommand;
 import de.eldoria.schematicbrush.commands.BrushCommand;
+import de.eldoria.schematicbrush.commands.BrushPreset;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,7 +45,10 @@ public class SchematicBrushReborn extends JavaPlugin {
         schematics.init();
 
         BrushCommand brushCommand = new BrushCommand(this, schematics);
+        BrushAppendCommand brushAppendCommand = new BrushAppendCommand(this, schematics);
 
         getCommand("schematicbrush").setExecutor(brushCommand);
+        getCommand("schematicbrushappend").setExecutor(brushAppendCommand);
+        getCommand("schematicpreset").setExecutor(new BrushPreset());
     }
 }

@@ -17,52 +17,46 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.session.PasteBuilder;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.schematicbrush.MessageSender;
-import de.eldoria.schematicbrush.schematics.Schematic;
+import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
+import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.util.Flip;
 import de.eldoria.schematicbrush.util.Rotation;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
-
+/**
+ * Represents the schematic brush as a {@link Brush} instance.
+ * A brush is immutable after creation and is always assigned to only one player.
+ */
 public class SchematicBrush implements Brush {
 
-    private final BrushSettings settings;
+    private final BrushConfiguration settings;
     private final Player brushOwner;
 
-    public SchematicBrush(Player player, BrushSettings settings) {
+    public SchematicBrush(Player player, BrushConfiguration settings) {
         this.settings = settings;
         brushOwner = player;
     }
 
     @Override
     public void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size) throws MaxChangedBlocksException {
-        BrushConfig randomBrushConfig = settings.getRandomBrushConfig();
+        SubBrush randomSubBrush = settings.getRandomBrushConfig();
 
-        Schematic randomSchematic = randomBrushConfig.getRandomSchematic();
-        Clipboard clipboard = null;
+        Clipboard clipboard = randomSubBrush.getRandomSchematic();
 
-        while (clipboard == null && randomSchematic != null) {
-            try {
-                clipboard = randomSchematic.getSchematic();
-            } catch (IOException e) {
-                // Silently fail and search for another schematic.
-            }
-        }
-
-        if (randomSchematic == null) {
+        if (clipboard == null) {
             MessageSender.sendError(brushOwner, "No valid schematic was found for this brush.");
             return;
         }
 
         // Apply flip
-        Flip direction = randomBrushConfig.getFlip().getFlipDirection();
+        Flip direction = randomSubBrush.getFlip().getFlipDirection();
         AffineTransform transform = new AffineTransform();
         if (direction != Flip.NONE) {
             transform = transform.scale(direction.asVector().abs().multiply(-2).add(1, 1, 1));
         }
 
         // Apply rotation
-        Rotation rotation = randomBrushConfig.getRotation();
+        Rotation rotation = randomSubBrush.getRotation();
         transform = transform.rotateY(rotation.getDeg());
 
 
@@ -78,7 +72,7 @@ public class SchematicBrush implements Brush {
         localSession.setClipboard(clipboardHolder);
         clipboardHolder.setTransform(clipboardHolder.getTransform().combine(transform));
 
-        // Find center of schematic and set with offset
+        // Find center of schematic and set new origin
         BlockVector3 dimensions = clipboard.getDimensions();
         int centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
         int centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
@@ -94,5 +88,15 @@ public class SchematicBrush implements Brush {
 
         Operations.completeBlindly(operation);
         brushOwner.sendMessage("brush executed");
+    }
+
+    /**
+     * Combine the current configuration with a new brush configuration to get a new brush
+     *
+     * @param brush Brush to combine. Only the {@link SubBrush} list is updated.
+     * @return a new schematic brush with the sub brushes of both brush configurations.
+     */
+    public SchematicBrush combineBrush(BrushConfiguration brush) {
+        return new SchematicBrush(brushOwner, settings.combine(brush));
     }
 }
