@@ -146,10 +146,11 @@ public class SchematicCache {
 
         String regex = name
                 .replace(".schematic", "")
-                .replace("*", ".+?")
-                .replace("\\", "")
                 .replace(".", "\\.")
-                .replace("+", "\\+");
+                .replace("\\", "")
+                .replace("+", "\\+")
+                .replace("*", ".+?");
+
 
         return Pattern.compile(regex);
     }
