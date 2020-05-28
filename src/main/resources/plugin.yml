@@ -10,16 +10,14 @@ commands:
     description: Create a new schematic brush
     aliases:
       - sbr
-      - sbra
       - schbr
-      - schbra
-  schematicbrushappend:
-    description: Append a schematic set to a schematic brush
+  schematicbrushmodify:
+    description: Modify a schematic brush
     aliases:
-      - sbra
-      - schbra
-      - schematicbrushappend
-  schematicpreset:
+      - sbrm
+      - schbrm
+  schematicbrushpreset:
     description: Create or edit schematic brush presets
     aliases:
-      - schpre
+      - sbrp
+      - schbrpre
