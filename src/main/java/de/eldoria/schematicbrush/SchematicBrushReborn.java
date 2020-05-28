@@ -4,6 +4,7 @@ import de.eldoria.schematicbrush.commands.BrushCommand;
 import de.eldoria.schematicbrush.commands.BrushModifyCommand;
 import de.eldoria.schematicbrush.commands.BrushPresetCommand;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +34,8 @@ public class SchematicBrushReborn extends JavaPlugin {
     @Override
     public void onEnable() {
         logger = getLogger();
+
+        Metrics metrics = new Metrics(this, 7683);
 
         if (this.getServer().getPluginManager().getPlugin("WorldEdit") == null) {
             logger.warning("WorldEdit is not installed on this Server!");
