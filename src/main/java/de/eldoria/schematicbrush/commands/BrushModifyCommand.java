@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.commands;
 
-import com.sk89q.worldedit.WorldEdit;
 import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
@@ -9,13 +8,14 @@ import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,9 +25,10 @@ import static java.lang.System.lineSeparator;
 /**
  * Command to modify a current used brush.
  */
-public class BrushModifyCommand implements CommandExecutor, Randomable {
+public class BrushModifyCommand implements TabExecutor, Randomable {
     private final JavaPlugin plugin;
     private final SchematicCache schematicCache;
+    private static final String[] COMMANDS = {"append", "remove", "edit", "info", "help"};
 
     public BrushModifyCommand(JavaPlugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
@@ -36,12 +37,6 @@ public class BrushModifyCommand implements CommandExecutor, Randomable {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Commands:
-        // Append a brush to current brush - sbrmod append <brushes...>
-        // Remove a brush from current brush - sbrmod remove <id>
-        // Replace a brush on current brush - sbrmod edit <id> <newBrush>
-        // Get list of brushes in current brush - sbrmod info
-
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only a player can do this.");
             return true;
@@ -50,7 +45,7 @@ public class BrushModifyCommand implements CommandExecutor, Randomable {
         Player player = (Player) sender;
 
         // Display command help
-        if (args.length == 0) {
+        if (args.length == 0 || "help".equalsIgnoreCase(args[0]) || "h".equalsIgnoreCase(args[0])) {
             help(player);
             return true;
         }
@@ -203,5 +198,47 @@ public class BrushModifyCommand implements CommandExecutor, Randomable {
                         + "/sbrm info - Get a list of all brushes your brush contains." + lineSeparator()
                         + "Use the id from the info command to change or remove a brush."
         );
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!(sender instanceof Player)) {
+            return null;
+        }
+
+        if (args.length == 0) {
+            return Arrays.asList(COMMANDS);
+        }
+
+        String last = args[args.length - 1];
+
+        String cmd = args[0];
+        if ("help".equalsIgnoreCase(cmd) || "h".equalsIgnoreCase(cmd)) {
+            return Collections.emptyList();
+        }
+
+        if ("append".equalsIgnoreCase(cmd) || "a".equalsIgnoreCase(cmd)) {
+            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+        }
+
+        if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
+            return List.of("<brush id>");
+        }
+
+        if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
+            if (args.length == 1) {
+                return List.of("<brush id> <brush>");
+            }
+            return TabUtil.getBrushSyntax(last,schematicCache, plugin);
+        }
+
+        if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
+            return Collections.emptyList();
+        }
+
+        if (args.length == 1) {
+            return TabUtil.startingWithInArray(cmd, COMMANDS);
+        }
+        return null;
     }
 }

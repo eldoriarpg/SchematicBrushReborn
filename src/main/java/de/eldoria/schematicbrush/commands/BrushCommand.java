@@ -11,24 +11,24 @@ import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Command which is used to create a new brush.
  * Rewrite of old schbr command.
  */
-public class BrushCommand implements CommandExecutor, Randomable {
+public class BrushCommand implements TabExecutor, Randomable {
     private final JavaPlugin plugin;
-    private final WorldEdit we;
     private final SchematicCache schematicCache;
 
     public BrushCommand(JavaPlugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
-        this.we = WorldEdit.getInstance();
         this.schematicCache = schematicCache;
     }
 
@@ -60,5 +60,15 @@ public class BrushCommand implements CommandExecutor, Randomable {
                     + settings.get().getSchematicCount() + " schematics created.");
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        String last = args[args.length - 1];
+        if(TabUtil.isFlag(last)){
+            return TabUtil.getFlagComplete(last);
+        }
+
+        return TabUtil.getBrushSyntax(last, schematicCache, plugin);
     }
 }

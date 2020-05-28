@@ -22,10 +22,12 @@ public class Schematic {
      * Reference to file ot the schematic.
      */
     private final File file;
+    private final String name;
 
     Schematic(ClipboardFormat format, File file) {
         this.format = format;
         this.file = file;
+        this.name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
     }
 
     /**
@@ -36,13 +38,17 @@ public class Schematic {
      */
     public boolean isSchematic(Pattern pattern) {
         Matcher matcher = pattern.matcher(file.toPath().getFileName().toString());
-        Matcher matcherExtension = pattern.matcher(file.toPath().getFileName().toString().replaceAll(EXTENSION, ""));
+        Matcher matcherExtension = pattern.matcher(name);
 
         return matcherExtension.find() || matcher.find();
     }
 
     public String getPath() {
         return file.toPath().toString();
+    }
+
+    public String getName(){
+        return name;
     }
 
     /**

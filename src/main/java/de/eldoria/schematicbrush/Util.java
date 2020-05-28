@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush;
 
+import com.google.common.collect.ObjectArrays;
 import lombok.experimental.UtilityClass;
 
 import java.util.regex.Matcher;
@@ -22,5 +23,22 @@ public class Util {
             }
         }
         return false;
+    }
+
+    public boolean arrayContains(char[] chars, char... contains) {
+        for (char character : chars) {
+            for (char contain : contains) {
+                if (character == contain) return true;
+            }
+        }
+        return false;
+    }
+
+    public String[] combineArrays(String[]... arrays) {
+        String[] result = new String[0];
+        for (String[] array : arrays) {
+            result = ObjectArrays.concat(array, result, String.class);
+        }
+        return result;
     }
 }

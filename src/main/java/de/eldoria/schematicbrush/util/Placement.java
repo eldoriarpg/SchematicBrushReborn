@@ -10,7 +10,7 @@ public enum Placement {
     /**
      * Use the center of the schematic as origin
      */
-    MIDDLE(findMiddle(), "c", "centerToTheMiddle"),
+    MIDDLE(findMiddle(), "m", "centerToTheMiddle"),
     /**
      * Use the lowest center point of the schematic as origin
      */

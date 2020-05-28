@@ -3,7 +3,6 @@ package de.eldoria.schematicbrush.schematics;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -153,5 +152,30 @@ public class SchematicCache {
 
 
         return Pattern.compile(regex);
+    }
+
+    public List<String> getMatchingDirectories(String dir, int count) {
+        List<String> matches = new ArrayList<>();
+        for (String k : schematicsCache.keySet()) {
+            if (k.toLowerCase().startsWith(dir.toLowerCase())) {
+                matches.add(k);
+                if (matches.size() > count) break;
+            }
+        }
+        return matches;
+    }
+
+    public List<String> getMatchingSchematics(String name, int count) {
+        List<String> matches = new ArrayList<>();
+        for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+            for (Schematic schematic : entry.getValue()) {
+                if (schematic.getName().toLowerCase().startsWith(name.toLowerCase())) {
+                    matches.add(schematic.getName());
+                    if (matches.size() > count) break;
+
+                }
+            }
+        }
+        return matches;
     }
 }

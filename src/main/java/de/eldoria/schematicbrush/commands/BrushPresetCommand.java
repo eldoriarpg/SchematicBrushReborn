@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.commands;
 
-import com.sk89q.worldedit.WorldEdit;
 import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
@@ -8,8 +7,8 @@ import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +16,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,10 +27,11 @@ import static java.lang.System.lineSeparator;
 /**
  * Brush to create and modify brush presets.
  */
-public class BrushPresetCommand implements CommandExecutor {
+public class BrushPresetCommand implements TabExecutor {
 
     private final Plugin plugin;
     private final SchematicCache schematicCache;
+    private static final String[] COMMANDS = {"current", "save", "appendBrush", "removeBrush", "remove", "info", "list", "descr", "help"};
 
     public BrushPresetCommand(Plugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
@@ -56,7 +57,7 @@ public class BrushPresetCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (args.length == 0) {
+        if (args.length == 0 || "help".equalsIgnoreCase(args[0]) || "h".equalsIgnoreCase(args[0])) {
             help(player);
             return true;
         }
@@ -377,4 +378,66 @@ public class BrushPresetCommand implements CommandExecutor {
         return plugin.getConfig().getString(path);
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!(sender instanceof Player)) {
+            return null;
+        }
+
+        if (args.length == 0) {
+            return Arrays.asList(COMMANDS);
+        }
+        String last = args[args.length - 1];
+        String cmd = args[0];
+        if ("help".equalsIgnoreCase(cmd) || "h".equalsIgnoreCase(cmd)) {
+            return null;
+        }
+
+        if ("current".equalsIgnoreCase(cmd) || "c".equalsIgnoreCase(cmd)) {
+            return List.of("<name of preset>");
+        }
+
+        if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)
+                || "info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
+            List<String> presets = TabUtil.getPresets(last, plugin, 8);
+            presets.add("<name of preset>");
+            return presets;
+        }
+        if ("save".equalsIgnoreCase(cmd) || "s".equalsIgnoreCase(cmd)
+                || "appendbrush".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
+            if (args.length == 1) {
+                return List.of("<name of preset>");
+            }
+            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+        }
+
+        if ("removebrush".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
+            if (args.length == 1) {
+                List<String> presets = TabUtil.getPresets(last, plugin, 8);
+                presets.add("<name of preset> <id of brush>");
+                return presets;
+            }
+            if (args.length == 2) {
+                return List.of("<id of brush>");
+            }
+        }
+
+        if ("list".equalsIgnoreCase(cmd) || "l".equalsIgnoreCase(cmd)) {
+            return Collections.emptyList();
+        }
+
+        if ("descr".equalsIgnoreCase(cmd) || "d".equalsIgnoreCase(cmd)) {
+            if (args.length == 1) {
+                List<String> presets = TabUtil.getPresets(last, plugin, 8);
+                presets.add("<name of preset> <description>");
+                return presets;
+            }
+            return List.of("<description>");
+        }
+
+        if (args.length == 1) {
+            return TabUtil.startingWithInArray(cmd, COMMANDS);
+        }
+        return null;
+    }
 }

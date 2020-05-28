@@ -52,9 +52,4 @@ public class SchematicBrushReborn extends JavaPlugin {
         getCommand("sbrm").setExecutor(brushModifyCommand);
         getCommand("sbrp").setExecutor(brushPresetCommand);
     }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return Collections.emptyList();
-    }
 }

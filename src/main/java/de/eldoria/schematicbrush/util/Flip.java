@@ -4,7 +4,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
 
 public enum Flip implements Randomable {
-    NONE,
+    NONE(),
     EAST_WEST(Direction.EAST, "E", "W", "EW", "WE"),
     NORT_SOUTH(Direction.NORTH, "NS", "SN", "N", "S"),
     RANDOM("*");
