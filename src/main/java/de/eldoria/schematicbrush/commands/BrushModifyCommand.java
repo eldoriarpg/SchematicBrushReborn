@@ -21,12 +21,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Optional;
 
-public class BrushAppendCommand implements CommandExecutor, Randomable {
+public class BrushModifyCommand implements CommandExecutor, Randomable {
     private final JavaPlugin plugin;
     private final WorldEdit we;
     private final SchematicCache schematicCache;
 
-    public BrushAppendCommand(JavaPlugin plugin, SchematicCache schematicCache) {
+    public BrushModifyCommand(JavaPlugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
         this.we = WorldEdit.getInstance();
         this.schematicCache = schematicCache;
@@ -34,6 +34,12 @@ public class BrushAppendCommand implements CommandExecutor, Randomable {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Commands:
+        // Append a brush to current brush - sbrmod append <brushes...>
+        // Remove a brush from current brush - sbrmod remove <brush>
+        // Replace a brush on current brush - sbrmod alter <oldBrush> <newBrush>
+        // Get list of brushes in current brush - sbrmod info
+
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only a player can do this.");
             return true;
