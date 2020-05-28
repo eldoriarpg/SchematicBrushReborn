@@ -194,7 +194,7 @@ public class BrushSettingsParser {
      * @param args                 arguments of the brush
      * @return optional configured brush settings object or empty if something could not be parsed
      */
-    public Optional<BrushConfiguration> buildBrushSettings(Player player, BrushConfiguration.Builder brushSettingsBuilder,
+    private Optional<BrushConfiguration> buildBrushSettings(Player player, BrushConfiguration.Builder brushSettingsBuilder,
                                                            String[] args) {
         List<String> strings = Arrays.asList(args);
 

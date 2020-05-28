@@ -120,6 +120,7 @@ public final class BrushConfiguration implements Randomable {
 
     /**
      * Get the brush configuration with a new brush combined.
+     * The options from the current brush are used.
      *
      * @param brush Brush to combine. Only the {@link SubBrush} list is updated.
      * @return new brush configuration.

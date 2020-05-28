@@ -106,4 +106,9 @@ public enum Placement {
             return dimensions.getBlockY();
         };
     }
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
+    }
 }

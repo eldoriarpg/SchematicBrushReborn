@@ -39,4 +39,9 @@ public enum Flip implements Randomable {
         }
         throw new IllegalArgumentException(string + " is not a valid Flip value");
     }
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
+    }
 }

@@ -1,12 +1,7 @@
 package de.eldoria.schematicbrush.commands;
 
-import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.command.tool.BrushTool;
-import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
-import com.sk89q.worldedit.extension.platform.Actor;
 import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
@@ -22,6 +17,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Optional;
 
+/**
+ * Command which is used to create a new brush.
+ * Rewrite of old schbr command.
+ */
 public class BrushCommand implements CommandExecutor, Randomable {
     private final JavaPlugin plugin;
     private final WorldEdit we;
@@ -39,17 +38,13 @@ public class BrushCommand implements CommandExecutor, Randomable {
             sender.sendMessage("Only a player can do this.");
             return true;
         }
+
         Player player = (Player) sender;
 
         if (args.length == 0) {
             MessageSender.sendError(player, "Too few arguments.");
             return true;
         }
-
-        Actor actor = BukkitAdapter.adapt(player);
-
-        LocalSession localSession = we.getSessionManager().get(actor);
-        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
 
         Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
@@ -58,13 +53,11 @@ public class BrushCommand implements CommandExecutor, Randomable {
         }
 
         Brush schematicBrush = new SchematicBrush(player, settings.get());
-        try {
-            BrushTool brushTool = localSession.getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType()));
-            brushTool.setBrush(schematicBrush, "schematicbrush.brush.use");
+
+        boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush);
+        if (success) {
             MessageSender.sendMessage(player, "Brush using "
                     + settings.get().getSchematicCount() + " schematics created.");
-        } catch (InvalidToolBindException e) {
-            MessageSender.sendError(player, e.getMessage());
         }
         return true;
     }
