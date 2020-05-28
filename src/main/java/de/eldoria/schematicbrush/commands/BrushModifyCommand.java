@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.commands;
 
+import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
@@ -178,24 +179,24 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             brushStrings.add((i + 1) + "| " + arguments);
         }
 
-        String brushList = brushStrings.stream().collect(Collectors.joining(lineSeparator()));
+        String brushList = brushStrings.stream().collect(Collectors.joining(C.NEW_LINE));
         MessageSender.sendMessage(player,
-                "Total schematics: " + settings.getSchematicCount() + lineSeparator()
-                        + "Placement: " + settings.getPlacement().toString() + lineSeparator()
-                        + "Y-Offset: " + settings.getYOffset() + lineSeparator()
-                        + "Paste air: " + settings.isIncludeAir() + lineSeparator()
-                        + "Replace air only: " + settings.isReplaceAirOnly() + lineSeparator()
-                        + "Brushes:" + lineSeparator()
+                "Total schematics: " + settings.getSchematicCount() + C.NEW_LINE
+                        + "Placement: " + settings.getPlacement().toString() + C.NEW_LINE
+                        + "Y-Offset: " + settings.getYOffset() + C.NEW_LINE
+                        + "Paste air: " + settings.isIncludeAir() + C.NEW_LINE
+                        + "Replace air only: " + settings.isReplaceAirOnly() + C.NEW_LINE
+                        + "Brushes:" + C.NEW_LINE
                         + brushList);
     }
 
     private void help(Player player) {
         MessageSender.sendMessage(player,
-                "This command allows you to modify a current used brush." + lineSeparator()
-                        + "/sbrm append <brushes...> - Add one or more brushes to your brush." + lineSeparator()
-                        + "/sbrm remove <id> - Remove a brush." + lineSeparator()
-                        + "/sbrm edit <id> <brush> - Replace a brush with another brush." + lineSeparator()
-                        + "/sbrm info - Get a list of all brushes your brush contains." + lineSeparator()
+                "This command allows you to modify a current used brush." + C.NEW_LINE
+                        + "/sbrm append <brushes...> - Add one or more brushes to your brush." + C.NEW_LINE
+                        + "/sbrm remove <id> - Remove a brush." + C.NEW_LINE
+                        + "/sbrm edit <id> <brush> - Replace a brush with another brush." + C.NEW_LINE
+                        + "/sbrm info - Get a list of all brushes your brush contains." + C.NEW_LINE
                         + "Use the id from the info command to change or remove a brush."
         );
     }
@@ -237,7 +238,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         if (args.length == 1) {
-            return TabUtil.startingWithInArray(cmd, COMMANDS);
+            return TabUtil.startingWithInArray(cmd, COMMANDS).collect(Collectors.toList());
         }
         return null;
     }

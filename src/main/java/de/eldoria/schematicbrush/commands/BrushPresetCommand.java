@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.commands;
 
+import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
@@ -97,15 +98,15 @@ public class BrushPresetCommand implements TabExecutor {
 
     private void help(Player player) {
         MessageSender.sendMessage(player,
-                "This command allows you to save and modify brush presets." + lineSeparator()
-                        + "/sbrp current <id> - Save your current equiped brush as a preset." + lineSeparator()
-                        + "/sbrp save <id> <brushes...> - Save one or more brushes as a preset." + lineSeparator()
-                        + "/sbrp appendbrush <id> <brushes...> - Add one or more brushes to a preset." + lineSeparator()
-                        + "/sbrm descr - Set a description for a brush." + lineSeparator()
-                        + "/sbrp removebrush <id> <id> - Remove brush from a preset." + lineSeparator()
-                        + "/sbrp remove <id> - Remove a preset." + lineSeparator()
-                        + "/sbrp info <id> - Get a list of brushes inside a preset." + lineSeparator()
-                        + "/sbrm list - Get a list of all presets with description." + lineSeparator()
+                "This command allows you to save and modify brush presets." + C.NEW_LINE
+                        + "/sbrp current <id> - Save your current equiped brush as a preset." + C.NEW_LINE
+                        + "/sbrp save <id> <brushes...> - Save one or more brushes as a preset." + C.NEW_LINE
+                        + "/sbrp appendbrush <id> <brushes...> - Add one or more brushes to a preset." + C.NEW_LINE
+                        + "/sbrm descr - Set a description for a brush." + C.NEW_LINE
+                        + "/sbrp removebrush <id> <id> - Remove brush from a preset." + C.NEW_LINE
+                        + "/sbrp remove <id> - Remove a preset." + C.NEW_LINE
+                        + "/sbrp info <id> - Get a list of brushes inside a preset." + C.NEW_LINE
+                        + "/sbrm list - Get a list of all presets with description." + C.NEW_LINE
                         + "Use the id from the info command to change or remove a brush."
         );
     }
@@ -257,9 +258,9 @@ public class BrushPresetCommand implements TabExecutor {
             brushes.add((i + 1) + "| " + brushString.get(i));
         }
 
-        String brushesList = brushes.stream().collect(Collectors.joining(lineSeparator()));
-        MessageSender.sendMessage(player, "Information about preset " + name + lineSeparator()
-                + getDescription(player, name) + lineSeparator() + "Brushes:" + lineSeparator() + brushesList);
+        String brushesList = String.join(C.NEW_LINE, brushes);
+        MessageSender.sendMessage(player, "Information about preset " + name + C.NEW_LINE
+                + getDescription(player, name) + C.NEW_LINE + "Brushes:" + C.NEW_LINE + brushesList);
     }
 
 
@@ -271,8 +272,8 @@ public class BrushPresetCommand implements TabExecutor {
         }
 
         String presetString = presets.getKeys(false).stream()
-                .map(k -> "ID: " + k + lineSeparator() + "  Desc: " + getDescription(player, k))
-                .collect(Collectors.joining(lineSeparator()));
+                .map(k -> "ID: " + k + C.NEW_LINE + "  Desc: " + getDescription(player, k))
+                .collect(Collectors.joining("\n"));
         MessageSender.sendMessage(player, presetString);
     }
 
@@ -436,7 +437,7 @@ public class BrushPresetCommand implements TabExecutor {
         }
 
         if (args.length == 1) {
-            return TabUtil.startingWithInArray(cmd, COMMANDS);
+            return TabUtil.startingWithInArray(cmd, COMMANDS).collect(Collectors.toList());
         }
         return null;
     }

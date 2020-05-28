@@ -42,6 +42,7 @@ public class BrushCommand implements TabExecutor, Randomable {
         Player player = (Player) sender;
 
         if (args.length == 0) {
+            //TODO Command explanation
             MessageSender.sendError(player, "Too few arguments.");
             return true;
         }

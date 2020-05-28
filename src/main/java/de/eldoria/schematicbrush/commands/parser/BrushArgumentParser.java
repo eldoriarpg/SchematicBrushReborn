@@ -4,7 +4,6 @@ import de.eldoria.schematicbrush.brush.BrushSelector;
 import de.eldoria.schematicbrush.util.Flip;
 import de.eldoria.schematicbrush.util.Rotation;
 import lombok.Data;
-import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,38 +11,42 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@UtilityClass
-public class BrushArgumentParser {
-    private final String NAME = ".+?)";
-    private final String ENDINGS = "(\\s|:|@|!|$)";
+public final class BrushArgumentParser {
+    private static final String NAME = ".+?)";
+    private static final String ENDINGS = "(\\s|:|@|!|$)";
 
     /**
      * Pattern to use a name or a regex
      */
-    private final Pattern NAME_PATTERN = Pattern.compile("^(" + NAME + ENDINGS);
+    private static final Pattern NAME_PATTERN = Pattern.compile("^(" + NAME + ENDINGS);
 
     /**
      * Pattern to use schematics inside a directory
      */
-    private final Pattern DIRECTORY_PATTERN = Pattern.compile("^(\\$" + NAME + ENDINGS);
+    private static final Pattern DIRECTORY_PATTERN = Pattern.compile("^(\\$" + NAME + ENDINGS);
 
     /**
      * Pattern to use a brush preset
      */
-    private final Pattern PRESET_PATTERN = Pattern.compile("^&(" + NAME + ENDINGS);
+    private static final Pattern PRESET_PATTERN = Pattern.compile("^&(" + NAME + ENDINGS);
 
     /**
      * Pattern to detect the rotation
      */
-    private final Pattern ROTATION_PATTERN = Pattern.compile("@(0|90|180|270|\\*)" + ENDINGS);
+    private static final Pattern ROTATION_PATTERN = Pattern.compile("@(0|90|180|270|\\*)" + ENDINGS);
     /**
      * Pattern to detect the flip
      */
-    private final Pattern FLIP_PATTERN = Pattern.compile("!(NS|SN|WO|OW|N|S|W|E|\\*)" + ENDINGS, Pattern.CASE_INSENSITIVE);
+    private static final Pattern FLIP_PATTERN = Pattern.compile("!(NS|SN|WO|OW|N|S|W|E|\\*)" + ENDINGS,
+            Pattern.CASE_INSENSITIVE);
     /**
      * Pattern to detect the weight
      */
-    private final Pattern WEIGHT_PATTERN = Pattern.compile(":([0-9]{1,3}|\\*)" + ENDINGS);
+    private static final Pattern WEIGHT_PATTERN = Pattern.compile(":([0-9]{1,3}|\\*)" + ENDINGS);
+
+    private BrushArgumentParser() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Get the type of the brush
@@ -51,7 +54,7 @@ public class BrushArgumentParser {
      * @param arguments arguments of the brush
      * @return optional brush type or empty if the brush could not be parsed.
      */
-    public Optional<SubBrushType> getBrushType(String arguments) {
+    public static Optional<SubBrushType> getBrushType(String arguments) {
         // Check if its a name or regex lookup
         Matcher nameMatcher = NAME_PATTERN.matcher(arguments);
         // Check if its a name or regex lookup
@@ -83,7 +86,7 @@ public class BrushArgumentParser {
      * @param arguments arguments of brush
      * @return values wrapped in a object.
      */
-    public SubBrushValues getBrushValues(String arguments) {
+    public static SubBrushValues getBrushValues(String arguments) {
         @Nullable Flip flip = null;
         @Nullable Rotation rotation = null;
         @Nullable Integer weight = null;
@@ -123,7 +126,7 @@ public class BrushArgumentParser {
      * Values which are not present are null.
      */
     @Data
-    public class SubBrushValues {
+    public static final class SubBrushValues {
         /**
          * Flip of the brush.
          */
@@ -139,13 +142,19 @@ public class BrushArgumentParser {
          */
         @Nullable
         private final Integer weight;
+
+        public SubBrushValues(@Nullable Flip flip, @Nullable Rotation rotation, @Nullable Integer weight) {
+            this.flip = flip;
+            this.rotation = rotation;
+            this.weight = weight;
+        }
     }
 
     /**
      * This class represents the type of a brush.
      */
     @Data
-    public class SubBrushType {
+    public static final class SubBrushType {
         /**
          * Selector type of the brush.
          */
@@ -156,5 +165,10 @@ public class BrushArgumentParser {
          */
         @Nonnull
         private final String selectorValue;
+
+        public SubBrushType(@Nonnull BrushSelector selectorType, @Nonnull String selectorValue) {
+            this.selectorType = selectorType;
+            this.selectorValue = selectorValue;
+        }
     }
 }
