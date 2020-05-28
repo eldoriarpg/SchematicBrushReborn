@@ -1,12 +1,9 @@
 package de.eldoria.schematicbrush;
 
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import de.eldoria.schematicbrush.commands.BrushAppendCommand;
+import de.eldoria.schematicbrush.commands.BrushModifyCommand;
 import de.eldoria.schematicbrush.commands.BrushCommand;
-import de.eldoria.schematicbrush.commands.BrushPreset;
+import de.eldoria.schematicbrush.commands.BrushPresetCommand;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -15,8 +12,6 @@ public class SchematicBrushReborn extends JavaPlugin {
 
     private SchematicCache schematics;
     private static Logger logger;
-    private WorldEditPlugin worldEditPlugin;
-    private WorldEdit worldEdit;
 
     public static Logger logger() {
         return logger;
@@ -27,28 +22,30 @@ public class SchematicBrushReborn extends JavaPlugin {
 
     }
 
+    public void onReload() {
+        schematics.reload();
+    }
+
     @Override
     public void onEnable() {
         logger = getLogger();
-        Plugin weCheck = this.getServer().getPluginManager().getPlugin("WorldEdit");
 
-        if (weCheck == null) {
+        if (this.getServer().getPluginManager().getPlugin("WorldEdit") == null) {
             logger.warning("WorldEdit is not installed on this Server!");
             return;
         }
 
-        worldEditPlugin = (WorldEditPlugin) weCheck;
-        worldEdit = worldEditPlugin.getWorldEdit();
 
         saveDefaultConfig();
         schematics = new SchematicCache(this);
         schematics.init();
 
         BrushCommand brushCommand = new BrushCommand(this, schematics);
-        BrushAppendCommand brushAppendCommand = new BrushAppendCommand(this, schematics);
+        BrushModifyCommand brushModifyCommand = new BrushModifyCommand(this, schematics);
+        BrushPresetCommand brushPresetCommand = new BrushPresetCommand(this, schematics);
 
-        getCommand("schematicbrush").setExecutor(brushCommand);
-        getCommand("schematicbrushappend").setExecutor(brushAppendCommand);
-        getCommand("schematicpreset").setExecutor(new BrushPreset());
+        getCommand("sbr").setExecutor(brushCommand);
+        getCommand("sbrm").setExecutor(brushModifyCommand);
+        getCommand("sbrp").setExecutor(brushPresetCommand);
     }
 }
