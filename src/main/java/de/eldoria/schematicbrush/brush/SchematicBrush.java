@@ -8,6 +8,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
+import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -38,13 +39,15 @@ public class SchematicBrush implements Brush {
     }
 
     @Override
-    public void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size) throws MaxChangedBlocksException {
+    public void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size)
+            throws MaxChangedBlocksException {
         SubBrush randomSubBrush = settings.getRandomBrushConfig();
 
         Clipboard clipboard = randomSubBrush.getRandomSchematic();
 
         if (clipboard == null) {
-            MessageSender.sendError(brushOwner, "No valid schematic was found for this brush.");
+            MessageSender.sendError(brushOwner, "No valid schematic was found for brush: "
+                    + randomSubBrush.getArguments());
             return;
         }
 
@@ -59,11 +62,19 @@ public class SchematicBrush implements Brush {
         Rotation rotation = randomSubBrush.getRotation();
         transform = transform.rotateY(rotation.getDeg());
 
+        // Save current user mask
+        Mask preBrushMask = editSession.getMask();
 
         // Apply replace mask
         if (settings.isReplaceAirOnly()) {
-            editSession.setMask(
-                    new BlockTypeMask(editSession, BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR));
+            // Check if the user has a block mask defined and append if present.
+            if (editSession.getMask() != null && editSession.getMask() instanceof BlockTypeMask) {
+                BlockTypeMask mask = (BlockTypeMask) editSession.getMask();
+                mask.add(BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR);
+            } else {
+                editSession.setMask(
+                        new BlockTypeMask(editSession, BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR));
+            }
         }
 
         // Create a new clipboard holder and apply the transforms
@@ -87,7 +98,9 @@ public class SchematicBrush implements Brush {
                 .build();
 
         Operations.completeBlindly(operation);
-        brushOwner.sendMessage("brush executed");
+
+        editSession.setMask(preBrushMask);
+        MessageSender.sendMessage(brushOwner, "Schematic pasted");
     }
 
     /**
@@ -98,5 +111,9 @@ public class SchematicBrush implements Brush {
      */
     public SchematicBrush combineBrush(BrushConfiguration brush) {
         return new SchematicBrush(brushOwner, settings.combine(brush));
+    }
+
+    public BrushConfiguration getSettings() {
+        return settings;
     }
 }

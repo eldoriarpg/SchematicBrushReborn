@@ -33,7 +33,6 @@ public class BrushCommand implements CommandExecutor, Randomable {
         this.schematicCache = schematicCache;
     }
 
-    //TODO: append brushes to brush. aka temp presets
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -62,7 +61,8 @@ public class BrushCommand implements CommandExecutor, Randomable {
         try {
             BrushTool brushTool = localSession.getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType()));
             brushTool.setBrush(schematicBrush, "schematicbrush.brush.use");
-            player.sendMessage("Schematic brush set.");
+            MessageSender.sendMessage(player, "Brush using "
+                    + settings.get().getSchematicCount() + " schematics created.");
         } catch (InvalidToolBindException e) {
             MessageSender.sendError(player, e.getMessage());
         }

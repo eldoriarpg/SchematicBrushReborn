@@ -64,7 +64,7 @@ public class SubBrush implements Randomable {
                 clipboard = randomSchematic.getSchematic();
             } catch (IOException e) {
                 // Silently fail and search for another schematic.
-                SchematicBrushReborn.logger().info("Schematic" + randomSchematic.getPath() + " does not anymore.");
+                SchematicBrushReborn.logger().info("Schematic \"" + randomSchematic.getPath() + "\" does not exist anymore.");
                 schematics.remove(randomSchematic);
             }
         }

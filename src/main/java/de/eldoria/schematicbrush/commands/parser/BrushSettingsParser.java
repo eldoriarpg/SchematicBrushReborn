@@ -2,9 +2,9 @@ package de.eldoria.schematicbrush.commands.parser;
 
 import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.Util;
-import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.brush.BrushSelector;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
+import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Placement;
@@ -105,9 +105,9 @@ public class BrushSettingsParser {
                         return Optional.empty();
                     }
 
-                    // Block if a preset is used in a preset to avoid recursive calls.
+                    // Block if a preset is used in a preset to avoid loop calls.
                     if (optionalBrushType.get().getSelectorType() == BrushSelector.PRESET) {
-                        MessageSender.sendError(player, "Presets are now allowed in presets.");
+                        MessageSender.sendError(player, "Presets are not allowed in presets.");
                         return Optional.empty();
                     }
 
@@ -124,7 +124,8 @@ public class BrushSettingsParser {
         return Optional.empty();
     }
 
-    public Optional<SubBrush> buildBrushConfig(Player player, BrushArgumentParser.SubBrushType type, String settingsString, SchematicCache schematicCache) {
+    private Optional<SubBrush> buildBrushConfig(Player player, BrushArgumentParser.SubBrushType type,
+                                                String settingsString, SchematicCache schematicCache) {
         SubBrush.Builder builder = null;
 
         List<Schematic> schematics = Collections.emptyList();
@@ -148,10 +149,14 @@ public class BrushSettingsParser {
             return Optional.empty();
         }
 
+        if (schematics.isEmpty()) {
+            MessageSender.sendError(player, "No schematics were found for " + settingsString);
+            return Optional.empty();
+        }
+
         builder.withSchematics(schematics);
 
         BrushArgumentParser.SubBrushValues subBrushValues = BrushArgumentParser.getBrushValues(settingsString);
-
 
         // Read rotation
         if (subBrushValues.getRotation() != null) {

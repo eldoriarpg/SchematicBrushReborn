@@ -58,10 +58,12 @@ public class BrushAppendCommand implements CommandExecutor, Randomable {
 
         try {
             BrushTool brushTool = localSession.getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType()));
-            if (brushTool.getBrush() instanceof SchematicBrush) {
-                SchematicBrush brush = (SchematicBrush) brushTool.getBrush();
-                brushTool.setBrush(brush.combineBrush(settings.get()), "schematicbrush.brush.use");
-                MessageSender.sendMessage(player, "Schematic brush appended.");
+            if (brushTool.getBrush() != null && brushTool.getBrush() instanceof SchematicBrush) {
+                SchematicBrush currentBrush = (SchematicBrush) brushTool.getBrush();
+                SchematicBrush combinedBrush = currentBrush.combineBrush(settings.get());
+                brushTool.setBrush(combinedBrush, "schematicbrush.brush.use");
+                MessageSender.sendMessage(player, "Brush appended. Using "
+                        + combinedBrush.getSettings().getSchematicCount() + " schematics.");
             } else {
                 MessageSender.sendError(player, "This is not a schematic brush.");
             }
