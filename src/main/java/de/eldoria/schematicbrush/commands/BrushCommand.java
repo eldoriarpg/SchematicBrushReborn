@@ -1,10 +1,10 @@
 package de.eldoria.schematicbrush.commands;
 
 import com.sk89q.worldedit.command.tool.brush.Brush;
-import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
@@ -69,6 +69,13 @@ public class BrushCommand implements TabExecutor, Randomable {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 0) {
+            return List.of("<name>@rotation!flip:weight",
+                    "$<directory>@rotation!flip:weight",
+                    "&<presetname>@rotation!flip:weight",
+                    "^<regex>@rotation!flip:weight");
+        }
+
         String last = args[args.length - 1];
         if (TabUtil.isFlag(last)) {
             return TabUtil.getFlagComplete(last);
