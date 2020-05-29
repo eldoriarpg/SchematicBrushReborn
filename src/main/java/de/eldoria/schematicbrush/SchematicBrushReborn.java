@@ -35,13 +35,12 @@ public class SchematicBrushReborn extends JavaPlugin {
     public void onEnable() {
         logger = getLogger();
 
-        Metrics metrics = new Metrics(this, 7683);
+        //Metrics metrics = new Metrics(this, 7683);
 
         if (this.getServer().getPluginManager().getPlugin("WorldEdit") == null) {
             logger.warning("WorldEdit is not installed on this Server!");
             return;
         }
-
 
         saveDefaultConfig();
         schematics = new SchematicCache(this);
