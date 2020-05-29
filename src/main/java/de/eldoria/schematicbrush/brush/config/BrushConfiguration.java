@@ -28,7 +28,7 @@ public final class BrushConfiguration implements Randomable {
     /**
      * True if the schematic should only be pasted where the block material is {@link org.bukkit.Material#AIR}
      */
-    private final boolean replaceAirOnly;
+    private final boolean replaceAll;
     /**
      * The y offset which will be applied before pasting to the position which was clicked by the user.
      */
@@ -42,11 +42,11 @@ public final class BrushConfiguration implements Randomable {
      */
     private final int totalWeight;
 
-    private BrushConfiguration(List<SubBrush> brushes, boolean includeAir, boolean replaceAirOnly, int yOffset,
+    private BrushConfiguration(List<SubBrush> brushes, boolean includeAir, boolean replaceAll, int yOffset,
                                Placement placement) {
         this.brushes = brushes;
         this.includeAir = includeAir;
-        this.replaceAirOnly = replaceAirOnly;
+        this.replaceAll = replaceAll;
         this.yOffset = yOffset;
         this.placement = placement;
 
@@ -128,7 +128,7 @@ public final class BrushConfiguration implements Randomable {
     public BrushConfiguration combine(BrushConfiguration brush) {
         List<SubBrush> brushes = new ArrayList<>(this.brushes);
         brushes.addAll(brush.brushes);
-        return new BrushConfiguration(brushes, includeAir, replaceAirOnly, yOffset, placement);
+        return new BrushConfiguration(brushes, includeAir, replaceAll, yOffset, placement);
     }
 
     public static final class BrushConfigurationBuilder {
@@ -141,9 +141,9 @@ public final class BrushConfiguration implements Randomable {
          */
         private boolean includeAir = false;
         /**
-         * True if the schematic should only be pasted where the block material is {@link org.bukkit.Material#AIR}
+         * False if the schematic should only be pasted where the block material is {@link org.bukkit.Material#AIR}
          */
-        private boolean replaceAirOnly = false;
+        private boolean replaceAll = false;
         /**
          * The y offset which will be applied before pasting to the position which was clicked by the user.
          */
@@ -192,8 +192,8 @@ public final class BrushConfiguration implements Randomable {
          *                       where the block material is {@link org.bukkit.Material#AIR}
          * @return builder instance with changed state
          */
-        public BrushConfigurationBuilder replaceAirOnly(boolean replaceAirOnly) {
-            this.replaceAirOnly = replaceAirOnly;
+        public BrushConfigurationBuilder replaceAll(boolean replaceAirOnly) {
+            this.replaceAll = replaceAirOnly;
             return this;
         }
 
@@ -225,7 +225,7 @@ public final class BrushConfiguration implements Randomable {
          * @return A immutable brush config.
          */
         public BrushConfiguration build() {
-            return new BrushConfiguration(brushes, includeAir, replaceAirOnly, yOffset, placement);
+            return new BrushConfiguration(brushes, includeAir, replaceAll, yOffset, placement);
         }
 
     }
