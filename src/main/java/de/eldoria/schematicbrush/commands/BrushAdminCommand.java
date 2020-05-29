@@ -40,7 +40,7 @@ public class BrushAdminCommand implements TabExecutor {
         }
 
         if ("reload".equalsIgnoreCase(arg)) {
-            if (sender.hasPermission("schematicbrush.reload")) {
+            if (sender.hasPermission("schematicbrush.admin.reload")) {
                 reload(sender);
             } else {
                 if (sender instanceof Player) {
@@ -50,7 +50,7 @@ public class BrushAdminCommand implements TabExecutor {
             return true;
         }
         if ("reloadschematics".equalsIgnoreCase(arg)) {
-            if (sender.hasPermission("schematicbrush.reloadschematics")) {
+            if (sender.hasPermission("schematicbrush.admin.reloadschematics")) {
                 reloadSchematics(sender);
             } else {
                 if (sender instanceof Player) {

@@ -99,7 +99,7 @@ public class SchematicPresetCommand implements TabExecutor {
         }
 
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
-            if (player.hasPermission("schematicbrush.preset.info")) {
+            if (player.hasPermission("schematicbrush.brush.use")) {
                 presetInfo(player, subcommandArgs);
             } else {
                 MessageSender.sendError(player, "You don't have the permission to do this!");
@@ -107,7 +107,7 @@ public class SchematicPresetCommand implements TabExecutor {
         }
 
         if ("list".equalsIgnoreCase(cmd) || "l".equalsIgnoreCase(cmd)) {
-            if (player.hasPermission("schematicbrush.preset.info")) {
+            if (player.hasPermission("schematicbrush.brush.use")) {
                 presetList(player);
             } else {
                 MessageSender.sendError(player, "You don't have the permission to do this!");
@@ -131,8 +131,8 @@ public class SchematicPresetCommand implements TabExecutor {
                 "This command allows you to save and modify schematic set presets." + C.NEW_LINE
                         + "§b/sbrp save§nc§r§burrent <id> §r- Save your current equiped schematic set as a preset." + C.NEW_LINE
                         + "§b/sbrp §ns§r§bave <id> <schematic sets...> §r- Save one or more schematic sets as a preset." + C.NEW_LINE
-                        + "§b/sbrp §na§r§bppend§ns§r§bet <id> <schematic sets...> §r- Add one or more schematic sets to a preset." + C.NEW_LINE
                         + "§b/sbrp §nd§r§bescr §r- Set a description for a preset." + C.NEW_LINE
+                        + "§b/sbrp §na§r§bppend§ns§r§bet <id> <schematic sets...> §r- Add one or more schematic sets to a preset." + C.NEW_LINE
                         + "§b/sbrp §nr§r§bemove§ns§r§bet <id> <id> §r- Remove schematic set from a preset." + C.NEW_LINE
                         + "§b/sbrp §nr§r§bemove <id> §r- Remove a preset." + C.NEW_LINE
                         + "§b/sbrp §ni§r§bnfo <id> §r- Get a list of schmematic sets inside a preset." + C.NEW_LINE
@@ -239,13 +239,13 @@ public class SchematicPresetCommand implements TabExecutor {
         Object[] original;
         String[] ids = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<List<String>> optionalSchematicSets = getSchematicSetsFromConfig(name);
-        if (optionalSchematicSets.isEmpty()) {
+        Optional<List<String>> optionalSchematics = getSchematicSetsFromConfig(name);
+        if (optionalSchematics.isEmpty()) {
             MessageSender.sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
 
-        List<String> schematicSets = optionalSchematicSets.get();
+        List<String> schematicSets = optionalSchematics.get();
 
         for (String id : ids) {
             try {
