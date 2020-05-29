@@ -1,4 +1,5 @@
 # Schematic Brush Reborn
+![## Description](http://chojo.u.catgirlsare.sexy/wHmbIpte.png)  
 Schematic Brush Reborn is a complete new rewrite of the old [Schematic Brush](https://github.com/mikeprimm/SchematicBrush)
 which doesn't received any updates for version 1.13+.
 
@@ -12,7 +13,7 @@ We support every schematic format which World Edit supports.
 We allow you to save your favourite schematic sets as a preset.
 You can use them every time and even combine them with other presets.
 
-## Features
+![## Features](http://chojo.u.catgirlsare.sexy/64F0fGlX.png)  
 + Use schematics from your server as a world edit brush.
 + Modify your current brush every time without creating a new one.
 + Customize your brush with different flags
@@ -20,13 +21,13 @@ You can use them every time and even combine them with other presets.
 + Use random schematic sets to get more diversity.
 + Save your favourite schematics sets as a set to use them everytime.
 
-## Requirements
+![## Requirements](http://chojo.u.catgirlsare.sexy/jtvCkmgC.png)  
 Spigot or Paper 1.13 and above.
 Java 11 and above.
 World Edit 7.1 and above.
 FAWE is also supported, but on the current state pretty unstable.
 
-## How does it work?
+![## How does it work?](http://chojo.u.catgirlsare.sexy/V05UGdwq.png)  
 A schematic brush can contain one or more schematic sets. So a brush is a collection of one or more schematic sets.
 
 A schematic set is defined by a selector and several modifications of the schematic. The general syntax is:
@@ -40,8 +41,8 @@ The brush itself has some flags, which allows to set a place method, offset and 
 `/sbr <schematic sets...> <flags...>`
 
 You don't have to remember any of this. The plugin features a rich tabcomplete, which supports you all the time.
-![http://chojo.u.catgirlsare.sexy/WJ3Eh7N2.png](http://chojo.u.catgirlsare.sexy/WJ3Eh7N2.png)
-We also track you schematic, preset and directory names. We can complete everything for you.
+![autocomplete image](http://chojo.u.catgirlsare.sexy/WJ3Eh7N2.png)
+We also track your schematic, preset and directory names. We can complete everything for you.
 
 ### Schematic Set
 A schematic set consists of a selector an optional modifier.
@@ -150,7 +151,7 @@ On default we dont place air block. If you want to change this use this flag.
 `-incair`
 `-a`
 
-## Commands
+![## Commands](http://chojo.u.catgirlsare.sexy/ovFjigc1.png)
 All command profide the information listed below, if you use them withour any arguments.
 All command have a rich tabcompletion which always helps you with building your brush
 
