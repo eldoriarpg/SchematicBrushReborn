@@ -6,7 +6,7 @@
 
     <groupId>de.eldoria</groupId>
     <artifactId>SchematicBrushReborn</artifactId>
-    <version>1.0-BETA</version>
+    <version>1.1-BETA</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,8 +19,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>
