@@ -6,7 +6,7 @@
 
     <groupId>de.eldoria</groupId>
     <artifactId>SchematicBrushReborn</artifactId>
-    <version>0.1-BETA</version>
+    <version>1.0-BETA</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
