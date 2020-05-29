@@ -100,7 +100,6 @@ public class SchematicBrush implements Brush {
         Operations.completeBlindly(operation);
 
         editSession.setMask(preBrushMask);
-        MessageSender.sendMessage(brushOwner, "Schematic pasted");
     }
 
     /**
