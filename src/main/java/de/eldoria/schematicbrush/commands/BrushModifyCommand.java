@@ -171,6 +171,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
                 .parseBrush(player, plugin, schematicCache, Arrays.copyOfRange(args, 1, args.length));
 
 
+
         if (!brushConfiguration.isPresent()) {
             return;
         }
@@ -197,12 +198,14 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     private void reload(Player player) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
+
         if (!schematicBrush.isPresent()) {
             MessageSender.sendMessage(player, "This is not a schematic brush!");
             return;
         }
 
         BrushSettings oldSettings = schematicBrush.get().getSettings();
+
         Optional<BrushSettings.BrushSettingsBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
                 oldSettings.getSchematicSets().stream().map(SchematicSet::getArguments).collect(Collectors.toList()),
                 plugin, schematicCache);
@@ -239,6 +242,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     private void brushInfo(Player player) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
+
         if (!schematicBrush.isPresent()) {
             MessageSender.sendError(player, "This is not a schematic brush.");
             return;
@@ -251,6 +255,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             String arguments = schematicSets.get(i).getArguments();
             schematicSetStrings.add("§b" + (i + 1) + "|§r " + arguments);
         }
+
 
         String schematicSetList = String.join(C.NEW_LINE, schematicSetStrings);
         MessageSender.sendMessage(player,
@@ -298,6 +303,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
+
             return Collections.singletonList("<schematic set id>");
         }
 
@@ -307,6 +313,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
         if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
             if (args.length == 1) {
+
                 return Collections.singletonList("<schematic set id> <schematic set>");
             }
             if (args.length == 2) {

@@ -171,6 +171,7 @@ public final class BrushSettings implements Randomable {
          * @return builder instance with brush added
          */
         public BrushSettingsBuilder addBrush(SchematicSet brush) {
+
             brushes.add(brush);
             return this;
         }
@@ -193,6 +194,7 @@ public final class BrushSettings implements Randomable {
          *                       where the block material is {@link org.bukkit.Material#AIR}
          * @return builder instance with changed state
          */
+
         public BrushSettingsBuilder replaceAll(boolean replaceAirOnly) {
             this.replaceAll = replaceAirOnly;
             return this;
@@ -204,6 +206,7 @@ public final class BrushSettings implements Randomable {
          * @param yOffset y offset of the brush
          * @return builder instance with applied offset
          */
+
         public BrushSettingsBuilder withYOffset(int yOffset) {
             this.yOffset = yOffset;
             return this;
@@ -215,6 +218,7 @@ public final class BrushSettings implements Randomable {
          * @param placement placement method for the schematic
          * @return builder instance with applied placement
          */
+
         public BrushSettingsBuilder withPlacementType(Placement placement) {
             this.placement = placement;
             return this;

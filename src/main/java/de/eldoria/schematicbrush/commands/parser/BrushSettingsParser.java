@@ -30,6 +30,7 @@ public class BrushSettingsParser {
         // Remove brush settings from arguments.
         List<String> brushes = Arrays.stream(args).filter(c -> !c.startsWith("-")).collect(Collectors.toList());
 
+
         Optional<BrushSettings.BrushSettingsBuilder> brushSettings = buildBrushes(player, brushes, plugin, schematicCache);
 
         // Check if somethin went wrong while creating the brush.
@@ -45,18 +46,18 @@ public class BrushSettingsParser {
      * @param settingsStrings one or more brushes
      * @param plugin          plugin instance
      * @param schematicCache  schematic cache instance
+
      * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already set
      * or empty if a brush string could not be parsed
      */
     public Optional<BrushSettings.BrushSettingsBuilder> buildBrushes(Player player, List<String> settingsStrings, Plugin plugin,
                                                                      SchematicCache schematicCache) {
-
         BrushSettings.BrushSettingsBuilder configurationBuilder = BrushSettings.newBrushSettingsBuilder();
-
 
         for (String settingsString : settingsStrings) {
             // Get the brush type
             Optional<SchematicSetParser.SubBrushType> optionalBrushType = SchematicSetParser.getBrushType(settingsString);
+
             if (!optionalBrushType.isPresent()) {
                 MessageSender.sendError(player, "Invalid schematic selector");
                 return Optional.empty();
@@ -67,6 +68,7 @@ public class BrushSettingsParser {
             // Check if its a name or regex lookup
             if (subBrushType.getSelectorType() == SchematicSelector.REGEX) {
                 Optional<SchematicSet> brushConfig = buildBrushConfig(player, subBrushType, settingsString, schematicCache);
+
                 if (!brushConfig.isPresent()) {
                     return Optional.empty();
                 }
@@ -77,6 +79,7 @@ public class BrushSettingsParser {
             // Check if its a directory lookup
             if (subBrushType.getSelectorType() == SchematicSelector.DIRECTORY) {
                 Optional<SchematicSet> brushConfig = buildBrushConfig(player, subBrushType, settingsString, schematicCache);
+
                 if (!brushConfig.isPresent()) {
                     MessageSender.sendError(player, settingsString + " is invalid");
                     return Optional.empty();
@@ -95,6 +98,7 @@ public class BrushSettingsParser {
                 }
 
                 // Get list of brush arguments.
+
                 Optional<List<String>> brushConfigs = getBrushesFromConfig(subBrushType.getSelectorValue(), plugin);
 
                 if (!brushConfigs.isPresent()) {
@@ -193,6 +197,7 @@ public class BrushSettingsParser {
     }
 
     /**
+
      * Build a new Brush from a {@link BrushSettings.BrushSettingsBuilder}
      *
      * @param player          executor of the brush
