@@ -38,7 +38,7 @@ public enum Rotation implements Randomable {
 
     /**
      * Rotation represented as postive int value.
-     * Can be 0, 90, 180 and 270 if value is {@link #ROT_RANDOM}
+     * Can be 0, 90, 180 and 270 if value is {@link #ROT_RANDOM}.
      *
      * @return rotation as positive integer
      */
@@ -51,12 +51,19 @@ public enum Rotation implements Randomable {
         }
     }
 
-    public static Rotation asRotation(String s) {
-        if ("0".equals(s)) return ROT_ZERO;
-        if ("270".equals(s)) return ROT_LEFT;
-        if ("90".equals(s)) return ROT_RIGHT;
-        if ("180".equals(s)) return ROT_HALF;
-        if ("*".equals(s)) return ROT_RANDOM;
-        throw new IllegalArgumentException(s + " is not a value of Rotation");
+    /**
+     * Get a string as rotation value.
+     *
+     * @param value value to parse
+     * @return rotation enum
+     * @throws IllegalArgumentException when value cant be parsed
+     */
+    public static Rotation asRotation(String value) {
+        if ("0".equals(value)) return ROT_ZERO;
+        if ("270".equals(value)) return ROT_LEFT;
+        if ("90".equals(value)) return ROT_RIGHT;
+        if ("180".equals(value)) return ROT_HALF;
+        if ("*".equals(value)) return ROT_RANDOM;
+        throw new IllegalArgumentException(value + " is not a value of Rotation");
     }
 }

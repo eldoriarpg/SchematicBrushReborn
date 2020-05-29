@@ -18,6 +18,12 @@ import java.util.Optional;
 public class WorldEditBrushAdapter {
     private final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
 
+    /**
+     * Get the schematic brush of a player registered on the item in its main hand.
+     *
+     * @param player player for lookup
+     * @return schematic brush instance if the item is a schematic brush
+     */
     public Optional<SchematicBrush> getSchematicBrush(Player player) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         try {
@@ -31,6 +37,13 @@ public class WorldEditBrushAdapter {
         return Optional.empty();
     }
 
+    /**
+     * Set the brush for a player and the item in its main hand.
+     *
+     * @param player player to set
+     * @param brush  brush to set
+     * @return true if the brush was set.
+     */
     public boolean setBrush(Player player, Brush brush) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         try {
@@ -42,6 +55,12 @@ public class WorldEditBrushAdapter {
         return true;
     }
 
+    /**
+     * Get the local session of a player
+     *
+     * @param player player for lookup
+     * @return local session.
+     */
     private LocalSession getLocalSession(Player player) {
         Actor actor = BukkitAdapter.adapt(player);
 

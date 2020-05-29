@@ -22,7 +22,6 @@ import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import de.eldoria.schematicbrush.commands.util.MessageSender;
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import org.bukkit.entity.Player;
 
 /**
@@ -34,6 +33,12 @@ public class SchematicBrush implements Brush {
     private final BrushConfiguration settings;
     private final Player brushOwner;
 
+    /**
+     * Create a new schematic brush for a player.
+     *
+     * @param player   placer which owns this brush
+     * @param settings settings of the brush
+     */
     public SchematicBrush(Player player, BrushConfiguration settings) {
         this.settings = settings;
         brushOwner = player;

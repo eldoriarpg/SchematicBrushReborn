@@ -43,11 +43,21 @@ public class Schematic {
         return matcherExtension.find() || matcher.find();
     }
 
+    /**
+     * Get the path to the file.
+     *
+     * @return path of file as string
+     */
     public String getPath() {
         return file.toPath().toString();
     }
 
-    public String getName(){
+    /**
+     * Get the name of the file without file extension
+     *
+     * @return name of file
+     */
+    public String getName() {
         return name;
     }
 

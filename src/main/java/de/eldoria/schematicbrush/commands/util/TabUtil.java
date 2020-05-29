@@ -1,7 +1,7 @@
 package de.eldoria.schematicbrush.commands.util;
 
-import de.eldoria.schematicbrush.util.ArrayUtil;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.util.ArrayUtil;
 import lombok.experimental.UtilityClass;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
@@ -28,15 +28,23 @@ public class TabUtil {
 
     private final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise"};
 
-    private final String[] FLIP_TYPES = {"N", "W","NS", "WE", "*"};
+    private final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
     private final String[] ROTATION_TYPES = {"0", "90", "180", "270", "*"};
 
     private final char[] MARKER = {':', '@', '!', '^', '$', '&'};
 
+    /**
+     * Get the brush syntax for the current entry.
+     *
+     * @param arg    argument which should be completed
+     * @param cache  cache for schematic lookup
+     * @param plugin plugin for config access
+     * @return a list of possible completions
+     */
     public List<String> getBrushSyntax(String arg, SchematicCache cache, Plugin plugin) {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
 
-        if(arg.isEmpty()){
+        if (arg.isEmpty()) {
             return List.of("<name>@rotation!flip:weight",
                     "$<directory>@rotation!flip:weight",
                     "&<presetname>@rotation!flip:weight",
@@ -95,13 +103,25 @@ public class TabUtil {
         return Collections.emptyList();
     }
 
+    /**
+     * Checks if the argument is a brush flag.
+     *
+     * @param arg argument to check
+     * @return true if the argument is a flag
+     */
     public boolean isFlag(String arg) {
         return arg.startsWith("-");
     }
 
-    public List<String> getFlagComplete(String arg) {
-        if (stringStartingWithValueInArray(arg, PLACEMENT)) {
-            String[] split = arg.split(":");
+    /**
+     * Get a tab complete for a flag. This will fail if {@link #isFlag(String)} is false.
+     *
+     * @param flag flag to check
+     * @return list of possible completions
+     */
+    public List<String> getFlagComplete(String flag) {
+        if (stringStartingWithValueInArray(flag, PLACEMENT)) {
+            String[] split = flag.split(":");
             if (split.length == 1) {
                 return prefixStrings(List.of(PLACEMENT_TYPES), split[0] + ":b");
             } else {
@@ -111,29 +131,56 @@ public class TabUtil {
             }
         }
 
-        if (stringStartingWithValueInArray(arg, Y_OFFSET)) {
-            return List.of(arg + "<number>");
+        if (stringStartingWithValueInArray(flag, Y_OFFSET)) {
+            return List.of(flag + "<number>");
         }
 
-        if ("-".equals(arg)) {
+        if ("-".equals(flag)) {
             return List.of(SMALL_FLAGS);
         }
 
-        return startingWithInArray(arg, FLAGS).collect(Collectors.toList());
+        return startingWithInArray(flag, FLAGS).collect(Collectors.toList());
     }
 
-    public Stream<String> startingWithInArray(String string, String[] array) {
-        return Arrays.stream(array).filter(e -> e.startsWith(string));
+    /**
+     * Searches for strings, which are starting with the provided value
+     *
+     * @param value start to search for
+     * @param array array to check
+     * @return list of strings which starts with the provided value
+     */
+    public Stream<String> startingWithInArray(String value, String[] array) {
+        return Arrays.stream(array).filter(e -> e.startsWith(value));
     }
 
-    public boolean stringStartingWithValueInArray(String string, String[] array) {
-        return Arrays.stream(array).anyMatch(string::startsWith);
+    /**
+     * Checks if a string start with any value in a string.
+     *
+     * @param value value to check
+     * @param array array values.
+     * @return true if the value starts with any value in the array
+     */
+    public boolean stringStartingWithValueInArray(String value, String[] array) {
+        return Arrays.stream(array).anyMatch(value::startsWith);
     }
 
-    public boolean endingWithInArray(String string, String[] array) {
-        return Arrays.stream(array).anyMatch(string::endsWith);
+    /**
+     * Checks if a string ends with a value in a array
+     *
+     * @param value value to check
+     * @param array array values.
+     * @return true if the value ends with any value in the array
+     */
+    public boolean endingWithInArray(String value, String[] array) {
+        return Arrays.stream(array).anyMatch(value::endsWith);
     }
 
+    /**
+     * Get the last brush argument marker in a string.
+     *
+     * @param string string to check
+     * @return optional argument marker if one is found.
+     */
     private Optional<Character> getBrushArgumentMarker(String string) {
         for (int i = string.length() - 1; i >= 0; i--) {
             char c = string.charAt(i);
@@ -144,6 +191,12 @@ public class TabUtil {
         return Optional.empty();
     }
 
+    /**
+     * Get the string from end to the last argument marker.
+     *
+     * @param string string to check
+     * @return substring between end and last argument marker.
+     */
     private String getBrushArgumentStringToLastMarker(String string) {
         for (int i = string.length() - 1; i >= 0; i--) {
             char c = string.charAt(i);
@@ -154,6 +207,14 @@ public class TabUtil {
         return string;
     }
 
+    /**
+     * Get a list of all preset names from the config which match a string
+     *
+     * @param arg    argument to check
+     * @param plugin plugin for config lookup
+     * @param count  number of max returned preset names
+     * @return list of matchin presets of length count or shorter.
+     */
     public List<String> getPresets(String arg, Plugin plugin, int count) {
         ConfigurationSection presets = plugin.getConfig().getConfigurationSection("presets");
         if (presets == null) {
@@ -168,10 +229,23 @@ public class TabUtil {
         return strings.subList(0, Math.min(strings.size(), count));
     }
 
+    /**
+     * Appends all strings on a prefix string
+     *
+     * @param list   list to prefix
+     * @param prefix prefix to add
+     * @return list of strings which start with the prefix
+     */
     private List<String> prefixStrings(List<String> list, String prefix) {
         return list.stream().map(s -> prefix + s).collect(Collectors.toList());
     }
 
+    /**
+     * Get the missing brush argument with a explanation string.
+     *
+     * @param arg argument to check
+     * @return list of missing arguments
+     */
     private List<String> getMissingBrushArguments(String arg) {
         List<String> result = new ArrayList<>();
         StringBuilder explanation = new StringBuilder();

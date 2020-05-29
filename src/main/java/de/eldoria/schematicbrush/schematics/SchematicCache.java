@@ -137,6 +137,13 @@ public class SchematicCache {
         return schematics;
     }
 
+    /**
+     * Convert a string to a regex.
+     *
+     * @param name name to convert
+     * @return name as regex
+     * @throws PatternSyntaxException if the string could not be parsed
+     */
     private Pattern buildRegex(String name) throws PatternSyntaxException {
         // Check if the name starts with a regex marker
         if (name.startsWith("^")) return Pattern.compile(name);
@@ -154,6 +161,13 @@ public class SchematicCache {
         return Pattern.compile(regex);
     }
 
+    /**
+     * Returns a list of matching directories.
+     *
+     * @param dir   string for lookup
+     * @param count amount of returned directories
+     * @return list of directory names with size of count or shorter
+     */
     public List<String> getMatchingDirectories(String dir, int count) {
         List<String> matches = new ArrayList<>();
         for (String k : schematicsCache.keySet()) {
@@ -165,6 +179,13 @@ public class SchematicCache {
         return matches;
     }
 
+    /**
+     * Returns a list of matching schematics.
+     *
+     * @param name   string for lookup
+     * @param count amount of returned schematics
+     * @return list of schematics names with size of count or shorter
+     */
     public List<String> getMatchingSchematics(String name, int count) {
         List<String> matches = new ArrayList<>();
         for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {

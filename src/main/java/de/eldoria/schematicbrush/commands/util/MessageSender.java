@@ -9,11 +9,21 @@ public class MessageSender {
     private final String DEFAULT_MESSAGE_COLOR = "§r§2";
     private final String DEFAULT_ERROR_COLOR = "§r§c";
 
-    public void sendMessage(Player p, String message) {
-        p.sendMessage(PREFIX + DEFAULT_MESSAGE_COLOR + message.replaceAll("§r", DEFAULT_MESSAGE_COLOR));
+    /**
+     * Send a message to a player
+     * @param player receiver of the message
+     * @param message message with optinal color codes
+     */
+    public void sendMessage(Player player, String message) {
+        player.sendMessage(PREFIX + DEFAULT_MESSAGE_COLOR + message.replaceAll("§r", DEFAULT_MESSAGE_COLOR));
     }
 
-    public void sendError(Player p, String message) {
-        p.sendMessage(PREFIX + DEFAULT_MESSAGE_COLOR + message.replaceAll("§r", DEFAULT_ERROR_COLOR));
+    /**
+     * Sends a error to a player
+     * @param player receiver of the message
+     * @param message message with optinal color codes
+     */
+    public void sendError(Player player, String message) {
+        player.sendMessage(PREFIX + DEFAULT_MESSAGE_COLOR + message.replaceAll("§r", DEFAULT_ERROR_COLOR));
     }
 }

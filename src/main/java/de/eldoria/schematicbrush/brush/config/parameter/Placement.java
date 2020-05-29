@@ -45,6 +45,13 @@ public enum Placement {
     }
 
 
+    /**
+     * Get the string as placement type.
+     *
+     * @param value value to parse
+     * @return placement enum value
+     * @throws IllegalArgumentException if value cant be parsed
+     */
     public static Placement asPlacement(String value) {
         for (Placement placement : values()) {
             if (value.equalsIgnoreCase(placement.toString())) return placement;
@@ -55,6 +62,11 @@ public enum Placement {
         throw new IllegalArgumentException(value + " is not a enum value or alias.");
     }
 
+    /**
+     * Find the y coordinate of a clipboard based on placement type.
+     * @param clipboard clipboard which should be pasted
+     * @return relative y origin position of clipboard
+     */
     public int find(Clipboard clipboard) {
         return this.find.applyAsInt(clipboard);
     }

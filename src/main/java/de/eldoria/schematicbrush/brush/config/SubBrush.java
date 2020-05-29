@@ -91,6 +91,9 @@ public class SubBrush implements Randomable {
         this.weight = weight;
     }
 
+    /**
+     * This class is a builder to build a {@link SubBrush}.
+     */
     public static class SubBrushBuilder {
         private List<Schematic> schematics = Collections.emptyList();
         private final String arguments;
@@ -102,26 +105,54 @@ public class SubBrush implements Randomable {
             this.arguments = arguments;
         }
 
+        /**
+         * Set the schematic list of brush.
+         *
+         * @param schematics schematics to set
+         * @return instance with schematics set
+         */
         public SubBrushBuilder withSchematics(List<Schematic> schematics) {
             this.schematics = schematics;
             return this;
         }
 
+        /**
+         * Set the rotation of the brush.
+         *
+         * @param rotation rotation of the brush
+         * @return instance with rotation set.
+         */
         public SubBrushBuilder withRotation(Rotation rotation) {
             this.rotation = rotation;
             return this;
         }
 
+        /**
+         * Set the flip of the brush.
+         *
+         * @param flip flip of the brush
+         * @return instance with flip set
+         */
         public SubBrushBuilder withFlip(Flip flip) {
             this.flip = flip;
             return this;
         }
 
+        /**
+         * Set the weight of the brush.
+         *
+         * @param weight weight of the brush
+         * @return instance with weight set
+         */
         public SubBrushBuilder withWeight(int weight) {
             this.weight = weight;
             return this;
         }
 
+        /**
+         * Build a sub brush.
+         * @return new sub brush instance with set values and default if not set.
+         */
         public SubBrush build() {
             return new SubBrush(schematics, arguments, rotation, flip, weight);
         }
