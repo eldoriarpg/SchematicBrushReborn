@@ -86,8 +86,6 @@ Currently only the direct folder inside the schematics folder is valid. No subfo
 A saved preset can be loaded with:
 `&<preset>@rotation!flip:weight`
 
-![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
-
 #### Modifier
 The modifier are optional. The order doesn't matter.
 
@@ -115,6 +113,8 @@ The weight defines the chance that the brush is used if a schematic brush contai
 If a brush doesn't has a weight the average of all weighted brushes will be used.
 
 `:weight`
+
+![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
 ### Brush Flags
 A brush can have several flags which change the behaviour of the brush and the placement of the schematics.
