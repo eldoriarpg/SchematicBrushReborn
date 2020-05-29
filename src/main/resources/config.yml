@@ -1,7 +1,2 @@
 version: 1
 presets:
- testset:
-   description: "this is a description"
-   filter:
-     - "^regex[0-9]@180!N:*"
-     - "$directory[0-9]@180!N:*"
