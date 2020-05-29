@@ -7,11 +7,17 @@
     <groupId>de.eldoria</groupId>
     <artifactId>SchematicBrushReborn</artifactId>
     <version>0.1-BETA</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -20,14 +26,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.3</version>
                 <!-- Do not include the <configuration>...</configuration> part if you are using Sponge! -->
                 <configuration>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <!-- Replace this with your package! -->
-                            <shadedPattern>de.eldoria.schematicbrush</shadedPattern>
+                            <shadedPattern>de.eldoria.schematicbrush.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -79,11 +85,13 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
