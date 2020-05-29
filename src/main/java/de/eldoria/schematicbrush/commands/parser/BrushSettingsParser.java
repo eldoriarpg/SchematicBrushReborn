@@ -94,15 +94,15 @@ public class BrushSettingsParser {
                 }
 
                 // Get list of brush arguments.
-                List<String> brushConfigs = plugin.getConfig().getStringList("presets." + subBrushType.getSelectorValue());
+                Optional<List<String>> brushConfigs = getBrushesFromConfig(subBrushType.getSelectorValue(), plugin) ;
 
                 if (brushConfigs.isEmpty()) {
-                    MessageSender.sendError(player, "This preset " + subBrushType.getSelectorValue()
+                    MessageSender.sendError(player, "The preset " + subBrushType.getSelectorValue()
                             + " does not contain any brushes");
                     return Optional.empty();
                 }
 
-                for (String settings : brushConfigs) {
+                for (String settings : brushConfigs.get()) {
                     optionalBrushType = BrushArgumentParser.getBrushType(settings);
 
                     if (optionalBrushType.isEmpty()) {
@@ -241,4 +241,13 @@ public class BrushSettingsParser {
 
         return Optional.of(brushSettingsBrushConfigurationBuilder.build());
     }
+
+    private Optional<List<String>> getBrushesFromConfig(String presetName, Plugin plugin) {
+        String path = "presets." + presetName + ".filter";
+        if (plugin.getConfig().contains(path)) {
+            return Optional.of(plugin.getConfig().getStringList(path));
+        }
+        return Optional.empty();
+    }
+
 }
