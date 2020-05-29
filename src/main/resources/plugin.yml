@@ -5,7 +5,13 @@ depend:
   - "WorldEdit"
 main: de.eldoria.schematicbrush.SchematicBrushReborn
 authors: [Hadde, SirYwell]
+website: ""
 commands:
+  schematicbrushadmin:
+    description: Manage schematic brush
+    aliases:
+      - sbra
+      - schbra
   schematicbrush:
     description: Create a new schematic brush
     aliases:
@@ -21,3 +27,21 @@ commands:
     aliases:
       - sbrp
       - schbrpre
+
+permissions:
+  schematicbrush.*:
+    description: "Allows full access to all schematic brush commands"
+  schematicbrush.brush.use:
+    description: "Allows usage of schematic brushes"
+  schematicbrush.preset.save:
+    description: "Allows to save presets"
+  schematicbrush.preset.modify:
+    description: "Allows to modify existing presets"
+  schematicbrush.preset.remove:
+    description: "Allows to remove presets"
+  schematicbrush.preset.info:
+    description: "Allows to get information about a preset"
+  schematicbrush.reload:
+    description: "Allows to reload the plugin"
+  schematicbrush.reloadschematics:
+    description: "Allows to reload the schematic cache"

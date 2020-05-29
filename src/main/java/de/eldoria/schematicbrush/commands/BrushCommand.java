@@ -1,19 +1,18 @@
 package de.eldoria.schematicbrush.commands;
 
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.command.tool.brush.Brush;
-import de.eldoria.schematicbrush.MessageSender;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
+import de.eldoria.schematicbrush.commands.util.TabUtil;
+import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -41,6 +40,10 @@ public class BrushCommand implements TabExecutor, Randomable {
 
         Player player = (Player) sender;
 
+        if (!player.hasPermission("schematicbrush.brush.use")) {
+            MessageSender.sendError(player, "You don't have the permission to do this!");
+            return true;
+        }
         if (args.length == 0) {
             //TODO Command explanation
             MessageSender.sendError(player, "Too few arguments.");
@@ -50,6 +53,7 @@ public class BrushCommand implements TabExecutor, Randomable {
         Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
         if (settings.isEmpty()) {
+
             return true;
         }
 
@@ -66,7 +70,7 @@ public class BrushCommand implements TabExecutor, Randomable {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         String last = args[args.length - 1];
-        if(TabUtil.isFlag(last)){
+        if (TabUtil.isFlag(last)) {
             return TabUtil.getFlagComplete(last);
         }
 

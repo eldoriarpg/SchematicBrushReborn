@@ -1,11 +1,13 @@
 package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.schematicbrush.C;
-import de.eldoria.schematicbrush.MessageSender;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
+import de.eldoria.schematicbrush.commands.util.TabUtil;
+import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,9 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.lang.System.lineSeparator;
 
 /**
  * Brush to create and modify brush presets.
@@ -32,7 +33,7 @@ public class BrushPresetCommand implements TabExecutor {
 
     private final Plugin plugin;
     private final SchematicCache schematicCache;
-    private static final String[] COMMANDS = {"current", "save", "appendBrush", "removeBrush", "remove", "info", "list", "descr", "help"};
+    private static final String[] COMMANDS = {"savecurrent", "save", "appendBrush", "removeBrush", "remove", "info", "list", "descr", "help"};
 
     public BrushPresetCommand(Plugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
@@ -67,29 +68,68 @@ public class BrushPresetCommand implements TabExecutor {
 
         String cmd = args[0];
 
-        if ("current".equalsIgnoreCase(cmd) || "c".equalsIgnoreCase(cmd)) {
-            save(player, subcommandArgs);
+        if ("savecurrent".equalsIgnoreCase(cmd) || "c".equalsIgnoreCase(cmd)) {
+            if (player.hasPermission("schematicbrush.preset.save")) {
+                savecurrent(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
+
         if ("save".equalsIgnoreCase(cmd) || "s".equalsIgnoreCase(cmd)) {
-            savecurrent(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.preset.save")) {
+                save(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
+
         if ("appendbrush".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
-            appendBrushes(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.preset.modify")) {
+                appendBrushes(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
+
         if ("removebrush".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
-            removeBrushes(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.preset.modify")) {
+                removeBrushes(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
+
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
-            removePreset(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.preset.remove")) {
+                removePreset(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
+
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
-            presetInfo(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.preset.info")) {
+                presetInfo(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
+
         if ("list".equalsIgnoreCase(cmd) || "l".equalsIgnoreCase(cmd)) {
-            presetList(player);
+            if (player.hasPermission("schematicbrush.preset.info")) {
+                presetList(player);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
+
         if ("descr".equalsIgnoreCase(cmd) || "d".equalsIgnoreCase(cmd)) {
-            setDescription(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.preset.save")) {
+                setDescription(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
         }
 
 
@@ -99,7 +139,7 @@ public class BrushPresetCommand implements TabExecutor {
     private void help(Player player) {
         MessageSender.sendMessage(player,
                 "This command allows you to save and modify brush presets." + C.NEW_LINE
-                        + "/sbrp current <id> - Save your current equiped brush as a preset." + C.NEW_LINE
+                        + "/sbrp savecurrent <id> - Save your current equiped brush as a preset." + C.NEW_LINE
                         + "/sbrp save <id> <brushes...> - Save one or more brushes as a preset." + C.NEW_LINE
                         + "/sbrp appendbrush <id> <brushes...> - Add one or more brushes to a preset." + C.NEW_LINE
                         + "/sbrm descr - Set a description for a brush." + C.NEW_LINE
@@ -122,7 +162,7 @@ public class BrushPresetCommand implements TabExecutor {
             return;
         }
 
-        String name = args[1];
+        String name = args[0];
 
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
@@ -138,6 +178,10 @@ public class BrushPresetCommand implements TabExecutor {
 
         savePreset(player, name, brushes);
         setDescription(player, name, "none");
+
+        MessageSender.sendMessage(player, "Brush " + name + " saved!" + C.NEW_LINE
+                + "Brush is using " + brushes.size() + " brushes with "
+                + brush.getSettings().getSchematicCount() + " schematics.");
     }
 
     private void save(Player player, String[] args) {
@@ -146,10 +190,9 @@ public class BrushPresetCommand implements TabExecutor {
         }
         String name = args[0];
 
-        Object[] original;
         String[] brushArgs = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
+        Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, brushArgs);
 
         if (settings.isEmpty()) {
             return;
@@ -158,6 +201,11 @@ public class BrushPresetCommand implements TabExecutor {
         List<String> brushes = getBrushes(settings.get());
         savePreset(player, name, brushes);
         setDescription(player, name, "none");
+
+        MessageSender.sendMessage(player, "Brush " + name + " saved!" + C.NEW_LINE
+                + "Brush is using " + brushes.size() + " brushes with "
+                + settings.get().getSchematicCount() + " schematics.");
+
     }
 
     private void appendBrushes(Player player, String[] args) {
@@ -176,6 +224,10 @@ public class BrushPresetCommand implements TabExecutor {
         }
 
         addBrushes(player, name, getBrushes(settings.get()));
+
+        MessageSender.sendMessage(player, "Brush " + name + " changed!" + C.NEW_LINE
+                + "Added " + settings.get().getBrushes().size() + " new brushes with "
+                + settings.get().getSchematicCount() + " schematics.");
     }
 
     private void setDescription(Player player, String[] args) {
@@ -186,6 +238,7 @@ public class BrushPresetCommand implements TabExecutor {
         String name = args[0];
 
         setDescription(player, name, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+        MessageSender.sendMessage(player, "Changed description of preset " + name + "!");
     }
 
     private void removeBrushes(Player player, String[] args) {
@@ -208,7 +261,7 @@ public class BrushPresetCommand implements TabExecutor {
         for (String id : ids) {
             try {
                 int i = Integer.parseInt(id);
-                if (i > brushes.size()) {
+                if (i > brushes.size() || i < 1) {
                     MessageSender.sendError(player, id + " is not a valid id.");
                     return;
                 }
@@ -220,6 +273,7 @@ public class BrushPresetCommand implements TabExecutor {
         }
 
         overrideBrushes(player, name, brushes.stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        MessageSender.sendMessage(player, "Removed brush from preset " + name);
     }
 
     private void removePreset(Player player, String[] args) {
@@ -236,6 +290,7 @@ public class BrushPresetCommand implements TabExecutor {
         }
         plugin.getConfig().set(path, null);
         plugin.saveConfig();
+        MessageSender.sendMessage(player, "Preset " + name + " deleted!");
     }
 
     private void presetInfo(Player player, String[] args) {
@@ -260,7 +315,8 @@ public class BrushPresetCommand implements TabExecutor {
 
         String brushesList = String.join(C.NEW_LINE, brushes);
         MessageSender.sendMessage(player, "Information about preset " + name + C.NEW_LINE
-                + getDescription(player, name) + C.NEW_LINE + "Brushes:" + C.NEW_LINE + brushesList);
+                + "Description: " + getDescription(player, name) + C.NEW_LINE
+                + "Brushes (" + brushes.size() + "):" + C.NEW_LINE + brushesList);
     }
 
 
@@ -394,27 +450,45 @@ public class BrushPresetCommand implements TabExecutor {
             return null;
         }
 
-        if ("current".equalsIgnoreCase(cmd) || "c".equalsIgnoreCase(cmd)) {
+        if ("savecurrent".equalsIgnoreCase(cmd) || "c".equalsIgnoreCase(cmd)) {
+            boolean exists = presetExists(last);
+            ConfigurationSection presets = plugin.getConfig().getConfigurationSection("presets");
+            if (exists) {
+                return List.of("This name is already in use!");
+            }
             return List.of("<name of preset>");
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)
                 || "info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
-            List<String> presets = TabUtil.getPresets(last, plugin, 8);
+            List<String> presets = TabUtil.getPresets(last, plugin, 50);
             presets.add("<name of preset>");
             return presets;
         }
-        if ("save".equalsIgnoreCase(cmd) || "s".equalsIgnoreCase(cmd)
-                || "appendbrush".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
+
+        if ("save".equalsIgnoreCase(cmd) || "s".equalsIgnoreCase(cmd)) {
             if (args.length == 1) {
+                boolean exists = presetExists(last);
+                if (exists) {
+                    return List.of("This name is already in use!");
+                }
                 return List.of("<name of preset>");
+            }
+            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+        }
+
+        if ("appendbrush".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
+            if (args.length == 1) {
+                List<String> presets = TabUtil.getPresets(last, plugin, 50);
+                presets.add("<name of preset>");
+                return presets;
             }
             return TabUtil.getBrushSyntax(last, schematicCache, plugin);
         }
 
         if ("removebrush".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
             if (args.length == 1) {
-                List<String> presets = TabUtil.getPresets(last, plugin, 8);
+                List<String> presets = TabUtil.getPresets(last, plugin, 50);
                 presets.add("<name of preset> <id of brush>");
                 return presets;
             }
@@ -429,7 +503,7 @@ public class BrushPresetCommand implements TabExecutor {
 
         if ("descr".equalsIgnoreCase(cmd) || "d".equalsIgnoreCase(cmd)) {
             if (args.length == 1) {
-                List<String> presets = TabUtil.getPresets(last, plugin, 8);
+                List<String> presets = TabUtil.getPresets(last, plugin, 50);
                 presets.add("<name of preset> <description>");
                 return presets;
             }
@@ -440,5 +514,14 @@ public class BrushPresetCommand implements TabExecutor {
             return TabUtil.startingWithInArray(cmd, COMMANDS).collect(Collectors.toList());
         }
         return null;
+    }
+
+    private boolean presetExists(String name) {
+        ConfigurationSection presets = plugin.getConfig().getConfigurationSection("presets");
+        if (presets != null) {
+            Set<String> keys = presets.getKeys(false);
+            return keys.stream().anyMatch(s -> s.equalsIgnoreCase(name));
+        }
+        return false;
     }
 }

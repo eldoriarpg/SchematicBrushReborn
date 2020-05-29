@@ -1,13 +1,13 @@
 package de.eldoria.schematicbrush.commands.parser;
 
-import de.eldoria.schematicbrush.MessageSender;
-import de.eldoria.schematicbrush.Util;
-import de.eldoria.schematicbrush.brush.BrushSelector;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
+import de.eldoria.schematicbrush.util.ArrayUtil;
+import de.eldoria.schematicbrush.brush.config.parameter.BrushSelector;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import de.eldoria.schematicbrush.util.Placement;
+import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -30,7 +30,7 @@ public class BrushSettingsParser {
         // Remove brush settings from arguments.
         List<String> brushes = Arrays.stream(args).filter(c -> !c.startsWith("-")).collect(Collectors.toList());
 
-        Optional<BrushConfiguration.Builder> brushSettings = buildBrushes(player, brushes, plugin, schematicCache);
+        Optional<BrushConfiguration.BrushConfigurationBuilder> brushSettings = buildBrushes(player, brushes, plugin, schematicCache);
 
         // Check if somethin went wrong while creating the brush.
         if (brushSettings.isEmpty()) return Optional.empty();
@@ -45,12 +45,14 @@ public class BrushSettingsParser {
      * @param settingsStrings one or more brushes
      * @param plugin          plugin instance
      * @param schematicCache  schematic cache instance
-     * @return A optional, which returns a unconfigured {@link BrushConfiguration.Builder} with brushes already set
+     * @return A optional, which returns a unconfigured {@link BrushConfiguration.BrushConfigurationBuilder} with brushes already set
      * or empty if a brush string could not be parsed
      */
-    private Optional<BrushConfiguration.Builder> buildBrushes(Player player, List<String> settingsStrings, Plugin plugin,
-                                                              SchematicCache schematicCache) {
-        BrushConfiguration.Builder builder = BrushConfiguration.newBrushSettingsBuilder();
+    private Optional<BrushConfiguration.BrushConfigurationBuilder> buildBrushes(Player player, List<String> settingsStrings, Plugin plugin,
+                                                                                SchematicCache schematicCache) {
+
+        BrushConfiguration.BrushConfigurationBuilder brushConfigurationBuilder = BrushConfiguration.newBrushSettingsBuilder();
+
 
         for (String settingsString : settingsStrings) {
             // Get the brush type
@@ -68,7 +70,7 @@ public class BrushSettingsParser {
                 if (brushConfig.isEmpty()) {
                     return Optional.empty();
                 }
-                builder.addBrush(brushConfig.get());
+                brushConfigurationBuilder.addBrush(brushConfig.get());
                 continue;
             }
 
@@ -79,21 +81,24 @@ public class BrushSettingsParser {
                     MessageSender.sendError(player, settingsString + " is invalid");
                     return Optional.empty();
                 }
-                builder.addBrush(brushConfig.get());
+                brushConfigurationBuilder.addBrush(brushConfig.get());
                 continue;
             }
 
             // Check if its a preset
             if (subBrushType.getSelectorType() == BrushSelector.PRESET) {
                 if (!plugin.getConfig().contains("presets." + subBrushType.getSelectorValue())) {
-                    MessageSender.sendError(player, "This brush preset does not exist.");
+                    MessageSender.sendError(player, "This brush preset"
+                            + subBrushType.getSelectorValue() + " does not exist.");
+                    return Optional.empty();
                 }
 
                 // Get list of brush arguments.
                 List<String> brushConfigs = plugin.getConfig().getStringList("presets." + subBrushType.getSelectorValue());
 
                 if (brushConfigs.isEmpty()) {
-                    MessageSender.sendError(player, "This preset does not contain any brushes");
+                    MessageSender.sendError(player, "This preset " + subBrushType.getSelectorValue()
+                            + " does not contain any brushes");
                     return Optional.empty();
                 }
 
@@ -117,35 +122,35 @@ public class BrushSettingsParser {
                         return Optional.empty();
                     }
 
-                    builder.addBrush(config.get());
+                    brushConfigurationBuilder.addBrush(config.get());
                 }
             }
         }
-        return Optional.empty();
+        return Optional.of(brushConfigurationBuilder);
     }
 
     private Optional<SubBrush> buildBrushConfig(Player player, BrushArgumentParser.SubBrushType type,
                                                 String settingsString, SchematicCache schematicCache) {
-        SubBrush.Builder builder = null;
+        SubBrush.SubBrushBuilder subBrushBuilder = null;
 
         List<Schematic> schematics = Collections.emptyList();
 
         // Check if its a name or regex lookup
         if (type.getSelectorType() == BrushSelector.REGEX) {
             schematics = schematicCache.getSchematicsByName(type.getSelectorValue());
-            builder = new SubBrush.Builder(settingsString);
+            subBrushBuilder = new SubBrush.SubBrushBuilder(settingsString);
         }
 
         // Check if its a directory lookup
         if (type.getSelectorType() == BrushSelector.DIRECTORY) {
             schematics = schematicCache.getSchematicsByDirectory(type.getSelectorValue());
-            builder = new SubBrush.Builder(settingsString);
+            subBrushBuilder = new SubBrush.SubBrushBuilder(settingsString);
         }
 
 
         // If no builder was initialized the expession is invalid.
-        if (builder == null) {
-            player.sendMessage("Invalid name type.");
+        if (subBrushBuilder == null) {
+            MessageSender.sendError(player, "Invalid name type.");
             return Optional.empty();
         }
 
@@ -154,13 +159,13 @@ public class BrushSettingsParser {
             return Optional.empty();
         }
 
-        builder.withSchematics(schematics);
+        subBrushBuilder.withSchematics(schematics);
 
         BrushArgumentParser.SubBrushValues subBrushValues = BrushArgumentParser.getBrushValues(settingsString);
 
         // Read rotation
         if (subBrushValues.getRotation() != null) {
-            builder.withRotation(subBrushValues.getRotation());
+            subBrushBuilder.withRotation(subBrushValues.getRotation());
         } else if (settingsString.contains("@")) {
             MessageSender.sendError(player, "Invalid rotation!");
             return Optional.empty();
@@ -168,7 +173,7 @@ public class BrushSettingsParser {
 
         // Read flip
         if (subBrushValues.getFlip() != null) {
-            builder.withFlip(subBrushValues.getFlip());
+            subBrushBuilder.withFlip(subBrushValues.getFlip());
         } else if (settingsString.contains("!")) {
             MessageSender.sendError(player, "Invalid flip!");
             return Optional.empty();
@@ -176,37 +181,37 @@ public class BrushSettingsParser {
 
         // Read weight
         if (subBrushValues.getWeight() != null) {
-            builder.withWeight(subBrushValues.getWeight());
+            subBrushBuilder.withWeight(subBrushValues.getWeight());
         } else if (settingsString.contains(":")) {
             MessageSender.sendError(player, "Invalid weight!");
             return Optional.empty();
         }
 
 
-        return Optional.ofNullable(builder.build());
+        return Optional.ofNullable(subBrushBuilder.build());
     }
 
     /**
-     * Build a new Brush from a {@link BrushConfiguration.Builder}
+     * Build a new Brush from a {@link BrushConfiguration.BrushConfigurationBuilder}
      *
-     * @param player               executor of the brush
-     * @param brushSettingsBuilder Unconfigures builder for brush settings
-     * @param args                 arguments of the brush
+     * @param player                                 executor of the brush
+     * @param brushSettingsBrushConfigurationBuilder Unconfigures builder for brush settings
+     * @param args                                   arguments of the brush
      * @return optional configured brush settings object or empty if something could not be parsed
      */
-    private Optional<BrushConfiguration> buildBrushSettings(Player player, BrushConfiguration.Builder brushSettingsBuilder,
-                                                           String[] args) {
+    private Optional<BrushConfiguration> buildBrushSettings(Player player, BrushConfiguration.BrushConfigurationBuilder brushSettingsBrushConfigurationBuilder,
+                                                            String[] args) {
         List<String> strings = Arrays.asList(args);
 
-        if (Util.arrayContains(args, "-includeair", "-incair", "-a")) {
-            brushSettingsBuilder.includeAir(true);
+        if (ArrayUtil.arrayContains(args, "-includeair", "-incair", "-a")) {
+            brushSettingsBrushConfigurationBuilder.includeAir(true);
         }
 
-        if (Util.arrayContains(args, "-replaceall", "-repla", "-r")) {
-            brushSettingsBuilder.includeAir(true);
+        if (ArrayUtil.arrayContains(args, "-replaceall", "-repla", "-r")) {
+            brushSettingsBrushConfigurationBuilder.includeAir(true);
         }
 
-        Matcher matcher = Util.findInArray(args, Y_OFFSET);
+        Matcher matcher = ArrayUtil.findInArray(args, Y_OFFSET);
         if (matcher != null) {
             String value = matcher.group(1);
             int offset;
@@ -216,10 +221,10 @@ public class BrushSettingsParser {
                 MessageSender.sendError(player, "Invalid offset.");
                 return Optional.empty();
             }
-            brushSettingsBuilder.withYOffset(offset);
+            brushSettingsBrushConfigurationBuilder.withYOffset(offset);
         }
 
-        matcher = Util.findInArray(args, PLACEMENT);
+        matcher = ArrayUtil.findInArray(args, PLACEMENT);
 
         if (matcher != null) {
             String value = matcher.group(1);
@@ -231,9 +236,9 @@ public class BrushSettingsParser {
                 MessageSender.sendError(player, "Invalid placement.");
                 return Optional.empty();
             }
-            brushSettingsBuilder.withYOffset(offset);
+            brushSettingsBrushConfigurationBuilder.withYOffset(offset);
         }
 
-        return Optional.of(brushSettingsBuilder.build());
+        return Optional.of(brushSettingsBrushConfigurationBuilder.build());
     }
 }

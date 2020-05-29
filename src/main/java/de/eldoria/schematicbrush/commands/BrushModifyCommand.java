@@ -1,11 +1,13 @@
 package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.schematicbrush.C;
-import de.eldoria.schematicbrush.MessageSender;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
+import de.eldoria.schematicbrush.commands.util.TabUtil;
+import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
@@ -20,8 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.lang.System.lineSeparator;
 
 /**
  * Command to modify a current used brush.
@@ -55,36 +55,52 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
         String cmd = args[0];
         if ("append".equalsIgnoreCase(cmd) || "a".equalsIgnoreCase(cmd)) {
-            appendBrush(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.brush.use")) {
+                appendBrush(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
             return true;
         }
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
-            removeBrush(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.brush.use")) {
+                removeBrush(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
             return true;
         }
         if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
-            editBrush(player, subcommandArgs);
+            if (player.hasPermission("schematicbrush.brush.use")) {
+                editBrush(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
             return true;
         }
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
-            brushInfo(player);
+            if (player.hasPermission("schematicbrush.brush.use")) {
+                brushInfo(player);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
             return true;
         }
         return true;
     }
 
-    private boolean appendBrush(Player player, String[] args) {
+    private void appendBrush(Player player, String[] args) {
         Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
         if (settings.isEmpty()) {
-            return true;
+            return;
         }
 
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         if (schematicBrush.isEmpty()) {
             MessageSender.sendError(player, "This is not a schematic brush.");
-            return true;
+            return;
         }
 
 
@@ -94,7 +110,6 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             MessageSender.sendMessage(player, "Brush appended. Using "
                     + combinedBrush.getSettings().getSchematicCount() + " schematics.");
         }
-        return false;
     }
 
     private void removeBrush(Player player, String[] args) {
@@ -109,11 +124,10 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             return;
         }
 
-
         int id;
         try {
             id = Integer.parseInt(args[0]);
-            if (id < 1 || id < schematicBrush.get().getSettings().getBrushes().size()) {
+            if (id < 1 || id > schematicBrush.get().getSettings().getBrushes().size()) {
                 MessageSender.sendError(player, "Invalid brush id.");
                 return;
             }
@@ -123,6 +137,9 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         List<SubBrush> brushes = schematicBrush.get().getSettings().getBrushes();
+        SubBrush remove = brushes.remove(id - 1);
+
+        MessageSender.sendMessage(player, "Brush " + remove.getArguments() + " removed!");
     }
 
     private void editBrush(Player player, String[] args) {
@@ -142,14 +159,14 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
                 .parseBrush(player, plugin, schematicCache, Arrays.copyOfRange(args, 1, args.length));
 
 
-        if (brushConfiguration.isPresent()) {
+        if (brushConfiguration.isEmpty()) {
             return;
         }
 
         int id;
         try {
             id = Integer.parseInt(args[0]);
-            if (id < 1 || id < schematicBrush.get().getSettings().getBrushes().size()) {
+            if (id < 1 || id > schematicBrush.get().getSettings().getBrushes().size()) {
                 MessageSender.sendError(player, "Invalid brush id.");
                 return;
             }
@@ -159,8 +176,10 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         List<SubBrush> brushes = schematicBrush.get().getSettings().getBrushes();
-        brushes.remove(id - 1);
+        SubBrush remove = brushes.remove(id - 1);
         WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(brushConfiguration.get()));
+        MessageSender.sendMessage(player, "Brush " + remove.getArguments() + "changed to "
+                + brushConfiguration.get().getBrushes().get(0).getArguments() + ".");
     }
 
     private void brushInfo(Player player) {
@@ -230,7 +249,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (args.length == 1) {
                 return List.of("<brush id> <brush>");
             }
-            return TabUtil.getBrushSyntax(last,schematicCache, plugin);
+            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
         }
 
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
