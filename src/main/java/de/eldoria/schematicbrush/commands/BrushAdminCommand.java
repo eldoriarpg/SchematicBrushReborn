@@ -59,6 +59,12 @@ public class BrushAdminCommand implements TabExecutor {
             }
             return true;
         }
+        if (sender instanceof Player) {
+            MessageSender.sendMessage((Player) sender, "Invalid command!");
+            return true;
+        }
+
+        sender.sendMessage("Invalid command");
         return true;
     }
 
@@ -68,9 +74,9 @@ public class BrushAdminCommand implements TabExecutor {
 
     private void info(CommandSender sender) {
         PluginDescriptionFile descr = plugin.getDescription();
-        String info = "Schematic Brush Reborn by " + String.join(", ", descr.getAuthors())
-                + "Version : " + descr.getVersion() + C.NEW_LINE
-                + "Spigot: " + descr.getWebsite();
+        String info = "§bSchematic Brush Reborn§r by §b" + String.join(", ", descr.getAuthors()) + "§r" + C.NEW_LINE
+                + "§bVersion§r : " + descr.getVersion() + C.NEW_LINE
+                + "§bSpigot:§r " + descr.getWebsite();
         if (sender instanceof ConsoleCommandSender) {
             plugin.getLogger().info(info);
         } else if (sender instanceof Player) {
@@ -99,7 +105,7 @@ public class BrushAdminCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 0) {
+        if (args[0].isEmpty()) {
             return List.of(COMMANDS);
         }
 

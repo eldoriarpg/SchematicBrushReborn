@@ -119,8 +119,8 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         SchematicBrush combinedBrush = schematicBrush.get().combineBrush(settings.get());
         boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(settings.get()));
         if (success) {
-            MessageSender.sendMessage(player, "Brush appended. Using "
-                    + combinedBrush.getSettings().getSchematicCount() + " schematics.");
+            MessageSender.sendMessage(player, "Brush appended. Using §b"
+                    + combinedBrush.getSettings().getSchematicCount() + "§r schematics.");
         }
     }
 
@@ -151,7 +151,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         List<SubBrush> brushes = schematicBrush.get().getSettings().getBrushes();
         SubBrush remove = brushes.remove(id - 1);
 
-        MessageSender.sendMessage(player, "Brush " + remove.getArguments() + " removed!");
+        MessageSender.sendMessage(player, "Brush §b" + remove.getArguments() + "§r removed!");
     }
 
     private void editBrush(Player player, String[] args) {
@@ -190,8 +190,8 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         List<SubBrush> brushes = schematicBrush.get().getSettings().getBrushes();
         SubBrush remove = brushes.remove(id - 1);
         WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(brushConfiguration.get()));
-        MessageSender.sendMessage(player, "Brush " + remove.getArguments() + "changed to "
-                + brushConfiguration.get().getBrushes().get(0).getArguments() + ".");
+        MessageSender.sendMessage(player, "Brush §b" + remove.getArguments() + "§r changed to §b"
+                + brushConfiguration.get().getBrushes().get(0).getArguments() + "§r.");
     }
 
     private void reload(Player player) {
@@ -214,7 +214,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         BrushConfiguration.BrushConfigurationBuilder builder = configurationBuilder.get();
 
         BrushConfiguration configuration = builder.includeAir(oldSettings.isIncludeAir())
-                .replaceAirOnly(oldSettings.isReplaceAirOnly())
+                .replaceAll(oldSettings.isReplaceAll())
                 .withPlacementType(oldSettings.getPlacement())
                 .withYOffset(oldSettings.getYOffset())
                 .build();
@@ -223,12 +223,16 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         int newcount = configuration.getSchematicCount();
         int addedSchematics = newcount - oldCount;
         WorldEditBrushAdapter.setBrush(player, new SchematicBrush(player, configuration));
-        if (addedSchematics != 0) {
-            MessageSender.sendMessage(player, "Brush reloaded. Added " + addedSchematics + " schematics" + C.NEW_LINE
-                    + "Brush is now using " + newcount + " schematics.");
+        if (addedSchematics > 0) {
+            MessageSender.sendMessage(player, "Brush reloaded. Added §b" + addedSchematics + "§r schematics" + C.NEW_LINE
+                    + "Brush is now using §b" + newcount + "§r schematics.");
+        } else if (addedSchematics < 0) {
+            MessageSender.sendMessage(player, "Brush reloaded. Removed §b" + addedSchematics + "§r schematics" + C.NEW_LINE
+                    + "Brush is now using §b" + newcount + "§r schematics.");
+
         } else {
-            MessageSender.sendMessage(player, "No new schematics were found." +
-                    "Maybe you have to reload the schematics first. Use /sbra reloadschematics");
+            MessageSender.sendMessage(player, "§cNo new schematics were found.§r " +
+                    "Maybe you have to reload the schematics first. Use §b/sbra reloadschematics§r");
         }
     }
 
@@ -245,29 +249,29 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         List<String> brushStrings = new ArrayList<>();
         for (int i = 0; i < brushes.size(); i++) {
             String arguments = brushes.get(i).getArguments();
-            brushStrings.add((i + 1) + "| " + arguments);
+            brushStrings.add("§b" + (i + 1) + "|§r " + arguments);
         }
 
         String brushList = brushStrings.stream().collect(Collectors.joining(C.NEW_LINE));
         MessageSender.sendMessage(player,
-                "Total schematics: " + settings.getSchematicCount() + C.NEW_LINE
-                        + "Placement: " + settings.getPlacement().toString() + C.NEW_LINE
-                        + "Y-Offset: " + settings.getYOffset() + C.NEW_LINE
-                        + "Paste air: " + settings.isIncludeAir() + C.NEW_LINE
-                        + "Replace air only: " + settings.isReplaceAirOnly() + C.NEW_LINE
-                        + "Brushes:" + C.NEW_LINE
+                "§bTotal schematics:§r " + settings.getSchematicCount() + C.NEW_LINE
+                        + "§bPlacement:§r " + settings.getPlacement().toString() + C.NEW_LINE
+                        + "§bY-Offset:§r " + settings.getYOffset() + C.NEW_LINE
+                        + "§bPaste air:§r " + settings.isIncludeAir() + C.NEW_LINE
+                        + "§bReplace all blocks:§r " + settings.isReplaceAll() + C.NEW_LINE
+                        + "§bBrushes:§r" + C.NEW_LINE
                         + brushList);
     }
 
     private void help(Player player) {
         MessageSender.sendMessage(player,
                 "This command allows you to modify a current used brush." + C.NEW_LINE
-                        + "/sbrm append <brushes...> - Add one or more brushes to your brush." + C.NEW_LINE
-                        + "/sbrm remove <id> - Remove a brush." + C.NEW_LINE
-                        + "/sbrm edit <id> <brush> - Replace a brush with another brush." + C.NEW_LINE
-                        + "/sbrm reload - Reload matching schematics, if new schematics were recently added."
-                        + "You may want to use /sbra reloadschematics first." + C.NEW_LINE
-                        + "/sbrm info - Get a list of all brushes your brush contains." + C.NEW_LINE
+                        + "§b/sbrm §na§r§bppend <brushes...>§r - Add one or more brushes to your brush." + C.NEW_LINE
+                        + "§b/sbrm §nr§r§bemove <id>§r - Remove a brush." + C.NEW_LINE
+                        + "§b/sbrm §ne§r§bdit <id> <brush>§r - Replace a brush with another brush." + C.NEW_LINE
+                        + "§b/sbrm §nrel§r§boad §r- Reload matching schematics, if new schematics were recently added."
+                        + "You may want to use §b/sbra reloadschematics§r first." + C.NEW_LINE
+                        + "§b/sbrm §ni§r§bnfo §r- Get a list of all brushes your brush contains." + C.NEW_LINE
                         + "Use the id from the info command to change or remove a brush."
         );
     }
@@ -304,6 +308,9 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
             if (args.length == 1) {
                 return List.of("<brush id> <brush>");
+            }
+            if (args.length == 2) {
+                return List.of("<brush id>");
             }
             return TabUtil.getBrushSyntax(last, schematicCache, plugin);
         }
