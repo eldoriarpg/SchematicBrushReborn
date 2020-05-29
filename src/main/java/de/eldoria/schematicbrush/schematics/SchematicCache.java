@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SchematicCache {
     private final Map<String, List<Schematic>> schematicsCache = new HashMap<>();
@@ -39,7 +41,7 @@ public class SchematicCache {
         schematicsCache.clear();
 
         // Check if internal schematics directory exists
-        Path internalSchematics = Path.of(plugin.getDataFolder().getPath(), "schematics");
+        Path internalSchematics = Paths.get(plugin.getDataFolder().getPath(), "schematics");
         File schematicsDirectory = internalSchematics.toFile();
         if (!schematicsDirectory.exists()) {
             boolean success = schematicsDirectory.mkdir();
@@ -50,8 +52,8 @@ public class SchematicCache {
 
         // Load schematics of schematic brush, FAWE and vanilla world edit.
         loadSchematics(internalSchematics);
-        loadSchematics(Path.of(plugin.getDataFolder().toPath().getParent().toString(), "WorldEdit", "schematics"));
-        loadSchematics(Path.of(plugin.getDataFolder().toPath().getParent().toString(), "FastAsyncWorldEdit", "schematics"));
+        loadSchematics(Paths.get(plugin.getDataFolder().toPath().getParent().toString(), "WorldEdit", "schematics"));
+        loadSchematics(Paths.get(plugin.getDataFolder().toPath().getParent().toString(), "FastAsyncWorldEdit", "schematics"));
 
         int sum = schematicsCache.values().stream().mapToInt(List::size).sum();
         logger.info("Loaded " + sum + " schematics from " + schematicsCache.size() + " directories.");
@@ -61,7 +63,7 @@ public class SchematicCache {
         if (!schematicFolder.toFile().exists()) return;
 
         List<Path> directories;
-        try (var list = Files.list(schematicFolder)) {
+        try (Stream<Path> list = Files.list(schematicFolder)) {
             directories = list
                     .filter(Files::isDirectory)
                     .collect(Collectors.toList());
@@ -70,9 +72,9 @@ public class SchematicCache {
             return;
         }
 
-        for (var dir : directories) {
+        for (Path dir : directories) {
             List<Schematic> schematics = new ArrayList<>();
-            try (var files = Files.list(dir)) {
+            try (Stream<Path> files = Files.list(dir)) {
                 for (Path path : files.collect(Collectors.toList())) {
                     File file = path.toFile();
                     if (!file.isFile()) continue;
@@ -112,7 +114,7 @@ public class SchematicCache {
     /**
      * If a directory matches the full name, all schematics inside this directory will be returned directly.
      *
-     * @return
+     * @return all schematics inside the directory
      */
     public List<Schematic> getSchematicsByDirectory(String name) {
         // Check if a directory with this name exists if a directory match should be checked.

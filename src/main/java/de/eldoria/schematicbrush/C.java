@@ -1,5 +1,5 @@
 package de.eldoria.schematicbrush;
 
-public class C {
+public final class C {
     public static final String NEW_LINE = "\n";
 }

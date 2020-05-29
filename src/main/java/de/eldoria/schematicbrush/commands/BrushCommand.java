@@ -52,7 +52,7 @@ public class BrushCommand implements TabExecutor, Randomable {
 
         Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
-        if (settings.isEmpty()) {
+        if (!settings.isPresent()) {
 
             return true;
         }

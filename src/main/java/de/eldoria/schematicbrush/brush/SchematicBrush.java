@@ -75,7 +75,7 @@ public class SchematicBrush implements Brush {
         if (!settings.isReplaceAll()) {
             // Check if the user has a block mask defined and append if present.
             //Mask mask = WorldEditBrushAdapter.getMask(brushOwner);
-            if (preBrushMask != null && preBrushMask instanceof BlockTypeMask) {
+            if (preBrushMask instanceof BlockTypeMask) {
                 BlockTypeMask blockMask = (BlockTypeMask) preBrushMask;
                 blockMask.add(BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR);
             } else {
