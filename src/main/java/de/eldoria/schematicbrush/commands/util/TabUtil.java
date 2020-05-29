@@ -123,7 +123,7 @@ public class TabUtil {
         if (stringStartingWithValueInArray(flag, PLACEMENT)) {
             String[] split = flag.split(":");
             if (split.length == 1) {
-                return prefixStrings(Arrays.asList(PLACEMENT_TYPES), split[0] + ":b");
+                return prefixStrings(Arrays.asList(PLACEMENT_TYPES), split[0] + ":");
             } else {
                 return startingWithInArray(split[1], PLACEMENT_TYPES)
                         .map(t -> split[0] + ":" + t)
