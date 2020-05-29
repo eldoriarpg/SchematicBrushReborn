@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.commands;
 
 import com.sk89q.worldedit.command.tool.brush.Brush;
+import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
@@ -45,8 +46,7 @@ public class BrushCommand implements TabExecutor, Randomable {
             return true;
         }
         if (args.length == 0) {
-            //TODO Command explanation
-            MessageSender.sendError(player, "Too few arguments.");
+            help(player);
             return true;
         }
 
@@ -65,6 +65,30 @@ public class BrushCommand implements TabExecutor, Randomable {
                     + settings.get().getSchematicCount() + " schematics created.");
         }
         return true;
+    }
+
+    private void help(Player player) {
+        MessageSender.sendMessage(player,
+                "A brush consists of one or more brushes. A brush is defined by a §bbrush argument§r." + C.NEW_LINE
+                        + "A brush argument contains a §bselector§r and a optional §brotation§r, §bflip§r and §bweight§r value:" + C.NEW_LINE
+                        + "  §b<selector>@rotation!flip:weight§r" + C.NEW_LINE
+                        + "§b§l§nSELECTOR§r" + C.NEW_LINE
+                        + "§bSelector§r can be a §bname§r with a optional wildcard §b(*)§r, §b$directory§r, §b$preset§r or §b^regex§r" + C.NEW_LINE
+                        + "§bRotation§r is the rotation of the schematic. §b*§r is a random rotation." + C.NEW_LINE
+                        + "§bFlip§r is the flip of the schematic. §b*§r is a random flip." + C.NEW_LINE
+                        + "§bWeight§r is the chance that this brush is selected, if the brush contains more than one brush." + C.NEW_LINE
+                        + "§b§l§nFLAGS§r" +C.NEW_LINE
+                        + "When you use a brush you can also add some §bflags§r for a better behaviour." + C.NEW_LINE
+                        + "-§bincludeair §r- Air in the schematic will replace blocks. Default: §bfalse§r" + C.NEW_LINE
+                        + "-§breplaceAll §r- Existing blocks will be replaced. Default: §bfalse§r" + C.NEW_LINE
+                        + "-§byoffset:number §r- Will move the schematic up or down on pasting. Default: §b0§r" + C.NEW_LINE
+                        + "-§bplacement:type §r- Choose in which way a schematic will be placed. Default: §bdrop§r" + C.NEW_LINE
+                        + "  - §bmiddle §r- Origin in center." + C.NEW_LINE
+                        + "  - §bbottom§r - Origin on bottom of schematic." + C.NEW_LINE
+                        + "  - §bdrop §r- Origin on lowest non air block in schematic." + C.NEW_LINE
+                        + "  - §btop §r- Origin on top of schematic." + C.NEW_LINE
+                        + "  - §braise §r- Origin on lowest non air block in schematic." + C.NEW_LINE
+        );
     }
 
     @Override
