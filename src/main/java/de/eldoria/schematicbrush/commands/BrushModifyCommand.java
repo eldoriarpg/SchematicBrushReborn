@@ -2,8 +2,8 @@ package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
-import de.eldoria.schematicbrush.brush.config.SubBrush;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
+import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
@@ -102,7 +102,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     }
 
     private void appendBrush(Player player, String[] args) {
-        Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
         if (settings.isEmpty()) {
             return;
@@ -119,7 +119,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         SchematicBrush combinedBrush = schematicBrush.get().combineBrush(settings.get());
         boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(settings.get()));
         if (success) {
-            MessageSender.sendMessage(player, "Brush appended. Using §b"
+            MessageSender.sendMessage(player, "Schematic set appended. Using §b"
                     + combinedBrush.getSettings().getSchematicCount() + "§r schematics.");
         }
     }
@@ -139,19 +139,19 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         int id;
         try {
             id = Integer.parseInt(args[0]);
-            if (id < 1 || id > schematicBrush.get().getSettings().getBrushes().size()) {
-                MessageSender.sendError(player, "Invalid brush id.");
+            if (id < 1 || id > schematicBrush.get().getSettings().getSchematicSets().size()) {
+                MessageSender.sendError(player, "Invalid set id.");
                 return;
             }
         } catch (NumberFormatException e) {
-            MessageSender.sendError(player, "Invalid brush id.");
+            MessageSender.sendError(player, "Invalid set id.");
             return;
         }
 
-        List<SubBrush> brushes = schematicBrush.get().getSettings().getBrushes();
-        SubBrush remove = brushes.remove(id - 1);
+        List<SchematicSet> schematicSets = schematicBrush.get().getSettings().getSchematicSets();
+        SchematicSet remove = schematicSets.remove(id - 1);
 
-        MessageSender.sendMessage(player, "Brush §b" + remove.getArguments() + "§r removed!");
+        MessageSender.sendMessage(player, "Set §b" + remove.getArguments() + "§r removed!");
     }
 
     private void editBrush(Player player, String[] args) {
@@ -167,7 +167,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
 
-        Optional<BrushConfiguration> brushConfiguration = BrushSettingsParser
+        Optional<BrushSettings> brushConfiguration = BrushSettingsParser
                 .parseBrush(player, plugin, schematicCache, Arrays.copyOfRange(args, 1, args.length));
 
 
@@ -178,20 +178,20 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         int id;
         try {
             id = Integer.parseInt(args[0]);
-            if (id < 1 || id > schematicBrush.get().getSettings().getBrushes().size()) {
-                MessageSender.sendError(player, "Invalid brush id.");
+            if (id < 1 || id > schematicBrush.get().getSettings().getSchematicSets().size()) {
+                MessageSender.sendError(player, "Invalid set id.");
                 return;
             }
         } catch (NumberFormatException e) {
-            MessageSender.sendError(player, "Invalid brush id.");
+            MessageSender.sendError(player, "Invalid set id.");
             return;
         }
 
-        List<SubBrush> brushes = schematicBrush.get().getSettings().getBrushes();
-        SubBrush remove = brushes.remove(id - 1);
+        List<SchematicSet> schematicSets = schematicBrush.get().getSettings().getSchematicSets();
+        SchematicSet remove = schematicSets.remove(id - 1);
         WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(brushConfiguration.get()));
-        MessageSender.sendMessage(player, "Brush §b" + remove.getArguments() + "§r changed to §b"
-                + brushConfiguration.get().getBrushes().get(0).getArguments() + "§r.");
+        MessageSender.sendMessage(player, "Set §b" + remove.getArguments() + "§r changed to §b"
+                + brushConfiguration.get().getSchematicSets().get(0).getArguments() + "§r.");
     }
 
     private void reload(Player player) {
@@ -202,18 +202,18 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             return;
         }
 
-        BrushConfiguration oldSettings = schematicBrush.get().getSettings();
-        Optional<BrushConfiguration.BrushConfigurationBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
-                oldSettings.getBrushes().stream().map(SubBrush::getArguments).collect(Collectors.toList()),
+        BrushSettings oldSettings = schematicBrush.get().getSettings();
+        Optional<BrushSettings.BrushConfigurationBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
+                oldSettings.getSchematicSets().stream().map(SchematicSet::getArguments).collect(Collectors.toList()),
                 plugin, schematicCache);
 
         if (configurationBuilder.isEmpty()) {
             return;
         }
 
-        BrushConfiguration.BrushConfigurationBuilder builder = configurationBuilder.get();
+        BrushSettings.BrushConfigurationBuilder builder = configurationBuilder.get();
 
-        BrushConfiguration configuration = builder.includeAir(oldSettings.isIncludeAir())
+        BrushSettings configuration = builder.includeAir(oldSettings.isIncludeAir())
                 .replaceAll(oldSettings.isReplaceAll())
                 .withPlacementType(oldSettings.getPlacement())
                 .withYOffset(oldSettings.getYOffset())
@@ -243,36 +243,36 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             MessageSender.sendError(player, "This is not a schematic brush.");
             return;
         }
-        BrushConfiguration settings = schematicBrush.get().getSettings();
-        List<SubBrush> brushes = settings.getBrushes();
+        BrushSettings settings = schematicBrush.get().getSettings();
+        List<SchematicSet> schematicSets = settings.getSchematicSets();
 
-        List<String> brushStrings = new ArrayList<>();
-        for (int i = 0; i < brushes.size(); i++) {
-            String arguments = brushes.get(i).getArguments();
-            brushStrings.add("§b" + (i + 1) + "|§r " + arguments);
+        List<String> schematicSetStrings = new ArrayList<>();
+        for (int i = 0; i < schematicSets.size(); i++) {
+            String arguments = schematicSets.get(i).getArguments();
+            schematicSetStrings.add("§b" + (i + 1) + "|§r " + arguments);
         }
 
-        String brushList = brushStrings.stream().collect(Collectors.joining(C.NEW_LINE));
+        String schematicSetList = schematicSetStrings.stream().collect(Collectors.joining(C.NEW_LINE));
         MessageSender.sendMessage(player,
                 "§bTotal schematics:§r " + settings.getSchematicCount() + C.NEW_LINE
                         + "§bPlacement:§r " + settings.getPlacement().toString() + C.NEW_LINE
                         + "§bY-Offset:§r " + settings.getYOffset() + C.NEW_LINE
                         + "§bPaste air:§r " + settings.isIncludeAir() + C.NEW_LINE
                         + "§bReplace all blocks:§r " + settings.isReplaceAll() + C.NEW_LINE
-                        + "§bBrushes:§r" + C.NEW_LINE
-                        + brushList);
+                        + "§bSchematic sets:§r" + C.NEW_LINE
+                        + schematicSetList);
     }
 
     private void help(Player player) {
         MessageSender.sendMessage(player,
                 "This command allows you to modify a current used brush." + C.NEW_LINE
-                        + "§b/sbrm §na§r§bppend <brushes...>§r - Add one or more brushes to your brush." + C.NEW_LINE
-                        + "§b/sbrm §nr§r§bemove <id>§r - Remove a brush." + C.NEW_LINE
+                        + "§b/sbrm §na§r§bppend <schematic sets...>§r - Add one or more schematic sets to your brush." + C.NEW_LINE
+                        + "§b/sbrm §nr§r§bemove <id>§r - Remove a schematic set." + C.NEW_LINE
                         + "§b/sbrm §ne§r§bdit <id> <brush>§r - Replace a brush with another brush." + C.NEW_LINE
                         + "§b/sbrm §nrel§r§boad §r- Reload matching schematics, if new schematics were recently added."
                         + "You may want to use §b/sbra reloadschematics§r first." + C.NEW_LINE
-                        + "§b/sbrm §ni§r§bnfo §r- Get a list of all brushes your brush contains." + C.NEW_LINE
-                        + "Use the id from the info command to change or remove a brush."
+                        + "§b/sbrm §ni§r§bnfo §r- Get all settings and a list of all schematic sets your brush uses." + C.NEW_LINE
+                        + "Use the id from the info command to change or remove a schematic set."
         );
     }
 
@@ -294,11 +294,11 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         if ("append".equalsIgnoreCase(cmd) || "a".equalsIgnoreCase(cmd)) {
-            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
-            return List.of("<brush id>");
+            return List.of("<schematic set id>");
         }
 
         if ("reload".equalsIgnoreCase(cmd) || "rel".equalsIgnoreCase(cmd)) {
@@ -307,12 +307,12 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
         if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
             if (args.length == 1) {
-                return List.of("<brush id> <brush>");
+                return List.of("<schematic set id> <schematic set>");
             }
             if (args.length == 2) {
-                return List.of("<brush id>");
+                return List.of("<schematic set>");
             }
-            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
         }
 
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {

@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.commands.parser;
 
-import de.eldoria.schematicbrush.brush.config.parameter.BrushSelector;
+import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class BrushArgumentParser {
+public final class SchematicSetParser {
     private static final String NAME = ".+?)";
     private static final String ENDINGS = "(\\s|:|@|!|$)";
 
@@ -44,7 +44,7 @@ public final class BrushArgumentParser {
      */
     private static final Pattern WEIGHT_PATTERN = Pattern.compile(":([0-9]{1,3}|\\*)" + ENDINGS);
 
-    private BrushArgumentParser() {
+    private SchematicSetParser() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
@@ -61,14 +61,14 @@ public final class BrushArgumentParser {
         Matcher nameMatcher = DIRECTORY_PATTERN.matcher(arguments);
         if (nameMatcher.find()) {
             String directoryName = nameMatcher.group(1);
-            return Optional.of(new SubBrushType(BrushSelector.DIRECTORY, directoryName));
+            return Optional.of(new SubBrushType(SchematicSelector.DIRECTORY, directoryName));
         }
 
         // Check if its a preset
         nameMatcher = PRESET_PATTERN.matcher(arguments);
         if (nameMatcher.find()) {
             String presetName = nameMatcher.group(1);
-            return Optional.of(new SubBrushType(BrushSelector.PRESET, presetName));
+            return Optional.of(new SubBrushType(SchematicSelector.PRESET, presetName));
 
         }
 
@@ -76,7 +76,7 @@ public final class BrushArgumentParser {
         nameMatcher = NAME_PATTERN.matcher(arguments);
         if (nameMatcher.find()) {
             String pattern = nameMatcher.group(1);
-            return Optional.of(new SubBrushType(BrushSelector.REGEX, pattern));
+            return Optional.of(new SubBrushType(SchematicSelector.REGEX, pattern));
         }
         return Optional.empty();
     }
@@ -161,14 +161,14 @@ public final class BrushArgumentParser {
          * Selector type of the brush.
          */
         @Nonnull
-        private final BrushSelector selectorType;
+        private final SchematicSelector selectorType;
         /**
          * Value of the selector.
          */
         @Nonnull
         private final String selectorValue;
 
-        public SubBrushType(@Nonnull BrushSelector selectorType, @Nonnull String selectorValue) {
+        public SubBrushType(@Nonnull SchematicSelector selectorType, @Nonnull String selectorValue) {
             this.selectorType = selectorType;
             this.selectorValue = selectorValue;
         }

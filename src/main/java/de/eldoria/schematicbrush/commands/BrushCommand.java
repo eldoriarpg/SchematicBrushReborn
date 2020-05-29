@@ -3,7 +3,7 @@ package de.eldoria.schematicbrush.commands;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
@@ -50,7 +50,7 @@ public class BrushCommand implements TabExecutor, Randomable {
             return true;
         }
 
-        Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
         if (settings.isEmpty()) {
 
@@ -69,14 +69,14 @@ public class BrushCommand implements TabExecutor, Randomable {
 
     private void help(Player player) {
         MessageSender.sendMessage(player,
-                "A brush consists of one or more brushes. A brush is defined by a §bbrush argument§r." + C.NEW_LINE
-                        + "A brush argument contains a §bselector§r and a optional §brotation§r, §bflip§r and §bweight§r value:" + C.NEW_LINE
+                "A brush consists of one or more schematic set. A schematic set is defined by a §bselector§r and §bmodifiers§r." + C.NEW_LINE
+                        + "A schematic set contains a §bselector§r and a optional §brotation§r, §bflip§r and §bweight§r value:" + C.NEW_LINE
                         + "  §b<selector>@rotation!flip:weight§r" + C.NEW_LINE
                         + "§b§l§nSELECTOR§r" + C.NEW_LINE
                         + "§bSelector§r can be a §bname§r with a optional wildcard §b(*)§r, §b$directory§r, §b$preset§r or §b^regex§r" + C.NEW_LINE
                         + "§bRotation§r is the rotation of the schematic. §b*§r is a random rotation." + C.NEW_LINE
                         + "§bFlip§r is the flip of the schematic. §b*§r is a random flip." + C.NEW_LINE
-                        + "§bWeight§r is the chance that this brush is selected, if the brush contains more than one brush." + C.NEW_LINE
+                        + "§bWeight§r is the chance that this schematic set is selected, if the brush contains more than one set." + C.NEW_LINE
                         + "§b§l§nFLAGS§r" +C.NEW_LINE
                         + "When you use a brush you can also add some §bflags§r for a better behaviour." + C.NEW_LINE
                         + "-§bincludeair §r- Air in the schematic will replace blocks. Default: §bfalse§r" + C.NEW_LINE
@@ -98,6 +98,6 @@ public class BrushCommand implements TabExecutor, Randomable {
             return TabUtil.getFlagComplete(last);
         }
 
-        return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+        return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
     }
 }

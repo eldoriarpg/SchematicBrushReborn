@@ -9,18 +9,18 @@ import java.util.List;
 
 /**
  * A brush configuration represents the settings of a single brush.
- * A brush consists of one or more brushes represented by a {@link SubBrush} object.
- * If more than one {@link SubBrush} is present, a random {@link SubBrush} will be returned via
- * the {@link #getRandomBrushConfig()} based on the {@link SubBrush#getWeight()} of the brushes.
+ * A brush consists of one or more brushes represented by a {@link SchematicSet} object.
+ * If more than one {@link SchematicSet} is present, a random {@link SchematicSet} will be returned via
+ * the {@link #getRandomBrushConfig()} based on the {@link SchematicSet#getWeight()} of the brushes.
  * The brush settings contains some general brush settings,
  * which apply to the whole brush and not only to specific sub brushes.
  */
 @Getter
-public final class BrushConfiguration implements Randomable {
+public final class BrushSettings implements Randomable {
     /**
      * List of all sub brushes this brush has.
      */
-    private final List<SubBrush> brushes;
+    private final List<SchematicSet> schematicSets;
     /**
      * True if the air of the schematic should replace non air blocks
      */
@@ -38,24 +38,24 @@ public final class BrushConfiguration implements Randomable {
      */
     private final Placement placement;
     /**
-     * The total weight of all brushes in the {@link #brushes} list
+     * The total weight of all brushes in the {@link #schematicSets} list
      */
     private final int totalWeight;
 
-    private BrushConfiguration(List<SubBrush> brushes, boolean includeAir, boolean replaceAll, int yOffset,
-                               Placement placement) {
-        this.brushes = brushes;
+    private BrushSettings(List<SchematicSet> schematicSets, boolean includeAir, boolean replaceAll, int yOffset,
+                          Placement placement) {
+        this.schematicSets = schematicSets;
         this.includeAir = includeAir;
         this.replaceAll = replaceAll;
         this.yOffset = yOffset;
         this.placement = placement;
 
         // Count all weights, which have a weight set.
-        int totalWeight = brushes.stream().filter(b -> b.getWeight() > 0).mapToInt(SubBrush::getWeight).sum();
+        int totalWeight = schematicSets.stream().filter(b -> b.getWeight() > 0).mapToInt(SchematicSet::getWeight).sum();
         // Count all weighted brushes
-        int weighted = (int) brushes.stream().filter(b -> b.getWeight() > 0).count();
+        int weighted = (int) schematicSets.stream().filter(b -> b.getWeight() > 0).count();
         // Count all unweighted brushes
-        int unweighted = (int) brushes.stream().filter(b -> b.getWeight() < 0).count();
+        int unweighted = (int) schematicSets.stream().filter(b -> b.getWeight() < 0).count();
         int defaultWeight;
         // Handle case, when no brush is weighted
         if (weighted == 0) {
@@ -66,28 +66,28 @@ public final class BrushConfiguration implements Randomable {
         }
 
         // Set the weight of all unweighted brushes
-        brushes.stream().filter(b -> b.getWeight() < 0).forEach(b -> b.updateWeight(defaultWeight));
+        schematicSets.stream().filter(b -> b.getWeight() < 0).forEach(b -> b.updateWeight(defaultWeight));
 
         // Calculate the total weight of all brushes
-        this.totalWeight = brushes.stream().mapToInt(SubBrush::getWeight).sum();
+        this.totalWeight = schematicSets.stream().mapToInt(SchematicSet::getWeight).sum();
     }
 
     /**
-     * Get a random brush from the {@link #brushes} list based on their {@link SubBrush#getWeight()}.
+     * Get a random brush from the {@link #schematicSets} list based on their {@link SchematicSet#getWeight()}.
      *
      * @return a random brush
      */
-    public SubBrush getRandomBrushConfig() {
+    public SchematicSet getRandomBrushConfig() {
         int random = randomInt(totalWeight);
 
         int count = 0;
-        for (SubBrush brush : brushes) {
+        for (SchematicSet brush : schematicSets) {
             if (count + brush.getWeight() > random) {
                 return brush;
             }
             count += brush.getWeight();
         }
-        return brushes.get(brushes.size() - 1);
+        return schematicSets.get(schematicSets.size() - 1);
     }
 
     /**
@@ -96,7 +96,7 @@ public final class BrushConfiguration implements Randomable {
      * @return total number of schematics in all brushes.
      */
     public int getSchematicCount() {
-        return brushes.stream().map(b -> b.getSchematics().size()).mapToInt(Integer::intValue).sum();
+        return schematicSets.stream().map(b -> b.getSchematics().size()).mapToInt(Integer::intValue).sum();
     }
 
     /**
@@ -105,7 +105,7 @@ public final class BrushConfiguration implements Randomable {
      * @param brush brush which should be added
      * @return a brush builder with one brush added
      */
-    public static BrushConfigurationBuilder newSingleBrushSettingsBuilder(SubBrush brush) {
+    public static BrushConfigurationBuilder newSingleBrushSettingsBuilder(SchematicSet brush) {
         return new BrushConfigurationBuilder(brush);
     }
 
@@ -122,20 +122,20 @@ public final class BrushConfiguration implements Randomable {
      * Get the brush configuration with a new brush combined.
      * The options from the current brush are used.
      *
-     * @param brush Brush to combine. Only the {@link SubBrush} list is updated.
+     * @param brush Brush to combine. Only the {@link SchematicSet} list is updated.
      * @return new brush configuration.
      */
-    public BrushConfiguration combine(BrushConfiguration brush) {
-        List<SubBrush> brushes = new ArrayList<>(this.brushes);
-        brushes.addAll(brush.brushes);
-        return new BrushConfiguration(brushes, includeAir, replaceAll, yOffset, placement);
+    public BrushSettings combine(BrushSettings brush) {
+        List<SchematicSet> brushes = new ArrayList<>(this.schematicSets);
+        brushes.addAll(brush.schematicSets);
+        return new BrushSettings(brushes, includeAir, replaceAll, yOffset, placement);
     }
 
     public static final class BrushConfigurationBuilder {
         /**
          * List of all sub brushes this brush has.
          */
-        private final List<SubBrush> brushes;
+        private final List<SchematicSet> brushes;
         /**
          * True if the air of the schematic should replace non air blocks
          */
@@ -154,7 +154,7 @@ public final class BrushConfiguration implements Randomable {
         private Placement placement = Placement.DROP;
 
 
-        private BrushConfigurationBuilder(SubBrush config) {
+        private BrushConfigurationBuilder(SchematicSet config) {
             brushes = List.of(config);
         }
 
@@ -169,7 +169,7 @@ public final class BrushConfiguration implements Randomable {
          * @param brush brush which should be added
          * @return builder instance with brush added
          */
-        public BrushConfigurationBuilder addBrush(SubBrush brush) {
+        public BrushConfigurationBuilder addBrush(SchematicSet brush) {
             brushes.add(brush);
             return this;
         }
@@ -224,8 +224,8 @@ public final class BrushConfiguration implements Randomable {
          *
          * @return A immutable brush config.
          */
-        public BrushConfiguration build() {
-            return new BrushConfiguration(brushes, includeAir, replaceAll, yOffset, placement);
+        public BrushSettings build() {
+            return new BrushSettings(brushes, includeAir, replaceAll, yOffset, placement);
         }
 
     }

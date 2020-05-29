@@ -2,8 +2,8 @@ package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
-import de.eldoria.schematicbrush.brush.config.SubBrush;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
+import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
@@ -29,29 +29,19 @@ import java.util.stream.Collectors;
 /**
  * Brush to create and modify brush presets.
  */
-public class BrushPresetCommand implements TabExecutor {
+public class SchematicPresetCommand implements TabExecutor {
 
     private final Plugin plugin;
     private final SchematicCache schematicCache;
-    private static final String[] COMMANDS = {"savecurrent", "save", "appendBrush", "removeBrush", "remove", "info", "list", "descr", "help"};
+    private static final String[] COMMANDS = {"savecurrent", "save", "appendSet", "removeSet", "remove", "info", "list", "descr", "help"};
 
-    public BrushPresetCommand(Plugin plugin, SchematicCache schematicCache) {
+    public SchematicPresetCommand(Plugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
         this.schematicCache = schematicCache;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Commands:
-        // Save the current applied brush: /sbrpre savecurrent <id>
-        // Save brush: /sbrpre current <id> <brushstrings>
-        // Append a brush to preset: /sbrpre append <id> <brushstrings>
-        // Append current brush to preset: /sbrpre append <id>
-        // Remove a brush from preset: /sbrpre remove <id> <brushstrings|id>
-        // Information about a preset: /sbrpre info <id>
-        // List all presets with description: /sbrpre list
-        // List all presets with description: /sbrpre descr <id> <description>
-
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only a player can do this.");
             return true;
@@ -84,17 +74,17 @@ public class BrushPresetCommand implements TabExecutor {
             }
         }
 
-        if ("appendbrush".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
+        if ("appendset".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
             if (player.hasPermission("schematicbrush.preset.modify")) {
-                appendBrushes(player, subcommandArgs);
+                appendSet(player, subcommandArgs);
             } else {
                 MessageSender.sendError(player, "You don't have the permission to do this!");
             }
         }
 
-        if ("removebrush".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
+        if ("removeset".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
             if (player.hasPermission("schematicbrush.preset.modify")) {
-                removeBrushes(player, subcommandArgs);
+                removeSets(player, subcommandArgs);
             } else {
                 MessageSender.sendError(player, "You don't have the permission to do this!");
             }
@@ -138,16 +128,16 @@ public class BrushPresetCommand implements TabExecutor {
 
     private void help(Player player) {
         MessageSender.sendMessage(player,
-                "This command allows you to save and modify brush presets." + C.NEW_LINE
-                        + "§b/sbrp save§nc§r§burrent <id> §r- Save your current equiped brush as a preset." + C.NEW_LINE
-                        + "§b/sbrp §ns§r§bave <id> <brushes...> §r- Save one or more brushes as a preset." + C.NEW_LINE
-                        + "§b/sbrp §na§r§bppend§nb§r§brush <id> <brushes...> §r- Add one or more brushes to a preset." + C.NEW_LINE
-                        + "§b/sbrp §nd§r§bescr §r- Set a description for a brush." + C.NEW_LINE
-                        + "§b/sbrp §nr§r§bemove§nb§r§brush <id> <id> §r- Remove brush from a preset." + C.NEW_LINE
+                "This command allows you to save and modify schematic set presets." + C.NEW_LINE
+                        + "§b/sbrp save§nc§r§burrent <id> §r- Save your current equiped schematic set as a preset." + C.NEW_LINE
+                        + "§b/sbrp §ns§r§bave <id> <schematic sets...> §r- Save one or more schematic sets as a preset." + C.NEW_LINE
+                        + "§b/sbrp §na§r§bppend§ns§r§bet <id> <schematic sets...> §r- Add one or more schematic sets to a preset." + C.NEW_LINE
+                        + "§b/sbrp §nd§r§bescr §r- Set a description for a preset." + C.NEW_LINE
+                        + "§b/sbrp §nr§r§bemove§ns§r§bet <id> <id> §r- Remove schematic set from a preset." + C.NEW_LINE
                         + "§b/sbrp §nr§r§bemove <id> §r- Remove a preset." + C.NEW_LINE
-                        + "§b/sbrp §ni§r§bnfo <id> §r- Get a list of brushes inside a preset." + C.NEW_LINE
+                        + "§b/sbrp §ni§r§bnfo <id> §r- Get a list of schmematic sets inside a preset." + C.NEW_LINE
                         + "§b/sbrp §nl§r§bist §r- Get a list of all presets with description." + C.NEW_LINE
-                        + "Use the id from the info command to change or remove a brush."
+                        + "Use the id from the info command to change or remove a schematic set."
         );
     }
 
@@ -172,15 +162,15 @@ public class BrushPresetCommand implements TabExecutor {
 
         SchematicBrush brush = schematicBrush.get();
 
-        List<String> brushes = getBrushes(brush.getSettings());
+        List<String> schematicSets = getSchematicSets(brush.getSettings());
 
         plugin.getConfig().contains("presets." + name + ".description");
 
-        savePreset(player, name, brushes);
+        savePreset(player, name, schematicSets);
         setDescription(player, name, "none");
 
-        MessageSender.sendMessage(player, "Brush " + name + " saved!" + C.NEW_LINE
-                + "Brush is using " + brushes.size() + " brushes with "
+        MessageSender.sendMessage(player, "Preset " + name + " saved!" + C.NEW_LINE
+                + "Preset contains " + schematicSets.size() + " schematic sets with "
                 + brush.getSettings().getSchematicCount() + " schematics.");
     }
 
@@ -192,23 +182,23 @@ public class BrushPresetCommand implements TabExecutor {
 
         String[] brushArgs = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, brushArgs);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, brushArgs);
 
         if (settings.isEmpty()) {
             return;
         }
 
-        List<String> brushes = getBrushes(settings.get());
-        savePreset(player, name, brushes);
+        List<String> schematicSets = getSchematicSets(settings.get());
+        savePreset(player, name, schematicSets);
         setDescription(player, name, "none");
 
-        MessageSender.sendMessage(player, "Brush " + name + " saved!" + C.NEW_LINE
-                + "Brush is using " + brushes.size() + " brushes with "
+        MessageSender.sendMessage(player, "Preset " + name + " saved!" + C.NEW_LINE
+                + "Preset contains " + schematicSets.size() + " schematic sets with "
                 + settings.get().getSchematicCount() + " schematics.");
 
     }
 
-    private void appendBrushes(Player player, String[] args) {
+    private void appendSet(Player player, String[] args) {
         if (args.length < 2) {
             MessageSender.sendError(player, "Too few arguments");
         }
@@ -216,16 +206,16 @@ public class BrushPresetCommand implements TabExecutor {
 
         String[] brushArgs = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<BrushConfiguration> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, brushArgs);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, brushArgs);
 
         if (settings.isEmpty()) {
             return;
         }
 
-        addBrushes(player, name, getBrushes(settings.get()));
+        addSchematicSets(player, name, getSchematicSets(settings.get()));
 
-        MessageSender.sendMessage(player, "Brush " + name + " changed!" + C.NEW_LINE
-                + "Added §b" + settings.get().getBrushes().size() + "§r new brushes with §b"
+        MessageSender.sendMessage(player, "Preset " + name + " changed!" + C.NEW_LINE
+                + "Added §b" + settings.get().getSchematicSets().size() + "§r schematic sets with §b"
                 + settings.get().getSchematicCount() + "§r schematics.");
     }
 
@@ -240,7 +230,7 @@ public class BrushPresetCommand implements TabExecutor {
         MessageSender.sendMessage(player, "Changed description of preset §b" + name + "§r!");
     }
 
-    private void removeBrushes(Player player, String[] args) {
+    private void removeSets(Player player, String[] args) {
         if (args.length < 2) {
             MessageSender.sendError(player, "Too few arguments");
         }
@@ -249,30 +239,30 @@ public class BrushPresetCommand implements TabExecutor {
         Object[] original;
         String[] ids = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<List<String>> optionalBrushes = getBrushesFromConfig(name);
-        if (optionalBrushes.isEmpty()) {
+        Optional<List<String>> optionalSchematicSets = getSchematicSetsFromConfig(name);
+        if (optionalSchematicSets.isEmpty()) {
             MessageSender.sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
 
-        List<String> brushes = optionalBrushes.get();
+        List<String> schematicSets = optionalSchematicSets.get();
 
         for (String id : ids) {
             try {
                 int i = Integer.parseInt(id);
-                if (i > brushes.size() || i < 1) {
+                if (i > schematicSets.size() || i < 1) {
                     MessageSender.sendError(player, "§b" + id + "§r is not a valid id.");
                     return;
                 }
-                brushes.set(i - 1, null);
+                schematicSets.set(i - 1, null);
             } catch (NumberFormatException e) {
                 MessageSender.sendError(player, "§b" + id + "§r is not a valid id.");
                 return;
             }
         }
 
-        overrideBrushes(player, name, brushes.stream().filter(Objects::nonNull).collect(Collectors.toList()));
-        MessageSender.sendMessage(player, "Removed brush from preset " + name);
+        overrideSchematicSets(player, name, schematicSets.stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        MessageSender.sendMessage(player, "Removed schematic set from preset " + name);
     }
 
     private void removePreset(Player player, String[] args) {
@@ -301,21 +291,21 @@ public class BrushPresetCommand implements TabExecutor {
         String name = args[0];
         String path = "presets." + name;
 
-        Optional<List<String>> brushesFromConfig = getBrushesFromConfig(name);
-        if (brushesFromConfig.isEmpty()) {
+        Optional<List<String>> schematicSetsConfig = getSchematicSetsFromConfig(name);
+        if (schematicSetsConfig.isEmpty()) {
             MessageSender.sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
-        List<String> brushString = brushesFromConfig.get();
-        List<String> brushes = new ArrayList<>();
-        for (int i = 0; i < brushString.size(); i++) {
-            brushes.add("§b" + (i + 1) + "| §r" + brushString.get(i));
+        List<String> schematicSets = schematicSetsConfig.get();
+        List<String> schematicSetsList = new ArrayList<>();
+        for (int i = 0; i < schematicSets.size(); i++) {
+            schematicSetsList.add("§b" + (i + 1) + "| §r" + schematicSets.get(i));
         }
 
-        String brushesList = String.join(C.NEW_LINE, brushes);
         MessageSender.sendMessage(player, "Information about preset §b" + name + "§r" + C.NEW_LINE
                 + "§bDescription:§r " + getDescription(player, name) + C.NEW_LINE
-                + "§bBrushes (" + brushes.size() + ")§r:" + C.NEW_LINE + brushesList);
+                + "§bSchematic sets (" + schematicSetsList.size() + ")§r:" + C.NEW_LINE
+                + String.join(C.NEW_LINE, schematicSetsList));
     }
 
 
@@ -334,77 +324,77 @@ public class BrushPresetCommand implements TabExecutor {
 
 
     /**
-     * Saves a list of brushes to a preset.
+     * Saves a list of schematic sets to a preset.
      *
      * @param player     player for error handling
      * @param presetName name of preset
-     * @param brushArgs  arguments of brushes
+     * @param schematicSets  schematic sets
      */
-    private void savePreset(Player player, String presetName, List<String> brushArgs) {
+    private void savePreset(Player player, String presetName, List<String> schematicSets) {
         String path = "presets." + presetName + ".filter";
-        boolean brushesPresent = plugin.getConfig().isSet(path);
-        if (brushesPresent) {
+        boolean presetPresent = plugin.getConfig().isSet(path);
+        if (presetPresent) {
             MessageSender.sendError(player, "Preset §b" + presetName + "§r does already exist.");
             return;
         }
 
-        plugin.getConfig().set(path, brushArgs);
+        plugin.getConfig().set(path, schematicSets);
         plugin.saveConfig();
     }
 
     /**
-     * Add a list of brushes to a existing preset.
+     * Add a list of schematic sets to a existing preset.
      *
      * @param player     player for error handling
      * @param presetName name of preset
-     * @param brushArgs  arguments of brushes
+     * @param schematicSets  schematic sets
      */
-    private void addBrushes(Player player, String presetName, List<String> brushArgs) {
+    private void addSchematicSets(Player player, String presetName, List<String> schematicSets) {
         String path = "presets." + presetName + ".filter";
-        boolean brushesPresent = plugin.getConfig().isSet(path);
-        if (!brushesPresent) {
+        boolean presetPresent = plugin.getConfig().isSet(path);
+        if (!presetPresent) {
             MessageSender.sendError(player, "Preset §b" + presetName + "§r does not exist.");
             return;
         }
 
-        brushArgs.addAll(plugin.getConfig().getStringList(path));
+        schematicSets.addAll(plugin.getConfig().getStringList(path));
 
-        plugin.getConfig().set(path, brushArgs);
+        plugin.getConfig().set(path, schematicSets);
         plugin.saveConfig();
     }
 
     /**
-     * Replaces the current list of brushes of a preset with a new list.
+     * Replaces the current list of schematic sets of a preset with a new list.
      *
      * @param player     player for error handling
      * @param presetName name of preset
-     * @param brushArgs  arguments of brushes
+     * @param schematicSets  schematic sets
      */
-    private void overrideBrushes(Player player, String presetName, List<String> brushArgs) {
+    private void overrideSchematicSets(Player player, String presetName, List<String> schematicSets) {
         String path = "presets." + presetName + ".filter";
-        boolean brushesPresent = plugin.getConfig().isSet(path);
-        if (!brushesPresent) {
+        boolean presetPresent = plugin.getConfig().isSet(path);
+        if (!presetPresent) {
             MessageSender.sendError(player, "Preset §b" + presetName + "§r does not exist.");
             return;
         }
 
-        plugin.getConfig().set(path, brushArgs);
+        plugin.getConfig().set(path, schematicSets);
         plugin.saveConfig();
     }
 
-    private List<String> getBrushes(BrushConfiguration brush) {
-        return brush.getBrushes().stream()
-                .map(SubBrush::getArguments)
+    private List<String> getSchematicSets(BrushSettings brush) {
+        return brush.getSchematicSets().stream()
+                .map(SchematicSet::getArguments)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Loads the brushes of a preset from config.
+     * Loads the schematic sets of a preset from config.
      *
      * @param presetName name of preset
-     * @return optional list of brushes when the preset is present in config
+     * @return optional list of schematic sets when the preset is present in config
      */
-    private Optional<List<String>> getBrushesFromConfig(String presetName) {
+    private Optional<List<String>> getSchematicSetsFromConfig(String presetName) {
         String path = "presets." + presetName + ".filter";
         if (plugin.getConfig().contains(path)) {
             return Optional.of(plugin.getConfig().getStringList(path));
@@ -414,8 +404,8 @@ public class BrushPresetCommand implements TabExecutor {
 
     private void setDescription(Player player, String name, String descr) {
         String path = "presets." + name;
-        boolean brushesPresent = plugin.getConfig().isSet(path);
-        if (!brushesPresent) {
+        boolean presetPresent = plugin.getConfig().isSet(path);
+        if (!presetPresent) {
             MessageSender.sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
@@ -425,8 +415,8 @@ public class BrushPresetCommand implements TabExecutor {
 
     private String getDescription(Player player, String name) {
         String path = "presets." + name + ".description";
-        boolean brushesPresent = plugin.getConfig().isSet(path);
-        if (!brushesPresent) {
+        boolean presetPresent = plugin.getConfig().isSet(path);
+        if (!presetPresent) {
             MessageSender.sendError(player, "Preset §b" + name + "§r does not exist.");
             return null;
         }
@@ -476,10 +466,10 @@ public class BrushPresetCommand implements TabExecutor {
                 }
                 return List.of("<name of preset>");
             }
-            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
         }
 
-        if ("appendbrush".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
+        if ("appendSet".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
             if (args.length == 2 && last.isEmpty()) {
                 List<String> presets = TabUtil.getPresets(last, plugin, 50);
                 presets.add("<name of preset>");
@@ -489,10 +479,10 @@ public class BrushPresetCommand implements TabExecutor {
                 return TabUtil.getPresets(last, plugin, 50);
             }
 
-            return TabUtil.getBrushSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
         }
 
-        if ("removebrush".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
+        if ("removeSet".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
             if (args.length == 2 && last.isEmpty()) {
                 List<String> presets = TabUtil.getPresets(last, plugin, 50);
                 presets.add("<name of preset>");
@@ -502,7 +492,7 @@ public class BrushPresetCommand implements TabExecutor {
                 return TabUtil.getPresets(last, plugin, 50);
             }
             if (args.length == 3) {
-                return List.of("<id of brush>");
+                return List.of("<id of schematic set>");
             }
         }
 

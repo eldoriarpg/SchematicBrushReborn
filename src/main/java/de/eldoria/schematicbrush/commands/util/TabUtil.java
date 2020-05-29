@@ -41,7 +41,7 @@ public class TabUtil {
      * @param plugin plugin for config access
      * @return a list of possible completions
      */
-    public List<String> getBrushSyntax(String arg, SchematicCache cache, Plugin plugin) {
+    public List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
 
         if (arg.isEmpty()) {
@@ -55,7 +55,7 @@ public class TabUtil {
             List<String> matchingSchematics = cache.getMatchingSchematics(arg, 50);
             matchingSchematics.add("<name>@rotation!flip:weight");
             if (matchingSchematics.size() == 1) {
-                matchingSchematics.addAll(getMissingBrushArguments(arg));
+                matchingSchematics.addAll(getMissingSchematicSetArguments(arg));
                 Collections.reverse(matchingSchematics);
             }
             return matchingSchematics;
@@ -66,13 +66,13 @@ public class TabUtil {
                 return List.of(arg + "@", arg + "!", "@rotation!flip", arg + "<1-999>");
             case '!': {
                 if (endingWithInArray(arg, FLIP_TYPES)) {
-                    return getMissingBrushArguments(arg);
+                    return getMissingSchematicSetArguments(arg);
                 }
                 return prefixStrings(List.of(FLIP_TYPES), getBrushArgumentStringToLastMarker(arg));
             }
             case '@':
                 if (endingWithInArray(arg, ROTATION_TYPES)) {
-                    return getMissingBrushArguments(arg);
+                    return getMissingSchematicSetArguments(arg);
                 }
                 return prefixStrings(List.of(ROTATION_TYPES), getBrushArgumentStringToLastMarker(arg));
             case '^':
@@ -81,7 +81,7 @@ public class TabUtil {
                 List<String> matchingDirectories = cache.getMatchingDirectories(arg.substring(1), 50);
                 matchingDirectories = prefixStrings(matchingDirectories, "$");
                 if (matchingDirectories.size() < 5) {
-                    matchingDirectories.addAll(getMissingBrushArguments(arg));
+                    matchingDirectories.addAll(getMissingSchematicSetArguments(arg));
                     Collections.reverse(matchingDirectories);
                 } else {
                     matchingDirectories.add("$<directory>@rotation!flip:weight");
@@ -92,7 +92,7 @@ public class TabUtil {
                 List<String> presets = getPresets(arg.substring(1), plugin, 50);
                 presets = prefixStrings(presets, "&");
                 if (presets.size() < 5) {
-                    presets.addAll(getMissingBrushArguments(arg));
+                    presets.addAll(getMissingSchematicSetArguments(arg));
                     Collections.reverse(presets);
                 } else {
                     presets.add("&<preset>@rotation!flip:weight");
@@ -246,7 +246,7 @@ public class TabUtil {
      * @param arg argument to check
      * @return list of missing arguments
      */
-    private List<String> getMissingBrushArguments(String arg) {
+    private List<String> getMissingSchematicSetArguments(String arg) {
         List<String> result = new ArrayList<>();
         StringBuilder explanation = new StringBuilder();
         if (!arg.contains("@")) {

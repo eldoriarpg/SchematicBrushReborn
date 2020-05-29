@@ -30,7 +30,7 @@ commands:
     description: Create or edit schematic brush presets
     aliases:
       - sbrp
-      - schbrpre
+      - schbrp
     permission: "schematicbrush.preset"
     permission-message: "You dont have the permission to do this!"
 

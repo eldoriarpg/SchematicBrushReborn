@@ -3,15 +3,11 @@ package de.eldoria.schematicbrush;
 import de.eldoria.schematicbrush.commands.BrushAdminCommand;
 import de.eldoria.schematicbrush.commands.BrushCommand;
 import de.eldoria.schematicbrush.commands.BrushModifyCommand;
-import de.eldoria.schematicbrush.commands.BrushPresetCommand;
+import de.eldoria.schematicbrush.commands.SchematicPresetCommand;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class SchematicBrushReborn extends JavaPlugin {
@@ -49,12 +45,12 @@ public class SchematicBrushReborn extends JavaPlugin {
 
         BrushCommand brushCommand = new BrushCommand(this, schematics);
         BrushModifyCommand brushModifyCommand = new BrushModifyCommand(this, schematics);
-        BrushPresetCommand brushPresetCommand = new BrushPresetCommand(this, schematics);
+        SchematicPresetCommand schematicPresetCommand = new SchematicPresetCommand(this, schematics);
         BrushAdminCommand brushAdminCommand = new BrushAdminCommand(this, schematics);
 
         getCommand("sbr").setExecutor(brushCommand);
         getCommand("sbrm").setExecutor(brushModifyCommand);
-        getCommand("sbrp").setExecutor(brushPresetCommand);
+        getCommand("sbrp").setExecutor(schematicPresetCommand);
         getCommand("sbra").setExecutor(brushAdminCommand);
     }
 }
