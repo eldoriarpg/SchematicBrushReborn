@@ -56,15 +56,9 @@ public final class BrushArgumentParser {
      */
     public static Optional<SubBrushType> getBrushType(String arguments) {
         // Check if its a name or regex lookup
-        Matcher nameMatcher = NAME_PATTERN.matcher(arguments);
-        // Check if its a name or regex lookup
-        if (nameMatcher.find()) {
-            String pattern = nameMatcher.group(1);
-            return Optional.of(new SubBrushType(BrushSelector.REGEX, pattern));
-        }
 
         // Check if its a directory lookup
-        nameMatcher = DIRECTORY_PATTERN.matcher(arguments);
+        Matcher nameMatcher = DIRECTORY_PATTERN.matcher(arguments);
         if (nameMatcher.find()) {
             String directoryName = nameMatcher.group(1);
             return Optional.of(new SubBrushType(BrushSelector.DIRECTORY, directoryName));
@@ -75,6 +69,14 @@ public final class BrushArgumentParser {
         if (nameMatcher.find()) {
             String presetName = nameMatcher.group(1);
             return Optional.of(new SubBrushType(BrushSelector.PRESET, presetName));
+
+        }
+
+        // Check if its a name or regex lookup
+        nameMatcher = NAME_PATTERN.matcher(arguments);
+        if (nameMatcher.find()) {
+            String pattern = nameMatcher.group(1);
+            return Optional.of(new SubBrushType(BrushSelector.REGEX, pattern));
         }
         return Optional.empty();
     }

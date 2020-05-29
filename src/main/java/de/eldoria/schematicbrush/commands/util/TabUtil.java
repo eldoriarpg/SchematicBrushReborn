@@ -28,7 +28,7 @@ public class TabUtil {
 
     private final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise"};
 
-    private final String[] FLIP_TYPES = {"NS", "EW", "*"};
+    private final String[] FLIP_TYPES = {"N", "W","NS", "WE", "*"};
     private final String[] ROTATION_TYPES = {"0", "90", "180", "270", "*"};
 
     private final char[] MARKER = {':', '@', '!', '^', '$', '&'};
