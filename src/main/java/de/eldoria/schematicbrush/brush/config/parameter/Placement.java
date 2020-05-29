@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.util;
+package de.eldoria.schematicbrush.brush.config.parameter;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -10,7 +10,7 @@ public enum Placement {
     /**
      * Use the center of the schematic as origin
      */
-    CENTER(findCenter(), "c", "centerToTheMiddle"),
+    MIDDLE(findMiddle(), "m", "centerToTheMiddle"),
     /**
      * Use the lowest center point of the schematic as origin
      */
@@ -24,9 +24,17 @@ public enum Placement {
      */
     DROP(findDrop(), "d", "dropItLikeItsHot"),
     /**
-     * Use the highest  non air point of the schematic as origin
+     * Use the highest non air point of the schematic as origin
      */
     RAISE(findRaise(), "r", "raiseItToTheSky");
+    /**
+     * Use the lowest terrain point in the region where the brush should be pasted as y.
+     */
+    //FLOOR(findFloor(), "f", "sinkItInTheGround"),
+    /**
+     * Use the heighest terrain point in the region where the brush should be pasted as y.
+     */
+    //CEIL(findFloor(), "c");
 
     private final String[] alias;
     private final ToIntFunction<Clipboard> find;
@@ -37,6 +45,13 @@ public enum Placement {
     }
 
 
+    /**
+     * Get the string as placement type.
+     *
+     * @param value value to parse
+     * @return placement enum value
+     * @throws IllegalArgumentException if value cant be parsed
+     */
     public static Placement asPlacement(String value) {
         for (Placement placement : values()) {
             if (value.equalsIgnoreCase(placement.toString())) return placement;
@@ -47,11 +62,16 @@ public enum Placement {
         throw new IllegalArgumentException(value + " is not a enum value or alias.");
     }
 
+    /**
+     * Find the y coordinate of a clipboard based on placement type.
+     * @param clipboard clipboard which should be pasted
+     * @return relative y origin position of clipboard
+     */
     public int find(Clipboard clipboard) {
         return this.find.applyAsInt(clipboard);
     }
 
-    private static ToIntFunction<Clipboard> findCenter() {
+    private static ToIntFunction<Clipboard> findMiddle() {
         return clipboard -> clipboard.getDimensions().getY() / 2;
     }
 
@@ -97,5 +117,10 @@ public enum Placement {
             }
             return dimensions.getBlockY();
         };
+    }
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
     }
 }
