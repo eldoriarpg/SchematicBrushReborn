@@ -17,11 +17,12 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.session.PasteBuilder;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
+import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import org.bukkit.entity.Player;
 
 /**
@@ -66,11 +67,12 @@ public class SchematicBrush implements Brush {
         Mask preBrushMask = editSession.getMask();
 
         // Apply replace mask
-        if (settings.isReplaceAirOnly()) {
+        if (!settings.isReplaceAll()) {
             // Check if the user has a block mask defined and append if present.
-            if (editSession.getMask() != null && editSession.getMask() instanceof BlockTypeMask) {
-                BlockTypeMask mask = (BlockTypeMask) editSession.getMask();
-                mask.add(BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR);
+            //Mask mask = WorldEditBrushAdapter.getMask(brushOwner);
+            if (preBrushMask != null && preBrushMask instanceof BlockTypeMask) {
+                BlockTypeMask blockMask = (BlockTypeMask) preBrushMask;
+                blockMask.add(BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR);
             } else {
                 editSession.setMask(
                         new BlockTypeMask(editSession, BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR));
@@ -98,8 +100,6 @@ public class SchematicBrush implements Brush {
                 .build();
 
         Operations.completeBlindly(operation);
-
-        editSession.setMask(preBrushMask);
     }
 
     /**
