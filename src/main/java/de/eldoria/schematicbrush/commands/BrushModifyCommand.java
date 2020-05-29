@@ -104,13 +104,13 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     private void appendBrush(Player player, String[] args) {
         Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
 
-        if (settings.isEmpty()) {
+        if (!settings.isPresent()) {
             return;
         }
 
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
-        if (schematicBrush.isEmpty()) {
+        if (!schematicBrush.isPresent()) {
             MessageSender.sendError(player, "This is not a schematic brush.");
             return;
         }
@@ -127,7 +127,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     private void removeBrush(Player player, String[] args) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
-        if (schematicBrush.isEmpty()) {
+        if (!schematicBrush.isPresent()) {
             MessageSender.sendError(player, "This is not a schematic brush.");
             return;
         }
@@ -157,7 +157,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     private void editBrush(Player player, String[] args) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
-        if (schematicBrush.isEmpty()) {
+        if (!schematicBrush.isPresent()) {
             MessageSender.sendError(player, "This is not a schematic brush.");
             return;
         }
@@ -171,7 +171,8 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
                 .parseBrush(player, plugin, schematicCache, Arrays.copyOfRange(args, 1, args.length));
 
 
-        if (brushConfiguration.isEmpty()) {
+
+        if (!brushConfiguration.isPresent()) {
             return;
         }
 
@@ -197,21 +198,23 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     private void reload(Player player) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
-        if (schematicBrush.isEmpty()) {
+
+        if (!schematicBrush.isPresent()) {
             MessageSender.sendMessage(player, "This is not a schematic brush!");
             return;
         }
 
         BrushSettings oldSettings = schematicBrush.get().getSettings();
-        Optional<BrushSettings.BrushConfigurationBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
+
+        Optional<BrushSettings.BrushSettingsBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
                 oldSettings.getSchematicSets().stream().map(SchematicSet::getArguments).collect(Collectors.toList()),
                 plugin, schematicCache);
 
-        if (configurationBuilder.isEmpty()) {
+        if (!configurationBuilder.isPresent()) {
             return;
         }
 
-        BrushSettings.BrushConfigurationBuilder builder = configurationBuilder.get();
+        BrushSettings.BrushSettingsBuilder builder = configurationBuilder.get();
 
         BrushSettings configuration = builder.includeAir(oldSettings.isIncludeAir())
                 .replaceAll(oldSettings.isReplaceAll())
@@ -239,7 +242,8 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     private void brushInfo(Player player) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
-        if (schematicBrush.isEmpty()) {
+
+        if (!schematicBrush.isPresent()) {
             MessageSender.sendError(player, "This is not a schematic brush.");
             return;
         }
@@ -252,7 +256,8 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             schematicSetStrings.add("§b" + (i + 1) + "|§r " + arguments);
         }
 
-        String schematicSetList = schematicSetStrings.stream().collect(Collectors.joining(C.NEW_LINE));
+
+        String schematicSetList = String.join(C.NEW_LINE, schematicSetStrings);
         MessageSender.sendMessage(player,
                 "§bTotal schematics:§r " + settings.getSchematicCount() + C.NEW_LINE
                         + "§bPlacement:§r " + settings.getPlacement().toString() + C.NEW_LINE
@@ -298,7 +303,8 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
-            return List.of("<schematic set id>");
+
+            return Collections.singletonList("<schematic set id>");
         }
 
         if ("reload".equalsIgnoreCase(cmd) || "rel".equalsIgnoreCase(cmd)) {
@@ -307,10 +313,11 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
         if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
             if (args.length == 1) {
-                return List.of("<schematic set id> <schematic set>");
+
+                return Collections.singletonList("<schematic set id> <schematic set>");
             }
             if (args.length == 2) {
-                return List.of("<schematic set>");
+                return Collections.singletonList("<schematic set>");
             }
             return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
         }

@@ -27,14 +27,15 @@ public enum Placement {
      * Use the highest non air point of the schematic as origin
      */
     RAISE(findRaise(), "r", "raiseItToTheSky");
+    /*
     /**
      * Use the lowest terrain point in the region where the brush should be pasted as y.
-     */
-    //FLOOR(findFloor(), "f", "sinkItInTheGround"),
+     *
+    FLOOR(findFloor(), "f", "sinkItInTheGround"),
     /**
      * Use the heighest terrain point in the region where the brush should be pasted as y.
-     */
-    //CEIL(findFloor(), "c");
+     *
+    CEIL(findFloor(), "c");*/
 
     private final String[] alias;
     private final ToIntFunction<Clipboard> find;

@@ -2,6 +2,7 @@ package de.eldoria.schematicbrush.schematics;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +70,7 @@ public class Schematic {
      *                     This should only happen, if the schematic was deletet or moved.
      */
     public Clipboard getSchematic() throws IOException {
-        try (var reader = format.getReader(new FileInputStream(file))) {
+        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
             return reader.read();
         }
     }

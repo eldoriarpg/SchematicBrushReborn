@@ -44,13 +44,13 @@ public class SchematicBrushReborn extends JavaPlugin {
         schematics.init();
 
         BrushCommand brushCommand = new BrushCommand(this, schematics);
-        BrushModifyCommand brushModifyCommand = new BrushModifyCommand(this, schematics);
-        SchematicPresetCommand schematicPresetCommand = new SchematicPresetCommand(this, schematics);
-        BrushAdminCommand brushAdminCommand = new BrushAdminCommand(this, schematics);
+        BrushModifyCommand modifyCommand = new BrushModifyCommand(this, schematics);
+        SchematicPresetCommand presetCommand = new SchematicPresetCommand(this, schematics);
+        BrushAdminCommand adminCommand = new BrushAdminCommand(this, schematics);
 
         getCommand("sbr").setExecutor(brushCommand);
-        getCommand("sbrm").setExecutor(brushModifyCommand);
-        getCommand("sbrp").setExecutor(schematicPresetCommand);
-        getCommand("sbra").setExecutor(brushAdminCommand);
+        getCommand("sbrm").setExecutor(modifyCommand);
+        getCommand("sbrp").setExecutor(presetCommand);
+        getCommand("sbra").setExecutor(adminCommand);
     }
 }

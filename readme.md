@@ -7,11 +7,11 @@ which doesn't received any updates for version 1.13+.
 So we decided to write it new from scratch and make it even better than before. We added several new functionalities,
 which should make using schematic brushes easier.
 
-We added tabcomplete for nearly everything. You can start directly and learn from the plugin on the fly how to use it.
-We load schematics from our own schematic folder, of FAWE and World Edit. So we dont care, where you store your schematics.
+We added tab complete for nearly everything. You can start directly and learn from the plugin on the fly how to use it.
+We load schematics from our own schematic folder, of FAWE and World Edit. So we don't care, where you store your schematics.
 We support every schematic format which World Edit supports.
 
-We allow you to save your favourite schematic sets as a preset.
+We allow you to save your favorite schematic sets as a preset.
 You can use them every time and even combine them with other presets.
 
 ![## Features](http://chojo.u.catgirlsare.sexy/64F0fGlX.png)  
@@ -21,7 +21,7 @@ You can use them every time and even combine them with other presets.
 + Customize your brush with different flags
 + Use weighted schematic sets to keep control of your schematics.
 + Use random schematic sets to get more diversity.
-+ Save your favourite schematics sets as a set to use them everytime.
++ Save your favorite schematics sets as a set to use them everytime.
 
 ![## Requirements](http://chojo.u.catgirlsare.sexy/jtvCkmgC.png)  
 

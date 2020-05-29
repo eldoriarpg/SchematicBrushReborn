@@ -156,8 +156,10 @@ public class SchematicPresetCommand implements TabExecutor {
 
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
-        if (schematicBrush.isEmpty()) {
+
+        if (!schematicBrush.isPresent()) {
             MessageSender.sendError(player, "This tool is not a schematic brush");
+            return;
         }
 
         SchematicBrush brush = schematicBrush.get();
@@ -184,7 +186,8 @@ public class SchematicPresetCommand implements TabExecutor {
 
         Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, brushArgs);
 
-        if (settings.isEmpty()) {
+
+        if (!settings.isPresent()) {
             return;
         }
 
@@ -208,7 +211,8 @@ public class SchematicPresetCommand implements TabExecutor {
 
         Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, brushArgs);
 
-        if (settings.isEmpty()) {
+
+        if (!settings.isPresent()) {
             return;
         }
 
@@ -240,7 +244,8 @@ public class SchematicPresetCommand implements TabExecutor {
         String[] ids = Arrays.copyOfRange(args, 1, args.length);
 
         Optional<List<String>> optionalSchematics = getSchematicSetsFromConfig(name);
-        if (optionalSchematics.isEmpty()) {
+
+        if (!optionalSchematics.isPresent()) {
             MessageSender.sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
@@ -292,7 +297,8 @@ public class SchematicPresetCommand implements TabExecutor {
         String path = "presets." + name;
 
         Optional<List<String>> schematicSetsConfig = getSchematicSetsFromConfig(name);
-        if (schematicSetsConfig.isEmpty()) {
+
+        if (!schematicSetsConfig.isPresent()) {
             MessageSender.sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
@@ -442,9 +448,9 @@ public class SchematicPresetCommand implements TabExecutor {
         if ("savecurrent".equalsIgnoreCase(cmd) || "c".equalsIgnoreCase(cmd)) {
             ConfigurationSection presets = plugin.getConfig().getConfigurationSection("presets");
             if (presetExists(last)) {
-                return List.of("This name is already in use!");
+                return Collections.singletonList("This name is already in use!");
             }
-            return List.of("<name of preset>");
+            return Collections.singletonList("<name of preset>");
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)
@@ -462,9 +468,9 @@ public class SchematicPresetCommand implements TabExecutor {
         if ("save".equalsIgnoreCase(cmd) || "s".equalsIgnoreCase(cmd)) {
             if (args.length == 2) {
                 if (presetExists(last)) {
-                    return List.of("This name is already in use!");
+                    return Collections.singletonList("This name is already in use!");
                 }
-                return List.of("<name of preset>");
+                return Collections.singletonList("<name of preset>");
             }
             return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
         }
@@ -492,7 +498,8 @@ public class SchematicPresetCommand implements TabExecutor {
                 return TabUtil.getPresets(last, plugin, 50);
             }
             if (args.length == 3) {
-                return List.of("<id of schematic set>");
+
+                return Collections.singletonList("<id of schematic set>");
             }
         }
 
@@ -509,7 +516,8 @@ public class SchematicPresetCommand implements TabExecutor {
             if (args.length == 2) {
                 return TabUtil.getPresets(last, plugin, 50);
             }
-            return List.of("<description>");
+
+            return Collections.singletonList("<description>");
         }
 
         if (args.length == 1) {
