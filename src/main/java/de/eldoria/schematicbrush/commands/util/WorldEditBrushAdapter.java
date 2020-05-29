@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.commands;
+package de.eldoria.schematicbrush.commands.util;
 
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -7,7 +7,6 @@ import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
-import de.eldoria.schematicbrush.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;

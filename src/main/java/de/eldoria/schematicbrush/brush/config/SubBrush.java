@@ -2,10 +2,10 @@ package de.eldoria.schematicbrush.brush.config;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
+import de.eldoria.schematicbrush.brush.config.parameter.Flip;
+import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import de.eldoria.schematicbrush.util.Flip;
 import de.eldoria.schematicbrush.util.Randomable;
-import de.eldoria.schematicbrush.util.Rotation;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -91,33 +91,33 @@ public class SubBrush implements Randomable {
         this.weight = weight;
     }
 
-    public static class Builder {
+    public static class SubBrushBuilder {
         private List<Schematic> schematics = Collections.emptyList();
         private final String arguments;
         private Rotation rotation = Rotation.ROT_ZERO;
         private Flip flip = Flip.NONE;
         private int weight = -1;
 
-        public Builder(String arguments) {
+        public SubBrushBuilder(String arguments) {
             this.arguments = arguments;
         }
 
-        public Builder withSchematics(List<Schematic> schematics) {
+        public SubBrushBuilder withSchematics(List<Schematic> schematics) {
             this.schematics = schematics;
             return this;
         }
 
-        public Builder withRotation(Rotation rotation) {
+        public SubBrushBuilder withRotation(Rotation rotation) {
             this.rotation = rotation;
             return this;
         }
 
-        public Builder withFlip(Flip flip) {
+        public SubBrushBuilder withFlip(Flip flip) {
             this.flip = flip;
             return this;
         }
 
-        public Builder withWeight(int weight) {
+        public SubBrushBuilder withWeight(int weight) {
             this.weight = weight;
             return this;
         }

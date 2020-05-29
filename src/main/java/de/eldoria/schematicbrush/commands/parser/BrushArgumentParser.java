@@ -1,8 +1,8 @@
 package de.eldoria.schematicbrush.commands.parser;
 
-import de.eldoria.schematicbrush.brush.BrushSelector;
-import de.eldoria.schematicbrush.util.Flip;
-import de.eldoria.schematicbrush.util.Rotation;
+import de.eldoria.schematicbrush.brush.config.parameter.BrushSelector;
+import de.eldoria.schematicbrush.brush.config.parameter.Flip;
+import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import lombok.Data;
 
 import javax.annotation.Nonnull;
@@ -37,7 +37,7 @@ public final class BrushArgumentParser {
     /**
      * Pattern to detect the flip
      */
-    private static final Pattern FLIP_PATTERN = Pattern.compile("!(NS|SN|WO|OW|N|S|W|E|\\*)" + ENDINGS,
+    private static final Pattern FLIP_PATTERN = Pattern.compile("!(NS|SN|WE|EW|N|S|W|E|\\*)" + ENDINGS,
             Pattern.CASE_INSENSITIVE);
     /**
      * Pattern to detect the weight

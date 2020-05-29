@@ -1,4 +1,6 @@
-package de.eldoria.schematicbrush.util;
+package de.eldoria.schematicbrush.brush.config.parameter;
+
+import de.eldoria.schematicbrush.util.Randomable;
 
 public enum Rotation implements Randomable {
     /**

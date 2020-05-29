@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush;
+package de.eldoria.schematicbrush.commands.util;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;

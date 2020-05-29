@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.util;
+package de.eldoria.schematicbrush.brush.config.parameter;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;

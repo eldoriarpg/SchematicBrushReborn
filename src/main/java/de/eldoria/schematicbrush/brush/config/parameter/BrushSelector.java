@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.brush;
+package de.eldoria.schematicbrush.brush.config.parameter;
 
 public enum BrushSelector {
     /**

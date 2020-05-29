@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush;
+package de.eldoria.schematicbrush.util;
 
 import com.google.common.collect.ObjectArrays;
 import lombok.experimental.UtilityClass;
@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @UtilityClass
-public class Util {
+public class ArrayUtil {
     public Matcher findInArray(String[] strings, Pattern contains) {
         for (String string : strings) {
             Matcher matcher = contains.matcher(string);

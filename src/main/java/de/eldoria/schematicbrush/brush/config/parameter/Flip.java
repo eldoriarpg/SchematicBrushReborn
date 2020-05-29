@@ -1,7 +1,8 @@
-package de.eldoria.schematicbrush.util;
+package de.eldoria.schematicbrush.brush.config.parameter;
 
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
+import de.eldoria.schematicbrush.util.Randomable;
 
 public enum Flip implements Randomable {
     NONE(),

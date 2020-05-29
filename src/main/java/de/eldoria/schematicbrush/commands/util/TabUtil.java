@@ -1,6 +1,6 @@
-package de.eldoria.schematicbrush.commands;
+package de.eldoria.schematicbrush.commands.util;
 
-import de.eldoria.schematicbrush.Util;
+import de.eldoria.schematicbrush.util.ArrayUtil;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import lombok.experimental.UtilityClass;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,7 +24,7 @@ public class TabUtil {
 
 
     private final String[] SMALL_FLAGS = {INCLUDE_AIR[0], REPLACE_ALL[0], Y_OFFSET[0], PLACEMENT[0]};
-    private final String[] FLAGS = Util.combineArrays(INCLUDE_AIR, REPLACE_ALL, Y_OFFSET, PLACEMENT);
+    private final String[] FLAGS = ArrayUtil.combineArrays(INCLUDE_AIR, REPLACE_ALL, Y_OFFSET, PLACEMENT);
 
     private final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise"};
 
@@ -130,7 +130,7 @@ public class TabUtil {
     private Optional<Character> getBrushArgumentMarker(String string) {
         for (int i = string.length() - 1; i >= 0; i--) {
             char c = string.charAt(i);
-            if (Util.arrayContains(MARKER, c)) {
+            if (ArrayUtil.arrayContains(MARKER, c)) {
                 return Optional.of(c);
             }
         }
@@ -140,7 +140,7 @@ public class TabUtil {
     private String getBrushArgumentStringToLastMarker(String string) {
         for (int i = string.length() - 1; i >= 0; i--) {
             char c = string.charAt(i);
-            if (Util.arrayContains(MARKER, c)) {
+            if (ArrayUtil.arrayContains(MARKER, c)) {
                 return string.substring(0, i + 1);
             }
         }

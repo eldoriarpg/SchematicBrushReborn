@@ -17,11 +17,11 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.session.PasteBuilder;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import de.eldoria.schematicbrush.MessageSender;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.brush.config.SubBrush;
-import de.eldoria.schematicbrush.util.Flip;
-import de.eldoria.schematicbrush.util.Rotation;
+import de.eldoria.schematicbrush.brush.config.parameter.Flip;
+import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import org.bukkit.entity.Player;
 
 /**

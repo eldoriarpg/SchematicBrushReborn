@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.brush.config;
 
-import de.eldoria.schematicbrush.util.Placement;
+import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.util.Randomable;
 import lombok.Getter;
 
@@ -105,8 +105,8 @@ public final class BrushConfiguration implements Randomable {
      * @param brush brush which should be added
      * @return a brush builder with one brush added
      */
-    public static Builder newSingleBrushSettingsBuilder(SubBrush brush) {
-        return new Builder(brush);
+    public static BrushConfigurationBuilder newSingleBrushSettingsBuilder(SubBrush brush) {
+        return new BrushConfigurationBuilder(brush);
     }
 
     /**
@@ -114,8 +114,8 @@ public final class BrushConfiguration implements Randomable {
      *
      * @return a brush builder without any configuration
      */
-    public static Builder newBrushSettingsBuilder() {
-        return new Builder();
+    public static BrushConfigurationBuilder newBrushSettingsBuilder() {
+        return new BrushConfigurationBuilder();
     }
 
     /**
@@ -131,7 +131,7 @@ public final class BrushConfiguration implements Randomable {
         return new BrushConfiguration(brushes, includeAir, replaceAirOnly, yOffset, placement);
     }
 
-    public static final class Builder {
+    public static final class BrushConfigurationBuilder {
         /**
          * List of all sub brushes this brush has.
          */
@@ -154,11 +154,11 @@ public final class BrushConfiguration implements Randomable {
         private Placement placement = Placement.DROP;
 
 
-        private Builder(SubBrush config) {
+        private BrushConfigurationBuilder(SubBrush config) {
             brushes = List.of(config);
         }
 
-        private Builder() {
+        private BrushConfigurationBuilder() {
             brushes = new ArrayList<>();
         }
 
@@ -169,7 +169,7 @@ public final class BrushConfiguration implements Randomable {
          * @param brush brush which should be added
          * @return builder instance with brush added
          */
-        public Builder addBrush(SubBrush brush) {
+        public BrushConfigurationBuilder addBrush(SubBrush brush) {
             brushes.add(brush);
             return this;
         }
@@ -180,7 +180,7 @@ public final class BrushConfiguration implements Randomable {
          * @param includeAir True if the air of the schematic should replace non air blocks
          * @return builder instance with changed state
          */
-        public Builder includeAir(boolean includeAir) {
+        public BrushConfigurationBuilder includeAir(boolean includeAir) {
             this.includeAir = includeAir;
             return this;
         }
@@ -192,7 +192,7 @@ public final class BrushConfiguration implements Randomable {
          *                       where the block material is {@link org.bukkit.Material#AIR}
          * @return builder instance with changed state
          */
-        public Builder replaceAirOnly(boolean replaceAirOnly) {
+        public BrushConfigurationBuilder replaceAirOnly(boolean replaceAirOnly) {
             this.replaceAirOnly = replaceAirOnly;
             return this;
         }
@@ -203,7 +203,7 @@ public final class BrushConfiguration implements Randomable {
          * @param yOffset y offset of the brush
          * @return builder instance with applied offset
          */
-        public Builder withYOffset(int yOffset) {
+        public BrushConfigurationBuilder withYOffset(int yOffset) {
             this.yOffset = yOffset;
             return this;
         }
@@ -214,7 +214,7 @@ public final class BrushConfiguration implements Randomable {
          * @param placement placement method for the schematic
          * @return builder instance with applied placement
          */
-        public Builder withPlacementType(Placement placement) {
+        public BrushConfigurationBuilder withPlacementType(Placement placement) {
             this.placement = placement;
             return this;
         }
