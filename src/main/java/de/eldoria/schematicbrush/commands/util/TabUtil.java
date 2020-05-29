@@ -36,6 +36,13 @@ public class TabUtil {
     public List<String> getBrushSyntax(String arg, SchematicCache cache, Plugin plugin) {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
 
+        if(arg.isEmpty()){
+            return List.of("<name>@rotation!flip:weight",
+                    "$<directory>@rotation!flip:weight",
+                    "&<presetname>@rotation!flip:weight",
+                    "^<regex>@rotation!flip:weight");
+        }
+
         if (brushArgumentMarker.isEmpty()) {
             List<String> matchingSchematics = cache.getMatchingSchematics(arg, 50);
             matchingSchematics.add("<name>@rotation!flip:weight");
