@@ -1,16 +1,24 @@
 # Schematic Brush Reborn
 Schematic Brush Reborn is a complete new rewrite of the old [Schematic Brush](https://github.com/mikeprimm/SchematicBrush)
-which doen't received any updates for version 1.13+.
+which doesn't received any updates for version 1.13+.
 
-So we decided to update it and make it even better than before. We added several new functionalities,
+So we decided to write it new from scratch and make it even better than before. We added several new functionalities,
 which should make using schematic brushes easier.
 
 We added tabcomplete for nearly everything. You can start directly and learn from the plugin on the fly how to use it.
-We load schematics from our own schematic folder, of FAWE and World edit. So we dont care, where you store your schematics.
+We load schematics from our own schematic folder, of FAWE and World Edit. So we dont care, where you store your schematics.
 We support every schematic format which World Edit supports.
 
 We allow you to save your favourite schematic sets as a preset.
-You can use them every time or even combine them with other presets.
+You can use them every time and even combine them with other presets.
+
+## Features
++ Use schematics from your server as a world edit brush.
++ Modify your current brush every time without creating a new one.
++ Customize your brush with different flags
++ Use weighted schematic sets to keep control of your schematics.
++ Use random schematic sets to get more diversity.
++ Save your favourite schematics sets as a set to use them everytime.
 
 ## Requirements
 Spigot or Paper 1.13 and above.
@@ -57,7 +65,7 @@ If you want a broader search you can add a * at the and. This will use every sch
 + For further information I recommend this [site](https://www.regextester.com/)
 
 ##### Directory
-If you are a organized humen, you have all your schematics probably sorted in folder.
+If you are an organized humen, you have all your schematics properly sorted in folder.
 You can select all schematics inside a folder with:
 
 `$<directory>@rotation!flip:weight`
