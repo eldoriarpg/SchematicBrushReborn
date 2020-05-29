@@ -48,7 +48,7 @@ public class BrushSettingsParser {
      * @return A optional, which returns a unconfigured {@link BrushConfiguration.BrushConfigurationBuilder} with brushes already set
      * or empty if a brush string could not be parsed
      */
-    private Optional<BrushConfiguration.BrushConfigurationBuilder> buildBrushes(Player player, List<String> settingsStrings, Plugin plugin,
+    public Optional<BrushConfiguration.BrushConfigurationBuilder> buildBrushes(Player player, List<String> settingsStrings, Plugin plugin,
                                                                                 SchematicCache schematicCache) {
 
         BrushConfiguration.BrushConfigurationBuilder brushConfigurationBuilder = BrushConfiguration.newBrushSettingsBuilder();

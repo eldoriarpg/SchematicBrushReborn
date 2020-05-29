@@ -1,11 +1,11 @@
 package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.schematicbrush.C;
-import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushConfiguration;
 import de.eldoria.schematicbrush.brush.config.SubBrush;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
+import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class BrushModifyCommand implements TabExecutor, Randomable {
     private final JavaPlugin plugin;
     private final SchematicCache schematicCache;
-    private static final String[] COMMANDS = {"append", "remove", "edit", "info", "help"};
+    private static final String[] COMMANDS = {"append", "remove", "edit", "info", "reload", "help"};
 
     public BrushModifyCommand(JavaPlugin plugin, SchematicCache schematicCache) {
         this.plugin = plugin;
@@ -54,6 +54,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         String[] subcommandArgs = Arrays.copyOfRange(args, 1, args.length);
 
         String cmd = args[0];
+
         if ("append".equalsIgnoreCase(cmd) || "a".equalsIgnoreCase(cmd)) {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 appendBrush(player, subcommandArgs);
@@ -62,6 +63,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             }
             return true;
         }
+
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 removeBrush(player, subcommandArgs);
@@ -70,9 +72,19 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             }
             return true;
         }
+
         if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 editBrush(player, subcommandArgs);
+            } else {
+                MessageSender.sendError(player, "You don't have the permission to do this!");
+            }
+            return true;
+        }
+
+        if ("reload".equalsIgnoreCase(cmd) || "rel".equalsIgnoreCase(cmd)) {
+            if (player.hasPermission("schematicbrush.brush.use")) {
+                reload(player);
             } else {
                 MessageSender.sendError(player, "You don't have the permission to do this!");
             }
@@ -182,6 +194,44 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
                 + brushConfiguration.get().getBrushes().get(0).getArguments() + ".");
     }
 
+    private void reload(Player player) {
+        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+
+        if (schematicBrush.isEmpty()) {
+            MessageSender.sendMessage(player, "This is not a schematic brush!");
+            return;
+        }
+
+        BrushConfiguration oldSettings = schematicBrush.get().getSettings();
+        Optional<BrushConfiguration.BrushConfigurationBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
+                oldSettings.getBrushes().stream().map(SubBrush::getArguments).collect(Collectors.toList()),
+                plugin, schematicCache);
+
+        if (configurationBuilder.isEmpty()) {
+            return;
+        }
+
+        BrushConfiguration.BrushConfigurationBuilder builder = configurationBuilder.get();
+
+        BrushConfiguration configuration = builder.includeAir(oldSettings.isIncludeAir())
+                .replaceAirOnly(oldSettings.isReplaceAirOnly())
+                .withPlacementType(oldSettings.getPlacement())
+                .withYOffset(oldSettings.getYOffset())
+                .build();
+
+        int oldCount = oldSettings.getSchematicCount();
+        int newcount = configuration.getSchematicCount();
+        int addedSchematics = newcount - oldCount;
+        WorldEditBrushAdapter.setBrush(player, new SchematicBrush(player, configuration));
+        if (addedSchematics != 0) {
+            MessageSender.sendMessage(player, "Brush reloaded. Added " + addedSchematics + " schematics" + C.NEW_LINE
+                    + "Brush is now using " + newcount + " schematics.");
+        } else {
+            MessageSender.sendMessage(player, "No new schematics were found." +
+                    "Maybe you have to reload the schematics first. Use /sbra reloadschematics");
+        }
+    }
+
     private void brushInfo(Player player) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
@@ -215,6 +265,8 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
                         + "/sbrm append <brushes...> - Add one or more brushes to your brush." + C.NEW_LINE
                         + "/sbrm remove <id> - Remove a brush." + C.NEW_LINE
                         + "/sbrm edit <id> <brush> - Replace a brush with another brush." + C.NEW_LINE
+                        + "/sbrm reload - Reload matching schematics, if new schematics were recently added."
+                        + "You may want to use /sbra reloadschematics first." + C.NEW_LINE
                         + "/sbrm info - Get a list of all brushes your brush contains." + C.NEW_LINE
                         + "Use the id from the info command to change or remove a brush."
         );
@@ -243,6 +295,10 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
             return List.of("<brush id>");
+        }
+
+        if ("reload".equalsIgnoreCase(cmd) || "rel".equalsIgnoreCase(cmd)) {
+            return Collections.emptyList();
         }
 
         if ("edit".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
