@@ -23,7 +23,7 @@ public final class BrushArgumentParser {
     /**
      * Pattern to use schematics inside a directory
      */
-    private static final Pattern DIRECTORY_PATTERN = Pattern.compile("^(\\$" + NAME + ENDINGS);
+    private static final Pattern DIRECTORY_PATTERN = Pattern.compile("^\\$(" + NAME + ENDINGS);
 
     /**
      * Pattern to use a brush preset
