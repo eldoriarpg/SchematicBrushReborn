@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class BrushSettingsParser {
-    private final Pattern Y_OFFSET = Pattern.compile("-(?:yoff)|(?:yoffset)|(?:y):-?([0-9]{1,3})", Pattern.CASE_INSENSITIVE);
-    private final Pattern PLACEMENT = Pattern.compile("-(?:place)|(?:placement)|(?:p):([a-zA-Z]+?)", Pattern.CASE_INSENSITIVE);
+    private final Pattern Y_OFFSET = Pattern.compile("-(?:(?:yoff)|(?:yoffset)|(?:y)):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
+    private final Pattern PLACEMENT = Pattern.compile("-(?:(?:place)|(?:placement)|(?:p)):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
 
     public Optional<BrushConfiguration> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
                                                    String[] args) {
@@ -87,6 +87,7 @@ public class BrushSettingsParser {
 
             // Check if its a preset
             if (subBrushType.getSelectorType() == BrushSelector.PRESET) {
+                // check if brush exists
                 if (!plugin.getConfig().contains("presets." + subBrushType.getSelectorValue())) {
                     MessageSender.sendError(player, "This brush preset"
                             + subBrushType.getSelectorValue() + " does not exist.");
@@ -116,7 +117,7 @@ public class BrushSettingsParser {
                         return Optional.empty();
                     }
 
-                    Optional<SubBrush> config = buildBrushConfig(player, subBrushType, settings, schematicCache);
+                    Optional<SubBrush> config = buildBrushConfig(player, optionalBrushType.get(), settings, schematicCache);
                     if (config.isEmpty()) {
                         MessageSender.sendError(player, settings + " is invalid");
                         return Optional.empty();
@@ -208,7 +209,7 @@ public class BrushSettingsParser {
         }
 
         if (ArrayUtil.arrayContains(args, "-replaceall", "-repla", "-r")) {
-            brushSettingsBrushConfigurationBuilder.includeAir(true);
+            brushSettingsBrushConfigurationBuilder.replaceAll(true);
         }
 
         Matcher matcher = ArrayUtil.findInArray(args, Y_OFFSET);
@@ -228,15 +229,8 @@ public class BrushSettingsParser {
 
         if (matcher != null) {
             String value = matcher.group(1);
-            Placement.asPlacement(value);
-            int offset;
-            try {
-                offset = Integer.parseInt(value);
-            } catch (NumberFormatException e) {
-                MessageSender.sendError(player, "Invalid placement.");
-                return Optional.empty();
-            }
-            brushSettingsBrushConfigurationBuilder.withYOffset(offset);
+            Placement placement = Placement.asPlacement(value);
+            brushSettingsBrushConfigurationBuilder.withPlacementType(placement);
         }
 
         return Optional.of(brushSettingsBrushConfigurationBuilder.build());
