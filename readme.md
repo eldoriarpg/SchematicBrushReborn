@@ -27,7 +27,7 @@ You can use them every time and even combine them with other presets.
 
 Spigot or Paper 1.13 and above.  
 Java 11 and above.  
-World Edit 7.1 and above.  
+WorldEdit 7.1 and above.  
 FAWE is also supported, but on the current state pretty unstable.  
 
 ![## How does it work?](http://chojo.u.catgirlsare.sexy/V05UGdwq.png)  
@@ -53,7 +53,8 @@ We also track your schematic, preset and directory names. We can complete everyt
 ![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
 ### Schematic Set
-A schematic set consists of a selector an optional modifier.
+A schematic set consists of a selector and optional modifiers.
+
 #### Selector
 A selector can be several things.
 
@@ -74,7 +75,7 @@ If you want a broader search you can add a * at the and. This will use every sch
 + For further information I recommend this [site](https://www.regextester.com/)
 
 ##### Directory
-If you are an organized humen, you have all your schematics properly sorted in folder.
+If you are an organized human, you have all your schematics properly sorted in folder.
 You can select all schematics inside a folder with:
 
 `$<directory>@rotation!flip:weight`
@@ -130,7 +131,7 @@ The origin is always at the x and z center of your schematic, but we allow you t
 **Bottom**: The origin will be on the lowest point of you schematic
 **Drop**: The origin will be at the lowest non air block in your schematic. This is the default value.
 **Top**: The origin will be on the highest point of you schematic
-**Drop**: The origin will be at the highest non air block in your schematic
+**Raise**: The origin will be at the highest non air block in your schematic
 
 `-placement:type`
 `-place:type`
@@ -155,25 +156,26 @@ This will change the behavioud. So we can replace blocks, which are solid.
 `-r`
 
 #### Placeair
-On default we dont place air block. If you want to change this use this flag.
+On default we don't place air block. If you want to change this use this flag.
 
 `-includeair`
 `-incair`
 `-a`
 
 ![## Commands](http://chojo.u.catgirlsare.sexy/ovFjigc1.png)  
-All command profide the information listed below, if you use them withour any arguments.
-All command have a rich tabcompletion which always helps you with building your brush
+
+All commands provide the information listed below, if you use them without any arguments.
+All commands have a rich tabcompletion which always helps you with building your brush.
 
 ![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
 ### Schematicbrush
 Alias: `schbr`, `sbr`
 
-Argumente: `<schematic sets...> <flags>`
+Arguments: `<schematic sets...> <flags>`
 Permission: `schematicbrush.brush.use`
 
-This command is be core of schematic brush. It allows you to create a schematic brush on a item.
+This command is the core of schematic brush. It allows you to create a schematic brush on a item.
 
 ![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
