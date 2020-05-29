@@ -278,7 +278,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             return null;
         }
 
-        if (args.length == 0) {
+        if (args[0].isEmpty()) {
             return Arrays.asList(COMMANDS);
         }
 

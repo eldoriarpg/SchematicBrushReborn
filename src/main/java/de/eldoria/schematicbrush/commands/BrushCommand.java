@@ -69,13 +69,6 @@ public class BrushCommand implements TabExecutor, Randomable {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 0) {
-            return List.of("<name>@rotation!flip:weight",
-                    "$<directory>@rotation!flip:weight",
-                    "&<presetname>@rotation!flip:weight",
-                    "^<regex>@rotation!flip:weight");
-        }
-
         String last = args[args.length - 1];
         if (TabUtil.isFlag(last)) {
             return TabUtil.getFlagComplete(last);

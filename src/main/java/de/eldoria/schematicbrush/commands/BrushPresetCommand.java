@@ -441,9 +441,10 @@ public class BrushPresetCommand implements TabExecutor {
             return null;
         }
 
-        if (args.length == 0) {
+        if (args[0].isEmpty()) {
             return Arrays.asList(COMMANDS);
         }
+
         String last = args[args.length - 1];
         String cmd = args[0];
         if ("help".equalsIgnoreCase(cmd) || "h".equalsIgnoreCase(cmd)) {
