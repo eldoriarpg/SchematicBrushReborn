@@ -50,6 +50,8 @@ You don't have to remember any of this. The plugin features a rich tabcomplete, 
 
 We also track your schematic, preset and directory names. We can complete everything for you.
 
+![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
+
 ### Schematic Set
 A schematic set consists of a selector an optional modifier.
 #### Selector
@@ -83,6 +85,8 @@ Currently only the direct folder inside the schematics folder is valid. No subfo
 ##### Preset
 A saved preset can be loaded with:
 `&<preset>@rotation!flip:weight`
+
+![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
 #### Modifier
 The modifier are optional. The order doesn't matter.
@@ -161,6 +165,8 @@ On default we dont place air block. If you want to change this use this flag.
 All command profide the information listed below, if you use them withour any arguments.
 All command have a rich tabcompletion which always helps you with building your brush
 
+![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
+
 ### Schematicbrush
 Alias: `schbr`, `sbr`
 
@@ -168,6 +174,8 @@ Argumente: `<schematic sets...> <flags>`
 Permission: `schematicbrush.brush.use`
 
 This command is be core of schematic brush. It allows you to create a schematic brush on a item.
+
+![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
 ### SchematicBrushModify
 Alias: `schrbm` `sbrm`
@@ -205,6 +213,8 @@ Get the settings and schematic sets on your current brush.
 
 `sbrm info`
 `sbrm i`
+
+![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
 ### SchematicBrushPreset
 Alias: `schbrp` `sbrp`
@@ -276,6 +286,8 @@ Permission: `schematicbrush.brush.use`
 
 `sbrp list`
 `sbrp l`
+
+![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
 ### SchematicBrushAdmin
 Alias: `schbra` `sbra`
