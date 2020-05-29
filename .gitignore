@@ -91,7 +91,6 @@ fabric.properties
 # Intellij
 .idea/
 *.iml
-*.iws
 
 # Maven
 log/

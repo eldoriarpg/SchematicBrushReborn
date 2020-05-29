@@ -5,6 +5,7 @@ import de.eldoria.schematicbrush.util.Randomable;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -105,8 +106,8 @@ public final class BrushSettings implements Randomable {
      * @param brush brush which should be added
      * @return a brush builder with one brush added
      */
-    public static BrushConfigurationBuilder newSingleBrushSettingsBuilder(SchematicSet brush) {
-        return new BrushConfigurationBuilder(brush);
+    public static BrushSettingsBuilder newSingleBrushSettingsBuilder(SchematicSet brush) {
+        return new BrushSettingsBuilder(brush);
     }
 
     /**
@@ -114,8 +115,8 @@ public final class BrushSettings implements Randomable {
      *
      * @return a brush builder without any configuration
      */
-    public static BrushConfigurationBuilder newBrushSettingsBuilder() {
-        return new BrushConfigurationBuilder();
+    public static BrushSettingsBuilder newBrushSettingsBuilder() {
+        return new BrushSettingsBuilder();
     }
 
     /**
@@ -131,7 +132,7 @@ public final class BrushSettings implements Randomable {
         return new BrushSettings(brushes, includeAir, replaceAll, yOffset, placement);
     }
 
-    public static final class BrushConfigurationBuilder {
+    public static final class BrushSettingsBuilder {
         /**
          * List of all sub brushes this brush has.
          */
@@ -154,11 +155,11 @@ public final class BrushSettings implements Randomable {
         private Placement placement = Placement.DROP;
 
 
-        private BrushConfigurationBuilder(SchematicSet config) {
-            brushes = List.of(config);
+        private BrushSettingsBuilder(SchematicSet config) {
+            brushes = Collections.singletonList(config);
         }
 
-        private BrushConfigurationBuilder() {
+        private BrushSettingsBuilder() {
             brushes = new ArrayList<>();
         }
 
@@ -169,7 +170,7 @@ public final class BrushSettings implements Randomable {
          * @param brush brush which should be added
          * @return builder instance with brush added
          */
-        public BrushConfigurationBuilder addBrush(SchematicSet brush) {
+        public BrushSettingsBuilder addBrush(SchematicSet brush) {
             brushes.add(brush);
             return this;
         }
@@ -180,7 +181,7 @@ public final class BrushSettings implements Randomable {
          * @param includeAir True if the air of the schematic should replace non air blocks
          * @return builder instance with changed state
          */
-        public BrushConfigurationBuilder includeAir(boolean includeAir) {
+        public BrushSettingsBuilder includeAir(boolean includeAir) {
             this.includeAir = includeAir;
             return this;
         }
@@ -192,7 +193,7 @@ public final class BrushSettings implements Randomable {
          *                       where the block material is {@link org.bukkit.Material#AIR}
          * @return builder instance with changed state
          */
-        public BrushConfigurationBuilder replaceAll(boolean replaceAirOnly) {
+        public BrushSettingsBuilder replaceAll(boolean replaceAirOnly) {
             this.replaceAll = replaceAirOnly;
             return this;
         }
@@ -203,7 +204,7 @@ public final class BrushSettings implements Randomable {
          * @param yOffset y offset of the brush
          * @return builder instance with applied offset
          */
-        public BrushConfigurationBuilder withYOffset(int yOffset) {
+        public BrushSettingsBuilder withYOffset(int yOffset) {
             this.yOffset = yOffset;
             return this;
         }
@@ -214,7 +215,7 @@ public final class BrushSettings implements Randomable {
          * @param placement placement method for the schematic
          * @return builder instance with applied placement
          */
-        public BrushConfigurationBuilder withPlacementType(Placement placement) {
+        public BrushSettingsBuilder withPlacementType(Placement placement) {
             this.placement = placement;
             return this;
         }

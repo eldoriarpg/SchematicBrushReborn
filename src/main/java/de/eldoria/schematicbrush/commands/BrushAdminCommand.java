@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,10 +69,6 @@ public class BrushAdminCommand implements TabExecutor {
         return true;
     }
 
-    private void help(CommandSender sender) {
-
-    }
-
     private void info(CommandSender sender) {
         PluginDescriptionFile descr = plugin.getDescription();
         String info = "§bSchematic Brush Reborn§r by §b" + String.join(", ", descr.getAuthors()) + "§r" + C.NEW_LINE
@@ -106,7 +103,7 @@ public class BrushAdminCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args[0].isEmpty()) {
-            return List.of(COMMANDS);
+            return Arrays.asList(COMMANDS);
         }
 
         if (args.length == 1) {

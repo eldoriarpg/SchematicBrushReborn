@@ -45,13 +45,13 @@ public class TabUtil {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
 
         if (arg.isEmpty()) {
-            return List.of("<name>@rotation!flip:weight",
+            return Arrays.asList("<name>@rotation!flip:weight",
                     "$<directory>@rotation!flip:weight",
                     "&<presetname>@rotation!flip:weight",
                     "^<regex>@rotation!flip:weight");
         }
 
-        if (brushArgumentMarker.isEmpty()) {
+        if (!brushArgumentMarker.isPresent()) {
             List<String> matchingSchematics = cache.getMatchingSchematics(arg, 50);
             matchingSchematics.add("<name>@rotation!flip:weight");
             if (matchingSchematics.size() == 1) {
@@ -63,20 +63,20 @@ public class TabUtil {
 
         switch (brushArgumentMarker.get()) {
             case ':':
-                return List.of(arg + "@", arg + "!", "@rotation!flip", arg + "<1-999>");
+                return Arrays.asList(arg + "@", arg + "!", "@rotation!flip", arg + "<1-999>");
             case '!': {
                 if (endingWithInArray(arg, FLIP_TYPES)) {
                     return getMissingSchematicSetArguments(arg);
                 }
-                return prefixStrings(List.of(FLIP_TYPES), getBrushArgumentStringToLastMarker(arg));
+                return prefixStrings(Arrays.asList(FLIP_TYPES), getBrushArgumentStringToLastMarker(arg));
             }
             case '@':
                 if (endingWithInArray(arg, ROTATION_TYPES)) {
                     return getMissingSchematicSetArguments(arg);
                 }
-                return prefixStrings(List.of(ROTATION_TYPES), getBrushArgumentStringToLastMarker(arg));
+                return prefixStrings(Arrays.asList(ROTATION_TYPES), getBrushArgumentStringToLastMarker(arg));
             case '^':
-                return List.of("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
+                return Arrays.asList("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
             case '$': {
                 List<String> matchingDirectories = cache.getMatchingDirectories(arg.substring(1), 50);
                 matchingDirectories = prefixStrings(matchingDirectories, "$");
@@ -123,7 +123,7 @@ public class TabUtil {
         if (stringStartingWithValueInArray(flag, PLACEMENT)) {
             String[] split = flag.split(":");
             if (split.length == 1) {
-                return prefixStrings(List.of(PLACEMENT_TYPES), split[0] + ":b");
+                return prefixStrings(Arrays.asList(PLACEMENT_TYPES), split[0] + ":b");
             } else {
                 return startingWithInArray(split[1], PLACEMENT_TYPES)
                         .map(t -> split[0] + ":" + t)
@@ -132,11 +132,11 @@ public class TabUtil {
         }
 
         if (stringStartingWithValueInArray(flag, Y_OFFSET)) {
-            return List.of(flag + "<number>");
+            return Collections.singletonList(flag + "<number>");
         }
 
         if ("-".equals(flag)) {
-            return List.of(SMALL_FLAGS);
+            return Arrays.asList(SMALL_FLAGS);
         }
 
         return startingWithInArray(flag, FLAGS).collect(Collectors.toList());
@@ -218,10 +218,10 @@ public class TabUtil {
     public List<String> getPresets(String arg, Plugin plugin, int count) {
         ConfigurationSection presets = plugin.getConfig().getConfigurationSection("presets");
         if (presets == null) {
-            return List.of("Preset section missing in config!");
+            return new ArrayList<>(Collections.singletonList("Preset section missing in config!"));
         }
         if (presets.getKeys(false).isEmpty()) {
-            return List.of("No presets defined!");
+            return new ArrayList<>(Collections.singletonList("No presets defined!"));
         }
         String[] array = new String[presets.getKeys(false).size()];
         List<String> strings = startingWithInArray(arg, presets.getKeys(false).toArray(array))
