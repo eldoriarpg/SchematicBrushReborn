@@ -3,6 +3,8 @@ package de.eldoria.schematicbrush.schematics;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
+import lombok.Data;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -10,11 +12,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -40,58 +45,143 @@ public class SchematicCache {
     public void reload() {
         schematicsCache.clear();
 
-        // Check if internal schematics directory exists
-        Path internalSchematics = Paths.get(plugin.getDataFolder().getPath(), "schematics");
-        File schematicsDirectory = internalSchematics.toFile();
-        if (!schematicsDirectory.exists()) {
-            boolean success = schematicsDirectory.mkdir();
-            if (!success) {
-                logger.warning("Could not create schematics ordner.");
-            }
+        String root = plugin.getDataFolder().toPath().getParent().toString();
+
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("schematicSources.scanPathes");
+
+        if (section == null) {
+            // This should never happen.
+            plugin.getLogger().warning("schematicSources.scanPathes is missing in config.");
+            return;
         }
 
-        // Load schematics of schematic brush, FAWE and vanilla world edit.
-        loadSchematics(internalSchematics);
-        loadSchematics(Paths.get(plugin.getDataFolder().toPath().getParent().toString(), "WorldEdit", "schematics"));
-        loadSchematics(Paths.get(plugin.getDataFolder().toPath().getParent().toString(), "FastAsyncWorldEdit", "schematics"));
+        boolean prefixActive = plugin.getConfig().getBoolean("selectorSettings.pathSourceAsPrefix");
+        String seperator = plugin.getConfig().getString("selectorSettings.pathSeperator");
+        List<String> excludedPaths = plugin.getConfig().getStringList("schematicSources.excludedPathes");
+
+        for (String key : section.getKeys(false)) {
+            String path = section.getString(key + ".path");
+            if (path == null || path.isEmpty()) {
+                if (SchematicBrushReborn.debugMode()) {
+                    logger.warning("Path " + key + " has no path. Skipping!");
+                }
+                continue;
+            }
+            String prefix = section.getString(key + ".prefix");
+            if (prefix == null || prefix.isEmpty()) {
+                logger.warning("Path " + key + " has no prefix. Skipping!");
+                continue;
+            }
+
+            path = path.replace("\\", "/");
+
+            loadSchematics(Paths.get(root, path), seperator, prefix, prefixActive, excludedPaths);
+        }
 
         int sum = schematicsCache.values().stream().mapToInt(List::size).sum();
         logger.info("Loaded " + sum + " schematics from " + schematicsCache.size() + " directories.");
     }
 
-    private void loadSchematics(Path schematicFolder) {
+    private void loadSchematics(Path schematicFolder, String seperator, String prefix, boolean prefixActive, List<String> excludedPaths) {
+        // fail silently if this folder does not exist.
         if (!schematicFolder.toFile().exists()) return;
 
-        List<Path> directories;
-        try (Stream<Path> list = Files.list(schematicFolder)) {
-            directories = list
-                    .filter(Files::isDirectory)
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            logger.warning("Could not load schematics from \"schematics folder in schematic brush folder.");
+        Optional<DirectoryData> baseDirectoryData = getDirectoryData(schematicFolder);
+
+        if (!baseDirectoryData.isPresent()) {
+            logger.warning("Could not load schematics from " + schematicFolder.toString() + " folder.");
             return;
         }
 
-        for (Path dir : directories) {
-            List<Schematic> schematics = new ArrayList<>();
-            try (Stream<Path> files = Files.list(dir)) {
-                for (Path path : files.collect(Collectors.toList())) {
-                    File file = path.toFile();
-                    if (!file.isFile()) continue;
+        // initialise queue with directory in first layer
+        Queue<Path> deepDirectories = new ArrayDeque<>(baseDirectoryData.get().getDirectories());
 
-                    ClipboardFormat format = ClipboardFormats.findByFile(file);
+        // iterate over every directory.
+        // load files and add new directories if found.
+        while (!deepDirectories.isEmpty()) {
+            Path path = deepDirectories.poll();
 
-                    if (format == null) continue;
+            // remove path to get relative path in schematic folder.
+            String rawKey = path.toString().replace(schematicFolder.toString(), "");
 
-                    schematics.add(new Schematic(format, file));
+
+            Optional<DirectoryData> directoryData = getDirectoryData(path);
+            if (!directoryData.isPresent()) {
+                continue;
+            }
+            // Queue new directories
+            deepDirectories.addAll(directoryData.get().getDirectories());
+
+            // check if path is excluded
+            if (isExclued(excludedPaths, prefix + rawKey)) {
+                if (SchematicBrushReborn.debugMode()) {
+                    logger.info("Skipping exluded path " + prefix + rawKey);
                 }
-            } catch (IOException e) {
                 continue;
             }
 
-            schematicsCache.computeIfAbsent(dir.getFileName().toString(), k -> new ArrayList<>()).addAll(schematics);
+            // Build schematic references
+            List<Schematic> schematics = new ArrayList<>();
+
+            for (File file : directoryData.get().files) {
+                ClipboardFormat format = ClipboardFormats.findByFile(file);
+
+                if (format == null) continue;
+
+                schematics.add(new Schematic(format, file));
+            }
+
+            if (schematics.isEmpty()) continue;
+
+            String key = rawKey.replace(" ", "_").substring(1).replace("\\", seperator);
+            if (prefixActive) {
+                key = prefix + seperator + key;
+            }
+
+            schematicsCache.computeIfAbsent(key, k -> new ArrayList<>())
+                    // add schematics
+                    .addAll(schematics);
+            if (SchematicBrushReborn.debugMode()) {
+                logger.info("Loaded " + schematics.size() + " schematics from " + path.toString() + " as " + key);
+            }
         }
         logger.info("Loaded schematics from " + schematicFolder.toString());
+    }
+
+    private boolean isExclued(List<String> excludes, String path) {
+        for (String exclude : excludes) {
+            if (exclude.endsWith("*")) {
+                if (path.startsWith(exclude.substring(0, exclude.length() - 1))) {
+                    return true;
+                }
+            }
+            if (exclude.equalsIgnoreCase(path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Optional<DirectoryData> getDirectoryData(Path directory) {
+        List<Path> directories = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+
+        // Get a list of all files and directories in a directory
+        try (Stream<Path> paths = Files.list(directory)) {
+            // Check for each file if its a directory or a file.
+            for (Path path : paths.collect(Collectors.toList())) {
+                if (path.equals(directory)) continue;
+                File file = path.toFile();
+                if (file.isDirectory()) {
+                    directories.add(path);
+                } else if (file.isFile()) {
+                    files.add(file);
+                }
+            }
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+        return Optional.of(new DirectoryData(directories, files));
     }
 
     /**
@@ -117,14 +207,27 @@ public class SchematicCache {
      * @return all schematics inside the directory
      */
     public List<Schematic> getSchematicsByDirectory(String name) {
-        // Check if a directory with this name exists if a directory match should be checked.
-        for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
-            if (name.equalsIgnoreCase(entry.getKey())) {
-                // only the schematics in directory will be returned if a directory is found.
-                return entry.getValue();
+        // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
+        if (name.endsWith("*")) {
+            String purename = name.replace("*", "").toLowerCase();
+            List<Schematic> allSchematics = new ArrayList<>();
+            // Check if a directory with this name exists if a directory match should be checked.
+            for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+                if (entry.getKey().toLowerCase().startsWith(purename)) {
+                    // only the schematics in directory will be returned if a directory is found.
+                    allSchematics.addAll(entry.getValue());
+                }
+            }
+            return allSchematics;
+        } else {
+            // Check if a directory with this name exists if a directory match should be checked.
+            for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+                if (name.equalsIgnoreCase(entry.getKey())) {
+                    // only the schematics in directory will be returned if a directory is found.
+                    return entry.getValue();
+                }
             }
         }
-
         return Collections.emptyList();
     }
 
@@ -184,7 +287,7 @@ public class SchematicCache {
     /**
      * Returns a list of matching schematics.
      *
-     * @param name   string for lookup
+     * @param name  string for lookup
      * @param count amount of returned schematics
      * @return list of schematics names with size of count or shorter
      */
@@ -200,5 +303,16 @@ public class SchematicCache {
             }
         }
         return matches;
+    }
+
+    @Data
+    private static class DirectoryData {
+        private List<Path> directories;
+        private List<File> files;
+
+        public DirectoryData(List<Path> directories, List<File> files) {
+            this.directories = directories;
+            this.files = files;
+        }
     }
 }
