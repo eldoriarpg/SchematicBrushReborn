@@ -38,7 +38,7 @@ A schematic set is defined by a selector and several modifications of the schema
 
 `<selector>@rotation!flip:weight`
 
-The modifiers are optional and the order doesn't matter.
+The modifiers are optional, and the order doesn't matter.
 
 The brush itself has some flags, which allows to set a place method, offset and replacement rules.
 
@@ -60,7 +60,7 @@ A selector can be several things.
 
 ##### Name
 A name. This will use every schematic which exactly matches this name.
-If you want a broader search you can add a * at the and. This will use every schematic which starts with the name.
+If you want a broader search you can add a * at the end. This will use every schematic which starts with the name.
 
 `<name>@rotation!flip:weight`
 + `tree_*` - this will match all schematics which start with tree_ 
@@ -75,30 +75,28 @@ If you want a broader search you can add a * at the and. This will use every sch
 + For further information I recommend this [site](https://www.regextester.com/)
 
 ##### Directory
-If you are an organized human, you have all your schematics properly sorted in folder.
+If you are an organized human, you have all your schematics properly sorted in folders.
 You can select all schematics inside a folder with:
 
 `$<directory>@rotation!flip:weight`
 + `$tree` - Uses all schematics inside the folder trees
-
-Currently only the direct folder inside the schematics folder is valid. No subfolders of these.
 
 ##### Preset
 A saved preset can be loaded with:
 `&<preset>@rotation!flip:weight`
 
 #### Modifier
-The modifier are optional. The order doesn't matter.
+Modifiers are optional. The order doesn't matter.
 
 The entered values will be applied before pasting the schematic.
 
 Every modifier has some explicit values.
-For for flip and rotation you can use a `*` for a random value.
+For flip and rotation you can use a `*` for a random value.
 These will change everytime the brush pastes a schematic.
 
 ##### Flip
-You can flip a schematic on the North South Axis (N) or on the East West Axis (E). Probably all values are valid.
-But they do all the same. So N is equals to S and NS and SN.
+You can flip a schematic on the North South Axis (N) or on the East West Axis (E).
+Probably all values are valid, but they do all the same. So N is equals to S and NS and SN.
 If the `*` is used the rotation will be None, N and E.
 
 `!flip`
@@ -110,8 +108,8 @@ If the `*` is used the rotation will be 0, 90, 180 or 270.
 `@rotation`
 
 ##### Weight
-The weight defines the chance that the brush is used if a schematic brush contains more than one brush.
-If a brush doesn't has a weight the average of all weighted brushes will be used.
+The weight defines the chance the brush is used, if a schematic brush contains more than one brush.
+If a brush doesn't have a weight the average of all weighted brushes will be used.
 
 `:weight`
 
@@ -122,7 +120,7 @@ A brush can have several flags which change the behaviour of the brush and the p
 All flags have a short form.
 
 #### Placement
-A schematic can be placed in several method.
+A schematic can be placed in several ways.
 Before a schematic is placed, we modify the origin of the schematic.
 The origin position is equal to the block you pointed at with the block.
 The origin is always at the x and z center of your schematic, but we allow you to change the y value which is most important.
@@ -137,7 +135,7 @@ The origin is always at the x and z center of your schematic, but we allow you t
 `-place:type`
 `-p:type`
 
-Hint you can also use only the first letter of the type. This means that: `-p:d` is equal to `-placement:drop`
+Hint you can also use only the first letter of the type. This means that: `-p:d` is equal to `-placement:drop`.
 
 #### YOffset
 The y offset is applied after the placement changes. You can raise or lower a schematic before pasting.
@@ -148,7 +146,7 @@ This is useful for trees if you want be sure, that they will not be placed on to
 `-y:number`
 
 #### Replaceall
-On default the schematic brush only replaces air. We dont want to destroy existing structures.
+On default the schematic brush only replaces air. We don't want to destroy existing structures.
 This will change the behavioud. So we can replace blocks, which are solid.
 
 `-replaceall`
@@ -156,7 +154,7 @@ This will change the behavioud. So we can replace blocks, which are solid.
 `-r`
 
 #### Placeair
-On default we don't place air block. If you want to change this use this flag.
+On default, we don't place air block. If you want to change this use this flag.
 
 `-includeair`
 `-incair`
@@ -175,7 +173,7 @@ Alias: `schbr`, `sbr`
 Arguments: `<schematic sets...> <flags>`
 Permission: `schematicbrush.brush.use`
 
-This command is the core of schematic brush. It allows you to create a schematic brush on a item.
+This command is the core of schematic brush. It allows you to create a schematic brush on an item.
 
 ![space](http://chojo.u.catgirlsare.sexy/yZsxd5nh.png)
 
