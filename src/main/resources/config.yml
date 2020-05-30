@@ -6,7 +6,7 @@ selectorSettings:
   # The character you want to use when entering a path
   pathSeperator: /
   # We prefix the path with the source of the path. Use this if you have directories with equal names in your sources.
-  pathSourceAsPrefix: true
+  pathSourceAsPrefix: false
 # Manage which directories we use for schematic loading
 schematicSources:
   # Directories we should search for schematics
