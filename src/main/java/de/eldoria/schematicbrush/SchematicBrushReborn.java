@@ -14,9 +14,13 @@ public class SchematicBrushReborn extends JavaPlugin {
 
     private SchematicCache schematics;
     private static Logger logger;
+    private static boolean debug;
 
     public static Logger logger() {
         return logger;
+    }
+    public static boolean debugMode() {
+        return debug;
     }
 
     @Override
@@ -40,6 +44,11 @@ public class SchematicBrushReborn extends JavaPlugin {
         }
 
         saveDefaultConfig();
+
+        ConfigUpdater.check(this);
+
+        debug = getConfig().getBoolean("debug");
+
         schematics = new SchematicCache(this);
         schematics.init();
 
