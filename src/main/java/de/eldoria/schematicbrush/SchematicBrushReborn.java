@@ -45,7 +45,7 @@ public class SchematicBrushReborn extends JavaPlugin {
 
         saveDefaultConfig();
 
-        ConfigUpdater.check(this);
+        ConfigUpdater.validateConfig(this);
 
         debug = getConfig().getBoolean("debug");
 

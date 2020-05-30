@@ -10,7 +10,7 @@ public final class ConfigUpdater {
     private ConfigUpdater() {
     }
 
-    public static void check(Plugin plugin) {
+    public static void validateConfig(Plugin plugin) {
         int version = plugin.getConfig().getInt("version");
 
         switch (version) {
@@ -18,11 +18,12 @@ public final class ConfigUpdater {
                 updateToVersion2(plugin);
                 plugin.getLogger().info("Config updated to version 2!");
             case 2:
+                // Optional v3 update
                 break;
             default:
                 plugin.getLogger().warning("Config version is invalid. Config restore performed.");
                 plugin.getConfig().set("version", 1);
-                check(plugin);
+                validateConfig(plugin);
         }
         ensureConfigConsistency(plugin);
         plugin.saveConfig();

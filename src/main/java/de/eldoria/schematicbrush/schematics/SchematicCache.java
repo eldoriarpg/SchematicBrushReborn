@@ -123,7 +123,7 @@ public class SchematicCache {
             // Build schematic references
             List<Schematic> schematics = new ArrayList<>();
 
-            for (File file : directoryData.get().files) {
+            for (File file : directoryData.get().getFiles()) {
                 ClipboardFormat format = ClipboardFormats.findByFile(file);
 
                 if (format == null) continue;
