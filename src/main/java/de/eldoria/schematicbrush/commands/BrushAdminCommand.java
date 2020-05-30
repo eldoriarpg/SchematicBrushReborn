@@ -84,6 +84,7 @@ public class BrushAdminCommand implements TabExecutor {
 
     private void reload(CommandSender sender) {
         cache.reload();
+        plugin.reloadConfig();
         if (sender instanceof ConsoleCommandSender) {
             plugin.getLogger().info("Schematic Brush Reborn reloaded.");
         } else if (sender instanceof Player) {
