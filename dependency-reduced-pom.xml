@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.eldoria</groupId>
   <artifactId>SchematicBrushReborn</artifactId>
-  <version>1.1-BETA</version>
+  <version>1.2-BETA</version>
   <build>
     <plugins>
       <plugin>
@@ -12,6 +12,26 @@
         <configuration>
           <source>8</source>
           <target>8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <relocations>
+            <relocation>
+              <pattern>org.bstats</pattern>
+              <shadedPattern>de.eldoria.schematicbrush.bstats</shadedPattern>
+            </relocation>
+          </relocations>
         </configuration>
       </plugin>
       <plugin>
