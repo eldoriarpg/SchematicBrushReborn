@@ -472,7 +472,7 @@ public class SchematicPresetCommand implements TabExecutor {
                 }
                 return Collections.singletonList("<name of preset>");
             }
-            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
         }
 
         if ("appendSet".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
@@ -485,7 +485,7 @@ public class SchematicPresetCommand implements TabExecutor {
                 return TabUtil.getPresets(last, plugin, 50);
             }
 
-            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
         }
 
         if ("removeSet".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
