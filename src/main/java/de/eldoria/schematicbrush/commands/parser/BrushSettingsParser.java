@@ -12,6 +12,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,10 +26,22 @@ public class BrushSettingsParser {
     private final Pattern Y_OFFSET = Pattern.compile("-(?:(?:yoff)|(?:yoffset)|(?:y)):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
     private final Pattern PLACEMENT = Pattern.compile("-(?:(?:place)|(?:placement)|(?:p)):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
 
+    // Legacy pattern parser
+    private final Pattern FLIP = Pattern.compile("-flip:|-f:", Pattern.CASE_INSENSITIVE);
+    private final Pattern ROTATION = Pattern.compile("-rotate:|-r:", Pattern.CASE_INSENSITIVE);
+    private final Pattern WEIGHT = Pattern.compile("-weight:|-w:", Pattern.CASE_INSENSITIVE);
+    private final Pattern RANDOM = Pattern.compile(":random|:r", Pattern.CASE_INSENSITIVE);
+    private final Pattern DIRECTORY = Pattern.compile("dir:|d:", Pattern.CASE_INSENSITIVE);
+    private final Pattern PRESET = Pattern.compile("preset:|p:", Pattern.CASE_INSENSITIVE);
+    private final Pattern REGEX = Pattern.compile("regex:|r:", Pattern.CASE_INSENSITIVE);
+
+
     public Optional<BrushSettings> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
                                               String[] args) {
+
+
         // Remove brush settings from arguments.
-        List<String> brushes = Arrays.stream(args).filter(c -> !c.startsWith("-")).collect(Collectors.toList());
+        List<String> brushes = Arrays.stream(parseToLegacySyntax(args)).filter(c -> !c.startsWith("-")).collect(Collectors.toList());
 
 
         Optional<BrushSettings.BrushSettingsBuilder> brushSettings = buildBrushes(player, brushes, plugin, schematicCache);
@@ -46,7 +59,6 @@ public class BrushSettingsParser {
      * @param settingsStrings one or more brushes
      * @param plugin          plugin instance
      * @param schematicCache  schematic cache instance
-
      * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already set
      * or empty if a brush string could not be parsed
      */
@@ -197,7 +209,6 @@ public class BrushSettingsParser {
     }
 
     /**
-
      * Build a new Brush from a {@link BrushSettings.BrushSettingsBuilder}
      *
      * @param player          executor of the brush
@@ -247,6 +258,60 @@ public class BrushSettingsParser {
             return Optional.of(plugin.getConfig().getStringList(path));
         }
         return Optional.empty();
+    }
+
+    private String[] parseToLegacySyntax(String[] args) {
+        List<String> parsedInput = new ArrayList<>();
+        boolean open = false;
+
+        StringBuilder argumentBuilder = new StringBuilder();
+        for (String arg : args) {
+            // If a string starts and ends with a double quote we assume, that a new schematic is defined inside
+            if (arg.startsWith("\"") && arg.endsWith("\"")) {
+                parsedInput.add(parseToLegacySelector(arg.substring(1, arg.length() - 1)));
+                continue;
+            }
+            // If a string starts with a double quote we assume, that a new schematic set will be defined and open the section
+            if (arg.startsWith("\"")) {
+                open = true;
+                argumentBuilder.append(parseToLegacySelector(arg.substring(1)));
+                continue;
+            }
+
+            // If a string starts with a double quote we assume, that a new schematic set was defined and close the section
+            if (arg.endsWith("\"")) {
+                open = false;
+                argumentBuilder.append(parseToLegacyModifier(arg.substring(0, arg.length() - 1)));
+                parsedInput.add(argumentBuilder.toString());
+                argumentBuilder.setLength(0);
+                continue;
+            }
+
+            // if the current section is not open we just add the input. Could be a flagt or legacy syntax
+            if (!open) {
+                parsedInput.add(arg);
+                continue;
+            }
+
+            // if the current section is open, we keep appending all arguments.
+            argumentBuilder.append(parseToLegacyModifier(arg));
+        }
+        return parsedInput.toArray(new String[0]);
+    }
+
+    private String parseToLegacyModifier(String modifier) {
+        String result = modifier;
+        result = FLIP.matcher(result).replaceAll("!");
+        result = ROTATION.matcher(result).replaceAll("@");
+        result = WEIGHT.matcher(result).replaceAll(":");
+        return RANDOM.matcher(result).replaceAll("*");
+    }
+
+    private String parseToLegacySelector(String selector) {
+        String result = selector;
+        result = DIRECTORY.matcher(selector).replaceAll("$");
+        result = PRESET.matcher(selector).replaceAll("&");
+        return REGEX.matcher(selector).replaceAll("^");
     }
 
 }

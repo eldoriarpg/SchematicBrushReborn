@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.eldoria.schematicbrush.util.TextUtil.countChars;
+
 @UtilityClass
 public class TabUtil {
     private final String[] INCLUDE_AIR = {"-includeair", "-incair", "-a"};
@@ -29,9 +31,79 @@ public class TabUtil {
     private final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise"};
 
     private final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
-    private final String[] ROTATION_TYPES = {"0", "90", "180", "270", "*"};
+    private final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
+
+    private final String[] SELECTOR_TYPE = {"dir:", "regex:", "preset:"};
+    private final String[] SELECTOR_TYPE_MATCH = {"directory:", "d:", "regex:", "r:", "preset:", "p:"};
+
+    private final String[] MODIFIERS = {"-flip:", "-rotate:", "-weight:", "-f:", "-r:", "-w:"};
+
+    private final String[] ROTATION = {"90", "180", "270", "random"};
+    private final String[] FLIP = {"N", "E", "random"};
 
     private final char[] MARKER = {':', '@', '!', '^', '$', '&'};
+
+    public List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Plugin plugin) {
+        int quoteCount = countChars(String.join(" ", args), '\"');
+        String last = args[args.length - 1];
+        if (quoteCount % 2 == 0) {
+            return getLegacySchematicSetSyntax(last, cache, plugin);
+        }
+
+        return getSchematicSetSyntax(last, cache, plugin);
+    }
+
+    private List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
+        if (arg.startsWith("\"")) {
+            if ("\"".equals(arg)) {
+                return prefixStrings(Arrays.asList(SELECTOR_TYPE), "\"");
+            }
+
+            String selector = arg.substring(1).toLowerCase();
+            String[] split = arg.split(":");
+
+            if (selector.startsWith("dir:") || selector.startsWith("d:")) {
+                List<String> matchingDirectories = cache.getMatchingDirectories(split.length == 1 ? "" :split[1], 50);
+                return prefixStrings(matchingDirectories, split[0] + ":");
+            }
+
+            if (selector.startsWith("preset:") || selector.startsWith("p:")) {
+                List<String> presets = getPresets(split.length == 1 ? "" : split[1], plugin, 50);
+                return prefixStrings(presets, split[0] + ":");
+            }
+
+            if (selector.startsWith("regex:") || selector.startsWith("r:")) {
+                return Collections.singletonList(selector + "<regex>");
+            }
+
+            List<String> matches = startingWithInArray(selector, SELECTOR_TYPE).collect(Collectors.toList());
+            matches.addAll(cache.getMatchingSchematics(selector, 50));
+            Collections.reverse(matches);
+            return prefixStrings(matches, "\"");
+        }
+
+        String[] split = arg.split(":");
+
+        if (arg.startsWith("-rotate:") || arg.startsWith("-r:")) {
+            if (split.length == 1) {
+                return prefixStrings(Arrays.asList(ROTATION), split[0]+ ":");
+            }
+            return prefixStrings(startingWithInArray(split[1], ROTATION).collect(Collectors.toList()), split[0] + ":");
+        }
+
+        if (arg.startsWith("-flip:") || arg.startsWith("-f:")) {
+            if (split.length == 1) {
+                return prefixStrings(Arrays.asList(FLIP), split[0] + ":");
+            }
+            return prefixStrings(startingWithInArray(split[1], FLIP).collect(Collectors.toList()), split[0] + ":");
+        }
+
+        if (arg.startsWith("-weight:") || arg.startsWith("-w:")) {
+            return Collections.singletonList(split[0] + ":<number>");
+        }
+
+        return startingWithInArray(arg, MODIFIERS).collect(Collectors.toList());
+    }
 
     /**
      * Get the brush syntax for the current entry.
@@ -41,13 +113,13 @@ public class TabUtil {
      * @param plugin plugin for config access
      * @return a list of possible completions
      */
-    public List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
+    private List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
 
         if (arg.isEmpty()) {
             return Arrays.asList("<name>@rotation!flip:weight",
                     "$<directory>@rotation!flip:weight",
-                    "&<presetname>@rotation!flip:weight",
+                    "&<presetname>",
                     "^<regex>@rotation!flip:weight");
         }
 
@@ -78,24 +150,25 @@ public class TabUtil {
             case '^':
                 return Arrays.asList("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
             case '$': {
-                List<String> matchingDirectories = cache.getMatchingDirectories(arg.substring(1), 50);
+                String directory = arg.substring(1);
+                List<String> matchingDirectories = cache.getMatchingDirectories(directory, 50);
                 matchingDirectories = prefixStrings(matchingDirectories, "$");
-                if (matchingDirectories.size() < 5) {
+                // only if a direct match is found add schematic arguments.
+                if (matchingDirectories.stream().anyMatch(d -> d.equalsIgnoreCase(directory)) || directory.endsWith("*")) {
                     matchingDirectories.addAll(getMissingSchematicSetArguments(arg));
-                    Collections.reverse(matchingDirectories);
                 } else {
                     matchingDirectories.add("$<directory>@rotation!flip:weight");
                 }
                 return matchingDirectories;
             }
             case '&': {
-                List<String> presets = getPresets(arg.substring(1), plugin, 50);
+                String preset = arg.substring(1);
+                List<String> presets = getPresets(preset, plugin, 50);
                 presets = prefixStrings(presets, "&");
-                if (presets.size() < 5) {
-                    presets.addAll(getMissingSchematicSetArguments(arg));
+                if (presets.size() < 1) {
                     Collections.reverse(presets);
                 } else {
-                    presets.add("&<preset>@rotation!flip:weight");
+                    presets.add("&<preset>");
                 }
                 return presets;
             }
@@ -109,12 +182,16 @@ public class TabUtil {
      * @param arg argument to check
      * @return true if the argument is a flag
      */
-    public boolean isFlag(String arg) {
-        return arg.startsWith("-");
+    public boolean isFlag(String[] arg) {
+        if (countChars(String.join(" ", arg), '"') % 2 == 0) {
+            return arg[arg.length - 1].startsWith("-");
+
+        }
+        return false;
     }
 
     /**
-     * Get a tab complete for a flag. This will fail if {@link #isFlag(String)} is false.
+     * Get a tab complete for a flag. This will fail if {@link #isFlag(String[])} is false.
      *
      * @param flag flag to check
      * @return list of possible completions
@@ -223,9 +300,14 @@ public class TabUtil {
         if (presets.getKeys(false).isEmpty()) {
             return new ArrayList<>(Collections.singletonList("No presets defined!"));
         }
+        List<String> strings;
         String[] array = new String[presets.getKeys(false).size()];
-        List<String> strings = startingWithInArray(arg, presets.getKeys(false).toArray(array))
-                .collect(Collectors.toList());
+        if (arg.isEmpty()) {
+            strings = new ArrayList<>(presets.getKeys(false));
+        } else {
+            strings = startingWithInArray(arg, presets.getKeys(false).toArray(array))
+                    .collect(Collectors.toList());
+        }
         return strings.subList(0, Math.min(strings.size(), count));
     }
 
@@ -247,6 +329,8 @@ public class TabUtil {
      * @return list of missing arguments
      */
     private List<String> getMissingSchematicSetArguments(String arg) {
+        // A preset cant have modifiers.
+        if (arg.startsWith("&")) return Collections.emptyList();
         List<String> result = new ArrayList<>();
         StringBuilder explanation = new StringBuilder();
         if (!arg.contains("@")) {
@@ -266,4 +350,5 @@ public class TabUtil {
         }
         return result;
     }
+
 }
