@@ -3,6 +3,7 @@ package de.eldoria.schematicbrush.schematics;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
+import de.eldoria.schematicbrush.util.TextUtil;
 import lombok.Data;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,10 +17,12 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -274,14 +277,27 @@ public class SchematicCache {
      * @return list of directory names with size of count or shorter
      */
     public List<String> getMatchingDirectories(String dir, int count) {
-        List<String> matches = new ArrayList<>();
+        Set<String> matches = new HashSet<>();
+        char seperator = plugin.getConfig().getString("selectorSettings.pathSeperator").charAt(0);
+        int deep = TextUtil.countChars(dir, seperator);
         for (String k : schematicsCache.keySet()) {
-            if (k.toLowerCase().startsWith(dir.toLowerCase())) {
-                matches.add(k);
+            if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
+                matches.add(trimPath(k, seperator, deep));
                 if (matches.size() > count) break;
             }
         }
-        return matches;
+        return new ArrayList<>(matches);
+    }
+
+    private String trimPath(String string, char seperator, int deep) {
+        int count = deep;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) != seperator) continue;
+            count--;
+            if (count != -1) continue;
+            return string.substring(0, i + 1);
+        }
+        return string;
     }
 
     /**
