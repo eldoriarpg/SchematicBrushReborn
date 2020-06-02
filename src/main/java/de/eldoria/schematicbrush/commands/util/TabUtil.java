@@ -2,7 +2,6 @@ package de.eldoria.schematicbrush.commands.util;
 
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.ArrayUtil;
-import lombok.experimental.UtilityClass;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 
@@ -16,34 +15,37 @@ import java.util.stream.Stream;
 
 import static de.eldoria.schematicbrush.util.TextUtil.countChars;
 
-@UtilityClass
-public class TabUtil {
-    private final String[] INCLUDE_AIR = {"-includeair", "-incair", "-a"};
-    private final String[] REPLACE_ALL = {"-replaceAll", "-repla", "-r"};
+public final class TabUtil {
+    private static final String[] INCLUDE_AIR = {"-includeair", "-incair", "-a"};
+    private static final String[] REPLACE_ALL = {"-replaceAll", "-repla", "-r"};
 
-    private final String[] Y_OFFSET = {"-yoffset:", "-yoff:", "-y:"};
-    private final String[] PLACEMENT = {"-placement:", "-place:", "-p:"};
+    private static final String[] Y_OFFSET = {"-yoffset:", "-yoff:", "-y:"};
+    private static final String[] PLACEMENT = {"-placement:", "-place:", "-p:"};
 
 
-    private final String[] SMALL_FLAGS = {INCLUDE_AIR[0], REPLACE_ALL[0], Y_OFFSET[0], PLACEMENT[0]};
-    private final String[] FLAGS = ArrayUtil.combineArrays(INCLUDE_AIR, REPLACE_ALL, Y_OFFSET, PLACEMENT);
+    private static final String[] SMALL_FLAGS = {INCLUDE_AIR[0], REPLACE_ALL[0], Y_OFFSET[0], PLACEMENT[0]};
+    private static final String[] FLAGS = ArrayUtil.combineArrays(INCLUDE_AIR, REPLACE_ALL, Y_OFFSET, PLACEMENT);
 
-    private final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise"};
+    private static final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise"};
 
-    private final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
-    private final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
+    private static final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
+    private static final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
 
-    private final String[] SELECTOR_TYPE = {"dir:", "regex:", "preset:"};
-    private final String[] SELECTOR_TYPE_MATCH = {"directory:", "d:", "regex:", "r:", "preset:", "p:"};
+    private static final String[] SELECTOR_TYPE = {"dir:", "regex:", "preset:"};
+    private static final String[] SELECTOR_TYPE_MATCH = {"directory:", "d:", "regex:", "r:", "preset:", "p:"};
 
-    private final String[] MODIFIERS = {"-flip:", "-rotate:", "-weight:", "-f:", "-r:", "-w:"};
+    private static final String[] MODIFIERS = {"-flip:", "-rotate:", "-weight:", "-f:", "-r:", "-w:"};
 
-    private final String[] ROTATION = {"90", "180", "270", "random"};
-    private final String[] FLIP = {"N", "E", "random"};
+    private static final String[] ROTATION = {"90", "180", "270", "random"};
+    private static final String[] FLIP = {"N", "E", "random"};
 
-    private final char[] MARKER = {':', '@', '!', '^', '$', '&'};
+    private static final char[] MARKER = {':', '@', '!', '^', '$', '&'};
 
-    public List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Plugin plugin) {
+    private TabUtil() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    public static List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Plugin plugin) {
         int quoteCount = countChars(String.join(" ", args), '\"');
         String last = args[args.length - 1];
         if (quoteCount % 2 == 0) {
@@ -53,7 +55,7 @@ public class TabUtil {
         return getSchematicSetSyntax(last, cache, plugin);
     }
 
-    private List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
+    private static List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
         if (arg.startsWith("\"")) {
             if ("\"".equals(arg)) {
                 return prefixStrings(Arrays.asList(SELECTOR_TYPE), "\"");
@@ -113,7 +115,7 @@ public class TabUtil {
      * @param plugin plugin for config access
      * @return a list of possible completions
      */
-    private List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
+    private static List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
 
         if (arg.isEmpty()) {
@@ -182,7 +184,7 @@ public class TabUtil {
      * @param arg argument to check
      * @return true if the argument is a flag
      */
-    public boolean isFlag(String[] arg) {
+    public static boolean isFlag(String[] arg) {
         if (countChars(String.join(" ", arg), '"') % 2 == 0) {
             return arg[arg.length - 1].startsWith("-");
 
@@ -196,7 +198,7 @@ public class TabUtil {
      * @param flag flag to check
      * @return list of possible completions
      */
-    public List<String> getFlagComplete(String flag) {
+    public static List<String> getFlagComplete(String flag) {
         if (stringStartingWithValueInArray(flag, PLACEMENT)) {
             String[] split = flag.split(":");
             if (split.length == 1) {
@@ -226,7 +228,7 @@ public class TabUtil {
      * @param array array to check
      * @return list of strings which starts with the provided value
      */
-    public Stream<String> startingWithInArray(String value, String[] array) {
+    public static Stream<String> startingWithInArray(String value, String[] array) {
         return Arrays.stream(array).filter(e -> e.startsWith(value));
     }
 
@@ -237,7 +239,7 @@ public class TabUtil {
      * @param array array values.
      * @return true if the value starts with any value in the array
      */
-    public boolean stringStartingWithValueInArray(String value, String[] array) {
+    public static boolean stringStartingWithValueInArray(String value, String[] array) {
         return Arrays.stream(array).anyMatch(value::startsWith);
     }
 
@@ -248,7 +250,7 @@ public class TabUtil {
      * @param array array values.
      * @return true if the value ends with any value in the array
      */
-    public boolean endingWithInArray(String value, String[] array) {
+    public static boolean endingWithInArray(String value, String[] array) {
         return Arrays.stream(array).anyMatch(value::endsWith);
     }
 
@@ -258,7 +260,7 @@ public class TabUtil {
      * @param string string to check
      * @return optional argument marker if one is found.
      */
-    private Optional<Character> getBrushArgumentMarker(String string) {
+    private static Optional<Character> getBrushArgumentMarker(String string) {
         for (int i = string.length() - 1; i >= 0; i--) {
             char c = string.charAt(i);
             if (ArrayUtil.arrayContains(MARKER, c)) {
@@ -274,7 +276,7 @@ public class TabUtil {
      * @param string string to check
      * @return substring between end and last argument marker.
      */
-    private String getBrushArgumentStringToLastMarker(String string) {
+    private static String getBrushArgumentStringToLastMarker(String string) {
         for (int i = string.length() - 1; i >= 0; i--) {
             char c = string.charAt(i);
             if (ArrayUtil.arrayContains(MARKER, c)) {
@@ -292,7 +294,7 @@ public class TabUtil {
      * @param count  number of max returned preset names
      * @return list of matchin presets of length count or shorter.
      */
-    public List<String> getPresets(String arg, Plugin plugin, int count) {
+    public static List<String> getPresets(String arg, Plugin plugin, int count) {
         ConfigurationSection presets = plugin.getConfig().getConfigurationSection("presets");
         if (presets == null) {
             return new ArrayList<>(Collections.singletonList("Preset section missing in config!"));
@@ -318,7 +320,7 @@ public class TabUtil {
      * @param prefix prefix to add
      * @return list of strings which start with the prefix
      */
-    private List<String> prefixStrings(List<String> list, String prefix) {
+    private static List<String> prefixStrings(List<String> list, String prefix) {
         return list.stream().map(s -> prefix + s).collect(Collectors.toList());
     }
 
@@ -328,7 +330,7 @@ public class TabUtil {
      * @param arg argument to check
      * @return list of missing arguments
      */
-    private List<String> getMissingSchematicSetArguments(String arg) {
+    private static List<String> getMissingSchematicSetArguments(String arg) {
         // A preset cant have modifiers.
         if (arg.startsWith("&")) return Collections.emptyList();
         List<String> result = new ArrayList<>();
