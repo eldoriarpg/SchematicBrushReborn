@@ -32,7 +32,7 @@ public final class TabUtil {
     private static final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
 
     private static final String[] SELECTOR_TYPE = {"<name>", "dir:", "regex:", "preset:"};
-    private static final String[] SELECTOR_TYPE_MATCH = {"directory:", "d:", "regex:", "r:", "preset:", "p:"};
+    private static final String[] SELECTOR_TYPE_MATCH = {"dir:", "d:", "regex:", "r:", "preset:", "p:"};
 
     private static final String[] MODIFIERS = {"-flip:", "-rotate:", "-weight:", "-f:", "-r:", "-w:"};
 
