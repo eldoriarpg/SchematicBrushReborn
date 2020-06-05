@@ -299,7 +299,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         if ("append".equalsIgnoreCase(cmd) || "a".equalsIgnoreCase(cmd)) {
-            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
@@ -319,7 +319,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (args.length == 2) {
                 return Collections.singletonList("<schematic set>");
             }
-            return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
         }
 
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {

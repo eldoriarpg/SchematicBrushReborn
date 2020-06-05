@@ -58,6 +58,11 @@ public final class ConfigUpdater {
         setIfAbsent(config, "debug", false);
         ConfigurationSection sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
         setIfAbsent(config, "selectorSettings.pathSeperator", "/");
+        String o = plugin.getConfig().getString("selectorSettings.pathSeperator");
+        if (o.length() != 1) {
+            plugin.getLogger().warning("Path seperator invalid. Must be only one char.");
+            plugin.getConfig().set("selectorSettings.pathSeperator", "/");
+        }
         setIfAbsent(config, "selectorSettings.pathSourceAsPrefix", false);
         setIfAbsent(config, "schematicSources.excludedPathes", Collections.singletonList("none"));
     }

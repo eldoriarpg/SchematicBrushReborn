@@ -1,11 +1,11 @@
 name: SchematicBrushReborn
-version: 1.2-BETA
+version: 1.3-BETA
 api-version: "1.13"
 depend:
   - "WorldEdit"
 main: de.eldoria.schematicbrush.SchematicBrushReborn
 authors: [Hadde, SirYwell]
-website: "https://www.spigotmc.org/resources/schematic-brush-reborn.79441/"
+website: "https://www.spigotmc.org/resources/79441/"
 commands:
   schematicbrushadmin:
     description: Manage schematic brush
@@ -17,6 +17,7 @@ commands:
     aliases:
       - sbr
       - schbr
+      - schembrush
     permission: "schematicbrush.brush.use"
     permission-message: "You dont have the permission to do this!"
   schematicbrushmodify:
