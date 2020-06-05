@@ -93,10 +93,10 @@ public class BrushCommand implements TabExecutor, Randomable {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         String last = args[args.length - 1];
-        if (TabUtil.isFlag(last)) {
+        if (TabUtil.isFlag(args)) {
             return TabUtil.getFlagComplete(last);
         }
 
-        return TabUtil.getSchematicSetSyntax(last, schematicCache, plugin);
+        return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
     }
 }

@@ -19,6 +19,7 @@ public class SchematicBrushReborn extends JavaPlugin {
     public static Logger logger() {
         return logger;
     }
+
     public static boolean debugMode() {
         return debug;
     }
@@ -28,8 +29,19 @@ public class SchematicBrushReborn extends JavaPlugin {
 
     }
 
-    public void onReload() {
-        schematics.reload();
+    public void reload() {
+        saveDefaultConfig();
+        this.reloadConfig();
+        ConfigUpdater.validateConfig(this);
+        debug = getConfig().getBoolean("debug");
+
+        if (schematics == null) {
+            schematics = new SchematicCache(this);
+            schematics.init();
+        } else {
+            schematics.reload();
+        }
+
     }
 
     @Override
@@ -43,14 +55,7 @@ public class SchematicBrushReborn extends JavaPlugin {
             return;
         }
 
-        saveDefaultConfig();
-
-        ConfigUpdater.validateConfig(this);
-
-        debug = getConfig().getBoolean("debug");
-
-        schematics = new SchematicCache(this);
-        schematics.init();
+        reload();
 
         BrushCommand brushCommand = new BrushCommand(this, schematics);
         BrushModifyCommand modifyCommand = new BrushModifyCommand(this, schematics);

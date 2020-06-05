@@ -20,15 +20,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static de.eldoria.schematicbrush.commands.parser.ParsingUtil.parseToLegacySyntax;
+
 @UtilityClass
 public class BrushSettingsParser {
-    private final Pattern Y_OFFSET = Pattern.compile("-(?:(?:yoff)|(?:yoffset)|(?:y)):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern Y_OFFSET = Pattern.compile("-(?:(?:yoff)|(?:yoffset)|(?:y)):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
     private final Pattern PLACEMENT = Pattern.compile("-(?:(?:place)|(?:placement)|(?:p)):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
+
+
 
     public Optional<BrushSettings> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
                                               String[] args) {
+
+
         // Remove brush settings from arguments.
-        List<String> brushes = Arrays.stream(args).filter(c -> !c.startsWith("-")).collect(Collectors.toList());
+        List<String> brushes = Arrays.stream(parseToLegacySyntax(args)).filter(c -> !c.startsWith("-")).collect(Collectors.toList());
 
 
         Optional<BrushSettings.BrushSettingsBuilder> brushSettings = buildBrushes(player, brushes, plugin, schematicCache);
@@ -46,7 +52,6 @@ public class BrushSettingsParser {
      * @param settingsStrings one or more brushes
      * @param plugin          plugin instance
      * @param schematicCache  schematic cache instance
-
      * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already set
      * or empty if a brush string could not be parsed
      */
@@ -197,7 +202,6 @@ public class BrushSettingsParser {
     }
 
     /**
-
      * Build a new Brush from a {@link BrushSettings.BrushSettingsBuilder}
      *
      * @param player          executor of the brush
