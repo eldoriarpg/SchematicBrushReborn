@@ -17,6 +17,7 @@ commands:
     aliases:
       - sbr
       - schbr
+      - schembrush
     permission: "schematicbrush.brush.use"
     permission-message: "You dont have the permission to do this!"
   schematicbrushmodify:
