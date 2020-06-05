@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.schematicbrush.C;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
@@ -18,12 +19,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BrushAdminCommand implements TabExecutor {
-    private final Plugin plugin;
+    private final SchematicBrushReborn instance;
     private final SchematicCache cache;
     private static final String[] COMMANDS = {"info", "reload", "reloadschematics"};
 
-    public BrushAdminCommand(Plugin plugin, SchematicCache cache) {
-        this.plugin = plugin;
+    public BrushAdminCommand(SchematicBrushReborn instance,
+                             SchematicCache cache) {
+        this.instance = instance;
         this.cache = cache;
     }
 
@@ -70,12 +72,12 @@ public class BrushAdminCommand implements TabExecutor {
     }
 
     private void info(CommandSender sender) {
-        PluginDescriptionFile descr = plugin.getDescription();
+        PluginDescriptionFile descr = instance.getDescription();
         String info = "§bSchematic Brush Reborn§r by §b" + String.join(", ", descr.getAuthors()) + "§r" + C.NEW_LINE
                 + "§bVersion§r : " + descr.getVersion() + C.NEW_LINE
                 + "§bSpigot:§r " + descr.getWebsite();
         if (sender instanceof ConsoleCommandSender) {
-            plugin.getLogger().info(info);
+            instance.getLogger().info(info);
         } else if (sender instanceof Player) {
             MessageSender.sendMessage((Player) sender, info);
         }
@@ -83,10 +85,9 @@ public class BrushAdminCommand implements TabExecutor {
     }
 
     private void reload(CommandSender sender) {
-        cache.reload();
-        plugin.reloadConfig();
+        instance.reload();
         if (sender instanceof ConsoleCommandSender) {
-            plugin.getLogger().info("Schematic Brush Reborn reloaded.");
+            instance.getLogger().info("Schematic Brush Reborn reloaded.");
         } else if (sender instanceof Player) {
             MessageSender.sendMessage((Player) sender, "Schematic Brush Reborn reloaded.");
         }
@@ -95,7 +96,7 @@ public class BrushAdminCommand implements TabExecutor {
     private void reloadSchematics(CommandSender sender) {
         cache.reload();
         if (sender instanceof ConsoleCommandSender) {
-            plugin.getLogger().info("Schematics reloaded.");
+            instance.getLogger().info("Schematics reloaded.");
         } else if (sender instanceof Player) {
             MessageSender.sendMessage((Player) sender, "Schematics reloaded");
         }

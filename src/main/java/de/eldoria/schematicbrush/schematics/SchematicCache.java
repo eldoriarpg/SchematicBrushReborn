@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -44,7 +44,8 @@ public class SchematicCache implements Runnable {
 
 
     public void init() {
-        Executors.newSingleThreadScheduledExecutor()
+        Executors
+                .newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(this, 60, 60, TimeUnit.SECONDS);
         reload();
     }
@@ -54,6 +55,9 @@ public class SchematicCache implements Runnable {
      * This overrides the cache, when the schematics are loaded.
      */
     public void reload() {
+        if (SchematicBrushReborn.debugMode()) {
+            plugin.getLogger().info("Reloading schematics.");
+        }
         Map<String, List<Schematic>> cache = new HashMap<>();
 
         String root = plugin.getDataFolder().toPath().getParent().toString();
