@@ -74,7 +74,8 @@ public class BrushAdminCommand implements TabExecutor {
         PluginDescriptionFile descr = instance.getDescription();
         String info = "§bSchematic Brush Reborn§r by §b" + String.join(", ", descr.getAuthors()) + "§r" + C.NEW_LINE
                 + "§bVersion§r : " + descr.getVersion() + C.NEW_LINE
-                + "§bSpigot:§r " + descr.getWebsite();
+                + "§bSpigot:§r " + descr.getWebsite() + C.NEW_LINE
+                + "§bSupport:§r https://discord.gg/zRW9Vpu";
         if (sender instanceof ConsoleCommandSender) {
             instance.getLogger().info(info);
         } else if (sender instanceof Player) {
