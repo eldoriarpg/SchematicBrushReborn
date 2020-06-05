@@ -31,7 +31,7 @@ public final class TabUtil {
     private static final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
     private static final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
 
-    private static final String[] SELECTOR_TYPE = {"dir:", "regex:", "preset:"};
+    private static final String[] SELECTOR_TYPE = {"<name>", "dir:", "regex:", "preset:"};
     private static final String[] SELECTOR_TYPE_MATCH = {"directory:", "d:", "regex:", "r:", "preset:", "p:"};
 
     private static final String[] MODIFIERS = {"-flip:", "-rotate:", "-weight:", "-f:", "-r:", "-w:"};
@@ -65,7 +65,7 @@ public final class TabUtil {
             String[] split = arg.split(":");
 
             if (selector.startsWith("dir:") || selector.startsWith("d:")) {
-                List<String> matchingDirectories = cache.getMatchingDirectories(split.length == 1 ? "" :split[1], 50);
+                List<String> matchingDirectories = cache.getMatchingDirectories(split.length == 1 ? "" : split[1], 50);
                 return prefixStrings(matchingDirectories, split[0] + ":");
             }
 
@@ -88,7 +88,7 @@ public final class TabUtil {
 
         if (arg.startsWith("-rotate:") || arg.startsWith("-r:")) {
             if (split.length == 1) {
-                return prefixStrings(Arrays.asList(ROTATION), split[0]+ ":");
+                return prefixStrings(Arrays.asList(ROTATION), split[0] + ":");
             }
             return prefixStrings(startingWithInArray(split[1], ROTATION).collect(Collectors.toList()), split[0] + ":");
         }
