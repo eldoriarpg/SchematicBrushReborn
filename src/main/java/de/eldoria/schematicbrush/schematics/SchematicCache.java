@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -29,8 +31,8 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SchematicCache {
-    private final Map<String, List<Schematic>> schematicsCache = new HashMap<>();
+public class SchematicCache implements Runnable {
+    private Map<String, List<Schematic>> schematicsCache = new HashMap<>();
 
     private final Pattern uuid = Pattern.compile("[a-zA-Z0-9]{8}(-[a-zA-Z0-9]{4}){3}-[a-zA-Z0-9]{12}");
     private final Logger logger = SchematicBrushReborn.logger();
@@ -42,11 +44,17 @@ public class SchematicCache {
 
 
     public void init() {
+        Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(this, 60, 60, TimeUnit.SECONDS);
         reload();
     }
 
+    /**
+     * Reload the current loaded schematics.
+     * This overrides the cache, when the schematics are loaded.
+     */
     public void reload() {
-        schematicsCache.clear();
+        Map<String, List<Schematic>> cache = new HashMap<>();
 
         String root = plugin.getDataFolder().toPath().getParent().toString();
 
@@ -78,14 +86,18 @@ public class SchematicCache {
 
             path = path.replace("\\", "/");
 
-            loadSchematics(Paths.get(root, path), seperator, prefix, prefixActive, excludedPaths);
+            loadSchematics(cache, Paths.get(root, path), seperator, prefix, prefixActive, excludedPaths);
         }
 
         int sum = schematicsCache.values().stream().mapToInt(List::size).sum();
-        logger.info("Loaded " + sum + " schematics from " + schematicsCache.size() + " directories.");
+        if (SchematicBrushReborn.debugMode()) {
+            logger.info("Loaded " + sum + " schematics from " + schematicsCache.size() + " directories.");
+        }
+        schematicsCache = cache;
     }
 
-    private void loadSchematics(Path schematicFolder, String seperator, String prefix, boolean prefixActive, List<String> excludedPaths) {
+    private void loadSchematics(Map<String, List<Schematic>> cache, Path schematicFolder, String seperator,
+                                String prefix, boolean prefixActive, List<String> excludedPaths) {
         // fail silently if this folder does not exist.
         if (!schematicFolder.toFile().exists()) return;
 
@@ -141,14 +153,16 @@ public class SchematicCache {
                 key = prefix + seperator + key;
             }
 
-            schematicsCache.computeIfAbsent(key, k -> new ArrayList<>())
+            cache.computeIfAbsent(key, k -> new ArrayList<>())
                     // add schematics
                     .addAll(schematics);
             if (SchematicBrushReborn.debugMode()) {
                 logger.info("Loaded " + schematics.size() + " schematics from " + path.toString() + " as " + key);
             }
         }
-        logger.info("Loaded schematics from " + schematicFolder.toString());
+        if (SchematicBrushReborn.debugMode()) {
+            logger.info("Loaded schematics from " + schematicFolder.toString());
+        }
     }
 
     private boolean isExclued(List<String> excludes, String path) {
@@ -265,7 +279,6 @@ public class SchematicCache {
                 .replace("+", "\\+")
                 .replace("*", ".+?");
 
-
         return Pattern.compile(regex);
     }
 
@@ -319,6 +332,11 @@ public class SchematicCache {
             }
         }
         return matches;
+    }
+
+    @Override
+    public void run() {
+        reload();
     }
 
     @Data
