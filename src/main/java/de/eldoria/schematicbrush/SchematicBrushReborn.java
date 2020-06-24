@@ -48,8 +48,6 @@ public class SchematicBrushReborn extends JavaPlugin {
     public void onEnable() {
         logger = getLogger();
 
-        Metrics metrics = new Metrics(this, 7683);
-
         if (this.getServer().getPluginManager().getPlugin("WorldEdit") == null) {
             logger.warning("WorldEdit is not installed on this Server!");
             return;
@@ -66,5 +64,50 @@ public class SchematicBrushReborn extends JavaPlugin {
         getCommand("sbrm").setExecutor(modifyCommand);
         getCommand("sbrp").setExecutor(presetCommand);
         getCommand("sbra").setExecutor(adminCommand);
+
+        if (getConfig().getBoolean("metrics")) {
+            enableMetrics();
+        }
+    }
+
+    private void enableMetrics() {
+        Metrics metrics = new Metrics(this, 7683);
+        metrics.addCustomChart(new Metrics.SimplePie("schematic_count",
+                () -> {
+                    int sCount = schematics.schematicCount();
+                    if (sCount < 50) return "<50";
+                    if (sCount < 100) return "<100";
+                    if (sCount < 250) return "<250";
+                    if (sCount < 500) return "<500";
+                    if (sCount < 1000) return "<1000";
+                    int count = (int) Math.floor(sCount / 1000d);
+                    return ">" + count * 1000;
+                }));
+        metrics.addCustomChart(new Metrics.SimplePie("directory_count",
+                () -> {
+                    int sCount = schematics.directoryCount();
+                    if (sCount < 10) return "<10";
+                    if (sCount < 50) return "<50";
+                    if (sCount < 100) return "<100";
+                    int count = (int) Math.floor(sCount / 100d);
+                    return ">" + count * 100;
+                }));
+        metrics.addCustomChart(new Metrics.SimplePie("preset_count",
+                () -> {
+                    int sCount = getConfig().getStringList("presets").size();
+                    if (sCount < 10) return "<10";
+                    if (sCount < 50) return "<50";
+                    if (sCount < 100) return "<100";
+                    int count = (int) Math.floor(sCount / 100d);
+                    return ">" + count * 100;
+                }));
+
+        metrics.addCustomChart(new Metrics.SimplePie("world_edit_version",
+                () -> {
+                    if (this.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
+                        return "FAWE";
+                    }
+                    return "WorldEdit";
+                }));
     }
 }
