@@ -32,10 +32,12 @@ public class SchematicSet implements Randomable {
     /**
      * Rotation of the schematic.
      */
+    //TODO: Allow multiple rotations for more specific randomized pasting
     private final Rotation rotation;
     /**
      * Flip direction of the schematic
      */
+    //TODO: Allow multiple flap values for more specific randomized pasting
     private final Flip flip;
     /**
      * Weight of the brush. Must be always larger then 1. Is -1 when no weight is applied.

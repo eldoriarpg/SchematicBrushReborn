@@ -27,6 +27,11 @@ public enum Placement {
      * Use the highest non air point of the schematic as origin
      */
     RAISE(findRaise(), "r", "raiseItToTheSky");
+    //TODO: Method to place the schematic relational to the surface.
+    //      This means, that when a schematic is placed at a woll it points away from the wall. Same with ceiling.
+    //      This will also result in a rotation and not only a offset. This requires a rewrite of placement.
+    //      Maybe another placement type e.g. allignment should be used for this to avoid mixup.
+    //      This can be then used in combination with placement
     /*
     /**
      * Use the lowest terrain point in the region where the brush should be pasted as y.

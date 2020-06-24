@@ -9,6 +9,8 @@ public enum Flip implements Randomable {
     EAST_WEST(Direction.EAST, "E", "W", "EW", "WE"),
     NORT_SOUTH(Direction.NORTH, "NS", "SN", "N", "S"),
     RANDOM("*");
+    //TODO: Flip Upside down as well but exclude this in random.
+    //      Add combinations of upside_down x east_west and upside_down x north_south
 
     private final String[] alias;
     private final Direction direction;

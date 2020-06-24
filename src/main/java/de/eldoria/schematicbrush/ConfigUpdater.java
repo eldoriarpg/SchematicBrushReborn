@@ -34,6 +34,7 @@ public final class ConfigUpdater {
         config.set("version", 2);
 
         setIfAbsent(config, "debug", false);
+        setIfAbsent(config, "metrics", true);
 
         setIfAbsent(config, "selectorSettings.pathSeperator", "/");
 

@@ -5,6 +5,7 @@ import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.util.ArrayUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -109,7 +110,7 @@ public class BrushAdminCommand implements TabExecutor {
         }
 
         if (args.length == 1) {
-            return TabUtil.startingWithInArray(args[0], COMMANDS).collect(Collectors.toList());
+            return ArrayUtil.startingWithInArray(args[0], COMMANDS).collect(Collectors.toList());
         }
 
         return Collections.emptyList();

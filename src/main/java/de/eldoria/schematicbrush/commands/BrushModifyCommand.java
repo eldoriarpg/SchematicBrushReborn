@@ -9,6 +9,7 @@ import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.util.ArrayUtil;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -327,7 +328,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         if (args.length == 1) {
-            return TabUtil.startingWithInArray(cmd, COMMANDS).collect(Collectors.toList());
+            return ArrayUtil.startingWithInArray(cmd, COMMANDS).collect(Collectors.toList());
         }
         return null;
     }

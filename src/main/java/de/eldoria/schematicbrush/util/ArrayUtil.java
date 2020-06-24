@@ -3,8 +3,10 @@ package de.eldoria.schematicbrush.util;
 import com.google.common.collect.ObjectArrays;
 import lombok.experimental.UtilityClass;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class ArrayUtil {
@@ -68,5 +70,38 @@ public class ArrayUtil {
             result = ObjectArrays.concat(arr, result, String.class);
         }
         return result;
+    }
+
+    /**
+     * Searches for strings, which are starting with the provided value
+     *
+     * @param value start to search for
+     * @param array array to check
+     * @return list of strings which starts with the provided value
+     */
+    public static Stream<String> startingWithInArray(String value, String[] array) {
+        return Arrays.stream(array).filter(e -> e.startsWith(value));
+    }
+
+    /**
+     * Checks if a string start with any value in a string.
+     *
+     * @param value value to check
+     * @param array array values.
+     * @return true if the value starts with any value in the array
+     */
+    public static boolean stringStartingWithValueInArray(String value, String[] array) {
+        return Arrays.stream(array).anyMatch(value::startsWith);
+    }
+
+    /**
+     * Checks if a string ends with a value in a array
+     *
+     * @param value value to check
+     * @param array array values.
+     * @return true if the value ends with any value in the array
+     */
+    public static boolean endingWithInArray(String value, String[] array) {
+        return Arrays.stream(array).anyMatch(value::endsWith);
     }
 }

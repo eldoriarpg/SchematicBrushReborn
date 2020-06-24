@@ -114,6 +114,7 @@ public class SchematicCache implements Runnable {
 
         // initialise queue with directory in first layer
         Queue<Path> deepDirectories = new ArrayDeque<>(baseDirectoryData.get().getDirectories());
+        deepDirectories.add(schematicFolder.toFile().toPath());
 
         // iterate over every directory.
         // load files and add new directories if found.
@@ -151,8 +152,12 @@ public class SchematicCache implements Runnable {
             }
 
             if (schematics.isEmpty()) continue;
-
-            String key = rawKey.replace(" ", "_").substring(1).replace("\\", seperator);
+            String key;
+            if (!rawKey.isEmpty()) {
+                key = rawKey.replace(" ", "_").substring(1).replace("\\", seperator);
+            } else {
+                key = rawKey;
+            }
             if (prefixActive) {
                 key = prefix + seperator + key;
             }
@@ -336,6 +341,13 @@ public class SchematicCache implements Runnable {
             }
         }
         return matches;
+    }
+
+    public int schematicCount() {
+        return schematicsCache.values().stream().map(List::size).mapToInt(Integer::intValue).sum();
+    }
+    public int directoryCount() {
+        return schematicsCache.keySet().size();
     }
 
     @Override
