@@ -3,6 +3,7 @@ version: ${project.version}
 api-version: "1.13"
 depend:
   - "WorldEdit"
+  - "EldoUtilities"
 main: de.eldoria.schematicbrush.SchematicBrushReborn
 authors: [Hadde, SirYwell]
 website: "https://www.spigotmc.org/resources/79441/"

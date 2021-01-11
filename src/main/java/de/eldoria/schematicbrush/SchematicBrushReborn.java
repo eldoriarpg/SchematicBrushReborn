@@ -1,23 +1,25 @@
 package de.eldoria.schematicbrush;
 
+import de.eldoria.eldoutilities.bstats.Metrics;
+import de.eldoria.eldoutilities.plugin.EldoPlugin;
+import de.eldoria.eldoutilities.updater.Updater;
+import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.schematicbrush.commands.BrushAdminCommand;
 import de.eldoria.schematicbrush.commands.BrushCommand;
 import de.eldoria.schematicbrush.commands.BrushModifyCommand;
 import de.eldoria.schematicbrush.commands.SchematicPresetCommand;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-public class SchematicBrushReborn extends JavaPlugin {
+public class SchematicBrushReborn extends EldoPlugin {
 
     private SchematicCache schematics;
     private static Logger logger;
     private static boolean debug;
 
     public static Logger logger() {
-        return logger;
+        return getInstance(SchematicBrushReborn.class).getLogger();
     }
 
     public static boolean debugMode() {
@@ -30,6 +32,8 @@ public class SchematicBrushReborn extends JavaPlugin {
     }
 
     public void reload() {
+        // Nothing to be proud of...
+        // Needs to be reworked.
         saveDefaultConfig();
         this.reloadConfig();
         ConfigUpdater.validateConfig(this);
@@ -38,6 +42,9 @@ public class SchematicBrushReborn extends JavaPlugin {
         if (schematics == null) {
             schematics = new SchematicCache(this);
             schematics.init();
+            Updater.Butler(
+                    new ButlerUpdateData(this, "schematicbrush.admin.reload", getConfig().getBoolean("updateCheck"),
+                            false, 12, ButlerUpdateData.HOST)).start();
         } else {
             schematics.reload();
         }
@@ -46,9 +53,7 @@ public class SchematicBrushReborn extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        logger = getLogger();
-
-        if (this.getServer().getPluginManager().getPlugin("WorldEdit") == null) {
+        if (!getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
             logger.warning("WorldEdit is not installed on this Server!");
             return;
         }
@@ -60,18 +65,19 @@ public class SchematicBrushReborn extends JavaPlugin {
         SchematicPresetCommand presetCommand = new SchematicPresetCommand(this, schematics);
         BrushAdminCommand adminCommand = new BrushAdminCommand(this, schematics);
 
-        getCommand("sbr").setExecutor(brushCommand);
-        getCommand("sbrm").setExecutor(modifyCommand);
-        getCommand("sbrp").setExecutor(presetCommand);
-        getCommand("sbra").setExecutor(adminCommand);
+        registerCommand("sbr", brushCommand);
+        registerCommand("sbrm", modifyCommand);
+        registerCommand("sbrp", presetCommand);
+        registerCommand("sbra", adminCommand);
 
-        if (getConfig().getBoolean("metrics")) {
-            enableMetrics();
-        }
+        enableMetrics();
     }
 
     private void enableMetrics() {
         Metrics metrics = new Metrics(this, 7683);
+        if (metrics.isEnabled()) {
+            logger().info("§2Metrics enabled. Thank you <3");
+        }
         metrics.addCustomChart(new Metrics.SimplePie("schematic_count",
                 () -> {
                     int sCount = schematics.schematicCount();

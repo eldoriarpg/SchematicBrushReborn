@@ -6,6 +6,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Collections;
 
+// This is a whole mess...
+// Need to wrap this shit in a proper eldo config...
 public final class ConfigUpdater {
     private ConfigUpdater() {
     }
@@ -57,6 +59,7 @@ public final class ConfigUpdater {
     private static void ensureConfigConsistency(Plugin plugin) {
         FileConfiguration config = plugin.getConfig();
         setIfAbsent(config, "debug", false);
+        setIfAbsent(config, "updateCheck", true);
         ConfigurationSection sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
         setIfAbsent(config, "selectorSettings.pathSeperator", "/");
         String o = plugin.getConfig().getString("selectorSettings.pathSeperator");
