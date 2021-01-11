@@ -56,7 +56,7 @@ public class BrushCommand implements TabExecutor, Randomable {
             return true;
         }
 
-        Brush schematicBrush = new SchematicBrush(player, settings.get());
+        Brush schematicBrush = new SchematicBrush(plugin, player, settings.get());
 
         boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush);
         if (success) {

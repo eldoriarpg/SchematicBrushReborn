@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -153,7 +154,9 @@ public class BrushSettingsParser {
 
         // Check if its a directory lookup
         if (type.getSelectorType() == SchematicSelector.DIRECTORY) {
-            schematics = schematicCache.getSchematicsByDirectory(type.getSelectorValue());
+            String[] split = type.getSelectorValue().split("#");
+            String filter = split.length > 1 ? split[1] : null;
+            schematics = schematicCache.getSchematicsByDirectory(split[0], filter);
             schematicSetBuilder = new SchematicSet.SchematicSetBuilder(settingsString);
         }
 

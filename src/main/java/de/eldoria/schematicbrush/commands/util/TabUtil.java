@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static de.eldoria.schematicbrush.util.ArrayUtil.endingWithInArray;
 import static de.eldoria.schematicbrush.util.ArrayUtil.startingWithInArray;
@@ -68,7 +67,7 @@ public final class TabUtil {
             String[] split = arg.split(":");
 
             if (selector.startsWith("dir:") || selector.startsWith("d:")) {
-                List<String> matchingDirectories = cache.getMatchingDirectories(split.length == 1 ? "" : split[1], 50);
+                List<String> matchingDirectories = cache.getMatchingDirectories(split.length == 1 ? "" : split[1].split("#")[0], 50);
                 return prefixStrings(matchingDirectories, split[0] + ":");
             }
 
@@ -116,10 +115,12 @@ public final class TabUtil {
      * @param arg    argument which should be completed
      * @param cache  cache for schematic lookup
      * @param plugin plugin for config access
+     *
      * @return a list of possible completions
      */
     private static List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
+        Optional<Character> firstMarker = getBrushArgumentMarker(arg, true);
 
         if (arg.isEmpty()) {
             return Arrays.asList("<name>@rotation!flip:weight",
@@ -153,9 +154,11 @@ public final class TabUtil {
                 }
                 return prefixStrings(Arrays.asList(ROTATION_TYPES), getBrushArgumentStringToLastMarker(arg));
             case '^':
-                return Arrays.asList("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
+                if (!firstMarker.isPresent() || firstMarker.get() != '$') {
+                    return Arrays.asList("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
+                }
             case '$': {
-                String directory = arg.substring(1);
+                String directory = arg.substring(1).split("#")[0];
                 List<String> matchingDirectories = cache.getMatchingDirectories(directory, 50);
                 matchingDirectories = prefixStrings(matchingDirectories, "$");
                 // only if a direct match is found add schematic arguments.
@@ -185,6 +188,7 @@ public final class TabUtil {
      * Checks if the argument is a brush flag.
      *
      * @param arg argument to check
+     *
      * @return true if the argument is a flag
      */
     public static boolean isFlag(String[] arg) {
@@ -199,6 +203,7 @@ public final class TabUtil {
      * Get a tab complete for a flag. This will fail if {@link #isFlag(String[])} is false.
      *
      * @param flag flag to check
+     *
      * @return list of possible completions
      */
     public static List<String> getFlagComplete(String flag) {
@@ -229,13 +234,35 @@ public final class TabUtil {
      * Get the last brush argument marker in a string.
      *
      * @param string string to check
+     *
      * @return optional argument marker if one is found.
      */
     private static Optional<Character> getBrushArgumentMarker(String string) {
-        for (int i = string.length() - 1; i >= 0; i--) {
-            char c = string.charAt(i);
-            if (ArrayUtil.arrayContains(MARKER, c)) {
-                return Optional.of(c);
+        return getBrushArgumentMarker(string, false);
+    }
+
+    /**
+     * Get the last brush argument marker in a string.
+     *
+     * @param string  string to check
+     * @param reverse true if the first argument marker should be returned
+     *
+     * @return optional argument marker if one is found.
+     */
+    private static Optional<Character> getBrushArgumentMarker(String string, boolean reverse) {
+        if (reverse) {
+            for (int i = 0; i < string.length(); i++) {
+                char c = string.charAt(i);
+                if (ArrayUtil.arrayContains(MARKER, c)) {
+                    return Optional.of(c);
+                }
+            }
+        } else {
+            for (int i = string.length() - 1; i >= 0; i--) {
+                char c = string.charAt(i);
+                if (ArrayUtil.arrayContains(MARKER, c)) {
+                    return Optional.of(c);
+                }
             }
         }
         return Optional.empty();
@@ -245,6 +272,7 @@ public final class TabUtil {
      * Get the string from end to the last argument marker.
      *
      * @param string string to check
+     *
      * @return substring between end and last argument marker.
      */
     private static String getBrushArgumentStringToLastMarker(String string) {
@@ -263,6 +291,7 @@ public final class TabUtil {
      * @param arg    argument to check
      * @param plugin plugin for config lookup
      * @param count  number of max returned preset names
+     *
      * @return list of matchin presets of length count or shorter.
      */
     public static List<String> getPresets(String arg, Plugin plugin, int count) {
@@ -289,6 +318,7 @@ public final class TabUtil {
      *
      * @param list   list to prefix
      * @param prefix prefix to add
+     *
      * @return list of strings which start with the prefix
      */
     private static List<String> prefixStrings(List<String> list, String prefix) {
@@ -299,6 +329,7 @@ public final class TabUtil {
      * Get the missing brush argument with a explanation string.
      *
      * @param arg argument to check
+     *
      * @return list of missing arguments
      */
     private static List<String> getMissingSchematicSetArguments(String arg) {

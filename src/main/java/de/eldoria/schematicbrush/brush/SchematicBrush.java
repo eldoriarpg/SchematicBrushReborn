@@ -22,7 +22,9 @@ import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import de.eldoria.schematicbrush.commands.util.MessageSender;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Represents the schematic brush as a {@link Brush} instance.
@@ -30,16 +32,19 @@ import org.bukkit.entity.Player;
  */
 public class SchematicBrush implements Brush {
 
+    private final Plugin plugin;
     private final BrushSettings settings;
     private final Player brushOwner;
 
     /**
      * Create a new schematic brush for a player.
      *
+     * @param plugin
      * @param player   placer which owns this brush
      * @param settings settings of the brush
      */
-    public SchematicBrush(Player player, BrushSettings settings) {
+    public SchematicBrush(Plugin plugin, Player player, BrushSettings settings) {
+        this.plugin = plugin;
         this.settings = settings;
         brushOwner = player;
     }
@@ -114,7 +119,7 @@ public class SchematicBrush implements Brush {
      * @return a new schematic brush with the sub brushes of both brush configurations.
      */
     public SchematicBrush combineBrush(BrushSettings brush) {
-        return new SchematicBrush(brushOwner, settings.combine(brush));
+        return new SchematicBrush(plugin, brushOwner, settings.combine(brush));
     }
 
     public BrushSettings getSettings() {
