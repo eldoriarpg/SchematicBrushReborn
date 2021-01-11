@@ -28,7 +28,6 @@ public class BrushSettingsParser {
     private final Pattern PLACEMENT = Pattern.compile("-(?:(?:place)|(?:placement)|(?:p)):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
 
 
-
     public Optional<BrushSettings> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
                                               String[] args) {
 
@@ -52,8 +51,9 @@ public class BrushSettingsParser {
      * @param settingsStrings one or more brushes
      * @param plugin          plugin instance
      * @param schematicCache  schematic cache instance
-     * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already set
-     * or empty if a brush string could not be parsed
+     *
+     * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already
+     * set or empty if a brush string could not be parsed
      */
     public Optional<BrushSettings.BrushSettingsBuilder> buildBrushes(Player player, List<String> settingsStrings, Plugin plugin,
                                                                      SchematicCache schematicCache) {
@@ -143,7 +143,7 @@ public class BrushSettingsParser {
                                                     String settingsString, SchematicCache schematicCache) {
         SchematicSet.SchematicSetBuilder schematicSetBuilder = null;
 
-        List<Schematic> schematics = Collections.emptyList();
+        Set<Schematic> schematics = Collections.emptySet();
 
         // Check if its a name or regex lookup
         if (type.getSelectorType() == SchematicSelector.REGEX) {
@@ -207,6 +207,7 @@ public class BrushSettingsParser {
      * @param player          executor of the brush
      * @param settingsBuilder Unconfigures builder for brush settings
      * @param args            arguments of the brush
+     *
      * @return optional configured brush settings object or empty if something could not be parsed
      */
     private Optional<BrushSettings> buildBrushSettings(Player player, BrushSettings.BrushSettingsBuilder settingsBuilder,

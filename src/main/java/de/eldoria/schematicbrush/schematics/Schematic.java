@@ -7,6 +7,7 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,5 +74,20 @@ public class Schematic {
         try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
             return reader.read();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Schematic schematic = (Schematic) o;
+        return format.getName().equals(schematic.format.getName()) &&
+                file.getPath().equals(schematic.file.getPath()) &&
+                name.equals(schematic.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(format.getName(), file.getPath(), name);
     }
 }

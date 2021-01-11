@@ -9,8 +9,10 @@ import de.eldoria.schematicbrush.util.Randomable;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The schematic set represents a part of a brush,
@@ -44,9 +46,9 @@ public class SchematicSet implements Randomable {
      */
     private int weight;
 
-    public SchematicSet(List<Schematic> schematics, String arguments, Rotation rotation,
+    public SchematicSet(Set<Schematic> schematics, String arguments, Rotation rotation,
                         Flip flip, int weight) {
-        this.schematics = schematics;
+        this.schematics = new ArrayList<>(schematics);
         this.arguments = arguments;
         this.rotation = rotation;
         this.flip = flip;
@@ -97,7 +99,7 @@ public class SchematicSet implements Randomable {
      * This class is a builder to build a {@link SchematicSet}.
      */
     public static class SchematicSetBuilder {
-        private List<Schematic> schematics = Collections.emptyList();
+        private Set<Schematic> schematics = Collections.emptySet();
         private final String arguments;
         private Rotation rotation = Rotation.ROT_ZERO;
         private Flip flip = Flip.NONE;
@@ -113,7 +115,7 @@ public class SchematicSet implements Randomable {
          * @param schematics schematics to set
          * @return instance with schematics set
          */
-        public SchematicSetBuilder withSchematics(List<Schematic> schematics) {
+        public SchematicSetBuilder withSchematics(Set<Schematic> schematics) {
             this.schematics = schematics;
             return this;
         }
