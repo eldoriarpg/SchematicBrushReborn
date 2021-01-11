@@ -1,5 +1,5 @@
 name: SchematicBrushReborn
-version: 1.3a-BETA
+version: ${project.version}
 api-version: "1.13"
 depend:
   - "WorldEdit"
