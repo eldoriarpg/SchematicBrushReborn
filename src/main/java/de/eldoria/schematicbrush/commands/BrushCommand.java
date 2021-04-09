@@ -8,6 +8,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
@@ -24,11 +25,13 @@ import java.util.Optional;
 public class BrushCommand extends EldoCommand implements Randomable {
     private final Plugin plugin;
     private final SchematicCache schematicCache;
+    private Config config;
 
-    public BrushCommand(Plugin plugin, SchematicCache schematicCache) {
+    public BrushCommand(Plugin plugin, SchematicCache schematicCache, Config config) {
         super(plugin);
         this.plugin = plugin;
         this.schematicCache = schematicCache;
+        this.config = config;
     }
 
     @Override
@@ -96,6 +99,6 @@ public class BrushCommand extends EldoCommand implements Randomable {
             return TabUtil.getFlagComplete(last);
         }
 
-        return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
+        return TabUtil.getSchematicSetSyntax(args, schematicCache, config);
     }
 }

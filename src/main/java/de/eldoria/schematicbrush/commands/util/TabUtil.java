@@ -1,9 +1,10 @@
 package de.eldoria.schematicbrush.commands.util;
 
+import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.eldoutilities.utils.TextUtil;
+import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -43,17 +44,17 @@ public final class TabUtil {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Plugin plugin) {
+    public static List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Config config) {
         int quoteCount = TextUtil.countChars(String.join(" ", args), '\"');
         String last = args[args.length - 1];
         if (quoteCount % 2 == 0) {
-            return getLegacySchematicSetSyntax(last, cache, plugin);
+            return getLegacySchematicSetSyntax(last, cache, config);
         }
 
-        return getSchematicSetSyntax(last, cache, plugin);
+        return getSchematicSetSyntax(last, cache, config);
     }
 
-    private static List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
+    private static List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Config config) {
         if (arg.startsWith("\"")) {
             if ("\"".equals(arg)) {
                 return prefixStrings(Arrays.asList(SELECTOR_TYPE), "\"");
@@ -68,7 +69,7 @@ public final class TabUtil {
             }
 
             if (selector.startsWith("preset:") || selector.startsWith("p:")) {
-                List<String> presets = getPresets(split.length == 1 ? "" : split[1], plugin, 50);
+                List<String> presets = getPresets(split.length == 1 ? "" : split[1], 50, config);
                 return prefixStrings(presets, split[0] + ":");
             }
 
@@ -110,11 +111,10 @@ public final class TabUtil {
      *
      * @param arg    argument which should be completed
      * @param cache  cache for schematic lookup
-     * @param plugin plugin for config access
      *
      * @return a list of possible completions
      */
-    private static List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Plugin plugin) {
+    private static List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Config config) {
         Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
         Optional<Character> firstMarker = getBrushArgumentMarker(arg, true);
 
@@ -167,7 +167,7 @@ public final class TabUtil {
             }
             case '&': {
                 String preset = arg.substring(1);
-                List<String> presets = getPresets(preset, plugin, 50);
+                List<String> presets = getPresets(preset, 50, config);
                 presets = prefixStrings(presets, "&");
                 if (presets.size() < 1) {
                     Collections.reverse(presets);
@@ -285,28 +285,14 @@ public final class TabUtil {
      * Get a list of all preset names from the config which match a string
      *
      * @param arg    argument to check
-     * @param plugin plugin for config lookup
      * @param count  number of max returned preset names
+     * @param config config
      *
      * @return list of matchin presets of length count or shorter.
      */
-    public static List<String> getPresets(String arg, Plugin plugin, int count) {
-        ConfigurationSection presets = plugin.getConfig().getConfigurationSection("presets");
-        if (presets == null) {
-            return new ArrayList<>(Collections.singletonList("Preset section missing in config!"));
-        }
-        if (presets.getKeys(false).isEmpty()) {
-            return new ArrayList<>(Collections.singletonList("No presets defined!"));
-        }
-        List<String> strings;
-        String[] array = new String[presets.getKeys(false).size()];
-        if (arg.isEmpty()) {
-            strings = new ArrayList<>(presets.getKeys(false));
-        } else {
-            strings = ArrayUtil.startingWithInArray(arg, presets.getKeys(false).toArray(array))
-                    .collect(Collectors.toList());
-        }
-        return strings.subList(0, Math.min(strings.size(), count));
+    public static List<String> getPresets(String arg, int count, Config config) {
+        List<String> complete = TabCompleteUtil.complete(arg, config.getPresetName());
+        return complete.subList(0, Math.min(count, complete.size()));
     }
 
     /**

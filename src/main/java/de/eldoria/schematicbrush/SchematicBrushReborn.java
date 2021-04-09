@@ -9,18 +9,25 @@ import de.eldoria.schematicbrush.commands.BrushAdminCommand;
 import de.eldoria.schematicbrush.commands.BrushCommand;
 import de.eldoria.schematicbrush.commands.BrushModifyCommand;
 import de.eldoria.schematicbrush.commands.SchematicPresetCommand;
+import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.ConfigUpdater;
+import de.eldoria.schematicbrush.config.sections.GeneralConfig;
+import de.eldoria.schematicbrush.config.sections.Preset;
+import de.eldoria.schematicbrush.config.sections.SchematicConfig;
+import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SchematicBrushReborn extends EldoPlugin {
 
-    private static Logger logger;
     private static boolean debug;
     private SchematicCache schematics;
+    Config config;
 
     public static boolean debugMode() {
         return debug;
@@ -39,11 +46,17 @@ public class SchematicBrushReborn extends EldoPlugin {
         ConfigUpdater.validateConfig(this);
         debug = getConfig().getBoolean("debug");
 
+        if (config == null) {
+             config = new Config(this);
+        } else {
+            config.reload();
+        }
+
         if (schematics == null) {
-            schematics = new SchematicCache(this);
+            schematics = new SchematicCache(this, config);
             schematics.init();
             Updater.Butler(
-                    new ButlerUpdateData(this, "schematicbrush.admin.reload", getConfig().getBoolean("updateCheck"),
+                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.getGeneral().isCheckUpdates(),
                             false, 12, ButlerUpdateData.HOST)).start();
         } else {
             schematics.reload();
@@ -54,7 +67,7 @@ public class SchematicBrushReborn extends EldoPlugin {
     @Override
     public void onPluginEnable() {
         if (!getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
-            logger.warning("WorldEdit is not installed on this Server!");
+            logger().warning("WorldEdit is not installed on this Server!");
             return;
         }
 
@@ -62,9 +75,9 @@ public class SchematicBrushReborn extends EldoPlugin {
 
         reload();
 
-        BrushCommand brushCommand = new BrushCommand(this, schematics);
-        BrushModifyCommand modifyCommand = new BrushModifyCommand(this, schematics);
-        SchematicPresetCommand presetCommand = new SchematicPresetCommand(this, schematics);
+        BrushCommand brushCommand = new BrushCommand(this, schematics, config);
+        BrushModifyCommand modifyCommand = new BrushModifyCommand(this, schematics, config);
+        SchematicPresetCommand presetCommand = new SchematicPresetCommand(this, schematics, config);
         BrushAdminCommand adminCommand = new BrushAdminCommand(this, schematics);
 
         registerCommand("sbr", brushCommand);
@@ -118,5 +131,10 @@ public class SchematicBrushReborn extends EldoPlugin {
                     }
                     return "WorldEdit";
                 }));
+    }
+
+    @Override
+    public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
+        return Arrays.asList(GeneralConfig.class, Preset.class, SchematicConfig.class, SchematicSource.class);
     }
 }

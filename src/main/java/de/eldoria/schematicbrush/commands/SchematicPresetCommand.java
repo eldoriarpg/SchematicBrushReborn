@@ -9,12 +9,12 @@ import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,10 +31,12 @@ import java.util.stream.Collectors;
 public class SchematicPresetCommand extends EldoCommand {
     private static final String[] COMMANDS = {"savecurrent", "save", "appendSet", "removeSet", "remove", "info", "list", "descr", "help"};
     private final SchematicCache schematicCache;
+    private final Config config;
 
-    public SchematicPresetCommand(Plugin plugin, SchematicCache schematicCache) {
+    public SchematicPresetCommand(Plugin plugin, SchematicCache schematicCache, Config config) {
         super(plugin);
         this.schematicCache = schematicCache;
+        this.config = config;
     }
 
     @Override
@@ -152,7 +153,6 @@ public class SchematicPresetCommand extends EldoCommand {
 
         String name = args[0];
 
-        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         if (!schematicBrush.isPresent()) {
@@ -164,10 +164,9 @@ public class SchematicPresetCommand extends EldoCommand {
 
         List<String> schematicSets = getSchematicSets(brush.getSettings());
 
-        getPlugin().getConfig().contains("presets." + name + ".description");
+        config.presetExists(name);
 
         savePreset(player, name, schematicSets);
-        setDescription(player, name, "none");
 
         messageSender().sendMessage(player, "Preset " + name + " saved!" + C.NEW_LINE
                 + "Preset contains " + schematicSets.size() + " schematic sets with "
@@ -191,7 +190,6 @@ public class SchematicPresetCommand extends EldoCommand {
 
         List<String> schematicSets = getSchematicSets(settings.get());
         savePreset(player, name, schematicSets);
-        setDescription(player, name, "none");
 
         messageSender().sendMessage(player, "Preset " + name + " saved!" + C.NEW_LINE
                 + "Preset contains " + schematicSets.size() + " schematic sets with "
@@ -214,7 +212,14 @@ public class SchematicPresetCommand extends EldoCommand {
             return;
         }
 
-        addSchematicSets(player, name, getSchematicSets(settings.get()));
+        Optional<Preset> preset = config.getPreset(name);
+        if (!preset.isPresent()) {
+            messageSender().sendError(player, "Preset §b" + name + "§r does not exist.");
+            return;
+        }
+
+        preset.get().getFilter().addAll(getSchematicSets(settings.get()));
+        config.save();
 
         messageSender().sendMessage(player, "Preset " + name + " changed!" + C.NEW_LINE
                 + "Added §b" + settings.get().getSchematicSets().size() + "§r schematic sets with §b"
@@ -228,8 +233,15 @@ public class SchematicPresetCommand extends EldoCommand {
 
         String name = args[0];
 
-        setDescription(player, name, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+        Optional<Preset> preset = config.getPreset(name);
+        if (!preset.isPresent()) {
+            messageSender().sendError(player, "Preset §b" + name + "§r does not exist.");
+            return;
+        }
+        preset.get().setDescription(String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
         messageSender().sendMessage(player, "Changed description of preset §b" + name + "§r!");
+        config.save();
+
     }
 
     private void removeSets(Player player, String[] args) {
@@ -238,17 +250,16 @@ public class SchematicPresetCommand extends EldoCommand {
         }
         String name = args[0];
 
-        Object[] original;
         String[] ids = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<List<String>> optionalSchematics = getSchematicSetsFromConfig(name);
+        Optional<Preset> preset = config.getPreset(name);
 
-        if (!optionalSchematics.isPresent()) {
+        if (!preset.isPresent()) {
             messageSender().sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
 
-        List<String> schematicSets = optionalSchematics.get();
+        List<String> schematicSets = preset.get().getFilter();
 
         for (String id : ids) {
             try {
@@ -263,8 +274,8 @@ public class SchematicPresetCommand extends EldoCommand {
                 return;
             }
         }
-
-        overrideSchematicSets(player, name, schematicSets.stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        preset.get().setFilter(schematicSets.stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        config.save();
         messageSender().sendMessage(player, "Removed schematic set from preset " + name);
     }
 
@@ -275,13 +286,10 @@ public class SchematicPresetCommand extends EldoCommand {
         }
 
         String name = args[0];
-        String path = "presets." + name;
-        if (!getPlugin().getConfig().isSet(path)) {
+        if (!config.removePreset(name)) {
             messageSender().sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
-        getPlugin().getConfig().set(path, null);
-        getPlugin().saveConfig();
         messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!");
     }
 
@@ -292,40 +300,32 @@ public class SchematicPresetCommand extends EldoCommand {
         }
 
         String name = args[0];
-        String path = "presets." + name;
 
-        Optional<List<String>> schematicSetsConfig = getSchematicSetsFromConfig(name);
+        Optional<Preset> optPreset = config.getPreset(name);
 
-        if (!schematicSetsConfig.isPresent()) {
+        if (!optPreset.isPresent()) {
             messageSender().sendError(player, "Preset §b" + name + "§r does not exist.");
             return;
         }
-        List<String> schematicSets = schematicSetsConfig.get();
+        Preset preset = optPreset.get();
+        List<String> schematicSets = preset.getFilter();
         List<String> schematicSetsList = new ArrayList<>();
         for (int i = 0; i < schematicSets.size(); i++) {
             schematicSetsList.add("§b" + (i + 1) + "| §r" + schematicSets.get(i));
         }
 
-        messageSender().sendMessage(player, "Information about preset §b" + name + "§r" + C.NEW_LINE
-                + "§bDescription:§r " + getDescription(player, name) + C.NEW_LINE
+        messageSender().sendMessage(player, "Information about preset §b" + preset.getName() + "§r" + C.NEW_LINE
+                + "§bDescription:§r " + preset.getDescription() + C.NEW_LINE
                 + "§bSchematic sets (" + schematicSetsList.size() + ")§r:" + C.NEW_LINE
                 + String.join(C.NEW_LINE, schematicSetsList));
     }
 
-
     private void presetList(Player player) {
-        ConfigurationSection presets = getPlugin().getConfig().getConfigurationSection("presets");
-        if (presets == null) {
-            getPlugin().getLogger().warning("Preset section is missing!");
-            return;
-        }
-
-        String presetString = presets.getKeys(false).stream()
-                .map(k -> "§bID: §r" + k + C.NEW_LINE + "  §bDesc:§r " + getDescription(player, k))
+        String presetString = config.getPresets().stream()
+                .map(preset -> "§bID: §r" + preset.getName() + C.NEW_LINE + "  §bDesc:§r " + preset.getDescription())
                 .collect(Collectors.joining("\n"));
         messageSender().sendMessage(player, presetString);
     }
-
 
     /**
      * Saves a list of schematic sets to a preset.
@@ -335,97 +335,18 @@ public class SchematicPresetCommand extends EldoCommand {
      * @param schematicSets schematic sets
      */
     private void savePreset(Player player, String presetName, List<String> schematicSets) {
-        String path = "presets." + presetName + ".filter";
-        boolean presetPresent = getPlugin().getConfig().isSet(path);
-        if (presetPresent) {
+        if (config.presetExists(presetName)) {
             messageSender().sendError(player, "Preset §b" + presetName + "§r does already exist.");
             return;
         }
-
-        getPlugin().getConfig().set(path, schematicSets);
-        getPlugin().saveConfig();
-    }
-
-    /**
-     * Add a list of schematic sets to a existing preset.
-     *
-     * @param player        player for error handling
-     * @param presetName    name of preset
-     * @param schematicSets schematic sets
-     */
-    private void addSchematicSets(Player player, String presetName, List<String> schematicSets) {
-        String path = "presets." + presetName + ".filter";
-        boolean presetPresent = getPlugin().getConfig().isSet(path);
-        if (!presetPresent) {
-            messageSender().sendError(player, "Preset §b" + presetName + "§r does not exist.");
-            return;
-        }
-
-        schematicSets.addAll(getPlugin().getConfig().getStringList(path));
-
-        getPlugin().getConfig().set(path, schematicSets);
-        getPlugin().saveConfig();
-    }
-
-    /**
-     * Replaces the current list of schematic sets of a preset with a new list.
-     *
-     * @param player        player for error handling
-     * @param presetName    name of preset
-     * @param schematicSets schematic sets
-     */
-    private void overrideSchematicSets(Player player, String presetName, List<String> schematicSets) {
-        String path = "presets." + presetName + ".filter";
-        boolean presetPresent = getPlugin().getConfig().isSet(path);
-        if (!presetPresent) {
-            messageSender().sendError(player, "Preset §b" + presetName + "§r does not exist.");
-            return;
-        }
-
-        getPlugin().getConfig().set(path, schematicSets);
-        getPlugin().saveConfig();
+        config.addPreset(new Preset(presetName, schematicSets));
+        config.save();
     }
 
     private List<String> getSchematicSets(BrushSettings brush) {
         return brush.getSchematicSets().stream()
                 .map(SchematicSet::getArguments)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Loads the schematic sets of a preset from config.
-     *
-     * @param presetName name of preset
-     *
-     * @return optional list of schematic sets when the preset is present in config
-     */
-    private Optional<List<String>> getSchematicSetsFromConfig(String presetName) {
-        String path = "presets." + presetName + ".filter";
-        if (getPlugin().getConfig().contains(path)) {
-            return Optional.of(getPlugin().getConfig().getStringList(path));
-        }
-        return Optional.empty();
-    }
-
-    private void setDescription(Player player, String name, String descr) {
-        String path = "presets." + name;
-        boolean presetPresent = getPlugin().getConfig().isSet(path);
-        if (!presetPresent) {
-            messageSender().sendError(player, "Preset §b" + name + "§r does not exist.");
-            return;
-        }
-        getPlugin().getConfig().set(path + ".description", descr);
-        getPlugin().saveConfig();
-    }
-
-    private String getDescription(Player player, String name) {
-        String path = "presets." + name + ".description";
-        boolean presetPresent = getPlugin().getConfig().isSet(path);
-        if (!presetPresent) {
-            messageSender().sendError(player, "Preset §b" + name + "§r does not exist.");
-            return null;
-        }
-        return getPlugin().getConfig().getString(path);
     }
 
     @Override
@@ -445,8 +366,7 @@ public class SchematicPresetCommand extends EldoCommand {
         }
 
         if ("savecurrent".equalsIgnoreCase(cmd) || "c".equalsIgnoreCase(cmd)) {
-            ConfigurationSection presets = getPlugin().getConfig().getConfigurationSection("presets");
-            if (presetExists(last)) {
+            if (config.presetExists(last)) {
                 return Collections.singletonList("This name is already in use!");
             }
             return Collections.singletonList("<name of preset>");
@@ -455,46 +375,46 @@ public class SchematicPresetCommand extends EldoCommand {
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)
                 || "info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
             if (args.length == 2 && last.isEmpty()) {
-                List<String> presets = TabUtil.getPresets(last, getPlugin(), 50);
+                List<String> presets = TabUtil.getPresets(last, 50, config);
                 presets.add("<name of preset>");
                 return presets;
             }
             if (args.length == 2) {
-                return TabUtil.getPresets(last, getPlugin(), 50);
+                return TabUtil.getPresets(last, 50, config);
             }
         }
 
         if ("save".equalsIgnoreCase(cmd) || "s".equalsIgnoreCase(cmd)) {
             if (args.length == 2) {
-                if (presetExists(last)) {
+                if (config.presetExists(last)) {
                     return Collections.singletonList("This name is already in use!");
                 }
                 return Collections.singletonList("<name of preset>");
             }
-            return TabUtil.getSchematicSetSyntax(args, schematicCache, getPlugin());
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, config);
         }
 
         if ("appendSet".equalsIgnoreCase(cmd) || "ab".equalsIgnoreCase(cmd)) {
             if (args.length == 2 && last.isEmpty()) {
-                List<String> presets = TabUtil.getPresets(last, getPlugin(), 50);
+                List<String> presets = TabUtil.getPresets(last, 50, config);
                 presets.add("<name of preset>");
                 return presets;
             }
             if (args.length == 2) {
-                return TabUtil.getPresets(last, getPlugin(), 50);
+                return TabUtil.getPresets(last, 50, config);
             }
 
-            return TabUtil.getSchematicSetSyntax(args, schematicCache, getPlugin());
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, config);
         }
 
         if ("removeSet".equalsIgnoreCase(cmd) || "rb".equalsIgnoreCase(cmd)) {
             if (args.length == 2 && last.isEmpty()) {
-                List<String> presets = TabUtil.getPresets(last, getPlugin(), 50);
+                List<String> presets = TabUtil.getPresets(last, 50, config);
                 presets.add("<name of preset>");
                 return presets;
             }
             if (args.length == 2) {
-                return TabUtil.getPresets(last, getPlugin(), 50);
+                return TabUtil.getPresets(last, 50, config);
             }
             if (args.length == 3) {
 
@@ -508,12 +428,12 @@ public class SchematicPresetCommand extends EldoCommand {
 
         if ("descr".equalsIgnoreCase(cmd) || "d".equalsIgnoreCase(cmd)) {
             if (args.length == 2 && last.isEmpty()) {
-                List<String> presets = TabUtil.getPresets(last, getPlugin(), 50);
+                List<String> presets = TabUtil.getPresets(last, 50, config);
                 presets.add("<name of preset>");
                 return presets;
             }
             if (args.length == 2) {
-                return TabUtil.getPresets(last, getPlugin(), 50);
+                return TabUtil.getPresets(last, 50, config);
             }
 
             return Collections.singletonList("<description>");
@@ -523,14 +443,5 @@ public class SchematicPresetCommand extends EldoCommand {
             return ArrayUtil.startingWithInArray(cmd, COMMANDS).collect(Collectors.toList());
         }
         return null;
-    }
-
-    private boolean presetExists(String name) {
-        ConfigurationSection presets = getPlugin().getConfig().getConfigurationSection("presets");
-        if (presets != null) {
-            Set<String> keys = presets.getKeys(false);
-            return keys.stream().anyMatch(s -> s.equalsIgnoreCase(name));
-        }
-        return false;
     }
 }

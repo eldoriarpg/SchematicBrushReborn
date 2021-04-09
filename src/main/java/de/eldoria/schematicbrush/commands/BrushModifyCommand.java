@@ -9,6 +9,7 @@ import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
@@ -29,10 +30,12 @@ import java.util.stream.Collectors;
 public class BrushModifyCommand extends EldoCommand implements Randomable {
     private static final String[] COMMANDS = {"append", "remove", "edit", "info", "reload", "help"};
     private final SchematicCache schematicCache;
+    private Config config;
 
-    public BrushModifyCommand(Plugin plugin, SchematicCache schematicCache) {
+    public BrushModifyCommand(Plugin plugin, SchematicCache schematicCache, Config config) {
         super(plugin);
         this.schematicCache = schematicCache;
+        this.config = config;
     }
 
     @Override
@@ -297,7 +300,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
         }
 
         if ("append".equalsIgnoreCase(cmd) || "a".equalsIgnoreCase(cmd)) {
-            return TabUtil.getSchematicSetSyntax(args, schematicCache, getPlugin());
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, config);
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
@@ -317,7 +320,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
             if (args.length == 2) {
                 return Collections.singletonList("<schematic set>");
             }
-            return TabUtil.getSchematicSetSyntax(args, schematicCache, getPlugin());
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, config);
         }
 
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {
