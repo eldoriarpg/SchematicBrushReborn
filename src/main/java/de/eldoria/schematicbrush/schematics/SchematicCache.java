@@ -2,8 +2,8 @@ package de.eldoria.schematicbrush.schematics;
 
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
-import de.eldoria.schematicbrush.util.TextUtil;
 import lombok.Data;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,11 +32,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SchematicCache implements Runnable {
-    private Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
-
     private final Pattern uuid = Pattern.compile("[a-zA-Z0-9]{8}(-[a-zA-Z0-9]{4}){3}-[a-zA-Z0-9]{12}");
     private final Logger logger = SchematicBrushReborn.logger();
     private final JavaPlugin plugin;
+    private Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
 
     public SchematicCache(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -45,9 +43,10 @@ public class SchematicCache implements Runnable {
 
 
     public void init() {
-        Executors
+        /*Executors
                 .newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(this, 60, 60, TimeUnit.SECONDS);
+        reload();*/
         reload();
     }
 
@@ -222,7 +221,7 @@ public class SchematicCache implements Runnable {
     }
 
     private Set<Schematic> filterSchematics(Set<Schematic> schematics, String filter) {
-        if(filter == null) return schematics;
+        if (filter == null) return schematics;
 
         Pattern pattern;
         try {

@@ -6,11 +6,12 @@
 
     <groupId>de.eldoria</groupId>
     <artifactId>SchematicBrushReborn</artifactId>
-    <version>1.4</version>
+    <version>1.4.2-pre1try this</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>8</java.version>
+        <shade.base>de.eldoria.schematicbrush</shade.base>
     </properties>
 
     <build>
@@ -28,14 +29,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
-                <!-- Do not include the <configuration>...</configuration> part if you are using Sponge! -->
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
-                            <pattern>org.bstats</pattern>
-                            <!-- Replace this with your package! -->
-                            <shadedPattern>de.eldoria.schematicbrush.bstats</shadedPattern>
+                            <pattern>de.eldoria.eldoutilities</pattern>
+                            <shadedPattern>${shade.base}.eldoutilities</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -82,10 +81,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.eldoria</groupId>
-            <artifactId>EldoUtilities</artifactId>
-            <version>1.2.3</version>
-            <scope>provided</scope>
+            <groupId>de.eldoria.EldoUtilities</groupId>
+            <artifactId>EldoUtilitiesCore</artifactId>
+            <version>1.6.9</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bstats</groupId>
+                    <artifactId>bstats-bukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

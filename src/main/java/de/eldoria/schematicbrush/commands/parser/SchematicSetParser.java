@@ -1,8 +1,8 @@
 package de.eldoria.schematicbrush.commands.parser;
 
-import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
+import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import lombok.Data;
 
 import javax.annotation.Nonnull;
@@ -52,6 +52,7 @@ public final class SchematicSetParser {
      * Get the type of the brush
      *
      * @param arguments arguments of the brush
+     *
      * @return optional brush type or empty if the brush could not be parsed.
      */
     public static Optional<SubBrushType> getBrushType(String arguments) {
@@ -82,10 +83,11 @@ public final class SchematicSetParser {
     }
 
     /**
-     * Parse the values of a brush to a {@link SubBrushValues} object.
-     * Values will be null, if the could not be found in the arguments.
+     * Parse the values of a brush to a {@link SubBrushValues} object. Values will be null, if the could not be found in
+     * the arguments.
      *
      * @param arguments arguments of brush
+     *
      * @return values wrapped in a object.
      */
     public static SubBrushValues getBrushValues(String arguments) {
@@ -124,8 +126,7 @@ public final class SchematicSetParser {
     }
 
     /**
-     * This class represents the values of a sub brush.
-     * Values which are not present are null.
+     * This class represents the values of a sub brush. Values which are not present are null.
      */
     @Data
     public static final class SubBrushValues {

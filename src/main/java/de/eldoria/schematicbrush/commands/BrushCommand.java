@@ -1,33 +1,32 @@
 package de.eldoria.schematicbrush.commands;
 
 import com.sk89q.worldedit.command.tool.brush.Brush;
+import de.eldoria.eldoutilities.simplecommands.EldoCommand;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
-import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Command which is used to create a new brush.
- * Rewrite of old schbr command.
+ * Command which is used to create a new brush. Rewrite of old schbr command.
  */
-public class BrushCommand implements TabExecutor, Randomable {
-    private final JavaPlugin plugin;
+public class BrushCommand extends EldoCommand implements Randomable {
+    private final Plugin plugin;
     private final SchematicCache schematicCache;
 
-    public BrushCommand(JavaPlugin plugin, SchematicCache schematicCache) {
+    public BrushCommand(Plugin plugin, SchematicCache schematicCache) {
+        super(plugin);
         this.plugin = plugin;
         this.schematicCache = schematicCache;
     }
@@ -42,7 +41,7 @@ public class BrushCommand implements TabExecutor, Randomable {
         Player player = (Player) sender;
 
         if (!player.hasPermission("schematicbrush.brush.use")) {
-            MessageSender.sendError(player, "You don't have the permission to do this!");
+            messageSender().sendError(player, "You don't have the permission to do this!");
             return true;
         }
         if (args.length == 0) {
@@ -60,14 +59,14 @@ public class BrushCommand implements TabExecutor, Randomable {
 
         boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush);
         if (success) {
-            MessageSender.sendMessage(player, "Brush using "
+            messageSender().sendMessage(player, "Brush using "
                     + settings.get().getSchematicCount() + " schematics created.");
         }
         return true;
     }
 
     private void help(Player player) {
-        MessageSender.sendMessage(player,
+        messageSender().sendMessage(player,
                 "A brush consists of one or more schematic set. A schematic set is defined by a §bselector§r and §bmodifiers§r." + C.NEW_LINE
                         + "A schematic set contains a §bselector§r and a optional §brotation§r, §bflip§r and §bweight§r value:" + C.NEW_LINE
                         + "  §b<selector>@rotation!flip:weight§r" + C.NEW_LINE
@@ -76,7 +75,7 @@ public class BrushCommand implements TabExecutor, Randomable {
                         + "§bRotation§r is the rotation of the schematic. §b*§r is a random rotation." + C.NEW_LINE
                         + "§bFlip§r is the flip of the schematic. §b*§r is a random flip." + C.NEW_LINE
                         + "§bWeight§r is the chance that this schematic set is selected, if the brush contains more than one set." + C.NEW_LINE
-                        + "§b§l§nFLAGS§r" +C.NEW_LINE
+                        + "§b§l§nFLAGS§r" + C.NEW_LINE
                         + "When you use a brush you can also add some §bflags§r for a better behaviour." + C.NEW_LINE
                         + "-§bincludeair §r- Air in the schematic will replace blocks. Default: §bfalse§r" + C.NEW_LINE
                         + "-§breplaceAll §r- Existing blocks will be replaced. Default: §bfalse§r" + C.NEW_LINE

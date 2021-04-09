@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush;
 
 import de.eldoria.eldoutilities.bstats.Metrics;
+import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
@@ -9,25 +10,24 @@ import de.eldoria.schematicbrush.commands.BrushCommand;
 import de.eldoria.schematicbrush.commands.BrushModifyCommand;
 import de.eldoria.schematicbrush.commands.SchematicPresetCommand;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import org.bukkit.Material;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class SchematicBrushReborn extends EldoPlugin {
 
-    private SchematicCache schematics;
     private static Logger logger;
     private static boolean debug;
-
-    public static Logger logger() {
-        return getInstance(SchematicBrushReborn.class).getLogger();
-    }
+    private SchematicCache schematics;
 
     public static boolean debugMode() {
         return debug;
     }
 
     @Override
-    public void onDisable() {
+    public void onPluginDisable() {
 
     }
 
@@ -52,11 +52,13 @@ public class SchematicBrushReborn extends EldoPlugin {
     }
 
     @Override
-    public void onEnable() {
+    public void onPluginEnable() {
         if (!getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
             logger.warning("WorldEdit is not installed on this Server!");
             return;
         }
+
+        MessageSender.create(this, "§6[SB]");
 
         reload();
 
@@ -71,6 +73,7 @@ public class SchematicBrushReborn extends EldoPlugin {
         registerCommand("sbra", adminCommand);
 
         enableMetrics();
+        Arrays.stream(Material.values()).map(Material::name).collect(Collectors.joining(", "));
     }
 
     private void enableMetrics() {

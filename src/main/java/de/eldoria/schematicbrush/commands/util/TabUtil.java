@@ -1,7 +1,8 @@
 package de.eldoria.schematicbrush.commands.util;
 
+import de.eldoria.eldoutilities.utils.ArrayUtil;
+import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import de.eldoria.schematicbrush.util.ArrayUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 
@@ -11,11 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static de.eldoria.schematicbrush.util.ArrayUtil.endingWithInArray;
-import static de.eldoria.schematicbrush.util.ArrayUtil.startingWithInArray;
-import static de.eldoria.schematicbrush.util.ArrayUtil.stringStartingWithValueInArray;
-import static de.eldoria.schematicbrush.util.TextUtil.countChars;
 
 public final class TabUtil {
     private static final String[] INCLUDE_AIR = {"-includeair", "-incair", "-a"};
@@ -48,7 +44,7 @@ public final class TabUtil {
     }
 
     public static List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Plugin plugin) {
-        int quoteCount = countChars(String.join(" ", args), '\"');
+        int quoteCount = TextUtil.countChars(String.join(" ", args), '\"');
         String last = args[args.length - 1];
         if (quoteCount % 2 == 0) {
             return getLegacySchematicSetSyntax(last, cache, plugin);
@@ -80,7 +76,7 @@ public final class TabUtil {
                 return Collections.singletonList(selector + "<regex>");
             }
 
-            List<String> matches = startingWithInArray(selector, SELECTOR_TYPE).collect(Collectors.toList());
+            List<String> matches = ArrayUtil.startingWithInArray(selector, SELECTOR_TYPE).collect(Collectors.toList());
             matches.addAll(cache.getMatchingSchematics(selector, 50));
             Collections.reverse(matches);
             return prefixStrings(matches, "\"");
@@ -92,21 +88,21 @@ public final class TabUtil {
             if (split.length == 1) {
                 return prefixStrings(Arrays.asList(ROTATION), split[0] + ":");
             }
-            return prefixStrings(startingWithInArray(split[1], ROTATION).collect(Collectors.toList()), split[0] + ":");
+            return prefixStrings(ArrayUtil.startingWithInArray(split[1], ROTATION).collect(Collectors.toList()), split[0] + ":");
         }
 
         if (arg.startsWith("-flip:") || arg.startsWith("-f:")) {
             if (split.length == 1) {
                 return prefixStrings(Arrays.asList(FLIP), split[0] + ":");
             }
-            return prefixStrings(startingWithInArray(split[1], FLIP).collect(Collectors.toList()), split[0] + ":");
+            return prefixStrings(ArrayUtil.startingWithInArray(split[1], FLIP).collect(Collectors.toList()), split[0] + ":");
         }
 
         if (arg.startsWith("-weight:") || arg.startsWith("-w:")) {
             return Collections.singletonList(split[0] + ":<number>");
         }
 
-        return startingWithInArray(arg, MODIFIERS).collect(Collectors.toList());
+        return ArrayUtil.startingWithInArray(arg, MODIFIERS).collect(Collectors.toList());
     }
 
     /**
@@ -143,13 +139,13 @@ public final class TabUtil {
             case ':':
                 return Arrays.asList(arg + "@", arg + "!", "@rotation!flip", arg + "<1-999>");
             case '!': {
-                if (endingWithInArray(arg, FLIP_TYPES)) {
+                if (ArrayUtil.endingWithInArray(arg, FLIP_TYPES)) {
                     return getMissingSchematicSetArguments(arg);
                 }
                 return prefixStrings(Arrays.asList(FLIP_TYPES), getBrushArgumentStringToLastMarker(arg));
             }
             case '@':
-                if (endingWithInArray(arg, ROTATION_TYPES)) {
+                if (ArrayUtil.endingWithInArray(arg, ROTATION_TYPES)) {
                     return getMissingSchematicSetArguments(arg);
                 }
                 return prefixStrings(Arrays.asList(ROTATION_TYPES), getBrushArgumentStringToLastMarker(arg));
@@ -192,7 +188,7 @@ public final class TabUtil {
      * @return true if the argument is a flag
      */
     public static boolean isFlag(String[] arg) {
-        if (countChars(String.join(" ", arg), '"') % 2 == 0) {
+        if (TextUtil.countChars(String.join(" ", arg), '"') % 2 == 0) {
             return arg[arg.length - 1].startsWith("-");
 
         }
@@ -207,18 +203,18 @@ public final class TabUtil {
      * @return list of possible completions
      */
     public static List<String> getFlagComplete(String flag) {
-        if (stringStartingWithValueInArray(flag, PLACEMENT)) {
+        if (ArrayUtil.stringStartingWithValueInArray(flag, PLACEMENT)) {
             String[] split = flag.split(":");
             if (split.length == 1) {
                 return prefixStrings(Arrays.asList(PLACEMENT_TYPES), split[0] + ":");
             } else {
-                return startingWithInArray(split[1], PLACEMENT_TYPES)
+                return ArrayUtil.startingWithInArray(split[1], PLACEMENT_TYPES)
                         .map(t -> split[0] + ":" + t)
                         .collect(Collectors.toList());
             }
         }
 
-        if (stringStartingWithValueInArray(flag, Y_OFFSET)) {
+        if (ArrayUtil.stringStartingWithValueInArray(flag, Y_OFFSET)) {
             return Collections.singletonList(flag + "<number>");
         }
 
@@ -226,7 +222,7 @@ public final class TabUtil {
             return Arrays.asList(SMALL_FLAGS);
         }
 
-        return startingWithInArray(flag, FLAGS).collect(Collectors.toList());
+        return ArrayUtil.startingWithInArray(flag, FLAGS).collect(Collectors.toList());
     }
 
 
@@ -307,7 +303,7 @@ public final class TabUtil {
         if (arg.isEmpty()) {
             strings = new ArrayList<>(presets.getKeys(false));
         } else {
-            strings = startingWithInArray(arg, presets.getKeys(false).toArray(array))
+            strings = ArrayUtil.startingWithInArray(arg, presets.getKeys(false).toArray(array))
                     .collect(Collectors.toList());
         }
         return strings.subList(0, Math.min(strings.size(), count));

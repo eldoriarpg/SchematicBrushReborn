@@ -1,21 +1,20 @@
 package de.eldoria.schematicbrush.commands;
 
+import de.eldoria.eldoutilities.simplecommands.EldoCommand;
+import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
-import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import de.eldoria.schematicbrush.util.ArrayUtil;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,13 +26,12 @@ import java.util.stream.Collectors;
 /**
  * Command to modify a current used brush.
  */
-public class BrushModifyCommand implements TabExecutor, Randomable {
-    private final JavaPlugin plugin;
-    private final SchematicCache schematicCache;
+public class BrushModifyCommand extends EldoCommand implements Randomable {
     private static final String[] COMMANDS = {"append", "remove", "edit", "info", "reload", "help"};
+    private final SchematicCache schematicCache;
 
-    public BrushModifyCommand(JavaPlugin plugin, SchematicCache schematicCache) {
-        this.plugin = plugin;
+    public BrushModifyCommand(Plugin plugin, SchematicCache schematicCache) {
+        super(plugin);
         this.schematicCache = schematicCache;
     }
 
@@ -60,7 +58,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 appendBrush(player, subcommandArgs);
             } else {
-                MessageSender.sendError(player, "You don't have the permission to do this!");
+                messageSender().sendError(player, "You don't have the permission to do this!");
             }
             return true;
         }
@@ -69,7 +67,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 removeBrush(player, subcommandArgs);
             } else {
-                MessageSender.sendError(player, "You don't have the permission to do this!");
+                messageSender().sendError(player, "You don't have the permission to do this!");
             }
             return true;
         }
@@ -78,7 +76,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 editBrush(player, subcommandArgs);
             } else {
-                MessageSender.sendError(player, "You don't have the permission to do this!");
+                messageSender().sendError(player, "You don't have the permission to do this!");
             }
             return true;
         }
@@ -87,7 +85,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 reload(player);
             } else {
-                MessageSender.sendError(player, "You don't have the permission to do this!");
+                messageSender().sendError(player, "You don't have the permission to do this!");
             }
             return true;
         }
@@ -95,7 +93,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (player.hasPermission("schematicbrush.brush.use")) {
                 brushInfo(player);
             } else {
-                MessageSender.sendError(player, "You don't have the permission to do this!");
+                messageSender().sendError(player, "You don't have the permission to do this!");
             }
             return true;
         }
@@ -103,7 +101,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     }
 
     private void appendBrush(Player player, String[] args) {
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, getPlugin(), schematicCache, args);
 
         if (!settings.isPresent()) {
             return;
@@ -112,7 +110,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         if (!schematicBrush.isPresent()) {
-            MessageSender.sendError(player, "This is not a schematic brush.");
+            messageSender().sendError(player, "This is not a schematic brush.");
             return;
         }
 
@@ -120,7 +118,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         SchematicBrush combinedBrush = schematicBrush.get().combineBrush(settings.get());
         boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(settings.get()));
         if (success) {
-            MessageSender.sendMessage(player, "Schematic set appended. Using §b"
+            messageSender().sendMessage(player, "Schematic set appended. Using §b"
                     + combinedBrush.getSettings().getSchematicCount() + "§r schematics.");
         }
     }
@@ -129,11 +127,11 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         if (!schematicBrush.isPresent()) {
-            MessageSender.sendError(player, "This is not a schematic brush.");
+            messageSender().sendError(player, "This is not a schematic brush.");
             return;
         }
         if (args.length == 0) {
-            MessageSender.sendError(player, "Too few arguments.");
+            messageSender().sendError(player, "Too few arguments.");
             return;
         }
 
@@ -141,36 +139,35 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         try {
             id = Integer.parseInt(args[0]);
             if (id < 1 || id > schematicBrush.get().getSettings().getSchematicSets().size()) {
-                MessageSender.sendError(player, "Invalid set id.");
+                messageSender().sendError(player, "Invalid set id.");
                 return;
             }
         } catch (NumberFormatException e) {
-            MessageSender.sendError(player, "Invalid set id.");
+            messageSender().sendError(player, "Invalid set id.");
             return;
         }
 
         List<SchematicSet> schematicSets = schematicBrush.get().getSettings().getSchematicSets();
         SchematicSet remove = schematicSets.remove(id - 1);
 
-        MessageSender.sendMessage(player, "Set §b" + remove.getArguments() + "§r removed!");
+        messageSender().sendMessage(player, "Set §b" + remove.getArguments() + "§r removed!");
     }
 
     private void editBrush(Player player, String[] args) {
         Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         if (!schematicBrush.isPresent()) {
-            MessageSender.sendError(player, "This is not a schematic brush.");
+            messageSender().sendError(player, "This is not a schematic brush.");
             return;
         }
         if (args.length < 2) {
-            MessageSender.sendError(player, "Too few arguments.");
+            messageSender().sendError(player, "Too few arguments.");
             return;
         }
 
 
         Optional<BrushSettings> brushConfiguration = BrushSettingsParser
-                .parseBrush(player, plugin, schematicCache, Arrays.copyOfRange(args, 1, args.length));
-
+                .parseBrush(player, getPlugin(), schematicCache, Arrays.copyOfRange(args, 1, args.length));
 
 
         if (!brushConfiguration.isPresent()) {
@@ -181,18 +178,18 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         try {
             id = Integer.parseInt(args[0]);
             if (id < 1 || id > schematicBrush.get().getSettings().getSchematicSets().size()) {
-                MessageSender.sendError(player, "Invalid set id.");
+                messageSender().sendError(player, "Invalid set id.");
                 return;
             }
         } catch (NumberFormatException e) {
-            MessageSender.sendError(player, "Invalid set id.");
+            messageSender().sendError(player, "Invalid set id.");
             return;
         }
 
         List<SchematicSet> schematicSets = schematicBrush.get().getSettings().getSchematicSets();
         SchematicSet remove = schematicSets.remove(id - 1);
         WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(brushConfiguration.get()));
-        MessageSender.sendMessage(player, "Set §b" + remove.getArguments() + "§r changed to §b"
+        messageSender().sendMessage(player, "Set §b" + remove.getArguments() + "§r changed to §b"
                 + brushConfiguration.get().getSchematicSets().get(0).getArguments() + "§r.");
     }
 
@@ -201,7 +198,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
 
         if (!schematicBrush.isPresent()) {
-            MessageSender.sendMessage(player, "This is not a schematic brush!");
+            messageSender().sendMessage(player, "This is not a schematic brush!");
             return;
         }
 
@@ -209,7 +206,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
         Optional<BrushSettings.BrushSettingsBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
                 oldSettings.getSchematicSets().stream().map(SchematicSet::getArguments).collect(Collectors.toList()),
-                plugin, schematicCache);
+                getPlugin(), schematicCache);
 
         if (!configurationBuilder.isPresent()) {
             return;
@@ -226,16 +223,16 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         int oldCount = oldSettings.getSchematicCount();
         int newcount = configuration.getSchematicCount();
         int addedSchematics = newcount - oldCount;
-        WorldEditBrushAdapter.setBrush(player, new SchematicBrush(plugin, player, configuration));
+        WorldEditBrushAdapter.setBrush(player, new SchematicBrush(getPlugin(), player, configuration));
         if (addedSchematics > 0) {
-            MessageSender.sendMessage(player, "Brush reloaded. Added §b" + addedSchematics + "§r schematics" + C.NEW_LINE
+            messageSender().sendMessage(player, "Brush reloaded. Added §b" + addedSchematics + "§r schematics" + C.NEW_LINE
                     + "Brush is now using §b" + newcount + "§r schematics.");
         } else if (addedSchematics < 0) {
-            MessageSender.sendMessage(player, "Brush reloaded. Removed §b" + addedSchematics + "§r schematics" + C.NEW_LINE
+            messageSender().sendMessage(player, "Brush reloaded. Removed §b" + addedSchematics + "§r schematics" + C.NEW_LINE
                     + "Brush is now using §b" + newcount + "§r schematics.");
 
         } else {
-            MessageSender.sendMessage(player, "§cNo new schematics were found.§r " +
+            messageSender().sendMessage(player, "§cNo new schematics were found.§r " +
                     "Maybe you have to reload the schematics first. Use §b/sbra reloadschematics§r");
         }
     }
@@ -245,7 +242,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
 
         if (!schematicBrush.isPresent()) {
-            MessageSender.sendError(player, "This is not a schematic brush.");
+            messageSender().sendError(player, "This is not a schematic brush.");
             return;
         }
         BrushSettings settings = schematicBrush.get().getSettings();
@@ -259,7 +256,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
 
 
         String schematicSetList = String.join(C.NEW_LINE, schematicSetStrings);
-        MessageSender.sendMessage(player,
+        messageSender().sendMessage(player,
                 "§bTotal schematics:§r " + settings.getSchematicCount() + C.NEW_LINE
                         + "§bPlacement:§r " + settings.getPlacement().toString() + C.NEW_LINE
                         + "§bY-Offset:§r " + settings.getYOffset() + C.NEW_LINE
@@ -270,7 +267,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
     }
 
     private void help(Player player) {
-        MessageSender.sendMessage(player,
+        messageSender().sendMessage(player,
                 "This command allows you to modify a current used brush." + C.NEW_LINE
                         + "§b/sbrm §na§r§bppend <schematic sets...>§r - Add one or more schematic sets to your brush." + C.NEW_LINE
                         + "§b/sbrm §nr§r§bemove <id>§r - Remove a schematic set." + C.NEW_LINE
@@ -300,7 +297,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         }
 
         if ("append".equalsIgnoreCase(cmd) || "a".equalsIgnoreCase(cmd)) {
-            return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, getPlugin());
         }
 
         if ("remove".equalsIgnoreCase(cmd) || "r".equalsIgnoreCase(cmd)) {
@@ -320,7 +317,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
             if (args.length == 2) {
                 return Collections.singletonList("<schematic set>");
             }
-            return TabUtil.getSchematicSetSyntax(args, schematicCache, plugin);
+            return TabUtil.getSchematicSetSyntax(args, schematicCache, getPlugin());
         }
 
         if ("info".equalsIgnoreCase(cmd) || "i".equalsIgnoreCase(cmd)) {

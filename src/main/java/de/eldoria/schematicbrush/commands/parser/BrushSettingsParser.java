@@ -1,13 +1,14 @@
 package de.eldoria.schematicbrush.commands.parser;
 
+import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.utils.ArrayUtil;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
-import de.eldoria.schematicbrush.commands.util.MessageSender;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import de.eldoria.schematicbrush.util.ArrayUtil;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -27,7 +28,6 @@ import static de.eldoria.schematicbrush.commands.parser.ParsingUtil.parseToLegac
 public class BrushSettingsParser {
     private static final Pattern Y_OFFSET = Pattern.compile("-(?:(?:yoff)|(?:yoffset)|(?:y)):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
     private final Pattern PLACEMENT = Pattern.compile("-(?:(?:place)|(?:placement)|(?:p)):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
-
 
     public Optional<BrushSettings> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
                                               String[] args) {
@@ -60,12 +60,14 @@ public class BrushSettingsParser {
                                                                      SchematicCache schematicCache) {
         BrushSettings.BrushSettingsBuilder configurationBuilder = BrushSettings.newBrushSettingsBuilder();
 
+        MessageSender messageSender = MessageSender.getPluginMessageSender(plugin);
+
         for (String settingsString : settingsStrings) {
             // Get the brush type
             Optional<SchematicSetParser.SubBrushType> optionalBrushType = SchematicSetParser.getBrushType(settingsString);
 
             if (!optionalBrushType.isPresent()) {
-                MessageSender.sendError(player, "Invalid schematic selector");
+                messageSender.sendError(player, "Invalid schematic selector");
                 return Optional.empty();
             }
 
@@ -87,7 +89,7 @@ public class BrushSettingsParser {
                 Optional<SchematicSet> brushConfig = buildBrushConfig(player, subBrushType, settingsString, schematicCache);
 
                 if (!brushConfig.isPresent()) {
-                    MessageSender.sendError(player, settingsString + " is invalid");
+                    messageSender.sendError(player, settingsString + " is invalid");
                     return Optional.empty();
                 }
                 configurationBuilder.addBrush(brushConfig.get());
@@ -98,7 +100,7 @@ public class BrushSettingsParser {
             if (subBrushType.getSelectorType() == SchematicSelector.PRESET) {
                 // check if brush exists
                 if (!plugin.getConfig().contains("presets." + subBrushType.getSelectorValue())) {
-                    MessageSender.sendError(player, "This brush preset"
+                    messageSender.sendError(player, "This brush preset"
                             + subBrushType.getSelectorValue() + " does not exist.");
                     return Optional.empty();
                 }
@@ -108,7 +110,7 @@ public class BrushSettingsParser {
                 Optional<List<String>> brushConfigs = getBrushesFromConfig(subBrushType.getSelectorValue(), plugin);
 
                 if (!brushConfigs.isPresent()) {
-                    MessageSender.sendError(player, "The preset " + subBrushType.getSelectorValue()
+                    messageSender.sendError(player, "The preset " + subBrushType.getSelectorValue()
                             + " does not contain any brushes");
                     return Optional.empty();
                 }
@@ -117,19 +119,19 @@ public class BrushSettingsParser {
                     optionalBrushType = SchematicSetParser.getBrushType(settings);
 
                     if (!optionalBrushType.isPresent()) {
-                        MessageSender.sendError(player, settings + " is invalid");
+                        messageSender.sendError(player, settings + " is invalid");
                         return Optional.empty();
                     }
 
                     // Block if a preset is used in a preset to avoid loop calls.
                     if (optionalBrushType.get().getSelectorType() == SchematicSelector.PRESET) {
-                        MessageSender.sendError(player, "Presets are not allowed in presets.");
+                        messageSender.sendError(player, "Presets are not allowed in presets.");
                         return Optional.empty();
                     }
 
                     Optional<SchematicSet> config = buildBrushConfig(player, optionalBrushType.get(), settings, schematicCache);
                     if (!config.isPresent()) {
-                        MessageSender.sendError(player, settings + " is invalid");
+                        messageSender.sendError(player, settings + " is invalid");
                         return Optional.empty();
                     }
 
@@ -145,6 +147,8 @@ public class BrushSettingsParser {
         SchematicSet.SchematicSetBuilder schematicSetBuilder = null;
 
         Set<Schematic> schematics = Collections.emptySet();
+
+        MessageSender messageSender = MessageSender.getPluginMessageSender(SchematicBrushReborn.class);
 
         // Check if its a name or regex lookup
         if (type.getSelectorType() == SchematicSelector.REGEX) {
@@ -163,12 +167,12 @@ public class BrushSettingsParser {
 
         // If no builder was initialized the expession is invalid.
         if (schematicSetBuilder == null) {
-            MessageSender.sendError(player, "Invalid name type.");
+            messageSender.sendError(player, "Invalid name type.");
             return Optional.empty();
         }
 
         if (schematics.isEmpty()) {
-            MessageSender.sendError(player, "No schematics were found for " + settingsString);
+            messageSender.sendError(player, "No schematics were found for " + settingsString);
             return Optional.empty();
         }
 
@@ -180,7 +184,7 @@ public class BrushSettingsParser {
         if (subBrushValues.getRotation() != null) {
             schematicSetBuilder.withRotation(subBrushValues.getRotation());
         } else if (settingsString.contains("@")) {
-            MessageSender.sendError(player, "Invalid rotation!");
+            messageSender.sendError(player, "Invalid rotation!");
             return Optional.empty();
         }
 
@@ -188,7 +192,7 @@ public class BrushSettingsParser {
         if (subBrushValues.getFlip() != null) {
             schematicSetBuilder.withFlip(subBrushValues.getFlip());
         } else if (settingsString.contains("!")) {
-            MessageSender.sendError(player, "Invalid flip!");
+            messageSender.sendError(player, "Invalid flip!");
             return Optional.empty();
         }
 
@@ -196,7 +200,7 @@ public class BrushSettingsParser {
         if (subBrushValues.getWeight() != null) {
             schematicSetBuilder.withWeight(subBrushValues.getWeight());
         } else if (settingsString.contains(":")) {
-            MessageSender.sendError(player, "Invalid weight!");
+            messageSender.sendError(player, "Invalid weight!");
             return Optional.empty();
         }
 
@@ -232,7 +236,8 @@ public class BrushSettingsParser {
             try {
                 offset = Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                MessageSender.sendError(player, "Invalid offset.");
+                MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                        .sendError(player, "Invalid offset.");
                 return Optional.empty();
             }
             settingsBuilder.withYOffset(offset);
