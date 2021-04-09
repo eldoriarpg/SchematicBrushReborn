@@ -88,6 +88,10 @@ public class Schematic {
                 name.equals(schematic.name);
     }
 
+    public File getFile() {
+        return file;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(format.getName(), file.getPath(), name);
