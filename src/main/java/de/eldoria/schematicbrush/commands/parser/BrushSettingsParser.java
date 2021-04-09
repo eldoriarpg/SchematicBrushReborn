@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,7 +27,6 @@ import static de.eldoria.schematicbrush.commands.parser.ParsingUtil.parseToLegac
 public class BrushSettingsParser {
     private static final Pattern Y_OFFSET = Pattern.compile("-(?:(?:yoff)|(?:yoffset)|(?:y)):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
     private final Pattern PLACEMENT = Pattern.compile("-(?:(?:place)|(?:placement)|(?:p)):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
-
 
 
     public Optional<BrushSettings> parseBrush(Player player, Plugin plugin, SchematicCache schematicCache,
@@ -52,8 +52,9 @@ public class BrushSettingsParser {
      * @param settingsStrings one or more brushes
      * @param plugin          plugin instance
      * @param schematicCache  schematic cache instance
-     * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already set
-     * or empty if a brush string could not be parsed
+     *
+     * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already
+     * set or empty if a brush string could not be parsed
      */
     public Optional<BrushSettings.BrushSettingsBuilder> buildBrushes(Player player, List<String> settingsStrings, Plugin plugin,
                                                                      SchematicCache schematicCache) {
@@ -143,7 +144,7 @@ public class BrushSettingsParser {
                                                     String settingsString, SchematicCache schematicCache) {
         SchematicSet.SchematicSetBuilder schematicSetBuilder = null;
 
-        List<Schematic> schematics = Collections.emptyList();
+        Set<Schematic> schematics = Collections.emptySet();
 
         // Check if its a name or regex lookup
         if (type.getSelectorType() == SchematicSelector.REGEX) {
@@ -153,7 +154,9 @@ public class BrushSettingsParser {
 
         // Check if its a directory lookup
         if (type.getSelectorType() == SchematicSelector.DIRECTORY) {
-            schematics = schematicCache.getSchematicsByDirectory(type.getSelectorValue());
+            String[] split = type.getSelectorValue().split("#");
+            String filter = split.length > 1 ? split[1] : null;
+            schematics = schematicCache.getSchematicsByDirectory(split[0], filter);
             schematicSetBuilder = new SchematicSet.SchematicSetBuilder(settingsString);
         }
 
@@ -207,6 +210,7 @@ public class BrushSettingsParser {
      * @param player          executor of the brush
      * @param settingsBuilder Unconfigures builder for brush settings
      * @param args            arguments of the brush
+     *
      * @return optional configured brush settings object or empty if something could not be parsed
      */
     private Optional<BrushSettings> buildBrushSettings(Player player, BrushSettings.BrushSettingsBuilder settingsBuilder,

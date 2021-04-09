@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SchematicCache implements Runnable {
-    private Map<String, List<Schematic>> schematicsCache = new HashMap<>();
+    private Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
 
     private final Pattern uuid = Pattern.compile("[a-zA-Z0-9]{8}(-[a-zA-Z0-9]{4}){3}-[a-zA-Z0-9]{12}");
     private final Logger logger = SchematicBrushReborn.logger();
@@ -51,14 +52,13 @@ public class SchematicCache implements Runnable {
     }
 
     /**
-     * Reload the current loaded schematics.
-     * This overrides the cache, when the schematics are loaded.
+     * Reload the current loaded schematics. This overrides the cache, when the schematics are loaded.
      */
     public void reload() {
         if (SchematicBrushReborn.debugMode()) {
             plugin.getLogger().info("Reloading schematics.");
         }
-        Map<String, List<Schematic>> cache = new HashMap<>();
+        Map<String, Set<Schematic>> cache = new HashMap<>();
 
         String root = plugin.getDataFolder().toPath().getParent().toString();
 
@@ -93,14 +93,14 @@ public class SchematicCache implements Runnable {
             loadSchematics(cache, Paths.get(root, path), seperator, prefix, prefixActive, excludedPaths);
         }
 
-        int sum = schematicsCache.values().stream().mapToInt(List::size).sum();
+        int sum = schematicsCache.values().stream().mapToInt(Set::size).sum();
         if (SchematicBrushReborn.debugMode()) {
             logger.info("Loaded " + sum + " schematics from " + schematicsCache.size() + " directories.");
         }
         schematicsCache = cache;
     }
 
-    private void loadSchematics(Map<String, List<Schematic>> cache, Path schematicFolder, String seperator,
+    private void loadSchematics(Map<String, Set<Schematic>> cache, Path schematicFolder, String seperator,
                                 String prefix, boolean prefixActive, List<String> excludedPaths) {
         // fail silently if this folder does not exist.
         if (!schematicFolder.toFile().exists()) return;
@@ -162,7 +162,7 @@ public class SchematicCache implements Runnable {
                 key = prefix + seperator + key;
             }
 
-            cache.computeIfAbsent(key, k -> new ArrayList<>())
+            cache.computeIfAbsent(key, k -> new HashSet<>())
                     // add schematics
                     .addAll(schematics);
             if (SchematicBrushReborn.debugMode()) {
@@ -214,17 +214,24 @@ public class SchematicCache implements Runnable {
      * Get a list of schematics which match a name or regex
      *
      * @param name name which will be parsed to a regex.
+     *
      * @return A brush config builder with assigned schematics.
      */
-    public List<Schematic> getSchematicsByName(String name) {
+    public Set<Schematic> getSchematicsByName(String name) {
+        return filterSchematics(getSchematics(), name);
+    }
+
+    private Set<Schematic> filterSchematics(Set<Schematic> schematics, String filter) {
+        if(filter == null) return schematics;
+
         Pattern pattern;
         try {
-            pattern = buildRegex(name);
+            pattern = buildRegex(filter);
         } catch (PatternSyntaxException e) {
             return null;
         }
 
-        return getSchematics().stream().filter(c -> c.isSchematic(pattern)).collect(Collectors.toList());
+        return schematics.stream().filter(c -> c.isSchematic(pattern)).collect(Collectors.toSet());
     }
 
     /**
@@ -232,29 +239,29 @@ public class SchematicCache implements Runnable {
      *
      * @return all schematics inside the directory
      */
-    public List<Schematic> getSchematicsByDirectory(String name) {
+    public Set<Schematic> getSchematicsByDirectory(String name, String filter) {
         // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
         if (name.endsWith("*")) {
             String purename = name.replace("*", "").toLowerCase();
-            List<Schematic> allSchematics = new ArrayList<>();
+            Set<Schematic> allSchematics = new HashSet<>();
             // Check if a directory with this name exists if a directory match should be checked.
-            for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+            for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
                 if (entry.getKey().toLowerCase().startsWith(purename)) {
                     // only the schematics in directory will be returned if a directory is found.
                     allSchematics.addAll(entry.getValue());
                 }
             }
-            return allSchematics;
+            return filterSchematics(allSchematics, filter);
         } else {
             // Check if a directory with this name exists if a directory match should be checked.
-            for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+            for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
                 if (name.equalsIgnoreCase(entry.getKey())) {
                     // only the schematics in directory will be returned if a directory is found.
-                    return entry.getValue();
+                    return filterSchematics(entry.getValue(), filter);
                 }
             }
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     /**
@@ -262,8 +269,8 @@ public class SchematicCache implements Runnable {
      *
      * @return list of schematics
      */
-    private List<Schematic> getSchematics() {
-        List<Schematic> schematics = new ArrayList<>();
+    private Set<Schematic> getSchematics() {
+        Set<Schematic> schematics = new HashSet<>();
         schematicsCache.values().forEach(schematics::addAll);
         return schematics;
     }
@@ -272,7 +279,9 @@ public class SchematicCache implements Runnable {
      * Convert a string to a regex.
      *
      * @param name name to convert
+     *
      * @return name as regex
+     *
      * @throws PatternSyntaxException if the string could not be parsed
      */
     private Pattern buildRegex(String name) throws PatternSyntaxException {
@@ -296,6 +305,7 @@ public class SchematicCache implements Runnable {
      *
      * @param dir   string for lookup
      * @param count amount of returned directories
+     *
      * @return list of directory names with size of count or shorter
      */
     public List<String> getMatchingDirectories(String dir, int count) {
@@ -327,11 +337,12 @@ public class SchematicCache implements Runnable {
      *
      * @param name  string for lookup
      * @param count amount of returned schematics
+     *
      * @return list of schematics names with size of count or shorter
      */
     public List<String> getMatchingSchematics(String name, int count) {
         List<String> matches = new ArrayList<>();
-        for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+        for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
             for (Schematic schematic : entry.getValue()) {
                 if (schematic.getName().toLowerCase().startsWith(name.toLowerCase())) {
                     matches.add(schematic.getName());
@@ -344,8 +355,9 @@ public class SchematicCache implements Runnable {
     }
 
     public int schematicCount() {
-        return schematicsCache.values().stream().map(List::size).mapToInt(Integer::intValue).sum();
+        return schematicsCache.values().stream().map(Set::size).mapToInt(Integer::intValue).sum();
     }
+
     public int directoryCount() {
         return schematicsCache.keySet().size();
     }

@@ -226,7 +226,7 @@ public class BrushModifyCommand implements TabExecutor, Randomable {
         int oldCount = oldSettings.getSchematicCount();
         int newcount = configuration.getSchematicCount();
         int addedSchematics = newcount - oldCount;
-        WorldEditBrushAdapter.setBrush(player, new SchematicBrush(player, configuration));
+        WorldEditBrushAdapter.setBrush(player, new SchematicBrush(plugin, player, configuration));
         if (addedSchematics > 0) {
             MessageSender.sendMessage(player, "Brush reloaded. Added §b" + addedSchematics + "§r schematics" + C.NEW_LINE
                     + "Brush is now using §b" + newcount + "§r schematics.");
