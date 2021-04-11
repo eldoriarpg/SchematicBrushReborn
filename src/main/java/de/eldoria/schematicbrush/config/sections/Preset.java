@@ -29,6 +29,9 @@ public class Preset implements ConfigurationSerializable {
         TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
         name = map.getValue("name");
         description = map.getValue("description");
+        if (description == null) {
+            description = "none";
+        }
         filter = map.getValue("filter");
     }
 
