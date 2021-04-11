@@ -133,6 +133,8 @@ public class SchematicCache implements Runnable {
 
         String root = plugin.getDataFolder().toPath().getParent().toString();
 
+        schematicsCache.clear();
+
         for (SchematicSource key : config.getSchematicConfig().getSources()) {
             String path = key.getPath();
             if (path == null || path.isEmpty()) {
@@ -143,28 +145,6 @@ public class SchematicCache implements Runnable {
             path = path.replace("\\", "/");
 
             loadSchematics(Paths.get(root, path));
-        }
-
-        int sum = schematicsCache.values().stream().mapToInt(Set::size).sum();
-    }
-
-    public void removeSchematic(File file) {
-        if (file.isDirectory()) {
-            return;
-        }
-
-        for (Set<Schematic> value : schematicsCache.values()) {
-            File remove = null;
-            for (Schematic schematic : value) {
-                // laziest implementation ever...
-                if (schematic.getFile() == file) {
-                    remove = file;
-                    break;
-                }
-            }
-            if (remove != null) {
-                value.remove(remove);
-            }
         }
     }
 
@@ -204,6 +184,27 @@ public class SchematicCache implements Runnable {
             logger.log(Level.CONFIG, "Loaded schematics from " + path.toString());
         }
         logger.log(Level.CONFIG, "Loaded schematics from " + schematicFolder.toString());
+    }
+
+    public void removeSchematic(File file) {
+        if (file.isDirectory()) {
+            return;
+        }
+
+        for (Set<Schematic> value : schematicsCache.values()) {
+            File remove = null;
+            for (Schematic schematic : value) {
+                // laziest implementation ever...
+                if (schematic.getFile() == file) {
+                    remove = file;
+                    break;
+                }
+            }
+            if (remove != null) {
+                File finalRemove = remove;
+                value.removeIf(schematic -> schematic.getFile() == finalRemove);
+            }
+        }
     }
 
     private void addSchematic(File file) {
@@ -377,7 +378,7 @@ public class SchematicCache implements Runnable {
      */
     public List<String> getMatchingDirectories(String dir, int count) {
         Set<String> matches = new HashSet<>();
-        char seperator = plugin.getConfig().getString("selectorSettings.pathSeperator").charAt(0);
+        char seperator = config.getSchematicConfig().getPathSeparator().charAt(0);
         int deep = TextUtil.countChars(dir, seperator);
         for (String k : schematicsCache.keySet()) {
             if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
