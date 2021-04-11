@@ -12,4 +12,8 @@ public interface Randomable {
     default int randomInt(int bound) {
         return ThreadLocalRandom.current().nextInt(bound);
     }
+
+    default Random random() {
+        return ThreadLocalRandom.current();
+    }
 }

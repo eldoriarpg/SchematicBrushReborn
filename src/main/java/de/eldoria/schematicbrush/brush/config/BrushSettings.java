@@ -9,12 +9,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A brush configuration represents the settings of a single brush.
- * A brush consists of one or more brushes represented by a {@link SchematicSet} object.
- * If more than one {@link SchematicSet} is present, a random {@link SchematicSet} will be returned via
- * the {@link #getRandomBrushConfig()} based on the {@link SchematicSet#getWeight()} of the brushes.
- * The brush settings contains some general brush settings,
- * which apply to the whole brush and not only to specific sub brushes.
+ * A brush configuration represents the settings of a single brush. A brush consists of one or more brushes represented
+ * by a {@link SchematicSet} object. If more than one {@link SchematicSet} is present, a random {@link SchematicSet}
+ * will be returned via the {@link #getRandomBrushConfig()} based on the {@link SchematicSet#getWeight()} of the
+ * brushes. The brush settings contains some general brush settings, which apply to the whole brush and not only to
+ * specific sub brushes.
  */
 @Getter
 public final class BrushSettings implements Randomable {
@@ -74,6 +73,26 @@ public final class BrushSettings implements Randomable {
     }
 
     /**
+     * Get a new builder for a brush configuration.
+     *
+     * @param brush brush which should be added
+     *
+     * @return a brush builder with one brush added
+     */
+    public static BrushSettingsBuilder newSingleBrushSettingsBuilder(SchematicSet brush) {
+        return new BrushSettingsBuilder(brush);
+    }
+
+    /**
+     * Get a new builder for a brush configuration.
+     *
+     * @return a brush builder without any configuration
+     */
+    public static BrushSettingsBuilder newBrushSettingsBuilder() {
+        return new BrushSettingsBuilder();
+    }
+
+    /**
      * Get a random brush from the {@link #schematicSets} list based on their {@link SchematicSet#getWeight()}.
      *
      * @return a random brush
@@ -101,29 +120,10 @@ public final class BrushSettings implements Randomable {
     }
 
     /**
-     * Get a new builder for a brush configuration.
-     *
-     * @param brush brush which should be added
-     * @return a brush builder with one brush added
-     */
-    public static BrushSettingsBuilder newSingleBrushSettingsBuilder(SchematicSet brush) {
-        return new BrushSettingsBuilder(brush);
-    }
-
-    /**
-     * Get a new builder for a brush configuration.
-     *
-     * @return a brush builder without any configuration
-     */
-    public static BrushSettingsBuilder newBrushSettingsBuilder() {
-        return new BrushSettingsBuilder();
-    }
-
-    /**
-     * Get the brush configuration with a new brush combined.
-     * The options from the current brush are used.
+     * Get the brush configuration with a new brush combined. The options from the current brush are used.
      *
      * @param brush Brush to combine. Only the {@link SchematicSet} list is updated.
+     *
      * @return new brush configuration.
      */
     public BrushSettings combine(BrushSettings brush) {
@@ -168,6 +168,7 @@ public final class BrushSettings implements Randomable {
          * Add a brush to the brush configuration.
          *
          * @param brush brush which should be added
+         *
          * @return builder instance with brush added
          */
         public BrushSettingsBuilder addBrush(SchematicSet brush) {
@@ -180,6 +181,7 @@ public final class BrushSettings implements Randomable {
          * Defines if the brush should include air when pasting. Default: {@code false}
          *
          * @param includeAir True if the air of the schematic should replace non air blocks
+         *
          * @return builder instance with changed state
          */
         public BrushSettingsBuilder includeAir(boolean includeAir) {
@@ -190,8 +192,9 @@ public final class BrushSettings implements Randomable {
         /**
          * Defines if the brush should only be pasted where the block is air. Default: {@code false}
          *
-         * @param replaceAirOnly True if the schematic should only be pasted
-         *                       where the block material is {@link org.bukkit.Material#AIR}
+         * @param replaceAirOnly True if the schematic should only be pasted where the block material is {@link
+         *                       org.bukkit.Material#AIR}
+         *
          * @return builder instance with changed state
          */
 
@@ -204,6 +207,7 @@ public final class BrushSettings implements Randomable {
          * Set the y offset of the brush. Default: 0
          *
          * @param yOffset y offset of the brush
+         *
          * @return builder instance with applied offset
          */
 
@@ -216,6 +220,7 @@ public final class BrushSettings implements Randomable {
          * Set the placement method for the schematics. Default: {@link Placement#DROP}
          *
          * @param placement placement method for the schematic
+         *
          * @return builder instance with applied placement
          */
 

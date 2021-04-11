@@ -17,18 +17,17 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.session.PasteBuilder;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
-import de.eldoria.schematicbrush.commands.util.MessageSender;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Represents the schematic brush as a {@link Brush} instance.
- * A brush is immutable after creation and is always assigned to only one player.
+ * Represents the schematic brush as a {@link Brush} instance. A brush is immutable after creation and is always
+ * assigned to only one player.
  */
 public class SchematicBrush implements Brush {
 
@@ -57,7 +56,7 @@ public class SchematicBrush implements Brush {
         Clipboard clipboard = randomSchematicSet.getRandomSchematic();
 
         if (clipboard == null) {
-            MessageSender.sendError(brushOwner, "No valid schematic was found for brush: "
+            MessageSender.getPluginMessageSender(plugin).sendError(brushOwner, "No valid schematic was found for brush: "
                     + randomSchematicSet.getArguments());
             return;
         }
@@ -116,6 +115,7 @@ public class SchematicBrush implements Brush {
      * Combine the current configuration with a new brush configuration to get a new brush
      *
      * @param brush Brush to combine. Only the {@link SchematicSet} list is updated.
+     *
      * @return a new schematic brush with the sub brushes of both brush configurations.
      */
     public SchematicBrush combineBrush(BrushSettings brush) {

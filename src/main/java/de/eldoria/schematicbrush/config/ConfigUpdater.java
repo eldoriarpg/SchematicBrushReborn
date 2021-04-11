@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush;
+package de.eldoria.schematicbrush.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -8,6 +8,7 @@ import java.util.Collections;
 
 // This is a whole mess...
 // Need to wrap this shit in a proper eldo config...
+@Deprecated
 public final class ConfigUpdater {
     private ConfigUpdater() {
     }
@@ -21,6 +22,8 @@ public final class ConfigUpdater {
                 plugin.getLogger().info("Config updated to version 2!");
             case 2:
                 // Optional v3 update
+                break;
+            case 3:
                 break;
             default:
                 plugin.getLogger().warning("Config version is invalid. Config restore performed.");

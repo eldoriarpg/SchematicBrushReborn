@@ -7,6 +7,8 @@ import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
+import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
@@ -22,6 +24,7 @@ public class WorldEditBrushAdapter {
      * Get the schematic brush of a player registered on the item in its main hand.
      *
      * @param player player for lookup
+     *
      * @return schematic brush instance if the item is a schematic brush
      */
     public Optional<SchematicBrush> getSchematicBrush(Player player) {
@@ -42,6 +45,7 @@ public class WorldEditBrushAdapter {
      *
      * @param player player to set
      * @param brush  brush to set
+     *
      * @return true if the brush was set.
      */
     public boolean setBrush(Player player, Brush brush) {
@@ -49,7 +53,7 @@ public class WorldEditBrushAdapter {
         try {
             getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType())).setBrush(brush, "schematicbrush.brush.use");
         } catch (InvalidToolBindException e) {
-            MessageSender.sendError(player, e.getMessage());
+            MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
             return false;
         }
         return true;
@@ -59,6 +63,7 @@ public class WorldEditBrushAdapter {
      * Get the local session of a player
      *
      * @param player player for lookup
+     *
      * @return local session.
      */
     private LocalSession getLocalSession(Player player) {

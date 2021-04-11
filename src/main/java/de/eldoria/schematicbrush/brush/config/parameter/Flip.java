@@ -26,6 +26,24 @@ public enum Flip implements Randomable {
     }
 
     /**
+     * Parse a string to a valid flip value
+     *
+     * @param string string to parse
+     *
+     * @return flip enum value
+     *
+     * @throws IllegalArgumentException when the value can't be parsed.
+     */
+    public static Flip asFlip(String string) {
+        for (Flip value : values()) {
+            for (String alias : value.alias) {
+                if (alias.equalsIgnoreCase(string)) return value;
+            }
+        }
+        throw new IllegalArgumentException(string + " is not a valid Flip value");
+    }
+
+    /**
      * Get the flip direct. Direction will be random if {@link #RANDOM}
      *
      * @return flip direction
@@ -41,23 +59,6 @@ public enum Flip implements Randomable {
      */
     public Vector3 asVector() {
         return direction.toVector();
-    }
-
-
-    /**
-     * Parse a string to a valid flip value
-     *
-     * @param string string to parse
-     * @return flip enum value
-     * @throws IllegalArgumentException when the value can't be parsed.
-     */
-    public static Flip asFlip(String string) {
-        for (Flip value : values()) {
-            for (String alias : value.alias) {
-                if (alias.equalsIgnoreCase(string)) return value;
-            }
-        }
-        throw new IllegalArgumentException(string + " is not a valid Flip value");
     }
 
     @Override
