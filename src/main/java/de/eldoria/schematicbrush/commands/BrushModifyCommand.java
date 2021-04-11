@@ -104,7 +104,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
     }
 
     private void appendBrush(Player player, String[] args) {
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, getPlugin(), schematicCache, args);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, schematicCache, args);
 
         if (!settings.isPresent()) {
             return;
@@ -170,7 +170,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
 
 
         Optional<BrushSettings> brushConfiguration = BrushSettingsParser
-                .parseBrush(player, getPlugin(), schematicCache, Arrays.copyOfRange(args, 1, args.length));
+                .parseBrush(player, config, schematicCache, Arrays.copyOfRange(args, 1, args.length));
 
 
         if (!brushConfiguration.isPresent()) {
@@ -209,7 +209,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
 
         Optional<BrushSettings.BrushSettingsBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
                 oldSettings.getSchematicSets().stream().map(SchematicSet::getArguments).collect(Collectors.toList()),
-                getPlugin(), schematicCache);
+                config, schematicCache);
 
         if (!configurationBuilder.isPresent()) {
             return;

@@ -52,7 +52,7 @@ public class BrushCommand extends EldoCommand implements Randomable {
             return true;
         }
 
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, plugin, schematicCache, args);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, schematicCache, args);
 
         if (!settings.isPresent()) {
             return true;

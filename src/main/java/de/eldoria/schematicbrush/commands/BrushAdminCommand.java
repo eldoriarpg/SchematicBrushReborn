@@ -108,11 +108,7 @@ public class BrushAdminCommand extends EldoCommand {
 
     private void reloadSchematics(CommandSender sender) {
         cache.reload();
-        if (sender instanceof ConsoleCommandSender) {
-            instance.getLogger().info("Schematics reloaded.");
-        } else if (sender instanceof Player) {
-            messageSender().sendMessage(sender, "Schematics reloaded");
-        }
+        messageSender().sendMessage(sender, "Schematics reloaded");
     }
 
     @Override

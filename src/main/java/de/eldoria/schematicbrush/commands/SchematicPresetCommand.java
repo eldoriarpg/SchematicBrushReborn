@@ -166,7 +166,7 @@ public class SchematicPresetCommand extends EldoCommand {
 
         config.presetExists(name);
 
-        savePreset(player, name, schematicSets);
+        if (!savePreset(player, name, schematicSets)) return;
 
         messageSender().sendMessage(player, "Preset " + name + " saved!" + C.NEW_LINE
                 + "Preset contains " + schematicSets.size() + " schematic sets with "
@@ -176,25 +176,25 @@ public class SchematicPresetCommand extends EldoCommand {
     private void save(Player player, String[] args) {
         if (args.length != 2) {
             messageSender().sendError(player, "Too few arguments");
+            return;
         }
         String name = args[0];
 
         String[] brushArgs = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, getPlugin(), schematicCache, brushArgs);
-
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, schematicCache, brushArgs);
 
         if (!settings.isPresent()) {
             return;
         }
 
         List<String> schematicSets = getSchematicSets(settings.get());
-        savePreset(player, name, schematicSets);
+
+        if (!savePreset(player, name, schematicSets)) return;
 
         messageSender().sendMessage(player, "Preset " + name + " saved!" + C.NEW_LINE
                 + "Preset contains " + schematicSets.size() + " schematic sets with "
                 + settings.get().getSchematicCount() + " schematics.");
-
     }
 
     private void appendSet(Player player, String[] args) {
@@ -205,7 +205,7 @@ public class SchematicPresetCommand extends EldoCommand {
 
         String[] brushArgs = Arrays.copyOfRange(args, 1, args.length);
 
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, getPlugin(), schematicCache, brushArgs);
+        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, schematicCache, brushArgs);
 
 
         if (!settings.isPresent()) {
@@ -334,13 +334,14 @@ public class SchematicPresetCommand extends EldoCommand {
      * @param presetName    name of preset
      * @param schematicSets schematic sets
      */
-    private void savePreset(Player player, String presetName, List<String> schematicSets) {
+    private boolean savePreset(Player player, String presetName, List<String> schematicSets) {
         if (config.presetExists(presetName)) {
             messageSender().sendError(player, "Preset §b" + presetName + "§r does already exist.");
-            return;
+            return false;
         }
         config.addPreset(new Preset(presetName, schematicSets));
         config.save();
+        return true;
     }
 
     private List<String> getSchematicSets(BrushSettings brush) {
