@@ -118,7 +118,7 @@ public class Config extends EldoConfig {
         if (presetSection != null) {
             for (String key : presetSection.getKeys(false)) {
                 List<String> filter = presetSection.getStringList(key + ".filter");
-                String description = presetSection.getString("description");
+                String description = presetSection.getString(key + ".description");
                 presets.add(new Preset(key, description, filter));
                 plugin.getLogger().info("Converted preset " + key);
             }
@@ -135,7 +135,7 @@ public class Config extends EldoConfig {
     }
 
     public Optional<Preset> getPreset(String name) {
-        return Optional.of(presets.get(name.toLowerCase(Locale.ROOT)));
+        return Optional.ofNullable(presets.get(name.toLowerCase(Locale.ROOT)));
     }
 
     public void addPreset(Preset preset) {

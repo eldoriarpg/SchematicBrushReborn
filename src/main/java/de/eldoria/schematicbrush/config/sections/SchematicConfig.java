@@ -55,7 +55,7 @@ public class SchematicConfig implements ConfigurationSerializable {
     }
 
     public String getPathSeparator() {
-        return pathSeparator;
+        return pathSeparator.substring(0,1);
     }
 
     public boolean isPathSourceAsPrefix() {
