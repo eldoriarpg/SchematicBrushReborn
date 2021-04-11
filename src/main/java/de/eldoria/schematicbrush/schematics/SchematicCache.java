@@ -109,6 +109,10 @@ public class SchematicCache implements Runnable {
     }
 
     private void watchDirectory(WatchService watcher, Path path) {
+        if(!path.toFile().exists()) {
+            logger.info("Path: " + path.toString() + " does not exists. Skipping watch service registration.");
+            return;
+        }
         try {
             // register directory and subdirectories
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
