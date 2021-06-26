@@ -5,7 +5,6 @@ import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +24,7 @@ public final class TabUtil {
     private static final String[] SMALL_FLAGS = {INCLUDE_AIR[0], REPLACE_ALL[0], Y_OFFSET[0], PLACEMENT[0]};
     private static final String[] FLAGS = ArrayUtil.combineArrays(INCLUDE_AIR, REPLACE_ALL, Y_OFFSET, PLACEMENT);
 
-    private static final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise"};
+    private static final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise", "original"};
 
     private static final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
     private static final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
@@ -109,9 +108,8 @@ public final class TabUtil {
     /**
      * Get the brush syntax for the current entry.
      *
-     * @param arg    argument which should be completed
-     * @param cache  cache for schematic lookup
-     *
+     * @param arg   argument which should be completed
+     * @param cache cache for schematic lookup
      * @return a list of possible completions
      */
     private static List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Config config) {
@@ -184,7 +182,6 @@ public final class TabUtil {
      * Checks if the argument is a brush flag.
      *
      * @param arg argument to check
-     *
      * @return true if the argument is a flag
      */
     public static boolean isFlag(String[] arg) {
@@ -199,7 +196,6 @@ public final class TabUtil {
      * Get a tab complete for a flag. This will fail if {@link #isFlag(String[])} is false.
      *
      * @param flag flag to check
-     *
      * @return list of possible completions
      */
     public static List<String> getFlagComplete(String flag) {
@@ -230,7 +226,6 @@ public final class TabUtil {
      * Get the last brush argument marker in a string.
      *
      * @param string string to check
-     *
      * @return optional argument marker if one is found.
      */
     private static Optional<Character> getBrushArgumentMarker(String string) {
@@ -242,7 +237,6 @@ public final class TabUtil {
      *
      * @param string  string to check
      * @param reverse true if the first argument marker should be returned
-     *
      * @return optional argument marker if one is found.
      */
     private static Optional<Character> getBrushArgumentMarker(String string, boolean reverse) {
@@ -268,7 +262,6 @@ public final class TabUtil {
      * Get the string from end to the last argument marker.
      *
      * @param string string to check
-     *
      * @return substring between end and last argument marker.
      */
     private static String getBrushArgumentStringToLastMarker(String string) {
@@ -287,7 +280,6 @@ public final class TabUtil {
      * @param arg    argument to check
      * @param count  number of max returned preset names
      * @param config config
-     *
      * @return list of matchin presets of length count or shorter.
      */
     public static List<String> getPresets(String arg, int count, Config config) {
@@ -300,7 +292,6 @@ public final class TabUtil {
      *
      * @param list   list to prefix
      * @param prefix prefix to add
-     *
      * @return list of strings which start with the prefix
      */
     private static List<String> prefixStrings(List<String> list, String prefix) {
@@ -311,7 +302,6 @@ public final class TabUtil {
      * Get the missing brush argument with a explanation string.
      *
      * @param arg argument to check
-     *
      * @return list of missing arguments
      */
     private static List<String> getMissingSchematicSetArguments(String arg) {

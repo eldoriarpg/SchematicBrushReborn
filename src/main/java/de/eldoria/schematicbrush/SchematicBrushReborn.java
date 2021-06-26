@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush;
 
-import de.eldoria.eldoutilities.bstats.Metrics;
+import de.eldoria.eldoutilities.bstats.EldoMetrics;
+import de.eldoria.eldoutilities.bstats.charts.SimplePie;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.eldoutilities.updater.Updater;
@@ -25,13 +26,8 @@ import java.util.stream.Collectors;
 
 public class SchematicBrushReborn extends EldoPlugin {
 
-    private static boolean debug;
     private SchematicCache schematics;
-    Config config;
-
-    public static boolean debugMode() {
-        return debug;
-    }
+    private Config config;
 
     @Override
     public void onPluginDisable() {
@@ -44,10 +40,9 @@ public class SchematicBrushReborn extends EldoPlugin {
         saveDefaultConfig();
         this.reloadConfig();
         ConfigUpdater.validateConfig(this);
-        debug = getConfig().getBoolean("debug");
 
         if (config == null) {
-             config = new Config(this);
+            config = new Config(this);
         } else {
             config.reload();
         }
@@ -55,7 +50,7 @@ public class SchematicBrushReborn extends EldoPlugin {
         if (schematics == null) {
             schematics = new SchematicCache(this, config);
             schematics.init();
-            Updater.Butler(
+            Updater.butler(
                     new ButlerUpdateData(this, "schematicbrush.admin.reload", config.getGeneral().isCheckUpdates(),
                             false, 12, ButlerUpdateData.HOST)).start();
         } else {
@@ -90,11 +85,11 @@ public class SchematicBrushReborn extends EldoPlugin {
     }
 
     private void enableMetrics() {
-        Metrics metrics = new Metrics(this, 7683);
+        EldoMetrics metrics = new EldoMetrics(this, 7683);
         if (metrics.isEnabled()) {
             logger().info("§2Metrics enabled. Thank you <3");
         }
-        metrics.addCustomChart(new Metrics.SimplePie("schematic_count",
+        metrics.addCustomChart(new SimplePie("schematic_count",
                 () -> {
                     int sCount = schematics.schematicCount();
                     if (sCount < 50) return "<50";
@@ -105,7 +100,7 @@ public class SchematicBrushReborn extends EldoPlugin {
                     int count = (int) Math.floor(sCount / 1000d);
                     return ">" + count * 1000;
                 }));
-        metrics.addCustomChart(new Metrics.SimplePie("directory_count",
+        metrics.addCustomChart(new SimplePie("directory_count",
                 () -> {
                     int sCount = schematics.directoryCount();
                     if (sCount < 10) return "<10";
@@ -114,7 +109,7 @@ public class SchematicBrushReborn extends EldoPlugin {
                     int count = (int) Math.floor(sCount / 100d);
                     return ">" + count * 100;
                 }));
-        metrics.addCustomChart(new Metrics.SimplePie("preset_count",
+        metrics.addCustomChart(new SimplePie("preset_count",
                 () -> {
                     int sCount = getConfig().getStringList("presets").size();
                     if (sCount < 10) return "<10";
@@ -124,7 +119,7 @@ public class SchematicBrushReborn extends EldoPlugin {
                     return ">" + count * 100;
                 }));
 
-        metrics.addCustomChart(new Metrics.SimplePie("world_edit_version",
+        metrics.addCustomChart(new SimplePie("world_edit_version",
                 () -> {
                     if (this.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
                         return "FAWE";

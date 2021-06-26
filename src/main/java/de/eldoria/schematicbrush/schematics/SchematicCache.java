@@ -6,7 +6,6 @@ import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
-import lombok.Data;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -49,10 +48,10 @@ public class SchematicCache implements Runnable {
     private final Logger logger = SchematicBrushReborn.logger();
     private final JavaPlugin plugin;
     private final Config config;
-    private Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
-    WatchService watchService;
-    private Thread watchThread;
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(3);
+    WatchService watchService;
+    private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
+    private Thread watchThread;
 
     public SchematicCache(JavaPlugin plugin, Config config) {
         this.plugin = plugin;
@@ -109,8 +108,8 @@ public class SchematicCache implements Runnable {
     }
 
     private void watchDirectory(WatchService watcher, Path path) {
-        if(!path.toFile().exists()) {
-            logger.info("Path: " + path.toString() + " does not exists. Skipping watch service registration.");
+        if (!path.toFile().exists()) {
+            logger.info("Path: " + path + " does not exists. Skipping watch service registration.");
             return;
         }
         try {
@@ -159,14 +158,14 @@ public class SchematicCache implements Runnable {
         Optional<DirectoryData> baseDirectoryData = getDirectoryData(schematicFolder);
 
         if (!baseDirectoryData.isPresent()) {
-            logger.warning("Could not load schematics from " + schematicFolder.toString() + " folder.");
+            logger.warning("Could not load schematics from " + schematicFolder + " folder.");
             return;
         }
 
         logger.log(Level.CONFIG, "Loading schematics from " + schematicFolder);
 
         // initialise queue with directory in first layer
-        Queue<Path> deepDirectories = new ArrayDeque<>(baseDirectoryData.get().getDirectories());
+        Queue<Path> deepDirectories = new ArrayDeque<>(baseDirectoryData.get().directories());
         deepDirectories.add(schematicFolder.toFile().toPath());
 
         // iterate over every directory.
@@ -179,15 +178,15 @@ public class SchematicCache implements Runnable {
                 continue;
             }
             // Queue new directories
-            deepDirectories.addAll(directoryData.get().getDirectories());
+            deepDirectories.addAll(directoryData.get().directories());
 
             // Build schematic references
-            for (File file : directoryData.get().getFiles()) {
+            for (File file : directoryData.get().files()) {
                 addSchematic(file);
             }
             logger.log(Level.CONFIG, "Loaded schematics from " + path.toString());
         }
-        logger.log(Level.CONFIG, "Loaded schematics from " + schematicFolder.toString());
+        logger.log(Level.CONFIG, "Loaded schematics from " + schematicFolder);
     }
 
     public void removeSchematic(File file) {
@@ -252,11 +251,11 @@ public class SchematicCache implements Runnable {
         ClipboardFormat format = ClipboardFormats.findByFile(file);
 
         if (format == null) {
-            logger.log(Level.CONFIG, "Could not determine schematic type of " + file.toPath().toString());
+            logger.log(Level.CONFIG, "Could not determine schematic type of " + file.toPath());
             return;
         }
 
-        logger.log(Level.CONFIG, "Added " + file.toPath().toString() + " to schematic cache.");
+        logger.log(Level.CONFIG, "Added " + file.toPath() + " to schematic cache.");
         schematicsCache.computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
     }
 
@@ -286,7 +285,6 @@ public class SchematicCache implements Runnable {
      * Get a list of schematics which match a name or regex
      *
      * @param name name which will be parsed to a regex.
-     *
      * @return A brush config builder with assigned schematics.
      */
     public Set<Schematic> getSchematicsByName(String name) {
@@ -351,9 +349,7 @@ public class SchematicCache implements Runnable {
      * Convert a string to a regex.
      *
      * @param name name to convert
-     *
      * @return name as regex
-     *
      * @throws PatternSyntaxException if the string could not be parsed
      */
     private Pattern buildRegex(String name) throws PatternSyntaxException {
@@ -377,7 +373,6 @@ public class SchematicCache implements Runnable {
      *
      * @param dir   string for lookup
      * @param count amount of returned directories
-     *
      * @return list of directory names with size of count or shorter
      */
     public List<String> getMatchingDirectories(String dir, int count) {
@@ -409,7 +404,6 @@ public class SchematicCache implements Runnable {
      *
      * @param name  string for lookup
      * @param count amount of returned schematics
-     *
      * @return list of schematics names with size of count or shorter
      */
     public List<String> getMatchingSchematics(String name, int count) {
@@ -439,13 +433,28 @@ public class SchematicCache implements Runnable {
         reload();
     }
 
-    @Data
     private static class DirectoryData {
         private List<Path> directories;
         private List<File> files;
 
         public DirectoryData(List<Path> directories, List<File> files) {
             this.directories = directories;
+            this.files = files;
+        }
+
+        public List<Path> directories() {
+            return directories;
+        }
+
+        public void directories(List<Path> directories) {
+            this.directories = directories;
+        }
+
+        public List<File> files() {
+            return files;
+        }
+
+        public void files(List<File> files) {
             this.files = files;
         }
     }

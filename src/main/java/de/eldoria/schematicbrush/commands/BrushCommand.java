@@ -25,7 +25,7 @@ import java.util.Optional;
 public class BrushCommand extends EldoCommand implements Randomable {
     private final Plugin plugin;
     private final SchematicCache schematicCache;
-    private Config config;
+    private final Config config;
 
     public BrushCommand(Plugin plugin, SchematicCache schematicCache, Config config) {
         super(plugin);

@@ -3,7 +3,6 @@ package de.eldoria.schematicbrush.commands.parser;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
-import lombok.Data;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,7 +51,6 @@ public final class SchematicSetParser {
      * Get the type of the brush
      *
      * @param arguments arguments of the brush
-     *
      * @return optional brush type or empty if the brush could not be parsed.
      */
     public static Optional<SubBrushType> getBrushType(String arguments) {
@@ -87,7 +85,6 @@ public final class SchematicSetParser {
      * the arguments.
      *
      * @param arguments arguments of brush
-     *
      * @return values wrapped in a object.
      */
     public static SubBrushValues getBrushValues(String arguments) {
@@ -125,10 +122,41 @@ public final class SchematicSetParser {
         return new SubBrushValues(flip, rotation, weight);
     }
 
+    public static String NAME() {
+        return NAME;
+    }
+
+    public static String ENDINGS() {
+        return ENDINGS;
+    }
+
+    public static Pattern namePattern() {
+        return NAME_PATTERN;
+    }
+
+    public static Pattern directoryPattern() {
+        return DIRECTORY_PATTERN;
+    }
+
+    public static Pattern presetPattern() {
+        return PRESET_PATTERN;
+    }
+
+    public static Pattern rotationPattern() {
+        return ROTATION_PATTERN;
+    }
+
+    public static Pattern flipPattern() {
+        return FLIP_PATTERN;
+    }
+
+    public static Pattern weightPattern() {
+        return WEIGHT_PATTERN;
+    }
+
     /**
      * This class represents the values of a sub brush. Values which are not present are null.
      */
-    @Data
     public static final class SubBrushValues {
         /**
          * Flip of the brush.
@@ -151,12 +179,26 @@ public final class SchematicSetParser {
             this.rotation = rotation;
             this.weight = weight;
         }
+
+        @Nullable
+        public Flip flip() {
+            return flip;
+        }
+
+        @Nullable
+        public Rotation rotation() {
+            return rotation;
+        }
+
+        @Nullable
+        public Integer weight() {
+            return weight;
+        }
     }
 
     /**
      * This class represents the type of a brush.
      */
-    @Data
     public static final class SubBrushType {
         /**
          * Selector type of the brush.
@@ -172,6 +214,16 @@ public final class SchematicSetParser {
         public SubBrushType(@Nonnull SchematicSelector selectorType, @Nonnull String selectorValue) {
             this.selectorType = selectorType;
             this.selectorValue = selectorValue;
+        }
+
+        @Nonnull
+        public SchematicSelector selectorType() {
+            return selectorType;
+        }
+
+        @Nonnull
+        public String selectorValue() {
+            return selectorValue;
         }
     }
 }

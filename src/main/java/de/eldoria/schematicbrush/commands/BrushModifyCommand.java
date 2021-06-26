@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class BrushModifyCommand extends EldoCommand implements Randomable {
     private static final String[] COMMANDS = {"append", "remove", "edit", "info", "reload", "help"};
     private final SchematicCache schematicCache;
-    private Config config;
+    private final Config config;
 
     public BrushModifyCommand(Plugin plugin, SchematicCache schematicCache, Config config) {
         super(plugin);
@@ -141,7 +141,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
         int id;
         try {
             id = Integer.parseInt(args[0]);
-            if (id < 1 || id > schematicBrush.get().getSettings().getSchematicSets().size()) {
+            if (id < 1 || id > schematicBrush.get().getSettings().schematicSets().size()) {
                 messageSender().sendError(player, "Invalid set id.");
                 return;
             }
@@ -150,10 +150,10 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
             return;
         }
 
-        List<SchematicSet> schematicSets = schematicBrush.get().getSettings().getSchematicSets();
+        List<SchematicSet> schematicSets = schematicBrush.get().getSettings().schematicSets();
         SchematicSet remove = schematicSets.remove(id - 1);
 
-        messageSender().sendMessage(player, "Set §b" + remove.getArguments() + "§r removed!");
+        messageSender().sendMessage(player, "Set §b" + remove.arguments() + "§r removed!");
     }
 
     private void editBrush(Player player, String[] args) {
@@ -180,7 +180,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
         int id;
         try {
             id = Integer.parseInt(args[0]);
-            if (id < 1 || id > schematicBrush.get().getSettings().getSchematicSets().size()) {
+            if (id < 1 || id > schematicBrush.get().getSettings().schematicSets().size()) {
                 messageSender().sendError(player, "Invalid set id.");
                 return;
             }
@@ -189,11 +189,11 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
             return;
         }
 
-        List<SchematicSet> schematicSets = schematicBrush.get().getSettings().getSchematicSets();
+        List<SchematicSet> schematicSets = schematicBrush.get().getSettings().schematicSets();
         SchematicSet remove = schematicSets.remove(id - 1);
         WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(brushConfiguration.get()));
-        messageSender().sendMessage(player, "Set §b" + remove.getArguments() + "§r changed to §b"
-                + brushConfiguration.get().getSchematicSets().get(0).getArguments() + "§r.");
+        messageSender().sendMessage(player, "Set §b" + remove.arguments() + "§r changed to §b"
+                + brushConfiguration.get().schematicSets().get(0).arguments() + "§r.");
     }
 
     private void reload(Player player) {
@@ -208,7 +208,7 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
         BrushSettings oldSettings = schematicBrush.get().getSettings();
 
         Optional<BrushSettings.BrushSettingsBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
-                oldSettings.getSchematicSets().stream().map(SchematicSet::getArguments).collect(Collectors.toList()),
+                oldSettings.schematicSets().stream().map(SchematicSet::arguments).collect(Collectors.toList()),
                 config, schematicCache);
 
         if (!configurationBuilder.isPresent()) {
@@ -219,8 +219,8 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
 
         BrushSettings configuration = builder.includeAir(oldSettings.isIncludeAir())
                 .replaceAll(oldSettings.isReplaceAll())
-                .withPlacementType(oldSettings.getPlacement())
-                .withYOffset(oldSettings.getYOffset())
+                .withPlacementType(oldSettings.placement())
+                .withYOffset(oldSettings.yOffset())
                 .build();
 
         int oldCount = oldSettings.getSchematicCount();
@@ -249,11 +249,11 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
             return;
         }
         BrushSettings settings = schematicBrush.get().getSettings();
-        List<SchematicSet> schematicSets = settings.getSchematicSets();
+        List<SchematicSet> schematicSets = settings.schematicSets();
 
         List<String> schematicSetStrings = new ArrayList<>();
         for (int i = 0; i < schematicSets.size(); i++) {
-            String arguments = schematicSets.get(i).getArguments();
+            String arguments = schematicSets.get(i).arguments();
             schematicSetStrings.add("§b" + (i + 1) + "|§r " + arguments);
         }
 
@@ -261,8 +261,8 @@ public class BrushModifyCommand extends EldoCommand implements Randomable {
         String schematicSetList = String.join(C.NEW_LINE, schematicSetStrings);
         messageSender().sendMessage(player,
                 "§bTotal schematics:§r " + settings.getSchematicCount() + C.NEW_LINE
-                        + "§bPlacement:§r " + settings.getPlacement().toString() + C.NEW_LINE
-                        + "§bY-Offset:§r " + settings.getYOffset() + C.NEW_LINE
+                        + "§bPlacement:§r " + settings.placement().toString() + C.NEW_LINE
+                        + "§bY-Offset:§r " + settings.yOffset() + C.NEW_LINE
                         + "§bPaste air:§r " + settings.isIncludeAir() + C.NEW_LINE
                         + "§bReplace all blocks:§r " + settings.isReplaceAll() + C.NEW_LINE
                         + "§bSchematic sets:§r" + C.NEW_LINE

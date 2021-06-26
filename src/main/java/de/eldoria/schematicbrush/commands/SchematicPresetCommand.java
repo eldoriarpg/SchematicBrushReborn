@@ -222,7 +222,7 @@ public class SchematicPresetCommand extends EldoCommand {
         config.save();
 
         messageSender().sendMessage(player, "Preset " + name + " changed!" + C.NEW_LINE
-                + "Added §b" + settings.get().getSchematicSets().size() + "§r schematic sets with §b"
+                + "Added §b" + settings.get().schematicSets().size() + "§r schematic sets with §b"
                 + settings.get().getSchematicCount() + "§r schematics.");
     }
 
@@ -345,8 +345,8 @@ public class SchematicPresetCommand extends EldoCommand {
     }
 
     private List<String> getSchematicSets(BrushSettings brush) {
-        return brush.getSchematicSets().stream()
-                .map(SchematicSet::getArguments)
+        return brush.schematicSets().stream()
+                .map(SchematicSet::arguments)
                 .collect(Collectors.toList());
     }
 
