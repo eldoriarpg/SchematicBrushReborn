@@ -37,9 +37,7 @@ public enum Rotation implements Randomable {
      * Get a string as rotation value.
      *
      * @param value value to parse
-     *
      * @return rotation enum
-     *
      * @throws IllegalArgumentException when value cant be parsed
      */
     public static Rotation asRotation(String value) {

@@ -29,9 +29,7 @@ public enum Flip implements Randomable {
      * Parse a string to a valid flip value
      *
      * @param string string to parse
-     *
      * @return flip enum value
-     *
      * @throws IllegalArgumentException when the value can't be parsed.
      */
     public static Flip asFlip(String string) {

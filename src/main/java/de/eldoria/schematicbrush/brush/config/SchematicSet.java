@@ -6,7 +6,6 @@ import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.util.Randomable;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.Set;
  * brush can have a weight which indicates how often it should be used, when a {@link BrushSettings} contains more than
  * one brush. The brush contains one ore more schematics which will be provided by random.
  */
-@Getter
 public class SchematicSet implements Randomable {
     /**
      * A list of schematics.
@@ -78,7 +76,6 @@ public class SchematicSet implements Randomable {
      * Update a not weighted brush.
      *
      * @param weight weight to set.
-     *
      * @throws IllegalStateException    when the weight is not -1 and this method is called.
      * @throws IllegalArgumentException when the weight is less than 1.
      */
@@ -92,6 +89,26 @@ public class SchematicSet implements Randomable {
         }
 
         this.weight = weight;
+    }
+
+    public List<Schematic> schematics() {
+        return schematics;
+    }
+
+    public String arguments() {
+        return arguments;
+    }
+
+    public Rotation rotation() {
+        return rotation;
+    }
+
+    public Flip flip() {
+        return flip;
+    }
+
+    public int weight() {
+        return weight;
     }
 
     /**
@@ -112,7 +129,6 @@ public class SchematicSet implements Randomable {
          * Set the schematic list of brush.
          *
          * @param schematics schematics to set
-         *
          * @return instance with schematics set
          */
         public SchematicSetBuilder withSchematics(Set<Schematic> schematics) {
@@ -124,7 +140,6 @@ public class SchematicSet implements Randomable {
          * Set the rotation of the brush.
          *
          * @param rotation rotation of the brush
-         *
          * @return instance with rotation set.
          */
         public SchematicSetBuilder withRotation(Rotation rotation) {
@@ -136,7 +151,6 @@ public class SchematicSet implements Randomable {
          * Set the flip of the brush.
          *
          * @param flip flip of the brush
-         *
          * @return instance with flip set
          */
         public SchematicSetBuilder withFlip(Flip flip) {
@@ -148,7 +162,6 @@ public class SchematicSet implements Randomable {
          * Set the weight of the brush.
          *
          * @param weight weight of the brush
-         *
          * @return instance with weight set
          */
         public SchematicSetBuilder withWeight(int weight) {

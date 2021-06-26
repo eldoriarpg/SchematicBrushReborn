@@ -21,6 +21,7 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
+import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -57,19 +58,19 @@ public class SchematicBrush implements Brush {
 
         if (clipboard == null) {
             MessageSender.getPluginMessageSender(plugin).sendError(brushOwner, "No valid schematic was found for brush: "
-                    + randomSchematicSet.getArguments());
+                    + randomSchematicSet.arguments());
             return;
         }
 
         // Apply flip
-        Flip direction = randomSchematicSet.getFlip().getFlipDirection();
+        Flip direction = randomSchematicSet.flip().getFlipDirection();
         AffineTransform transform = new AffineTransform();
         if (direction != Flip.NONE) {
             transform = transform.scale(direction.asVector().abs().multiply(-2).add(1, 1, 1));
         }
 
         // Apply rotation
-        Rotation rotation = randomSchematicSet.getRotation();
+        Rotation rotation = randomSchematicSet.rotation();
         transform = transform.rotateY(rotation.getDeg());
 
         // Save current user mask
@@ -96,15 +97,17 @@ public class SchematicBrush implements Brush {
 
         // Find center of schematic and set new origin
         BlockVector3 dimensions = clipboard.getDimensions();
-        int centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
-        int centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
-        int centerY = clipboard.getMinimumPoint().getBlockY() + settings.getPlacement().find(clipboard);
-        clipboard.setOrigin(BlockVector3.at(centerX, centerY, centerZ));
+        if (settings.placement() != Placement.ORIGINAL) {
+            int centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
+            int centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
+            int centerY = clipboard.getMinimumPoint().getBlockY() + settings.placement().find(clipboard);
+            clipboard.setOrigin(BlockVector3.at(centerX, centerY, centerZ));
+        }
 
         // Create paste operation
         PasteBuilder paste = clipboardHolder.createPaste(editSession);
         Operation operation = paste
-                .to(position.add(0, settings.getYOffset(), 0))
+                .to(position.add(0, settings.yOffset(), 0))
                 .ignoreAirBlocks(!settings.isIncludeAir())
                 .build();
 
@@ -115,7 +118,6 @@ public class SchematicBrush implements Brush {
      * Combine the current configuration with a new brush configuration to get a new brush
      *
      * @param brush Brush to combine. Only the {@link SchematicSet} list is updated.
-     *
      * @return a new schematic brush with the sub brushes of both brush configurations.
      */
     public SchematicBrush combineBrush(BrushSettings brush) {
