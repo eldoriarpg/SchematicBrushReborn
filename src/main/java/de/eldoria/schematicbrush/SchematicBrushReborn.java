@@ -17,12 +17,10 @@ import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SchematicBrushReborn extends EldoPlugin {
 
@@ -81,7 +79,6 @@ public class SchematicBrushReborn extends EldoPlugin {
         registerCommand("sbra", adminCommand);
 
         enableMetrics();
-        Arrays.stream(Material.values()).map(Material::name).collect(Collectors.joining(", "));
     }
 
     private void enableMetrics() {

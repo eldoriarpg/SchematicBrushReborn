@@ -1,12 +1,17 @@
-name: Verify state
+name: Publish to Nexus
 
 on:
+  workflow_dispatch:
   push:
-  pull_request:
-    types: [opened, ready_for_review, review_requested, edited]
+    branches:
+      - master
+      - dev*
+      - feature/*
+      - release/*
 
 jobs:
   build:
+    environment: build
     runs-on: ubuntu-latest
 
     steps:
@@ -20,3 +25,8 @@ jobs:
         run: ./gradlew --build-cache build
       - name: Test with Gradle
         run: ./gradlew test
+      - name: Publish to eldonexus
+        run: ./gradlew publishMavenPublicationToEldoNexusRepository
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}

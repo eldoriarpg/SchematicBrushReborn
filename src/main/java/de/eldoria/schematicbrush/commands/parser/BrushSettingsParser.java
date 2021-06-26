@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import static de.eldoria.schematicbrush.commands.parser.ParsingUtil.parseToLegacySyntax;
 
 public class BrushSettingsParser {
-    private static final Pattern Y_OFFSET = Pattern.compile("-(?:(?:yoff)|(?:yoffset)|(?:y)):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PLACEMENT = Pattern.compile("-(?:(?:place)|(?:placement)|(?:p)):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern Y_OFFSET = Pattern.compile("-(?:yoff|yoffset|y):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PLACEMENT = Pattern.compile("-(?:place|placement|p):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
 
     private BrushSettingsParser() {
         throw new UnsupportedOperationException("This is a utility class.");

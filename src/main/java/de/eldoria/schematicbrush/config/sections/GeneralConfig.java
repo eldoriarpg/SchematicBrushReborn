@@ -7,9 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 @SerializableAs("sbrGeneralSettings")
 public class GeneralConfig implements ConfigurationSerializable {
-    private final boolean checkUpdates = true;
+    private boolean checkUpdates = true;
 
     public GeneralConfig() {
     }

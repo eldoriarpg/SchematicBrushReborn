@@ -203,11 +203,10 @@ public final class TabUtil {
             String[] split = flag.split(":");
             if (split.length == 1) {
                 return prefixStrings(Arrays.asList(PLACEMENT_TYPES), split[0] + ":");
-            } else {
-                return ArrayUtil.startingWithInArray(split[1], PLACEMENT_TYPES)
-                        .map(t -> split[0] + ":" + t)
-                        .collect(Collectors.toList());
             }
+            return ArrayUtil.startingWithInArray(split[1], PLACEMENT_TYPES)
+                    .map(t -> split[0] + ":" + t)
+                    .collect(Collectors.toList());
         }
 
         if (ArrayUtil.stringStartingWithValueInArray(flag, Y_OFFSET)) {
@@ -225,31 +224,31 @@ public final class TabUtil {
     /**
      * Get the last brush argument marker in a string.
      *
-     * @param string string to check
+     * @param input string to check
      * @return optional argument marker if one is found.
      */
-    private static Optional<Character> getBrushArgumentMarker(String string) {
-        return getBrushArgumentMarker(string, false);
+    private static Optional<Character> getBrushArgumentMarker(String input) {
+        return getBrushArgumentMarker(input, false);
     }
 
     /**
      * Get the last brush argument marker in a string.
      *
-     * @param string  string to check
+     * @param input   string to check
      * @param reverse true if the first argument marker should be returned
      * @return optional argument marker if one is found.
      */
-    private static Optional<Character> getBrushArgumentMarker(String string, boolean reverse) {
+    private static Optional<Character> getBrushArgumentMarker(String input, boolean reverse) {
         if (reverse) {
-            for (int i = 0; i < string.length(); i++) {
-                char c = string.charAt(i);
+            for (int i = 0; i < input.length(); i++) {
+                char c = input.charAt(i);
                 if (ArrayUtil.arrayContains(MARKER, c)) {
                     return Optional.of(c);
                 }
             }
         } else {
-            for (int i = string.length() - 1; i >= 0; i--) {
-                char c = string.charAt(i);
+            for (int i = input.length() - 1; i >= 0; i--) {
+                char c = input.charAt(i);
                 if (ArrayUtil.arrayContains(MARKER, c)) {
                     return Optional.of(c);
                 }
@@ -261,17 +260,17 @@ public final class TabUtil {
     /**
      * Get the string from end to the last argument marker.
      *
-     * @param string string to check
+     * @param input string to check
      * @return substring between end and last argument marker.
      */
-    private static String getBrushArgumentStringToLastMarker(String string) {
-        for (int i = string.length() - 1; i >= 0; i--) {
-            char c = string.charAt(i);
+    private static String getBrushArgumentStringToLastMarker(String input) {
+        for (int i = input.length() - 1; i >= 0; i--) {
+            char c = input.charAt(i);
             if (ArrayUtil.arrayContains(MARKER, c)) {
-                return string.substring(0, i + 1);
+                return input.substring(0, i + 1);
             }
         }
-        return string;
+        return input;
     }
 
     /**

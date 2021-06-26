@@ -122,38 +122,6 @@ public final class SchematicSetParser {
         return new SubBrushValues(flip, rotation, weight);
     }
 
-    public static String NAME() {
-        return NAME;
-    }
-
-    public static String ENDINGS() {
-        return ENDINGS;
-    }
-
-    public static Pattern namePattern() {
-        return NAME_PATTERN;
-    }
-
-    public static Pattern directoryPattern() {
-        return DIRECTORY_PATTERN;
-    }
-
-    public static Pattern presetPattern() {
-        return PRESET_PATTERN;
-    }
-
-    public static Pattern rotationPattern() {
-        return ROTATION_PATTERN;
-    }
-
-    public static Pattern flipPattern() {
-        return FLIP_PATTERN;
-    }
-
-    public static Pattern weightPattern() {
-        return WEIGHT_PATTERN;
-    }
-
     /**
      * This class represents the values of a sub brush. Values which are not present are null.
      */

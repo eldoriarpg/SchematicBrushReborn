@@ -191,7 +191,6 @@ public final class BrushSettings implements Randomable {
          * @return builder instance with brush added
          */
         public BrushSettingsBuilder addBrush(SchematicSet brush) {
-
             brushes.add(brush);
             return this;
         }

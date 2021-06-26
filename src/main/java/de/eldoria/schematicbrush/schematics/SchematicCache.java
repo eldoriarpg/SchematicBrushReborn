@@ -44,18 +44,24 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 
 public class SchematicCache implements Runnable {
-    private final Pattern uuid = Pattern.compile("[a-zA-Z0-9]{8}(-[a-zA-Z0-9]{4}){3}-[a-zA-Z0-9]{12}");
     private final Logger logger = SchematicBrushReborn.logger();
     private final JavaPlugin plugin;
     private final Config config;
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(3);
-    WatchService watchService;
+    private final ThreadGroup fileWorker = new ThreadGroup("File worker");
+    private final ScheduledExecutorService executorService;
     private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
+    private WatchService watchService;
     private Thread watchThread;
 
     public SchematicCache(JavaPlugin plugin, Config config) {
         this.plugin = plugin;
         this.config = config;
+        executorService = Executors.newScheduledThreadPool(3, r -> {
+            Thread thread = new Thread(fileWorker, r);
+            thread.setUncaughtExceptionHandler((t, throwable) ->
+                    plugin.getLogger().log(Level.SEVERE, "And error occured on thread " + t.getName() + ".", throwable));
+            return thread;
+        });
     }
 
     public void init() {
@@ -68,7 +74,6 @@ public class SchematicCache implements Runnable {
         String root = plugin.getDataFolder().toPath().getParent().toString();
 
         List<SchematicSource> sources = config.getSchematicConfig().getSources();
-        WatchService watchService;
         try {
             watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
@@ -322,13 +327,12 @@ public class SchematicCache implements Runnable {
                 }
             }
             return filterSchematics(allSchematics, filter);
-        } else {
-            // Check if a directory with this name exists if a directory match should be checked.
-            for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
-                if (name.equalsIgnoreCase(entry.getKey())) {
-                    // only the schematics in directory will be returned if a directory is found.
-                    return filterSchematics(entry.getValue(), filter);
-                }
+        }
+        // Check if a directory with this name exists if a directory match should be checked.
+        for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
+            if (name.equalsIgnoreCase(entry.getKey())) {
+                // only the schematics in directory will be returned if a directory is found.
+                return filterSchematics(entry.getValue(), filter);
             }
         }
         return Collections.emptySet();
@@ -388,15 +392,15 @@ public class SchematicCache implements Runnable {
         return new ArrayList<>(matches);
     }
 
-    private String trimPath(String string, char seperator, int deep) {
+    private String trimPath(String input, char seperator, int deep) {
         int count = deep;
-        for (int i = 0; i < string.length(); i++) {
-            if (string.charAt(i) != seperator) continue;
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) != seperator) continue;
             count--;
             if (count != -1) continue;
-            return string.substring(0, i + 1);
+            return input.substring(0, i + 1);
         }
-        return string;
+        return input;
     }
 
     /**

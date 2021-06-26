@@ -48,6 +48,7 @@ public enum Placement {
     private final String[] alias;
 
     private final ToIntFunction<Clipboard> find;
+
     Placement(ToIntFunction<Clipboard> yCenter, String... alias) {
         this.alias = alias;
         this.find = yCenter;

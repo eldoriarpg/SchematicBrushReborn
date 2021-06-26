@@ -2,7 +2,6 @@ package de.eldoria.schematicbrush.brush;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.command.tool.brush.Brush;
@@ -39,7 +38,7 @@ public class SchematicBrush implements Brush {
     /**
      * Create a new schematic brush for a player.
      *
-     * @param plugin
+     * @param plugin   plugin instance
      * @param player   placer which owns this brush
      * @param settings settings of the brush
      */
@@ -50,8 +49,7 @@ public class SchematicBrush implements Brush {
     }
 
     @Override
-    public void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size)
-            throws MaxChangedBlocksException {
+    public void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size) {
         SchematicSet randomSchematicSet = settings.getRandomBrushConfig();
 
         Clipboard clipboard = randomSchematicSet.getRandomSchematic();

@@ -58,8 +58,7 @@ public enum Rotation implements Randomable {
         if (deg == -1) {
             int degrees = random().nextInt(4);
             return degrees * 90;
-        } else {
-            return deg;
         }
+        return deg;
     }
 }
