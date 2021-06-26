@@ -9,7 +9,7 @@ import java.util.Map;
 
 @SerializableAs("sbrGeneralSettings")
 public class GeneralConfig implements ConfigurationSerializable {
-    private boolean checkUpdates = true;
+    private final boolean checkUpdates = true;
 
     public GeneralConfig() {
     }

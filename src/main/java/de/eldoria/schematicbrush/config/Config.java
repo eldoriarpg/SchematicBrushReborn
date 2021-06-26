@@ -44,7 +44,7 @@ public class Config extends EldoConfig {
         schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfig());
         general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfig());
         presets = new HashMap<>();
-        List<Preset> presets = (List<Preset>) getConfig().getList("presets", new ArrayList<>());
+        List<Preset> presets = (List<Preset>) getConfig().getList("presets", new ArrayList<Preset>());
         for (Preset preset : presets) {
             this.presets.put(preset.getName().toLowerCase(Locale.ROOT), preset);
         }
@@ -53,6 +53,11 @@ public class Config extends EldoConfig {
     @Override
     protected void init() {
         int version = plugin.getConfig().getInt("version", -1);
+        if (version == -1) {
+            setVersion(3, true);
+            return;
+        }
+
         if (version == 2) {
             upgradeToV3();
         }

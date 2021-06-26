@@ -26,8 +26,7 @@ public final class ConfigUpdater {
             case 3:
                 break;
             default:
-                plugin.getLogger().warning("Config version is invalid. Config restore performed.");
-                plugin.getConfig().set("version", 1);
+                plugin.getConfig().set("version", 3);
                 validateConfig(plugin);
         }
         ensureConfigConsistency(plugin);
