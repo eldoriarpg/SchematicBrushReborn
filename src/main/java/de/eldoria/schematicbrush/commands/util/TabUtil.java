@@ -210,7 +210,7 @@ public final class TabUtil {
         }
 
         if (ArrayUtil.stringStartingWithValueInArray(flag, Y_OFFSET)) {
-            return Collections.singletonList(flag + "<number>");
+            return Arrays.asList(flag + "<number>", flag + "[<min>:<max>]", flag + "[<num1>,<num2>,...]");
         }
 
         if ("-".equals(flag)) {
