@@ -6,6 +6,7 @@ import de.eldoria.eldoutilities.utils.Parser;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.offset.IOffset;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetFixed;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetList;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetRange;
@@ -252,7 +253,7 @@ public class BrushSettingsParser {
                                 .sendError(player, "Invalid offset.");
                         return Optional.empty();
                     }
-                    settingsBuilder.withYOffset(new OffsetRange(min.getAsInt(), max.getAsInt()));
+                    settingsBuilder.withYOffset(IOffset.range(min.getAsInt(), max.getAsInt()));
                 } else if (stripped.contains(",")) {
                     String[] stringNumbers = stripped.split(",");
                     List<Integer> numbers = new ArrayList<>();
@@ -265,7 +266,7 @@ public class BrushSettingsParser {
                         }
                         numbers.add(optionalInt.getAsInt());
                     }
-                    settingsBuilder.withYOffset(new OffsetList(numbers));
+                    settingsBuilder.withYOffset(IOffset.list(numbers));
                 }
             } else {
                 OptionalInt optionOffset = Parser.parseInt(value);
@@ -274,7 +275,7 @@ public class BrushSettingsParser {
                             .sendError(player, "Invalid offset.");
                     return Optional.empty();
                 }
-                settingsBuilder.withYOffset(new OffsetFixed(optionOffset.getAsInt()));
+                settingsBuilder.withYOffset(IOffset.fixed(optionOffset.getAsInt()));
             }
         }
 
