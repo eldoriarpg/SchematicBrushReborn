@@ -36,7 +36,6 @@ public class Schematic {
      * Matches a pattern agains the file name.
      *
      * @param pattern pattern to match
-     *
      * @return true if the pattern matches the file name with or without extension
      */
     public boolean isSchematic(Pattern pattern) {
@@ -68,7 +67,6 @@ public class Schematic {
      * Load the schematic from file.
      *
      * @return the schematic wrapped in a clipboard object
-     *
      * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deletet or
      *                     moved.
      */

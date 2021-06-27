@@ -37,9 +37,7 @@ public enum Rotation implements Randomable {
      * Get a string as rotation value.
      *
      * @param value value to parse
-     *
      * @return rotation enum
-     *
      * @throws IllegalArgumentException when value cant be parsed
      */
     public static Rotation asRotation(String value) {
@@ -60,8 +58,7 @@ public enum Rotation implements Randomable {
         if (deg == -1) {
             int degrees = random().nextInt(4);
             return degrees * 90;
-        } else {
-            return deg;
         }
+        return deg;
     }
 }

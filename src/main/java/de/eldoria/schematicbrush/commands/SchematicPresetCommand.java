@@ -16,6 +16,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public class SchematicPresetCommand extends EldoCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only a player can do this.");
             return true;
@@ -222,7 +223,7 @@ public class SchematicPresetCommand extends EldoCommand {
         config.save();
 
         messageSender().sendMessage(player, "Preset " + name + " changed!" + C.NEW_LINE
-                + "Added §b" + settings.get().getSchematicSets().size() + "§r schematic sets with §b"
+                + "Added §b" + settings.get().schematicSets().size() + "§r schematic sets with §b"
                 + settings.get().getSchematicCount() + "§r schematics.");
     }
 
@@ -345,13 +346,13 @@ public class SchematicPresetCommand extends EldoCommand {
     }
 
     private List<String> getSchematicSets(BrushSettings brush) {
-        return brush.getSchematicSets().stream()
-                .map(SchematicSet::getArguments)
+        return brush.schematicSets().stream()
+                .map(SchematicSet::arguments)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         if (!(sender instanceof Player)) {
             return null;
         }

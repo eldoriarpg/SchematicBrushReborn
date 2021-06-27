@@ -1,11 +1,12 @@
 name: SchematicBrushReborn
-version: ${project.version}
+version: ${version}
 api-version: "1.13"
 depend:
   - "WorldEdit"
 main: de.eldoria.schematicbrush.SchematicBrushReborn
 authors: [Hadde, SirYwell]
 website: "https://www.spigotmc.org/resources/79441/"
+description: Use your world edit schematics as a brush!
 commands:
   schematicbrushadmin:
     description: Manage schematic brush

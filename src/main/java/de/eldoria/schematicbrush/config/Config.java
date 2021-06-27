@@ -44,7 +44,7 @@ public class Config extends EldoConfig {
         schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfig());
         general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfig());
         presets = new HashMap<>();
-        List<Preset> presets = (List<Preset>) getConfig().getList("presets", new ArrayList<>());
+        List<Preset> presets = (List<Preset>) getConfig().getList("presets", new ArrayList<Preset>());
         for (Preset preset : presets) {
             this.presets.put(preset.getName().toLowerCase(Locale.ROOT), preset);
         }
@@ -53,6 +53,11 @@ public class Config extends EldoConfig {
     @Override
     protected void init() {
         int version = plugin.getConfig().getInt("version", -1);
+        if (version == -1) {
+            setVersion(3, true);
+            return;
+        }
+
         if (version == 2) {
             upgradeToV3();
         }
@@ -66,7 +71,7 @@ public class Config extends EldoConfig {
         try {
             Path path = Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml");
             if (!path.toFile().exists()) {
-                path.toFile().createNewFile();
+                Files.createFile(path);
             }
             Files.write(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"), plugin.getConfig().saveToString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
@@ -84,7 +89,7 @@ public class Config extends EldoConfig {
                 for (String key : scanPath.getKeys(false)) {
                     String path = scanPath.getString(key + ".path");
                     plugin.getLogger().info("Converting path " + path);
-                    String prefix = scanPath.getString(key + ".prefix");
+                    String prefix = scanPath.getString(key + ".prefix", "null");
                     List<String> excluded = new ArrayList<>();
                     for (String currpath : excludedPathes) {
                         if (currpath.startsWith(prefix)) {

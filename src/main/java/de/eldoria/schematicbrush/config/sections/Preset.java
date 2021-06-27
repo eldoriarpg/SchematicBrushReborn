@@ -52,12 +52,12 @@ public class Preset implements ConfigurationSerializable {
         return description;
     }
 
-    public List<String> getFilter() {
-        return filter;
-    }
-
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<String> getFilter() {
+        return filter;
     }
 
     public void setFilter(List<String> filter) {

@@ -26,8 +26,7 @@ public final class ConfigUpdater {
             case 3:
                 break;
             default:
-                plugin.getLogger().warning("Config version is invalid. Config restore performed.");
-                plugin.getConfig().set("version", 1);
+                plugin.getConfig().set("version", 3);
                 validateConfig(plugin);
         }
         ensureConfigConsistency(plugin);
@@ -65,8 +64,8 @@ public final class ConfigUpdater {
         setIfAbsent(config, "updateCheck", true);
         ConfigurationSection sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
         setIfAbsent(config, "selectorSettings.pathSeperator", "/");
-        String o = plugin.getConfig().getString("selectorSettings.pathSeperator");
-        if (o.length() != 1) {
+        String seperator = plugin.getConfig().getString("selectorSettings.pathSeperator", "/");
+        if (seperator.length() != 1) {
             plugin.getLogger().warning("Path seperator invalid. Must be only one char.");
             plugin.getConfig().set("selectorSettings.pathSeperator", "/");
         }

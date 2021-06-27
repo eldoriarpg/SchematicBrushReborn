@@ -6,7 +6,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.text.html.Option;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +54,7 @@ public class SchematicConfig implements ConfigurationSerializable {
     }
 
     public String getPathSeparator() {
-        return pathSeparator.substring(0,1);
+        return pathSeparator.substring(0, 1);
     }
 
     public boolean isPathSourceAsPrefix() {
