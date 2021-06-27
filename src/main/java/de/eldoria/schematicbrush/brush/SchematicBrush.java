@@ -105,7 +105,7 @@ public class SchematicBrush implements Brush {
         // Create paste operation
         PasteBuilder paste = clipboardHolder.createPaste(editSession);
         Operation operation = paste
-                .to(position.add(0, settings.yOffset(), 0))
+                .to(position.add(0, settings.yOffset().offset(), 0))
                 .ignoreAirBlocks(!settings.isIncludeAir())
                 .build();
 
