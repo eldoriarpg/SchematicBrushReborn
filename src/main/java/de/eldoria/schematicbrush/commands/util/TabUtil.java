@@ -210,7 +210,29 @@ public final class TabUtil {
         }
 
         if (ArrayUtil.stringStartingWithValueInArray(flag, Y_OFFSET)) {
-            return Arrays.asList(flag + "<number>", flag + "[<min>:<max>]", flag + "[<num1>,<num2>,...]");
+            String[] split = flag.split(":", 2);
+            if (split[1].isEmpty()) {
+                return Arrays.asList(flag + "<number>", flag + "[<min>:<max>]", flag + "[<num1>,<num2>,...]");
+            }
+            String value = split[1];
+            if (value.startsWith("[")) {
+                if (!value.contains(":") && !value.contains(",")) {
+                    return Arrays.asList(flag + ":<max>]", flag + ",<num2>,...]");
+                }
+                if (value.contains(":")) {
+                    if (value.endsWith(":")) {
+                        return Collections.singletonList(flag + "<max>]");
+                    }
+                    return Collections.singletonList(flag + "]");
+                }
+                if (value.contains(",")) {
+                    if (value.endsWith(",")) {
+                        return Collections.singletonList(flag + "<num>]");
+                    }
+                    return Arrays.asList(flag + "]", flag + ",<num>]");
+                }
+            }
+            return Collections.singletonList(split[0] + ":" + "<number>");
         }
 
         if ("-".equals(flag)) {
