@@ -3,8 +3,6 @@ package de.eldoria.schematicbrush.brush.config.offset;
 import java.util.List;
 
 public interface IOffset {
-    int offset();
-
     static IOffset range(int min, int max) {
         return new OffsetRange(min, max);
     }
@@ -16,4 +14,6 @@ public interface IOffset {
     static IOffset list(List<Integer> values) {
         return new OffsetList(values);
     }
+
+    int offset();
 }

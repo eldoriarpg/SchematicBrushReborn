@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.brush.config.offset;
 
-public class OffsetFixed implements IOffset{
+class OffsetFixed implements IOffset {
     private final int offset;
 
 

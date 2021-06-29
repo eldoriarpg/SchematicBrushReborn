@@ -2,7 +2,7 @@ package de.eldoria.schematicbrush.brush.config.offset;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class OffsetRange implements IOffset {
+class OffsetRange implements IOffset {
 
     private final int min;
     private final int max;

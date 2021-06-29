@@ -3,7 +3,7 @@ package de.eldoria.schematicbrush.brush.config.offset;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class OffsetList implements IOffset{
+class OffsetList implements IOffset {
 
     private final List<Integer> values;
 

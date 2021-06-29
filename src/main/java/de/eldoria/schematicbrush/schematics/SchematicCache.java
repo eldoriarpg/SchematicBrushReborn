@@ -133,7 +133,7 @@ public class SchematicCache implements Runnable {
         }
     }
 
-    private void registerWatcher(WatchService service, Path path)  throws IOException{
+    private void registerWatcher(WatchService service, Path path) throws IOException{
         path.register(service, ENTRY_CREATE, ENTRY_DELETE);
         logger.log(Level.CONFIG, "Registered watch service on: " + path);
     }
