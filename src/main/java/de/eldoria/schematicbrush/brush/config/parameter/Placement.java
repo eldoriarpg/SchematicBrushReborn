@@ -4,6 +4,7 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
+import java.util.Optional;
 import java.util.function.ToIntFunction;
 
 public enum Placement {
@@ -60,16 +61,15 @@ public enum Placement {
      *
      * @param value value to parse
      * @return placement enum value
-     * @throws IllegalArgumentException if value cant be parsed
      */
-    public static Placement asPlacement(String value) {
+    public static Optional<Placement> asPlacement(String value) {
         for (Placement placement : values()) {
-            if (value.equalsIgnoreCase(placement.toString())) return placement;
+            if (value.equalsIgnoreCase(placement.toString())) return Optional.of(placement);
             for (String alias : placement.alias) {
-                if (alias.equalsIgnoreCase(value)) return placement;
+                if (alias.equalsIgnoreCase(value)) return Optional.of(placement);
             }
         }
-        throw new IllegalArgumentException(value + " is not a enum value or alias.");
+        return Optional.empty();
     }
 
     private static ToIntFunction<Clipboard> findOriginal() {

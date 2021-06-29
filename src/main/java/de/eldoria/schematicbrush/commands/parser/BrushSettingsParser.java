@@ -274,16 +274,27 @@ public class BrushSettingsParser {
                 }
                 settingsBuilder.withYOffset(IOffset.fixed(optionOffset.getAsInt()));
             }
+        } else {
+            matcher = ArrayUtil.findInArray(args, Y_OFFSET_FLAG);
+            if (matcher != null) {
+                MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                        .sendError(player, "Invalid offset.");
+                return Optional.empty();
+            }
         }
 
         matcher = ArrayUtil.findInArray(args, PLACEMENT);
 
         if (matcher != null) {
             String value = matcher.group(1);
-            Placement placement = Placement.asPlacement(value);
-            settingsBuilder.withPlacementType(placement);
+            Optional<Placement> placement = Placement.asPlacement(value);
+            if (!placement.isPresent()) {
+                MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                        .sendError(player, "Invalid placement.");
+                return Optional.empty();
+            }
+            settingsBuilder.withPlacementType(placement.get());
         }
-
         return Optional.of(settingsBuilder.build());
     }
 }
