@@ -29,8 +29,10 @@ import java.util.stream.Collectors;
 import static de.eldoria.schematicbrush.commands.parser.ParsingUtil.parseToLegacySyntax;
 
 public class BrushSettingsParser {
-    private static final Pattern Y_OFFSET = Pattern.compile("-(?:yoff|yoffset|y):(-?[0-9]{1,3}|\\[-?[0-9]{1,3}:-?[0-9]{1,3}\\]|\\[(?:-?[0-9]{1,3},?)+?\\])$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern Y_OFFSET = Pattern.compile("-(?:yoff|yoffset|y):(-?[0-9]{1,3}|\\[-?[0-9]{1,3}:-?[0-9]{1,3}\\]|\\[(?:-?[0-9]{1,3},?)*?[^,]\\])$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern Y_OFFSET_FLAG = Pattern.compile("-(?:yoff|yoffset|y).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern PLACEMENT = Pattern.compile("-(?:place|placement|p):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PLACEMENT_FLAG = Pattern.compile("-(?:place|placement|p).*", Pattern.CASE_INSENSITIVE);
 
     private BrushSettingsParser() {
         throw new UnsupportedOperationException("This is a utility class.");
@@ -225,8 +227,6 @@ public class BrushSettingsParser {
      */
     private static Optional<BrushSettings> buildBrushSettings(Player player, BrushSettings.BrushSettingsBuilder settingsBuilder,
                                                               String[] args) {
-        List<String> strings = Arrays.asList(args);
-
         if (ArrayUtil.arrayContains(args, "-includeair", "-incair", "-a")) {
             settingsBuilder.includeAir(true);
         }

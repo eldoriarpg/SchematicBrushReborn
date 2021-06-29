@@ -216,6 +216,10 @@ public final class TabUtil {
             }
             String value = split[1];
             if (value.startsWith("[")) {
+                if (value.endsWith("]")) {
+                    return Collections.singletonList(flag);
+                }
+
                 if (!value.contains(":") && !value.contains(",")) {
                     return Arrays.asList(flag + ":<max>]", flag + ",<num2>,...]");
                 }
