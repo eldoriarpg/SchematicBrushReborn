@@ -1,9 +1,8 @@
 package de.eldoria.schematicbrush.commands.parser;
 
-import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import de.eldoria.schematicbrush.brush.config.parameter.Flip;
 import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
-import lombok.Data;
+import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,8 +81,8 @@ public final class SchematicSetParser {
     }
 
     /**
-     * Parse the values of a brush to a {@link SubBrushValues} object.
-     * Values will be null, if the could not be found in the arguments.
+     * Parse the values of a brush to a {@link SubBrushValues} object. Values will be null, if the could not be found in
+     * the arguments.
      *
      * @param arguments arguments of brush
      * @return values wrapped in a object.
@@ -124,10 +123,8 @@ public final class SchematicSetParser {
     }
 
     /**
-     * This class represents the values of a sub brush.
-     * Values which are not present are null.
+     * This class represents the values of a sub brush. Values which are not present are null.
      */
-    @Data
     public static final class SubBrushValues {
         /**
          * Flip of the brush.
@@ -150,12 +147,26 @@ public final class SchematicSetParser {
             this.rotation = rotation;
             this.weight = weight;
         }
+
+        @Nullable
+        public Flip flip() {
+            return flip;
+        }
+
+        @Nullable
+        public Rotation rotation() {
+            return rotation;
+        }
+
+        @Nullable
+        public Integer weight() {
+            return weight;
+        }
     }
 
     /**
      * This class represents the type of a brush.
      */
-    @Data
     public static final class SubBrushType {
         /**
          * Selector type of the brush.
@@ -171,6 +182,16 @@ public final class SchematicSetParser {
         public SubBrushType(@Nonnull SchematicSelector selectorType, @Nonnull String selectorValue) {
             this.selectorType = selectorType;
             this.selectorValue = selectorValue;
+        }
+
+        @Nonnull
+        public SchematicSelector selectorType() {
+            return selectorType;
+        }
+
+        @Nonnull
+        public String selectorValue() {
+            return selectorValue;
         }
     }
 }

@@ -2,17 +2,24 @@ package de.eldoria.schematicbrush.schematics;
 
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
-import de.eldoria.schematicbrush.util.TextUtil;
-import lombok.Data;
-import org.bukkit.configuration.ConfigurationSection;
+import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,96 +31,151 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SchematicCache implements Runnable {
-    private Map<String, List<Schematic>> schematicsCache = new HashMap<>();
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 
-    private final Pattern uuid = Pattern.compile("[a-zA-Z0-9]{8}(-[a-zA-Z0-9]{4}){3}-[a-zA-Z0-9]{12}");
+public class SchematicCache implements Runnable {
     private final Logger logger = SchematicBrushReborn.logger();
     private final JavaPlugin plugin;
+    private final Config config;
+    private final ThreadGroup fileWorker = new ThreadGroup("File worker");
+    private final ScheduledExecutorService executorService;
+    private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
+    private WatchService watchService;
+    private Thread watchThread;
 
-    public SchematicCache(JavaPlugin plugin) {
+    public SchematicCache(JavaPlugin plugin, Config config) {
         this.plugin = plugin;
+        this.config = config;
+        executorService = Executors.newScheduledThreadPool(3, r -> {
+            Thread thread = new Thread(fileWorker, r);
+            thread.setUncaughtExceptionHandler((t, throwable) ->
+                    plugin.getLogger().log(Level.SEVERE, "And error occured on thread " + t.getName() + ".", throwable));
+            return thread;
+        });
     }
-
 
     public void init() {
-        Executors
-                .newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(this, 60, 60, TimeUnit.SECONDS);
         reload();
+        initWatchServices();
     }
 
-    /**
-     * Reload the current loaded schematics.
-     * This overrides the cache, when the schematics are loaded.
-     */
-    public void reload() {
-        if (SchematicBrushReborn.debugMode()) {
-            plugin.getLogger().info("Reloading schematics.");
-        }
-        Map<String, List<Schematic>> cache = new HashMap<>();
+    public void initWatchServices() {
 
         String root = plugin.getDataFolder().toPath().getParent().toString();
 
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("schematicSources.scanPathes");
-
-        if (section == null) {
-            // This should never happen.
-            plugin.getLogger().warning("schematicSources.scanPathes is missing in config.");
+        List<SchematicSource> sources = config.getSchematicConfig().getSources();
+        try {
+            watchService = FileSystems.getDefault().newWatchService();
+        } catch (IOException e) {
+            logger.log(Level.CONFIG, "Could not create watch service");
             return;
         }
 
-        boolean prefixActive = plugin.getConfig().getBoolean("selectorSettings.pathSourceAsPrefix");
-        String seperator = plugin.getConfig().getString("selectorSettings.pathSeperator");
-        List<String> excludedPaths = plugin.getConfig().getStringList("schematicSources.excludedPathes");
+        for (SchematicSource source : sources) {
+            Path path = Paths.get(root, source.getPath());
+            watchDirectory(watchService, path);
+        }
 
-        for (String key : section.getKeys(false)) {
-            String path = section.getString(key + ".path");
-            if (path == null || path.isEmpty()) {
-                if (SchematicBrushReborn.debugMode()) {
-                    logger.warning("Path " + key + " has no path. Skipping!");
+        watchThread = new Thread(() -> {
+            Thread.currentThread().setName("Schematic Brush Watch Service.");
+            while (true) {
+                WatchKey key;
+                key = watchService.poll();
+                if (key == null) continue;
+                plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    File path = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
+                    switch (event.kind().name()) {
+                        case "ENTRY_CREATE":
+                            plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
+                            executorService.schedule(() -> addSchematic(path), 5, TimeUnit.SECONDS);
+                            break;
+                        case "ENTRY_DELETE":
+                            plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
+                            executorService.schedule(() -> removeSchematic(path), 5, TimeUnit.SECONDS);
+                            break;
+                    }
                 }
-                continue;
+                key.reset();
             }
-            String prefix = section.getString(key + ".prefix");
-            if (prefix == null || prefix.isEmpty()) {
-                logger.warning("Path " + key + " has no prefix. Skipping!");
+        });
+        watchThread.start();
+    }
+
+    private void watchDirectory(WatchService watcher, Path path) {
+        if (!path.toFile().exists()) {
+            logger.info("Path: " + path + " does not exists. Skipping watch service registration.");
+            return;
+        }
+        try {
+            registerWatcher(watcher, path);
+            // register directory and subdirectories
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                        throws IOException {
+                    registerWatcher(watcher, dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Could not register watch service.", e);
+        }
+    }
+
+    private void registerWatcher(WatchService service, Path path) throws IOException {
+        path.register(service, ENTRY_CREATE, ENTRY_DELETE);
+        logger.log(Level.CONFIG, "Registered watch service on: " + path);
+    }
+
+    /**
+     * Reload the current loaded schematics. This overrides the cache, when the schematics are loaded.
+     */
+    public void reload() {
+        plugin.getLogger().log(Level.CONFIG, "Reloading schematics.");
+
+        String root = plugin.getDataFolder().toPath().getParent().toString();
+
+        schematicsCache.clear();
+
+        for (SchematicSource key : config.getSchematicConfig().getSources()) {
+            String path = key.getPath();
+            if (path == null || path.isEmpty()) {
+                plugin.getLogger().log(Level.CONFIG, "Path " + key + " has no path. Skipping!");
                 continue;
             }
 
             path = path.replace("\\", "/");
 
-            loadSchematics(cache, Paths.get(root, path), seperator, prefix, prefixActive, excludedPaths);
+            loadSchematics(Paths.get(root, path));
         }
-
-        int sum = schematicsCache.values().stream().mapToInt(List::size).sum();
-        if (SchematicBrushReborn.debugMode()) {
-            logger.info("Loaded " + sum + " schematics from " + schematicsCache.size() + " directories.");
-        }
-        schematicsCache = cache;
     }
 
-    private void loadSchematics(Map<String, List<Schematic>> cache, Path schematicFolder, String seperator,
-                                String prefix, boolean prefixActive, List<String> excludedPaths) {
+    private void loadSchematics(Path schematicFolder) {
         // fail silently if this folder does not exist.
         if (!schematicFolder.toFile().exists()) return;
 
         Optional<DirectoryData> baseDirectoryData = getDirectoryData(schematicFolder);
 
         if (!baseDirectoryData.isPresent()) {
-            logger.warning("Could not load schematics from " + schematicFolder.toString() + " folder.");
+            logger.warning("Could not load schematics from " + schematicFolder + " folder.");
             return;
         }
 
+        logger.log(Level.CONFIG, "Loading schematics from " + schematicFolder);
+
         // initialise queue with directory in first layer
-        Queue<Path> deepDirectories = new ArrayDeque<>(baseDirectoryData.get().getDirectories());
+        Queue<Path> deepDirectories = new ArrayDeque<>(baseDirectoryData.get().directories());
         deepDirectories.add(schematicFolder.toFile().toPath());
 
         // iterate over every directory.
@@ -121,71 +183,90 @@ public class SchematicCache implements Runnable {
         while (!deepDirectories.isEmpty()) {
             Path path = deepDirectories.poll();
 
-            // remove path to get relative path in schematic folder.
-            String rawKey = path.toString().replace(schematicFolder.toString(), "");
-
-
             Optional<DirectoryData> directoryData = getDirectoryData(path);
             if (!directoryData.isPresent()) {
                 continue;
             }
             // Queue new directories
-            deepDirectories.addAll(directoryData.get().getDirectories());
-
-            // check if path is excluded
-            if (isExclued(excludedPaths, prefix + rawKey)) {
-                if (SchematicBrushReborn.debugMode()) {
-                    logger.info("Skipping exluded path " + prefix + rawKey);
-                }
-                continue;
-            }
+            deepDirectories.addAll(directoryData.get().directories());
 
             // Build schematic references
-            List<Schematic> schematics = new ArrayList<>();
-
-            for (File file : directoryData.get().getFiles()) {
-                ClipboardFormat format = ClipboardFormats.findByFile(file);
-
-                if (format == null) continue;
-
-                schematics.add(new Schematic(format, file));
+            for (File file : directoryData.get().files()) {
+                addSchematic(file);
             }
-
-            if (schematics.isEmpty()) continue;
-            String key;
-            if (!rawKey.isEmpty()) {
-                key = rawKey.replace(" ", "_").substring(1).replace("\\", seperator);
-            } else {
-                key = rawKey;
-            }
-            if (prefixActive) {
-                key = prefix + seperator + key;
-            }
-
-            cache.computeIfAbsent(key, k -> new ArrayList<>())
-                    // add schematics
-                    .addAll(schematics);
-            if (SchematicBrushReborn.debugMode()) {
-                logger.info("Loaded " + schematics.size() + " schematics from " + path.toString() + " as " + key);
-            }
+            logger.log(Level.CONFIG, "Loaded schematics from " + path.toString());
         }
-        if (SchematicBrushReborn.debugMode()) {
-            logger.info("Loaded schematics from " + schematicFolder.toString());
+        logger.log(Level.CONFIG, "Loaded schematics from " + schematicFolder);
+    }
+
+    public void removeSchematic(File file) {
+        if (file.isDirectory()) {
+            return;
+        }
+
+        for (Set<Schematic> value : schematicsCache.values()) {
+            File remove = null;
+            for (Schematic schematic : value) {
+                // laziest implementation ever...
+                if (schematic.getFile() == file) {
+                    remove = file;
+                    break;
+                }
+            }
+            if (remove != null) {
+                File finalRemove = remove;
+                value.removeIf(schematic -> schematic.getFile() == finalRemove);
+            }
         }
     }
 
-    private boolean isExclued(List<String> excludes, String path) {
-        for (String exclude : excludes) {
-            if (exclude.endsWith("*")) {
-                if (path.startsWith(exclude.substring(0, exclude.length() - 1))) {
-                    return true;
-                }
-            }
-            if (exclude.equalsIgnoreCase(path)) {
-                return true;
-            }
+    private void addSchematic(File file) {
+        if (file.isDirectory()) {
+            watchDirectory(watchService, file.toPath());
+            return;
         }
-        return false;
+
+        Path directory = file.toPath().getParent();
+        directory = directory.subpath(1, directory.getNameCount());
+
+
+        Optional<SchematicSource> sourceForPath = config.getSchematicConfig().getSourceForPath(directory);
+
+        if (!sourceForPath.isPresent()) {
+            logger.log(Level.CONFIG, "File " + directory + "is not part of a source");
+            return;
+        }
+
+        SchematicSource source = sourceForPath.get();
+
+        if (source.isExcluded(directory)) {
+            logger.log(Level.CONFIG, "Directory " + directory + "is exluded.");
+            return;
+        }
+
+        // remove path to get relative path in schematic folder.
+        String rawKey = directory.toString().replace(source.getPath(), "");
+
+        String key;
+        if (!rawKey.isEmpty()) {
+            key = rawKey.replace(" ", "_").substring(1).replace("\\", config.getSchematicConfig().getPathSeparator());
+        } else {
+            key = rawKey;
+        }
+
+        if (config.getSchematicConfig().isPathSourceAsPrefix()) {
+            key = source.getPrefix() + config.getSchematicConfig().getPathSeparator() + key;
+        }
+
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+
+        if (format == null) {
+            logger.log(Level.CONFIG, "Could not determine schematic type of " + file.toPath());
+            return;
+        }
+
+        logger.log(Level.CONFIG, "Added " + file.toPath() + " to schematic cache.");
+        schematicsCache.computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
     }
 
     private Optional<DirectoryData> getDirectoryData(Path directory) {
@@ -216,15 +297,21 @@ public class SchematicCache implements Runnable {
      * @param name name which will be parsed to a regex.
      * @return A brush config builder with assigned schematics.
      */
-    public List<Schematic> getSchematicsByName(String name) {
+    public Set<Schematic> getSchematicsByName(String name) {
+        return filterSchematics(getSchematics(), name);
+    }
+
+    private Set<Schematic> filterSchematics(Set<Schematic> schematics, String filter) {
+        if (filter == null) return schematics;
+
         Pattern pattern;
         try {
-            pattern = buildRegex(name);
+            pattern = buildRegex(filter);
         } catch (PatternSyntaxException e) {
             return null;
         }
 
-        return getSchematics().stream().filter(c -> c.isSchematic(pattern)).collect(Collectors.toList());
+        return schematics.stream().filter(c -> c.isSchematic(pattern)).collect(Collectors.toSet());
     }
 
     /**
@@ -232,29 +319,28 @@ public class SchematicCache implements Runnable {
      *
      * @return all schematics inside the directory
      */
-    public List<Schematic> getSchematicsByDirectory(String name) {
+    public Set<Schematic> getSchematicsByDirectory(String name, String filter) {
         // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
         if (name.endsWith("*")) {
             String purename = name.replace("*", "").toLowerCase();
-            List<Schematic> allSchematics = new ArrayList<>();
+            Set<Schematic> allSchematics = new HashSet<>();
             // Check if a directory with this name exists if a directory match should be checked.
-            for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+            for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
                 if (entry.getKey().toLowerCase().startsWith(purename)) {
                     // only the schematics in directory will be returned if a directory is found.
                     allSchematics.addAll(entry.getValue());
                 }
             }
-            return allSchematics;
-        } else {
-            // Check if a directory with this name exists if a directory match should be checked.
-            for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
-                if (name.equalsIgnoreCase(entry.getKey())) {
-                    // only the schematics in directory will be returned if a directory is found.
-                    return entry.getValue();
-                }
+            return filterSchematics(allSchematics, filter);
+        }
+        // Check if a directory with this name exists if a directory match should be checked.
+        for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
+            if (name.equalsIgnoreCase(entry.getKey())) {
+                // only the schematics in directory will be returned if a directory is found.
+                return filterSchematics(entry.getValue(), filter);
             }
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     /**
@@ -262,8 +348,8 @@ public class SchematicCache implements Runnable {
      *
      * @return list of schematics
      */
-    private List<Schematic> getSchematics() {
-        List<Schematic> schematics = new ArrayList<>();
+    private Set<Schematic> getSchematics() {
+        Set<Schematic> schematics = new HashSet<>();
         schematicsCache.values().forEach(schematics::addAll);
         return schematics;
     }
@@ -300,7 +386,7 @@ public class SchematicCache implements Runnable {
      */
     public List<String> getMatchingDirectories(String dir, int count) {
         Set<String> matches = new HashSet<>();
-        char seperator = plugin.getConfig().getString("selectorSettings.pathSeperator").charAt(0);
+        char seperator = config.getSchematicConfig().getPathSeparator().charAt(0);
         int deep = TextUtil.countChars(dir, seperator);
         for (String k : schematicsCache.keySet()) {
             if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
@@ -311,15 +397,15 @@ public class SchematicCache implements Runnable {
         return new ArrayList<>(matches);
     }
 
-    private String trimPath(String string, char seperator, int deep) {
+    private String trimPath(String input, char seperator, int deep) {
         int count = deep;
-        for (int i = 0; i < string.length(); i++) {
-            if (string.charAt(i) != seperator) continue;
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) != seperator) continue;
             count--;
             if (count != -1) continue;
-            return string.substring(0, i + 1);
+            return input.substring(0, i + 1);
         }
-        return string;
+        return input;
     }
 
     /**
@@ -331,7 +417,7 @@ public class SchematicCache implements Runnable {
      */
     public List<String> getMatchingSchematics(String name, int count) {
         List<String> matches = new ArrayList<>();
-        for (Map.Entry<String, List<Schematic>> entry : schematicsCache.entrySet()) {
+        for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
             for (Schematic schematic : entry.getValue()) {
                 if (schematic.getName().toLowerCase().startsWith(name.toLowerCase())) {
                     matches.add(schematic.getName());
@@ -344,8 +430,9 @@ public class SchematicCache implements Runnable {
     }
 
     public int schematicCount() {
-        return schematicsCache.values().stream().map(List::size).mapToInt(Integer::intValue).sum();
+        return schematicsCache.values().stream().map(Set::size).mapToInt(Integer::intValue).sum();
     }
+
     public int directoryCount() {
         return schematicsCache.keySet().size();
     }
@@ -355,13 +442,28 @@ public class SchematicCache implements Runnable {
         reload();
     }
 
-    @Data
     private static class DirectoryData {
         private List<Path> directories;
         private List<File> files;
 
         public DirectoryData(List<Path> directories, List<File> files) {
             this.directories = directories;
+            this.files = files;
+        }
+
+        public List<Path> directories() {
+            return directories;
+        }
+
+        public void directories(List<Path> directories) {
+            this.directories = directories;
+        }
+
+        public List<File> files() {
+            return files;
+        }
+
+        public void files(List<File> files) {
             this.files = files;
         }
     }

@@ -7,16 +7,20 @@ import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
+import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-@UtilityClass
 public class WorldEditBrushAdapter {
-    private final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
+    private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
+
+    private WorldEditBrushAdapter() {
+        throw new UnsupportedOperationException("This is a utility class.");
+    }
 
     /**
      * Get the schematic brush of a player registered on the item in its main hand.
@@ -24,7 +28,7 @@ public class WorldEditBrushAdapter {
      * @param player player for lookup
      * @return schematic brush instance if the item is a schematic brush
      */
-    public Optional<SchematicBrush> getSchematicBrush(Player player) {
+    public static Optional<SchematicBrush> getSchematicBrush(Player player) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         try {
             BrushTool brushTool = getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType()));
@@ -44,12 +48,12 @@ public class WorldEditBrushAdapter {
      * @param brush  brush to set
      * @return true if the brush was set.
      */
-    public boolean setBrush(Player player, Brush brush) {
+    public static boolean setBrush(Player player, Brush brush) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         try {
             getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType())).setBrush(brush, "schematicbrush.brush.use");
         } catch (InvalidToolBindException e) {
-            MessageSender.sendError(player, e.getMessage());
+            MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
             return false;
         }
         return true;
@@ -61,7 +65,7 @@ public class WorldEditBrushAdapter {
      * @param player player for lookup
      * @return local session.
      */
-    private LocalSession getLocalSession(Player player) {
+    private static LocalSession getLocalSession(Player player) {
         Actor actor = BukkitAdapter.adapt(player);
 
         return WORLD_EDIT.getSessionManager().get(actor);

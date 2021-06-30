@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush;
+package de.eldoria.schematicbrush.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -6,6 +6,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Collections;
 
+// This is a whole mess...
+// Need to wrap this shit in a proper eldo config...
+@Deprecated
 public final class ConfigUpdater {
     private ConfigUpdater() {
     }
@@ -20,9 +23,10 @@ public final class ConfigUpdater {
             case 2:
                 // Optional v3 update
                 break;
+            case 3:
+                break;
             default:
-                plugin.getLogger().warning("Config version is invalid. Config restore performed.");
-                plugin.getConfig().set("version", 1);
+                plugin.getConfig().set("version", 3);
                 validateConfig(plugin);
         }
         ensureConfigConsistency(plugin);
@@ -57,10 +61,11 @@ public final class ConfigUpdater {
     private static void ensureConfigConsistency(Plugin plugin) {
         FileConfiguration config = plugin.getConfig();
         setIfAbsent(config, "debug", false);
+        setIfAbsent(config, "updateCheck", true);
         ConfigurationSection sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
         setIfAbsent(config, "selectorSettings.pathSeperator", "/");
-        String o = plugin.getConfig().getString("selectorSettings.pathSeperator");
-        if (o.length() != 1) {
+        String seperator = plugin.getConfig().getString("selectorSettings.pathSeperator", "/");
+        if (seperator.length() != 1) {
             plugin.getLogger().warning("Path seperator invalid. Must be only one char.");
             plugin.getConfig().set("selectorSettings.pathSeperator", "/");
         }

@@ -4,6 +4,7 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
+import java.util.Optional;
 import java.util.function.ToIntFunction;
 
 public enum Placement {
@@ -26,7 +27,11 @@ public enum Placement {
     /**
      * Use the highest non air point of the schematic as origin
      */
-    RAISE(findRaise(), "r", "raiseItToTheSky");
+    RAISE(findRaise(), "r", "raiseItToTheSky"),
+    /**
+     * Use the origin height as height.
+     */
+    ORIGINAL(findOriginal(), "o", "whereItWas");
     //TODO: Method to place the schematic relational to the surface.
     //      This means, that when a schematic is placed at a woll it points away from the wall. Same with ceiling.
     //      This will also result in a rotation and not only a offset. This requires a rewrite of placement.
@@ -41,8 +46,8 @@ public enum Placement {
      * Use the heighest terrain point in the region where the brush should be pasted as y.
      *
     CEIL(findFloor(), "c");*/
-
     private final String[] alias;
+
     private final ToIntFunction<Clipboard> find;
 
     Placement(ToIntFunction<Clipboard> yCenter, String... alias) {
@@ -56,25 +61,19 @@ public enum Placement {
      *
      * @param value value to parse
      * @return placement enum value
-     * @throws IllegalArgumentException if value cant be parsed
      */
-    public static Placement asPlacement(String value) {
+    public static Optional<Placement> asPlacement(String value) {
         for (Placement placement : values()) {
-            if (value.equalsIgnoreCase(placement.toString())) return placement;
+            if (value.equalsIgnoreCase(placement.toString())) return Optional.of(placement);
             for (String alias : placement.alias) {
-                if (alias.equalsIgnoreCase(value)) return placement;
+                if (alias.equalsIgnoreCase(value)) return Optional.of(placement);
             }
         }
-        throw new IllegalArgumentException(value + " is not a enum value or alias.");
+        return Optional.empty();
     }
 
-    /**
-     * Find the y coordinate of a clipboard based on placement type.
-     * @param clipboard clipboard which should be pasted
-     * @return relative y origin position of clipboard
-     */
-    public int find(Clipboard clipboard) {
-        return this.find.applyAsInt(clipboard);
+    private static ToIntFunction<Clipboard> findOriginal() {
+        return clipboard -> clipboard.getOrigin().getBlockY();
     }
 
     private static ToIntFunction<Clipboard> findMiddle() {
@@ -96,13 +95,7 @@ public enum Placement {
             BlockVector3 dimensions = clipboard.getDimensions();
 
             for (int y = 0; y < dimensions.getBlockY(); y++) {
-                for (int x = 0; x < dimensions.getBlockX(); x++) {
-                    for (int z = 0; z < dimensions.getBlockZ(); z++) {
-                        if (clipboard.getBlock(clipboard.getMinimumPoint().add(x, y, z)).getBlockType() != BlockTypes.AIR) {
-                            return y;
-                        }
-                    }
-                }
+                if (levelNonAir(clipboard, dimensions, y)) return y;
             }
             return 0;
         };
@@ -111,18 +104,32 @@ public enum Placement {
     private static ToIntFunction<Clipboard> findRaise() {
         return clipboard -> {
             BlockVector3 dimensions = clipboard.getDimensions();
-
             for (int y = dimensions.getBlockY() - 1; y > -1; y--) {
-                for (int x = 0; x < dimensions.getBlockX(); x++) {
-                    for (int z = 0; z < dimensions.getBlockZ(); z++) {
-                        if (clipboard.getBlock(clipboard.getMinimumPoint().add(x, y, z)).getBlockType() != BlockTypes.AIR) {
-                            return y;
-                        }
-                    }
-                }
+                if (levelNonAir(clipboard, dimensions, y)) return y;
             }
             return dimensions.getBlockY();
         };
+    }
+
+    private static boolean levelNonAir(Clipboard clipboard, BlockVector3 dimensions, int y) {
+        for (int x = 0; x < dimensions.getBlockX(); x++) {
+            for (int z = 0; z < dimensions.getBlockZ(); z++) {
+                if (clipboard.getBlock(clipboard.getMinimumPoint().add(x, y, z)).getBlockType() != BlockTypes.AIR) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Find the y coordinate of a clipboard based on placement type.
+     *
+     * @param clipboard clipboard which should be pasted
+     * @return relative y origin position of clipboard
+     */
+    public int find(Clipboard clipboard) {
+        return this.find.applyAsInt(clipboard);
     }
 
     @Override

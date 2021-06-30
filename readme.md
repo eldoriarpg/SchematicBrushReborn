@@ -1,3 +1,10 @@
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eldoriarpg/SchematicBrushReborn/Verify%20state?style=for-the-badge&label=Building)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eldoriarpg/SchematicBrushReborn/Publish%20to%20Nexus?style=for-the-badge&label=Publishing)
+![Sonatype Nexus (Releases)](https://img.shields.io/nexus/maven-releases/de.eldoria/schematicbrushreborn?label=Release&logo=Release&server=https%3A%2F%2Feldonexus.de&style=for-the-badge)
+![Sonatype Nexus (Development)](https://img.shields.io/nexus/maven-dev/de.eldoria/schematicbrushreborn?label=DEV&logo=Release&server=https%3A%2F%2Feldonexus.de&style=for-the-badge)
+![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/de.eldoria/schematicbrushreborn?color=orange&label=Snapshot&server=https%3A%2F%2Feldonexus.de&style=for-the-badge)
+
+
 # Schematic Brush Reborn
 ![## Description](http://chojo.u.catgirlsare.sexy/wHmbIpte.png)  
 
@@ -309,4 +316,3 @@ We store them to access them faster. Don't worry. this doesn't need much RAM.
 General information about the plugin.
 
 `sbra info`
-
