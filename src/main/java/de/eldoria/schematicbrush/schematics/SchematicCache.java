@@ -118,19 +118,24 @@ public class SchematicCache implements Runnable {
             return;
         }
         try {
+            registerWatcher(watcher, path);
             // register directory and subdirectories
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                         throws IOException {
-                    dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
-                    logger.log(Level.CONFIG, "Registered watch service on: " + dir);
+                    registerWatcher(watcher, dir);
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Could not register watch service.", e);
         }
+    }
+
+    private void registerWatcher(WatchService service, Path path) throws IOException {
+        path.register(service, ENTRY_CREATE, ENTRY_DELETE);
+        logger.log(Level.CONFIG, "Registered watch service on: " + path);
     }
 
     /**

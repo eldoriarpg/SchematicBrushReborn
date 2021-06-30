@@ -2,9 +2,11 @@ package de.eldoria.schematicbrush.commands.parser;
 
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.utils.ArrayUtil;
+import de.eldoria.eldoutilities.utils.Parser;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.offset.IOffset;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import de.eldoria.schematicbrush.config.Config;
@@ -13,10 +15,12 @@ import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,8 +29,10 @@ import java.util.stream.Collectors;
 import static de.eldoria.schematicbrush.commands.parser.ParsingUtil.parseToLegacySyntax;
 
 public class BrushSettingsParser {
-    private static final Pattern Y_OFFSET = Pattern.compile("-(?:yoff|yoffset|y):(-?[0-9]{1,3})$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern Y_OFFSET = Pattern.compile("-(?:yoff|yoffset|y):(-?[0-9]{1,3}|\\[-?[0-9]{1,3}:-?[0-9]{1,3}\\]|\\[(?:-?[0-9]{1,3},?)*?[^,]\\])$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern Y_OFFSET_FLAG = Pattern.compile("-(?:yoff|yoffset|y).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern PLACEMENT = Pattern.compile("-(?:place|placement|p):([a-zA-Z]+?)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PLACEMENT_FLAG = Pattern.compile("-(?:place|placement|p).*", Pattern.CASE_INSENSITIVE);
 
     private BrushSettingsParser() {
         throw new UnsupportedOperationException("This is a utility class.");
@@ -221,8 +227,6 @@ public class BrushSettingsParser {
      */
     private static Optional<BrushSettings> buildBrushSettings(Player player, BrushSettings.BrushSettingsBuilder settingsBuilder,
                                                               String[] args) {
-        List<String> strings = Arrays.asList(args);
-
         if (ArrayUtil.arrayContains(args, "-includeair", "-incair", "-a")) {
             settingsBuilder.includeAir(true);
         }
@@ -234,25 +238,63 @@ public class BrushSettingsParser {
         Matcher matcher = ArrayUtil.findInArray(args, Y_OFFSET);
         if (matcher != null) {
             String value = matcher.group(1);
-            int offset;
-            try {
-                offset = Integer.parseInt(value);
-            } catch (NumberFormatException e) {
+
+            if (value.startsWith("[") && value.endsWith("]")) {
+                String stripped = value.substring(1, value.length() - 1);
+                if (stripped.contains(":")) {
+                    String[] split = stripped.split(":");
+                    OptionalInt min = Parser.parseInt(split[0]);
+                    OptionalInt max = Parser.parseInt(split[1]);
+                    if (!(min.isPresent() && max.isPresent()) || min.getAsInt() > max.getAsInt()) {
+                        MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                                .sendError(player, "Invalid offset.");
+                        return Optional.empty();
+                    }
+                    settingsBuilder.withYOffset(IOffset.range(min.getAsInt(), max.getAsInt()));
+                } else if (stripped.contains(",")) {
+                    String[] stringNumbers = stripped.split(",");
+                    List<Integer> numbers = new ArrayList<>();
+                    for (String stringNumber : stringNumbers) {
+                        OptionalInt optionalInt = Parser.parseInt(stringNumber);
+                        if (!optionalInt.isPresent()) {
+                            MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                                    .sendError(player, "Invalid offset.");
+                            return Optional.empty();
+                        }
+                        numbers.add(optionalInt.getAsInt());
+                    }
+                    settingsBuilder.withYOffset(IOffset.list(numbers));
+                }
+            } else {
+                OptionalInt optionOffset = Parser.parseInt(value);
+                if (!optionOffset.isPresent()) {
+                    MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                            .sendError(player, "Invalid offset.");
+                    return Optional.empty();
+                }
+                settingsBuilder.withYOffset(IOffset.fixed(optionOffset.getAsInt()));
+            }
+        } else {
+            matcher = ArrayUtil.findInArray(args, Y_OFFSET_FLAG);
+            if (matcher != null) {
                 MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
                         .sendError(player, "Invalid offset.");
                 return Optional.empty();
             }
-            settingsBuilder.withYOffset(offset);
         }
 
         matcher = ArrayUtil.findInArray(args, PLACEMENT);
 
         if (matcher != null) {
             String value = matcher.group(1);
-            Placement placement = Placement.asPlacement(value);
-            settingsBuilder.withPlacementType(placement);
+            Optional<Placement> placement = Placement.asPlacement(value);
+            if (!placement.isPresent()) {
+                MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                        .sendError(player, "Invalid placement.");
+                return Optional.empty();
+            }
+            settingsBuilder.withPlacementType(placement.get());
         }
-
         return Optional.of(settingsBuilder.build());
     }
 }

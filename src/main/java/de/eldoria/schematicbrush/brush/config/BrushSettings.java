@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.brush.config;
 
+import de.eldoria.schematicbrush.brush.config.offset.IOffset;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.util.Randomable;
 
@@ -30,7 +31,7 @@ public final class BrushSettings implements Randomable {
     /**
      * The y offset which will be applied before pasting to the position which was clicked by the user.
      */
-    private final int yOffset;
+    private final IOffset yOffset;
     /**
      * Method which determins the origin of the schematic.
      */
@@ -40,7 +41,7 @@ public final class BrushSettings implements Randomable {
      */
     private final int totalWeight;
 
-    private BrushSettings(List<SchematicSet> schematicSets, boolean includeAir, boolean replaceAll, int yOffset,
+    private BrushSettings(List<SchematicSet> schematicSets, boolean includeAir, boolean replaceAll, IOffset yOffset,
                           Placement placement) {
         this.schematicSets = schematicSets;
         this.includeAir = includeAir;
@@ -140,7 +141,7 @@ public final class BrushSettings implements Randomable {
         return replaceAll;
     }
 
-    public int yOffset() {
+    public IOffset yOffset() {
         return yOffset;
     }
 
@@ -168,7 +169,7 @@ public final class BrushSettings implements Randomable {
         /**
          * The y offset which will be applied before pasting to the position which was clicked by the user.
          */
-        private int yOffset;
+        private IOffset yOffset = IOffset.fixed(0);
         /**
          * Method which determins the origin of the schematic.
          */
@@ -213,7 +214,6 @@ public final class BrushSettings implements Randomable {
          *                       org.bukkit.Material#AIR}
          * @return builder instance with changed state
          */
-
         public BrushSettingsBuilder replaceAll(boolean replaceAirOnly) {
             this.replaceAll = replaceAirOnly;
             return this;
@@ -225,8 +225,7 @@ public final class BrushSettings implements Randomable {
          * @param yOffset y offset of the brush
          * @return builder instance with applied offset
          */
-
-        public BrushSettingsBuilder withYOffset(int yOffset) {
+        public BrushSettingsBuilder withYOffset(IOffset yOffset) {
             this.yOffset = yOffset;
             return this;
         }
@@ -237,7 +236,6 @@ public final class BrushSettings implements Randomable {
          * @param placement placement method for the schematic
          * @return builder instance with applied placement
          */
-
         public BrushSettingsBuilder withPlacementType(Placement placement) {
             this.placement = placement;
             return this;
