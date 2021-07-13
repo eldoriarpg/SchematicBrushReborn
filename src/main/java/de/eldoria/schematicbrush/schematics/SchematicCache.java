@@ -109,6 +109,8 @@ public class SchematicCache implements Runnable {
                                 if (file.isFile()) {
                                     plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
                                     removeSchematic(file);
+                                }else {
+                                    plugin.getLogger().log(Level.CONFIG, "A directory was deleted.");
                                 }
                                 break;
                         }
