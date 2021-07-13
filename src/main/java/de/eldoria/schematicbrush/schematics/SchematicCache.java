@@ -10,16 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,9 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -40,102 +30,21 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-
-public class SchematicCache implements Runnable {
+public class SchematicCache {
     private final Logger logger = SchematicBrushReborn.logger();
     private final JavaPlugin plugin;
     private final Config config;
-    private final ThreadGroup fileWorker = new ThreadGroup("File worker");
-    private final ScheduledExecutorService executorService;
     private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
-    private WatchService watchService;
-    private Thread watchThread;
+    private SchematicWatchService watchService;
 
     public SchematicCache(JavaPlugin plugin, Config config) {
         this.plugin = plugin;
         this.config = config;
-        executorService = Executors.newScheduledThreadPool(3, r -> {
-            Thread thread = new Thread(fileWorker, r);
-            thread.setUncaughtExceptionHandler((t, throwable) ->
-                    plugin.getLogger().log(Level.SEVERE, "And error occured on thread " + t.getName() + ".", throwable));
-            return thread;
-        });
     }
 
     public void init() {
         reload();
-        initWatchServices();
-    }
-
-    public void initWatchServices() {
-
-        String root = plugin.getDataFolder().toPath().getParent().toString();
-
-        List<SchematicSource> sources = config.getSchematicConfig().getSources();
-        try {
-            watchService = FileSystems.getDefault().newWatchService();
-        } catch (IOException e) {
-            logger.log(Level.CONFIG, "Could not create watch service");
-            return;
-        }
-
-        for (SchematicSource source : sources) {
-            Path path = Paths.get(root, source.getPath());
-            watchDirectory(watchService, path);
-        }
-
-        watchThread = new Thread(() -> {
-            Thread.currentThread().setName("Schematic Brush Watch Service.");
-            while (true) {
-                WatchKey key;
-                key = watchService.poll();
-                if (key == null) continue;
-                plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
-                for (WatchEvent<?> event : key.pollEvents()) {
-                    File path = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
-                    switch (event.kind().name()) {
-                        case "ENTRY_CREATE":
-                            plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
-                            executorService.schedule(() -> addSchematic(path), 5, TimeUnit.SECONDS);
-                            break;
-                        case "ENTRY_DELETE":
-                            plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
-                            executorService.schedule(() -> removeSchematic(path), 5, TimeUnit.SECONDS);
-                            break;
-                    }
-                }
-                key.reset();
-            }
-        });
-        watchThread.start();
-    }
-
-    private void watchDirectory(WatchService watcher, Path path) {
-        if (!path.toFile().exists()) {
-            logger.info("Path: " + path + " does not exists. Skipping watch service registration.");
-            return;
-        }
-        try {
-            registerWatcher(watcher, path);
-            // register directory and subdirectories
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                        throws IOException {
-                    registerWatcher(watcher, dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Could not register watch service.", e);
-        }
-    }
-
-    private void registerWatcher(WatchService service, Path path) throws IOException {
-        path.register(service, ENTRY_CREATE, ENTRY_DELETE);
-        logger.log(Level.CONFIG, "Registered watch service on: " + path);
+        watchService = SchematicWatchService.of(plugin, config, this);
     }
 
     /**
@@ -205,26 +114,11 @@ public class SchematicCache implements Runnable {
         }
 
         for (Set<Schematic> value : schematicsCache.values()) {
-            File remove = null;
-            for (Schematic schematic : value) {
-                // laziest implementation ever...
-                if (schematic.getFile() == file) {
-                    remove = file;
-                    break;
-                }
-            }
-            if (remove != null) {
-                File finalRemove = remove;
-                value.removeIf(schematic -> schematic.getFile() == finalRemove);
-            }
+            value.removeIf(schematic -> schematic.getFile() == file);
         }
     }
 
-    private void addSchematic(File file) {
-        if (file.isDirectory()) {
-            watchDirectory(watchService, file.toPath());
-            return;
-        }
+    void addSchematic(File file) {
 
         Path directory = file.toPath().getParent();
         directory = directory.subpath(1, directory.getNameCount());
@@ -437,9 +331,8 @@ public class SchematicCache implements Runnable {
         return schematicsCache.keySet().size();
     }
 
-    @Override
-    public void run() {
-        reload();
+    public void shutdown() {
+        watchService.shutdown();
     }
 
     private static class DirectoryData {
