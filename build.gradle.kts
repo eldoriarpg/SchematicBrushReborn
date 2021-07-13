@@ -24,7 +24,7 @@ dependencies {
 }
 
 group = "de.eldoria"
-version = "1.4.3"
+version = "1.4.4"
 description = "SchematicBrushReborn"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 val shadebase = "de.eldoria.schematicbrush."

@@ -90,25 +90,30 @@ public class SchematicCache implements Runnable {
             Thread.currentThread().setName("Schematic Brush Watch Service.");
             while (true) {
                 WatchKey key;
-                key = watchService.poll();
-                if (key == null) continue;
-                plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
-                for (WatchEvent<?> event : key.pollEvents()) {
-                    File path = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
-                    switch (event.kind().name()) {
-                        case "ENTRY_CREATE":
-                            plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
-                            executorService.schedule(() -> addSchematic(path), 5, TimeUnit.SECONDS);
-                            break;
-                        case "ENTRY_DELETE":
-                            plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
-                            executorService.schedule(() -> removeSchematic(path), 5, TimeUnit.SECONDS);
-                            break;
+                try {
+                    key = watchService.take();
+                    if (key == null) continue;
+                    plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
+                    for (WatchEvent<?> event : key.pollEvents()) {
+                        File path = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
+                        switch (event.kind().name()) {
+                            case "ENTRY_CREATE":
+                                plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
+                                executorService.schedule(() -> addSchematic(path), 5, TimeUnit.SECONDS);
+                                break;
+                            case "ENTRY_DELETE":
+                                plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
+                                executorService.schedule(() -> removeSchematic(path), 5, TimeUnit.SECONDS);
+                                break;
+                        }
                     }
+                    key.reset();
+                } catch (InterruptedException e) {
+
                 }
-                key.reset();
             }
         });
+        watchThread.setDaemon(true);
         watchThread.start();
     }
 
