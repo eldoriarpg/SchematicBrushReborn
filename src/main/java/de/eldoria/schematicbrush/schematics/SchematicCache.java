@@ -92,18 +92,24 @@ public class SchematicCache implements Runnable {
                 WatchKey key;
                 try {
                     key = watchService.take();
-                    if (key == null) continue;
                     plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
                     for (WatchEvent<?> event : key.pollEvents()) {
-                        File path = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
+                        File file = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
                         switch (event.kind().name()) {
                             case "ENTRY_CREATE":
-                                plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
-                                executorService.schedule(() -> addSchematic(path), 5, TimeUnit.SECONDS);
+                                if (file.isFile()) {
+                                    plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
+                                    executorService.schedule(() -> addSchematic(file), 5, TimeUnit.SECONDS);
+                                } else {
+                                    plugin.getLogger().log(Level.CONFIG, "A new directory was detected. Register watcher.");
+                                    watchDirectory(watchService, file.toPath());
+                                }
                                 break;
                             case "ENTRY_DELETE":
-                                plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
-                                executorService.schedule(() -> removeSchematic(path), 5, TimeUnit.SECONDS);
+                                if (file.isFile()) {
+                                    plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
+                                    removeSchematic(file);
+                                }
                                 break;
                         }
                     }
@@ -210,18 +216,7 @@ public class SchematicCache implements Runnable {
         }
 
         for (Set<Schematic> value : schematicsCache.values()) {
-            File remove = null;
-            for (Schematic schematic : value) {
-                // laziest implementation ever...
-                if (schematic.getFile() == file) {
-                    remove = file;
-                    break;
-                }
-            }
-            if (remove != null) {
-                File finalRemove = remove;
-                value.removeIf(schematic -> schematic.getFile() == finalRemove);
-            }
+            value.removeIf(schematic -> schematic.getFile() == file);
         }
     }
 
