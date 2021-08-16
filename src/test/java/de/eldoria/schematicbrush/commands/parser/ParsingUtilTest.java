@@ -1,30 +1,30 @@
 package de.eldoria.schematicbrush.commands.parser;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ParsingUtilTest {
     @Test
     public void legacySelectorParserTest() {
-        Assert.assertEquals("$test", ParsingUtil.parseToLegacySelector("dir:test"));
-        Assert.assertEquals("$test*", ParsingUtil.parseToLegacySelector("dir:test*"));
-        Assert.assertEquals("^test.+?", ParsingUtil.parseToLegacySelector("regex:test.+?"));
-        Assert.assertEquals("&test", ParsingUtil.parseToLegacySelector("preset:test"));
-        Assert.assertEquals("test", ParsingUtil.parseToLegacySelector("test"));
+        Assertions.assertEquals("$test", ParsingUtil.parseToLegacySelector("dir:test"));
+        Assertions.assertEquals("$test*", ParsingUtil.parseToLegacySelector("dir:test*"));
+        Assertions.assertEquals("^test.+?", ParsingUtil.parseToLegacySelector("regex:test.+?"));
+        Assertions.assertEquals("&test", ParsingUtil.parseToLegacySelector("preset:test"));
+        Assertions.assertEquals("test", ParsingUtil.parseToLegacySelector("test"));
     }
 
     @Test
     public void legacyModifierParserTest() {
-        Assert.assertEquals("@180", ParsingUtil.parseToLegacyModifier("-rotate:180"));
-        Assert.assertEquals("@*", ParsingUtil.parseToLegacyModifier("-rotate:random"));
-        Assert.assertEquals("!NS", ParsingUtil.parseToLegacyModifier("-flip:NS"));
-        Assert.assertEquals("!N", ParsingUtil.parseToLegacyModifier("-flip:N"));
-        Assert.assertEquals(":10", ParsingUtil.parseToLegacyModifier("-weight:10"));
+        Assertions.assertEquals("@180", ParsingUtil.parseToLegacyModifier("-rotate:180"));
+        Assertions.assertEquals("@*", ParsingUtil.parseToLegacyModifier("-rotate:random"));
+        Assertions.assertEquals("!NS", ParsingUtil.parseToLegacyModifier("-flip:NS"));
+        Assertions.assertEquals("!N", ParsingUtil.parseToLegacyModifier("-flip:N"));
+        Assertions.assertEquals(":10", ParsingUtil.parseToLegacyModifier("-weight:10"));
     }
 
     @Test
     public void legaceSchematicSetParserTest() {
-        Assert.assertEquals("&test@180:10", ParsingUtil.parseToLegacySyntax(new String[] {"\"p:test", "-rotate:180", "-weight:10\""})[0]);
-        Assert.assertEquals("&test@180!NE", ParsingUtil.parseToLegacySyntax(new String[] {"\"p:test", "-rotate:180","-flip:NE\""})[0]);
+        Assertions.assertEquals("&test@180:10", ParsingUtil.parseToLegacySyntax(new String[] {"\"p:test", "-rotate:180", "-weight:10\""})[0]);
+        Assertions.assertEquals("&test@180!NE", ParsingUtil.parseToLegacySyntax(new String[] {"\"p:test", "-rotate:180","-flip:NE\""})[0]);
     }
 }
