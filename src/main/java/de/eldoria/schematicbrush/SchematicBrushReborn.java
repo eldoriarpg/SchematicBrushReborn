@@ -58,7 +58,7 @@ public class SchematicBrushReborn extends EldoPlugin {
     }
 
     @Override
-    public void onPluginEnable() {
+    public void onPluginEnable(boolean reload) {
         if (!getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
             logger().warning("WorldEdit is not installed on this Server!");
             return;
