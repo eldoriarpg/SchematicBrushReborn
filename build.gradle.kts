@@ -12,19 +12,19 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains","annotations","21.0.1")
-    implementation("de.eldoria", "eldo-util", "1.9.2-DEV")
-    compileOnly("org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.1.0")
+    implementation("de.eldoria", "eldo-util", "1.9.6-DEV")
+    compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
+    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
 
     testImplementation("org.jetbrains","annotations","21.0.1")
-    testImplementation("org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
-    testImplementation("org.mockito:mockito-core:3.5.13")
+    testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.7.1")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.7.1")
+    testImplementation("org.mockito", "mockito-core", "3.5.13")
 }
 
 group = "de.eldoria"
-version = "1.4.4"
+version = "1.4.5"
 description = "SchematicBrushReborn"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 val shadebase = "de.eldoria.schematicbrush."
