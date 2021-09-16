@@ -3,6 +3,7 @@ package de.eldoria.schematicbrush.brush.config.parameter;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
 import de.eldoria.schematicbrush.util.Randomable;
+import jdk.javadoc.internal.doclets.formats.html.EnumConstantWriterImpl;
 
 public enum Flip implements Randomable {
     NONE(),
@@ -56,6 +57,7 @@ public enum Flip implements Randomable {
      * @return dircetion vector
      */
     public Vector3 asVector() {
+        if(direction == null) return Vector3.ZERO;
         return direction.toVector();
     }
 

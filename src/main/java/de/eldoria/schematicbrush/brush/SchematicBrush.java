@@ -4,24 +4,22 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
+import com.sk89q.worldedit.command.tool.BrushTool;
+import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.function.mask.BlockTypeMask;
-import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.transform.AffineTransform;
-import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.session.PasteBuilder;
-import com.sk89q.worldedit.world.block.BlockTypes;
+import com.sk89q.worldedit.util.HandSide;
+import com.sk89q.worldedit.util.Location;
 import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.schematicbrush.brush.config.BrushPaste;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
+import de.eldoria.schematicbrush.brush.config.FakeWorld;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
-import de.eldoria.schematicbrush.brush.config.parameter.Flip;
-import de.eldoria.schematicbrush.brush.config.parameter.Placement;
-import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -34,6 +32,7 @@ public class SchematicBrush implements Brush {
     private final Plugin plugin;
     private final BrushSettings settings;
     private final Player brushOwner;
+    private BrushPaste nextPaste;
 
     /**
      * Create a new schematic brush for a player.
@@ -46,70 +45,45 @@ public class SchematicBrush implements Brush {
         this.plugin = plugin;
         this.settings = settings;
         brushOwner = player;
+        buildNextPaste();
     }
 
     @Override
     public void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size) {
+        Operation paste = nextPaste.buildpaste(editSession, BukkitAdapter.adapt(brushOwner), position);
+
+        Operations.completeBlindly(paste);
+        if (editSession.getWorld() instanceof FakeWorld) return;
+        buildNextPaste();
+    }
+
+    public FakeWorld pasteFake() {
+        FakeWorld world = new FakeWorld(brushOwner.getWorld());
+        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, 100000)) {
+            BukkitPlayer bukkitPlayer = BukkitAdapter.adapt(brushOwner);
+            LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
+            BrushTool brushTool;
+            try {
+                brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType());
+            } catch (InvalidToolBindException e) {
+                return null;
+            }
+            if (!(brushTool.getBrush() instanceof SchematicBrush)) return null;
+            Location target = bukkitPlayer.getBlockTrace(brushTool.getRange(), true, brushTool.getTraceMask());
+            build(editSession, target.toVector().toBlockPoint(), brushTool.getMaterial(), brushTool.getSize());
+        }
+        return world;
+    }
+
+    private void buildNextPaste() {
         SchematicSet randomSchematicSet = settings.getRandomBrushConfig();
-
         Clipboard clipboard = randomSchematicSet.getRandomSchematic();
-
         if (clipboard == null) {
             MessageSender.getPluginMessageSender(plugin).sendError(brushOwner, "No valid schematic was found for brush: "
-                    + randomSchematicSet.arguments());
+                                                                               + randomSchematicSet.arguments());
             return;
         }
-
-        // Apply flip
-        Flip direction = randomSchematicSet.flip().getFlipDirection();
-        AffineTransform transform = new AffineTransform();
-        if (direction != Flip.NONE) {
-            transform = transform.scale(direction.asVector().abs().multiply(-2).add(1, 1, 1));
-        }
-
-        // Apply rotation
-        Rotation rotation = randomSchematicSet.rotation();
-        transform = transform.rotateY(rotation.getDeg());
-
-        // Save current user mask
-        Mask preBrushMask = editSession.getMask();
-
-        // Apply replace mask
-        if (!settings.isReplaceAll()) {
-            // Check if the user has a block mask defined and append if present.
-            //Mask mask = WorldEditBrushAdapter.getMask(brushOwner);
-            if (preBrushMask instanceof BlockTypeMask) {
-                BlockTypeMask blockMask = (BlockTypeMask) preBrushMask;
-                blockMask.add(BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR);
-            } else {
-                editSession.setMask(
-                        new BlockTypeMask(editSession, BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR));
-            }
-        }
-
-        // Create a new clipboard holder and apply the transforms
-        LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(brushOwner));
-        ClipboardHolder clipboardHolder = new ClipboardHolder(clipboard);
-        localSession.setClipboard(clipboardHolder);
-        clipboardHolder.setTransform(clipboardHolder.getTransform().combine(transform));
-
-        // Find center of schematic and set new origin
-        BlockVector3 dimensions = clipboard.getDimensions();
-        if (settings.placement() != Placement.ORIGINAL) {
-            int centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
-            int centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
-            int centerY = clipboard.getMinimumPoint().getBlockY() + settings.placement().find(clipboard);
-            clipboard.setOrigin(BlockVector3.at(centerX, centerY, centerZ));
-        }
-
-        // Create paste operation
-        PasteBuilder paste = clipboardHolder.createPaste(editSession);
-        Operation operation = paste
-                .to(position.add(0, settings.yOffset().offset(), 0))
-                .ignoreAirBlocks(!settings.isIncludeAir())
-                .build();
-
-        Operations.completeBlindly(operation);
+        nextPaste = new BrushPaste(settings, randomSchematicSet, clipboard);
     }
 
     /**

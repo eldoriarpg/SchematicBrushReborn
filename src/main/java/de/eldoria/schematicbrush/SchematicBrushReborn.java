@@ -16,6 +16,7 @@ import de.eldoria.schematicbrush.config.sections.GeneralConfig;
 import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
+import de.eldoria.schematicbrush.rendering.RenderService;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -79,6 +80,8 @@ public class SchematicBrushReborn extends EldoPlugin {
         registerCommand("sbra", adminCommand);
 
         enableMetrics();
+
+        getServer().getScheduler().runTaskTimer(this, new RenderService(), 0,40);
     }
 
     private void enableMetrics() {
