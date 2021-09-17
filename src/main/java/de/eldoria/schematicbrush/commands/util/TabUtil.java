@@ -27,7 +27,7 @@ public final class TabUtil {
     private static final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise", "original"};
 
     private static final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
-    private static final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
+    private static final String[] ROTATION_TYPES = {"0", "90", "180", "270", "*"};
 
     private static final String[] SELECTOR_TYPE = {"<name>", "dir:", "regex:", "preset:"};
     private static final String[] SELECTOR_TYPE_MATCH = {"dir:", "d:", "regex:", "r:", "preset:", "p:"};
@@ -85,17 +85,11 @@ public final class TabUtil {
         String[] split = arg.split(":");
 
         if (arg.startsWith("-rotate:") || arg.startsWith("-r:")) {
-            if (split.length == 1) {
-                return prefixStrings(Arrays.asList(ROTATION), split[0] + ":");
-            }
-            return prefixStrings(ArrayUtil.startingWithInArray(split[1], ROTATION).collect(Collectors.toList()), split[0] + ":");
+            return completeArrayFlags(arg, ROTATION_TYPES);
         }
 
         if (arg.startsWith("-flip:") || arg.startsWith("-f:")) {
-            if (split.length == 1) {
-                return prefixStrings(Arrays.asList(FLIP), split[0] + ":");
-            }
-            return prefixStrings(ArrayUtil.startingWithInArray(split[1], FLIP).collect(Collectors.toList()), split[0] + ":");
+            return completeArrayFlags(arg, FLIP_TYPES);
         }
 
         if (arg.startsWith("-weight:") || arg.startsWith("-w:")) {
@@ -136,17 +130,10 @@ public final class TabUtil {
         switch (brushArgumentMarker.get()) {
             case ':':
                 return Arrays.asList(arg + "@", arg + "!", "@rotation!flip", arg + "<1-999>");
-            case '!': {
-                if (ArrayUtil.endingWithInArray(arg, FLIP_TYPES)) {
-                    return getMissingSchematicSetArguments(arg);
-                }
-                return prefixStrings(Arrays.asList(FLIP_TYPES), getBrushArgumentStringToLastMarker(arg));
-            }
+            case '!':
+                return completeLegacyArrayFlags(arg, FLIP_TYPES);
             case '@':
-                if (ArrayUtil.endingWithInArray(arg, ROTATION_TYPES)) {
-                    return getMissingSchematicSetArguments(arg);
-                }
-                return prefixStrings(Arrays.asList(ROTATION_TYPES), getBrushArgumentStringToLastMarker(arg));
+                return completeLegacyArrayFlags(arg, ROTATION_TYPES);
             case '^':
                 if (!firstMarker.isPresent() || firstMarker.get() != '$') {
                     return Arrays.asList("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
@@ -352,4 +339,77 @@ public final class TabUtil {
         return result;
     }
 
+    private static List<String> completeLegacyArrayFlags(String arg, String[] values) {
+        String pre = getBrushArgumentStringToLastMarker(arg);
+        String val = arg.replace(pre, "");
+        if (val.startsWith("[")) {
+            if (val.endsWith("]")) {
+                return getMissingSchematicSetArguments(arg);
+            }
+
+            if (val.contains(",")) {
+                if (val.endsWith(",")) {
+                    return prefixStrings(Arrays.asList(values), arg);
+                }
+                if (ArrayUtil.endingWithInArray(arg, values)) {
+                    return Arrays.asList(arg + "]", arg + ",");
+                }
+                String[] split = val.split(",");
+                String end = split[split.length - 1];
+                String join = String.join(",", Arrays.copyOfRange(split, 0, split.length - 1));
+                return prefixStrings(TabCompleteUtil.complete(end, values), join + ",");
+            }
+            if (ArrayUtil.endingWithInArray(arg, values)) {
+                return Arrays.asList(arg + "]", arg + ",");
+            }
+            return prefixStrings(TabCompleteUtil.complete(val.replace("[", ""), values), pre + "[");
+        }
+        if (ArrayUtil.endingWithInArray(arg, values)) {
+            return getMissingSchematicSetArguments(arg);
+        }
+        List<String> strings = prefixStrings(Arrays.asList(values), arg);
+        strings.add(pre + "[");
+        return strings;
+    }
+
+    private static List<String> completeArrayFlags(String arg, String[] values) {
+        String[] split = arg.split(":");
+        if (split.length == 1) {
+            List<String> strings = prefixStrings(Arrays.asList(values), split[0] + ":");
+            strings.add(arg + "[");
+            return strings;
+        }
+
+        String val = split[1];
+
+        if (val.startsWith("[")) {
+            if (val.endsWith("]")) {
+                return Collections.emptyList();
+            }
+
+            if (val.contains(",")) {
+                if (val.endsWith(",")) {
+                    return prefixStrings(Arrays.asList(values), arg);
+                }
+                if (ArrayUtil.endingWithInArray(arg, values)) {
+                    return Arrays.asList(arg + "]", arg + ",");
+                }
+                String[] args = val.split(",");
+                String end = args[args.length - 1];
+                String join = String.join(",", Arrays.copyOfRange(args, 0, args.length - 1));
+                return prefixStrings(TabCompleteUtil.complete(end, values), join + ",");
+            }
+            if (ArrayUtil.endingWithInArray(arg, values)) {
+                return Arrays.asList(arg + "]", arg + ",");
+            }
+            return prefixStrings(Arrays.asList(values), arg);
+        }
+        if (ArrayUtil.endingWithInArray(arg, values)) {
+            return getMissingSchematicSetArguments(arg);
+        }
+
+        List<String> strings = prefixStrings(Arrays.asList(values), arg);
+        strings.add(arg + "[");
+        return strings;
+    }
 }

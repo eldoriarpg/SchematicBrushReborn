@@ -10,6 +10,7 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,8 +31,18 @@ public class WorldEditBrushAdapter {
      */
     public static Optional<SchematicBrush> getSchematicBrush(Player player) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        return getSchematicBrush(player, itemInMainHand.getType());
+    }
+
+    /**
+     * Get the schematic brush of a player registered on the item in its main hand.
+     *
+     * @param player player for lookup
+     * @return schematic brush instance if the item is a schematic brush
+     */
+    public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
         try {
-            BrushTool brushTool = getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType()));
+            BrushTool brushTool = getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(material));
             if (brushTool.getBrush() != null && brushTool.getBrush() instanceof SchematicBrush) {
                 return Optional.of((SchematicBrush) brushTool.getBrush());
             }

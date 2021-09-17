@@ -1,12 +1,13 @@
 package de.eldoria.schematicbrush.commands.parser;
 
+import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.eldoutilities.utils.Parser;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
-import de.eldoria.schematicbrush.brush.config.offset.IOffset;
+import de.eldoria.schematicbrush.brush.config.offset.AOffset;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import de.eldoria.schematicbrush.config.Config;
@@ -15,12 +16,10 @@ import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,7 +109,7 @@ public class BrushSettingsParser {
                 // check if brush exists
                 if (!config.presetExists(subBrushType.selectorValue())) {
                     messageSender.sendError(player, "This brush preset "
-                            + subBrushType.selectorValue() + " does not exist.");
+                                                    + subBrushType.selectorValue() + " does not exist.");
                     return Optional.empty();
                 }
 
@@ -120,7 +119,7 @@ public class BrushSettingsParser {
 
                 if (!brushConfigs.isPresent()) {
                     messageSender.sendError(player, "The preset " + subBrushType.selectorValue()
-                            + " does not contain any brushes");
+                                                    + " does not contain any brushes");
                     return Optional.empty();
                 }
 
@@ -173,7 +172,6 @@ public class BrushSettingsParser {
             schematicSetBuilder = new SchematicSet.SchematicSetBuilder(settingsString);
         }
 
-
         // If no builder was initialized the expession is invalid.
         if (schematicSetBuilder == null) {
             messageSender.sendError(player, "Invalid name type.");
@@ -213,7 +211,6 @@ public class BrushSettingsParser {
             return Optional.empty();
         }
 
-
         return Optional.ofNullable(schematicSetBuilder.build());
     }
 
@@ -239,47 +236,27 @@ public class BrushSettingsParser {
         if (matcher != null) {
             String value = matcher.group(1);
 
-            if (value.startsWith("[") && value.endsWith("]")) {
-                String stripped = value.substring(1, value.length() - 1);
-                if (stripped.contains(":")) {
-                    String[] split = stripped.split(":");
-                    OptionalInt min = Parser.parseInt(split[0]);
-                    OptionalInt max = Parser.parseInt(split[1]);
-                    if (!(min.isPresent() && max.isPresent()) || min.getAsInt() > max.getAsInt()) {
+            ParsingUtil.ParseResult<Integer> parseResult = ParsingUtil.parseValue(value, Parser::parseInt);
+            switch (parseResult.type()) {
+                case RANDOM:
+                case NONE:
+                    MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
+                            .sendError(player, "Invalid offset.");
+                    return Optional.empty();
+                case LIST:
+                    settingsBuilder.withYOffset(AOffset.list(parseResult.results()));
+                case RANGE:
+                    Pair<Integer, Integer> range = parseResult.range();
+                    if (range.first > range.second) {
                         MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
                                 .sendError(player, "Invalid offset.");
                         return Optional.empty();
                     }
-                    settingsBuilder.withYOffset(IOffset.range(min.getAsInt(), max.getAsInt()));
-                } else if (stripped.contains(",")) {
-                    String[] stringNumbers = stripped.split(",");
-                    List<Integer> numbers = new ArrayList<>();
-                    for (String stringNumber : stringNumbers) {
-                        OptionalInt optionalInt = Parser.parseInt(stringNumber);
-                        if (!optionalInt.isPresent()) {
-                            MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
-                                    .sendError(player, "Invalid offset.");
-                            return Optional.empty();
-                        }
-                        numbers.add(optionalInt.getAsInt());
-                    }
-                    settingsBuilder.withYOffset(IOffset.list(numbers));
-                }
-            } else {
-                OptionalInt optionOffset = Parser.parseInt(value);
-                if (!optionOffset.isPresent()) {
-                    MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
-                            .sendError(player, "Invalid offset.");
-                    return Optional.empty();
-                }
-                settingsBuilder.withYOffset(IOffset.fixed(optionOffset.getAsInt()));
-            }
-        } else {
-            matcher = ArrayUtil.findInArray(args, Y_OFFSET_FLAG);
-            if (matcher != null) {
-                MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
-                        .sendError(player, "Invalid offset.");
-                return Optional.empty();
+                    settingsBuilder.withYOffset(AOffset.range(range.first, range.second));
+                    break;
+                case FIXED:
+                    settingsBuilder.withYOffset(AOffset.fixed(parseResult.result()));
+                    break;
             }
         }
 

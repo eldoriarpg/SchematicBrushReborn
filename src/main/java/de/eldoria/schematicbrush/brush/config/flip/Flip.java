@@ -2,10 +2,13 @@ package de.eldoria.schematicbrush.brush.config.parameter;
 
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
+import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 import de.eldoria.schematicbrush.util.Randomable;
 import jdk.javadoc.internal.doclets.formats.html.EnumConstantWriterImpl;
 
-public enum Flip implements Randomable {
+import java.util.function.Supplier;
+
+public enum Flip implements Randomable, IShiftable<Flip> {
     NONE(),
     EAST_WEST(Direction.EAST, "E", "W", "EW", "WE"),
     NORT_SOUTH(Direction.NORTH, "NS", "SN", "N", "S"),
@@ -15,7 +18,7 @@ public enum Flip implements Randomable {
 
     private final String[] alias;
     private final Direction direction;
-
+    private final Supplier<Flip> next;
 
     Flip(Direction direction, String... alias) {
         this.alias = alias;
@@ -64,5 +67,25 @@ public enum Flip implements Randomable {
     @Override
     public String toString() {
         return this.name().toLowerCase();
+    }
+
+    @Override
+    public Flip shift() {
+        return IShiftable.super.shift();
+    }
+
+    @Override
+    public void value(Flip value) {
+
+    }
+
+    @Override
+    public Flip value() {
+        return null;
+    }
+
+    @Override
+    public Flip valueProvider() {
+        return this;
     }
 }

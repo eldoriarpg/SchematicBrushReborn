@@ -8,15 +8,14 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.weather.WeatherType;
+import de.eldoria.schematicbrush.brush.BlockChangeCollecter;
+import de.eldoria.schematicbrush.rendering.Changes;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class FakeWorld extends BukkitWorld {
-    Map<Location, BlockData> changes = new HashMap<>();
+public class FakeWorld extends BukkitWorld implements BlockChangeCollecter {
+    Changes.Builder changes = Changes.builder();
 
     /**
      * Construct the object.
@@ -30,10 +29,10 @@ public class FakeWorld extends BukkitWorld {
     @Override
     public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight) throws WorldEditException {
         BlockData data = BukkitAdapter.adapt(block.toBaseBlock());
-        changes.put(BukkitAdapter.adapt(getWorld(), position), data);
+        Location location = BukkitAdapter.adapt(getWorld(), position);
+        changes.add(location, location.getBlock().getBlockData(), data);
         return true;
     }
-
 
 
     @Override
@@ -51,8 +50,8 @@ public class FakeWorld extends BukkitWorld {
         return true;
     }
 
-    public Map<Location, BlockData> changes() {
-        return changes;
+    public Changes changes() {
+        return changes.build();
     }
 
 
