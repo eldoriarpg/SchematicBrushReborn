@@ -16,7 +16,14 @@ public interface Rotation extends IShiftable<Rotation> {
         if ("90".equals(value)) return ROT_RIGHT;
         if ("180".equals(value)) return ROT_HALF;
         throw new IllegalArgumentException(value + " is not a value of Rotation");
-    }    /**
+    }
+
+    /**
+     * Rotation represented as postive int value.
+     *
+     * @return rotation as positive integer
+     */
+    int degree();    /**
      * Represents a rotation of 0.
      */
     Rotation ROT_ZERO = new Rotation() {
@@ -36,12 +43,14 @@ public interface Rotation extends IShiftable<Rotation> {
         }
     };
 
-    /**
-     * Rotation represented as postive int value.
-     *
-     * @return rotation as positive integer
-     */
-    int degree();    /**
+    @Override
+    default void value(Rotation value) {
+    }
+
+    @Override
+    default Rotation value() {
+        return this;
+    }    /**
      * Represents a rotation of 90 degrees counter clockwise. Alterantive a rotation of -90 or 270 degrees.
      */
     Rotation ROT_LEFT = new Rotation() {
@@ -62,8 +71,11 @@ public interface Rotation extends IShiftable<Rotation> {
     };
 
     @Override
-    default void value(Rotation value) {
-    }    /**
+    default Rotation valueProvider() {
+        return this;
+    }
+
+    /**
      * Represents a rotation of 180 degrees.
      */
     Rotation ROT_HALF = new Rotation() {
@@ -83,10 +95,9 @@ public interface Rotation extends IShiftable<Rotation> {
         }
     };
 
-    @Override
-    default Rotation value() {
-        return this;
-    }    /**
+
+
+    /**
      * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
      */
     Rotation ROT_RIGHT = new Rotation() {
@@ -105,15 +116,6 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 90";
         }
     };
-
-    @Override
-    default Rotation valueProvider() {
-        return this;
-    }
-
-
-
-
 
 
 

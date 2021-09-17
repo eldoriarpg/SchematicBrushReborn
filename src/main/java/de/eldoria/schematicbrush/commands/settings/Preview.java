@@ -29,9 +29,9 @@ public class Preview extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         boolean state = args.asBoolen(0);
         renderService.setState(player, state);
-        if(state){
+        if (state) {
             messageSender().sendMessage(player, "Preview active.");
-        }else {
+        } else {
             messageSender().sendMessage(player, "Previed disabled.");
         }
     }

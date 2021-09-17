@@ -12,7 +12,7 @@ public class Settings extends AdvancedCommand {
     public Settings(Plugin plugin, RenderService renderService, NotifyListener notifyListener) {
         super(plugin);
         meta(CommandMeta.builder("sbs")
-                .withSubCommand(new Preview(plugin,renderService ))
+                .withSubCommand(new Preview(plugin, renderService))
                 .withSubCommand(new ShowNames(plugin, notifyListener))
                 .build());
     }

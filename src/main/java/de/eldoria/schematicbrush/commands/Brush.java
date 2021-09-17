@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.commands;
 
-import com.sk89q.worldedit.command.tool.brush.Brush;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
@@ -15,8 +14,6 @@ import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;

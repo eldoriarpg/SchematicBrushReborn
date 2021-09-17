@@ -15,6 +15,10 @@ public class PasteEvent extends PlayerEvent {
         this.schematic = schematic;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public Schematic schematic() {
         return schematic;
     }
@@ -22,10 +26,6 @@ public class PasteEvent extends PlayerEvent {
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 }

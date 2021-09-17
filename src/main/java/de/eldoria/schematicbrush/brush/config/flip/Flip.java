@@ -7,6 +7,22 @@ import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 public interface Flip extends IShiftable<Flip> {
     static Flip[] values() {
         return new Flip[]{NONE, NORTH_SOUTH, EAST_WEST, UP_DOWN};
+    }
+
+    /**
+     * Parse a string to a valid flip value
+     *
+     * @param input string to parse
+     * @return flip enum value
+     * @throws IllegalArgumentException when the value can't be parsed.
+     */
+    public static Flip asFlip(String input) {
+        for (Flip value : values()) {
+            for (String alias : value.alias()) {
+                if (alias.equalsIgnoreCase(input)) return value;
+            }
+        }
+        throw new IllegalArgumentException(input + " is not a valid Flip value");
     }    Flip NONE = new Flip() {
         @Override
         public String[] alias() {
@@ -29,21 +45,9 @@ public interface Flip extends IShiftable<Flip> {
         }
     };
 
-    /**
-     * Parse a string to a valid flip value
-     *
-     * @param input string to parse
-     * @return flip enum value
-     * @throws IllegalArgumentException when the value can't be parsed.
-     */
-    public static Flip asFlip(String input) {
-        for (Flip value : values()) {
-            for (String alias : value.alias()) {
-                if (alias.equalsIgnoreCase(input)) return value;
-            }
-        }
-        throw new IllegalArgumentException(input + " is not a valid Flip value");
-    }    Flip EAST_WEST = new Flip() {
+    String[] alias();
+
+    Vector3 direction();    Flip EAST_WEST = new Flip() {
         @Override
         public String[] alias() {
             return new String[]{"E", "W", "EW", "WE"};
@@ -65,7 +69,14 @@ public interface Flip extends IShiftable<Flip> {
         }
     };
 
-    String[] alias();    Flip NORTH_SOUTH = new Flip() {
+    @Override
+    default void value(Flip value) {
+    }
+
+    @Override
+    default Flip value() {
+        return this;
+    }    Flip NORTH_SOUTH = new Flip() {
         @Override
         public String[] alias() {
             return new String[]{"NS", "SN", "N", "S"};
@@ -87,7 +98,12 @@ public interface Flip extends IShiftable<Flip> {
         }
     };
 
-    Vector3 direction();    Flip UP_DOWN = new Flip() {
+    @Override
+    default Flip valueProvider() {
+        return this;
+    }
+
+    Flip UP_DOWN = new Flip() {
         @Override
         public String[] alias() {
             return new String[]{"U", "D", "UD", "DU"};
@@ -108,20 +124,6 @@ public interface Flip extends IShiftable<Flip> {
             return "UP DOWN";
         }
     };
-
-    @Override
-    default void value(Flip value) {
-    }
-
-    @Override
-    default Flip value() {
-        return this;
-    }
-
-    @Override
-    default Flip valueProvider() {
-        return this;
-    }
 
 
 

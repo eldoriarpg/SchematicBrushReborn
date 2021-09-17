@@ -2,7 +2,6 @@ package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
-import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.preset.AppendSet;
@@ -13,18 +12,11 @@ import de.eldoria.schematicbrush.commands.preset.Remove;
 import de.eldoria.schematicbrush.commands.preset.RemoveSet;
 import de.eldoria.schematicbrush.commands.preset.Save;
 import de.eldoria.schematicbrush.commands.preset.SaveCurrent;
-import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +45,12 @@ public class Preset extends AdvancedCommand {
         this.config = config;
     }
 
+    public static List<String> getSchematicSets(BrushSettings brush) {
+        return brush.schematicSets().stream()
+                .map(SchematicSet::arguments)
+                .collect(Collectors.toList());
+    }
+
     /**
      * Saves a list of schematic sets to a preset.
      *
@@ -68,11 +66,5 @@ public class Preset extends AdvancedCommand {
         config.addPreset(new de.eldoria.schematicbrush.config.sections.Preset(presetName, schematicSets));
         config.save();
         return true;
-    }
-
-    public static List<String> getSchematicSets(BrushSettings brush) {
-        return brush.schematicSets().stream()
-                .map(SchematicSet::arguments)
-                .collect(Collectors.toList());
     }
 }
