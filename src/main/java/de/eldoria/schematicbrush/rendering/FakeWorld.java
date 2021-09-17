@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.brush.config;
+package de.eldoria.schematicbrush.rendering;
 
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -8,8 +8,6 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.weather.WeatherType;
-import de.eldoria.schematicbrush.brush.BlockChangeCollecter;
-import de.eldoria.schematicbrush.rendering.Changes;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;

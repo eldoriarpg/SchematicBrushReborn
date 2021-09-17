@@ -1,30 +1,33 @@
-package de.eldoria.schematicbrush.brush.config.offset;
+package de.eldoria.schematicbrush.brush.config.rotation;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-class OffsetList extends AOffset {
+public class RotationList extends ARotation {
+    private final List<Rotation> values;
 
-    private final List<Integer> values;
-
-    public OffsetList(List<Integer> values) {
+    public RotationList(List<Rotation> values) {
         this.values = values;
     }
 
     @Override
-    public Integer valueProvider() {
+    public Rotation valueProvider() {
         return values.get(ThreadLocalRandom.current().nextInt(values.size()));
     }
 
     @Override
-    public Integer shift() {
+    public Rotation shift() {
         if (value() == null) {
             return values.get(ThreadLocalRandom.current().nextInt(values.size()));
         }
         int index = values.indexOf(value());
+        Rotation newValue;
         if (index + 1 == values.size()) {
-            return values.get(0);
+            newValue = values.get(0);
+        } else {
+            newValue = values.get(index + 1);
         }
-        return values.get(index + 1);
+        value(newValue);
+        return value();
     }
 }

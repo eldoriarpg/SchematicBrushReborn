@@ -4,6 +4,7 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
+import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
 import com.sk89q.worldedit.function.mask.Mask;
@@ -14,49 +15,77 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.session.PasteBuilder;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
+import de.eldoria.schematicbrush.schematics.Schematic;
+
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class BrushPaste {
-    final BrushSettings settings;
-    final SchematicSet schematicSet;
-    final Clipboard origClipboard;
-    Vector3 direction;
-    int rotation;
-    int offset;
+    private final BrushSettings settings;
+    private final SchematicSet schematicSet;
+    private Schematic schematic;
+    private Clipboard clipboard;
     private AffineTransform transform = new AffineTransform();
+    private boolean flipped;
+    private boolean rotated;
+    private boolean centered;
 
-    public BrushPaste(BrushSettings settings, SchematicSet schematicSet, Clipboard origClipboard) {
+    public BrushPaste(BrushSettings settings, SchematicSet schematicSet, Schematic schematic) {
         this.settings = settings;
         this.schematicSet = schematicSet;
-        this.origClipboard = origClipboard;
-        changeDirection();
+        this.schematic = schematic;
+        reloadSchematic();
         changeFlip();
+        changeRotation();
         changeOffset();
     }
 
-    public void changeDirection() {
-        direction = schematicSet.flip().asVector();
+    public void changeFlip() {
+        schematicSet.flip().refresh();
     }
 
-    public void changeFlip() {
-        rotation = schematicSet.rotation().getDeg();
+    public void changeRotation() {
+        schematicSet.rotation().refresh();
     }
 
     public void changeOffset() {
-        offset = settings.yOffset().offset();
+        settings.yOffset().refresh();
     }
 
-    private BrushPaste flip() {
-        transform = transform.scale(direction.abs().multiply(-2).add(1, 1, 1));
-        return this;
+    public void shiftFlip() {
+        reloadSchematic();
+        schematicSet.flip().shift();
     }
 
-    private BrushPaste rotate() {
-        transform = transform.rotateY(rotation);
-        return this;
+    public void shiftRotation() {
+        reloadSchematic();
+        schematicSet.rotation().shift();
     }
 
-    private BrushPaste replaceAll(EditSession editSession) {
+    public void shiftOffset() {
+        reloadSchematic();
+        settings.yOffset().shift();
+    }
+
+    private void flip() {
+        if (flipped) return;
+        if (schematicSet.flip().value().direction() != Vector3.ZERO) {
+            transform = transform.scale(schematicSet.flip().value().direction().abs().multiply(-2).add(1, 1, 1));
+        }
+        flipped = true;
+    }
+
+    private void rotate() {
+        if (rotated) return;
+        if (schematicSet.rotation().value().degree() != 0) {
+            transform = transform.rotateY(schematicSet.rotation().value().degree());
+        }
+        rotated = true;
+    }
+
+    private void replaceAll(EditSession editSession) {
         Mask preBrushMask = editSession.getMask();
         // Apply replace mask
         if (!settings.isReplaceAll()) {
@@ -70,42 +99,68 @@ public class BrushPaste {
                         new BlockTypeMask(editSession, BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR));
             }
         }
-        return this;
     }
 
     public Operation buildpaste(EditSession editSession, BukkitPlayer owner, BlockVector3 position) {
+        return buildpaste(editSession, editSession, owner, position);
+    }
+
+    public Operation buildpaste(EditSession editSession, Extent capturingExtent, BukkitPlayer owner, BlockVector3 position) {
         flip();
         rotate();
         replaceAll(editSession);
         ClipboardHolder clipboardHolder = buildClipboard(owner);
         center();
-        return paste(clipboardHolder, editSession, position);
+        return paste(clipboardHolder, capturingExtent, position);
     }
 
-    private Operation paste(ClipboardHolder clipboardHolder, EditSession editSession, BlockVector3 position) {
+    private Operation paste(ClipboardHolder clipboardHolder, Extent targetExtent, BlockVector3 position) {
         // Create paste operation
-        PasteBuilder paste = clipboardHolder.createPaste(editSession);
+        PasteBuilder paste = clipboardHolder.createPaste(targetExtent);
         return paste
-                .to(position.add(0, settings.yOffset().offset(), 0))
+                .to(position.add(0, settings.yOffset().value(), 0))
                 .ignoreAirBlocks(!settings.isIncludeAir())
                 .build();
     }
 
     private ClipboardHolder buildClipboard(BukkitPlayer owner) {
         LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(owner);
-        ClipboardHolder clipboardHolder = new ClipboardHolder(origClipboard);
+        ClipboardHolder clipboardHolder = new ClipboardHolder(clipboard);
         localSession.setClipboard(clipboardHolder);
         clipboardHolder.setTransform(clipboardHolder.getTransform().combine(transform));
         return clipboardHolder;
     }
 
     private void center() {
-        BlockVector3 dimensions = origClipboard.getDimensions();
+        if (centered) return;
+        BlockVector3 dimensions = clipboard.getDimensions();
         if (settings.placement() != Placement.ORIGINAL) {
-            int centerZ = origClipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
-            int centerX = origClipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
-            int centerY = origClipboard.getMinimumPoint().getBlockY() + settings.placement().find(origClipboard);
-            origClipboard.setOrigin(BlockVector3.at(centerX, centerY, centerZ));
+            int centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
+            int centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
+            int centerY = clipboard.getMinimumPoint().getBlockY() + settings.placement().find(clipboard);
+            clipboard.setOrigin(BlockVector3.at(centerX, centerY, centerZ));
         }
+        centered = true;
+    }
+
+    public void shiftSchematic() {
+        schematic = schematicSet.getRandomSchematic();
+        reloadSchematic();
+    }
+
+    public void reloadSchematic() {
+        centered = false;
+        rotated = false;
+        flipped = false;
+        transform = new AffineTransform();
+        try {
+            clipboard = schematic.loadSchematic();
+        } catch (IOException e) {
+            SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load schemartic", e);
+        }
+    }
+
+    public Schematic schematic() {
+        return schematic;
     }
 }

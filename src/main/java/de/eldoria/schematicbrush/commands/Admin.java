@@ -24,9 +24,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class BrushAdmin extends AdvancedCommand {
-    public BrushAdmin(SchematicBrushReborn instance,
-                      SchematicCache cache) {
+public class Admin extends AdvancedCommand {
+    public Admin(SchematicBrushReborn instance,
+                 SchematicCache cache) {
         super(instance);
         meta(CommandMeta.builder("sba")
                 .buildSubCommands((cmds, builder) ->{

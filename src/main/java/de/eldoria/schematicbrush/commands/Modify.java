@@ -16,8 +16,8 @@ import org.bukkit.plugin.Plugin;
 /**
  * Command to modify a current used brush.
  */
-public class BrushModify extends AdvancedCommand implements Randomable {
-    public BrushModify(Plugin plugin, SchematicCache schematicCache, Config config) {
+public class Modify extends AdvancedCommand implements Randomable {
+    public Modify(Plugin plugin, SchematicCache schematicCache, Config config) {
         super(plugin, CommandMeta.builder("sbm")
                 .withPermission("schematicbrush.brush.use")
                 .buildSubCommands((cmds, builder) -> {

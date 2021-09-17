@@ -8,11 +8,10 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
-import de.eldoria.schematicbrush.commands.SchematicPreset;
+import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -46,10 +45,10 @@ public class AppendSet extends AdvancedCommand implements IPlayerTabExecutor {
             return;
         }
 
-        Optional<Preset> preset = config.getPreset(name);
+        Optional<de.eldoria.schematicbrush.config.sections.Preset> preset = config.getPreset(name);
         CommandAssertions.isTrue(preset.isPresent(), "Preset §b" + name + "§r does not exist.");
 
-        preset.get().getFilter().addAll(SchematicPreset.getSchematicSets(settings.get()));
+        preset.get().getFilter().addAll(Preset.getSchematicSets(settings.get()));
         config.save();
 
         messageSender().sendMessage(player, "Preset " + name + " changed!" + C.NEW_LINE

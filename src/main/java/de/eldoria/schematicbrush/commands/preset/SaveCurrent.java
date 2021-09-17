@@ -8,7 +8,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.commands.SchematicPreset;
+import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.config.Config;
 import org.bukkit.entity.Player;
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class SaveCurrent extends AdvancedCommand implements IPlayerTabExecutor {
-    private final SchematicPreset preset;
+    private final Preset preset;
     private final Config config;
 
-    public SaveCurrent(Plugin plugin, SchematicPreset preset, Config config) {
+    public SaveCurrent(Plugin plugin, Preset preset, Config config) {
         super(plugin, CommandMeta.builder("saveCurrent")
                 .withPermission("schematicbrush.preset.save")
                 .addUnlocalizedArgument("name", true)
@@ -41,7 +41,7 @@ public class SaveCurrent extends AdvancedCommand implements IPlayerTabExecutor {
         CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
         SchematicBrush brush = schematicBrush.get();
 
-        List<String> schematicSets = SchematicPreset.getSchematicSets(brush.getSettings());
+        List<String> schematicSets = Preset.getSchematicSets(brush.getSettings());
 
         config.presetExists(name);
 

@@ -50,7 +50,7 @@ public class Schematic {
      *
      * @return path of file as string
      */
-    public String getPath() {
+    public String path() {
         return file.toPath().toString();
     }
 
@@ -59,7 +59,7 @@ public class Schematic {
      *
      * @return name of file
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -70,7 +70,7 @@ public class Schematic {
      * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deletet or
      *                     moved.
      */
-    public Clipboard getSchematic() throws IOException {
+    public Clipboard loadSchematic() throws IOException {
         try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
             return reader.read();
         }
@@ -82,8 +82,8 @@ public class Schematic {
         if (o == null || getClass() != o.getClass()) return false;
         Schematic schematic = (Schematic) o;
         return format.getName().equals(schematic.format.getName()) &&
-                file.getPath().equals(schematic.file.getPath()) &&
-                name.equals(schematic.name);
+               file.getPath().equals(schematic.file.getPath()) &&
+               name.equals(schematic.name);
     }
 
     public File getFile() {

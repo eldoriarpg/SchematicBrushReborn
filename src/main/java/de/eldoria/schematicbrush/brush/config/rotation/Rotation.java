@@ -1,38 +1,8 @@
-package de.eldoria.schematicbrush.brush.config.parameter;
+package de.eldoria.schematicbrush.brush.config.rotation;
 
-import de.eldoria.schematicbrush.util.Randomable;
+import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 
-public enum Rotation implements Randomable {
-    /**
-     * Represents a rotation of 0.
-     */
-    ROT_ZERO(0),
-    /**
-     * Represents a rotation of 90 degrees counter clockwise. Alterantive a rotation of -90 or 270 degrees.
-     */
-    ROT_LEFT(270),
-    /**
-     * Represents a rotation of 180 degrees.
-     */
-    ROT_HALF(180),
-    /**
-     * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
-     */
-    ROT_RIGHT(90),
-    /**
-     * Represents a random rotation.
-     */
-    ROT_RANDOM(-1);
-
-    /**
-     * Rotation represented as postive int value. Can be null.
-     */
-    private final int deg;
-
-    Rotation(int deg) {
-        this.deg = deg;
-    }
-
+public interface Rotation extends IShiftable<Rotation> {
     /**
      * Get a string as rotation value.
      *
@@ -45,20 +15,107 @@ public enum Rotation implements Randomable {
         if ("270".equals(value)) return ROT_LEFT;
         if ("90".equals(value)) return ROT_RIGHT;
         if ("180".equals(value)) return ROT_HALF;
-        if ("*".equals(value)) return ROT_RANDOM;
         throw new IllegalArgumentException(value + " is not a value of Rotation");
-    }
+    }    /**
+     * Represents a rotation of 0.
+     */
+    Rotation ROT_ZERO = new Rotation() {
+        @Override
+        public int degree() {
+            return 0;
+        }
+
+        @Override
+        public Rotation shift() {
+            return ROT_RIGHT;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 0";
+        }
+    };
 
     /**
-     * Rotation represented as postive int value. Can be 0, 90, 180 and 270 if value is {@link #ROT_RANDOM}.
+     * Rotation represented as postive int value.
      *
      * @return rotation as positive integer
      */
-    public int getDeg() {
-        if (deg == -1) {
-            int degrees = random().nextInt(4);
-            return degrees * 90;
+    int degree();    /**
+     * Represents a rotation of 90 degrees counter clockwise. Alterantive a rotation of -90 or 270 degrees.
+     */
+    Rotation ROT_LEFT = new Rotation() {
+        @Override
+        public int degree() {
+            return 270;
         }
-        return deg;
+
+        @Override
+        public Rotation shift() {
+            return ROT_ZERO;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 270";
+        }
+    };
+
+    @Override
+    default void value(Rotation value) {
+    }    /**
+     * Represents a rotation of 180 degrees.
+     */
+    Rotation ROT_HALF = new Rotation() {
+        @Override
+        public int degree() {
+            return 180;
+        }
+
+        @Override
+        public Rotation shift() {
+            return ROT_LEFT;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 180";
+        }
+    };
+
+    @Override
+    default Rotation value() {
+        return this;
+    }    /**
+     * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
+     */
+    Rotation ROT_RIGHT = new Rotation() {
+        @Override
+        public int degree() {
+            return 90;
+        }
+
+        @Override
+        public Rotation valueProvider() {
+            return ROT_HALF;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 90";
+        }
+    };
+
+    @Override
+    default Rotation valueProvider() {
+        return this;
     }
+
+
+
+
+
+
+
+
 }

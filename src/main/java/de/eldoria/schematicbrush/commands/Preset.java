@@ -31,10 +31,10 @@ import java.util.stream.Collectors;
 /**
  * Brush to create and modify brush presets.
  */
-public class SchematicPreset extends AdvancedCommand {
+public class Preset extends AdvancedCommand {
     private final Config config;
 
-    public SchematicPreset(Plugin plugin, SchematicCache cache, Config config) {
+    public Preset(Plugin plugin, SchematicCache cache, Config config) {
         super(plugin);
         meta(CommandMeta.builder("sbp")
                 .buildSubCommands((cmds, builder) -> {
@@ -65,7 +65,7 @@ public class SchematicPreset extends AdvancedCommand {
             messageSender().sendError(player, "Preset §b" + presetName + "§r does already exist.");
             return false;
         }
-        config.addPreset(new Preset(presetName, schematicSets));
+        config.addPreset(new de.eldoria.schematicbrush.config.sections.Preset(presetName, schematicSets));
         config.save();
         return true;
     }

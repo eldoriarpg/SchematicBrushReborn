@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.brush.config;
 
-import de.eldoria.schematicbrush.brush.config.offset.IOffset;
+import de.eldoria.schematicbrush.brush.config.offset.AOffset;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.util.Randomable;
 
@@ -31,7 +31,7 @@ public final class BrushSettings implements Randomable {
     /**
      * The y offset which will be applied before pasting to the position which was clicked by the user.
      */
-    private final IOffset yOffset;
+    private final AOffset yOffset;
     /**
      * Method which determins the origin of the schematic.
      */
@@ -41,7 +41,7 @@ public final class BrushSettings implements Randomable {
      */
     private final int totalWeight;
 
-    private BrushSettings(List<SchematicSet> schematicSets, boolean includeAir, boolean replaceAll, IOffset yOffset,
+    private BrushSettings(List<SchematicSet> schematicSets, boolean includeAir, boolean replaceAll, AOffset yOffset,
                           Placement placement) {
         this.schematicSets = schematicSets;
         this.includeAir = includeAir;
@@ -141,7 +141,7 @@ public final class BrushSettings implements Randomable {
         return replaceAll;
     }
 
-    public IOffset yOffset() {
+    public AOffset yOffset() {
         return yOffset;
     }
 
@@ -169,7 +169,7 @@ public final class BrushSettings implements Randomable {
         /**
          * The y offset which will be applied before pasting to the position which was clicked by the user.
          */
-        private IOffset yOffset = IOffset.fixed(0);
+        private AOffset yOffset = AOffset.fixed(0);
         /**
          * Method which determins the origin of the schematic.
          */
@@ -225,7 +225,7 @@ public final class BrushSettings implements Randomable {
          * @param yOffset y offset of the brush
          * @return builder instance with applied offset
          */
-        public BrushSettingsBuilder withYOffset(IOffset yOffset) {
+        public BrushSettingsBuilder withYOffset(AOffset yOffset) {
             this.yOffset = yOffset;
             return this;
         }

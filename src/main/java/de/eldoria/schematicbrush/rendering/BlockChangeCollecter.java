@@ -1,7 +1,5 @@
-package de.eldoria.schematicbrush.brush;
-
-import de.eldoria.schematicbrush.rendering.Changes;
+package de.eldoria.schematicbrush.rendering;
 
 public interface BlockChangeCollecter {
-    public Changes changes();
+    Changes changes();
 }

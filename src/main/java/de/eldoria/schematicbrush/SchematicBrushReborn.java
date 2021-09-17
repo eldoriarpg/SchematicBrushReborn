@@ -6,16 +6,16 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
-import de.eldoria.schematicbrush.commands.BrushAdminCommand;
-import de.eldoria.schematicbrush.commands.BrushCommand;
-import de.eldoria.schematicbrush.commands.BrushModifyCommand;
-import de.eldoria.schematicbrush.commands.SchematicPresetCommand;
+import de.eldoria.schematicbrush.commands.Admin;
+import de.eldoria.schematicbrush.commands.Brush;
+import de.eldoria.schematicbrush.commands.Modify;
+import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.config.ConfigUpdater;
 import de.eldoria.schematicbrush.config.sections.GeneralConfig;
-import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
+import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.rendering.RenderService;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -69,19 +69,21 @@ public class SchematicBrushReborn extends EldoPlugin {
 
         reload();
 
-        BrushCommand brushCommand = new BrushCommand(this, schematics, config);
-        BrushModifyCommand modifyCommand = new BrushModifyCommand(this, schematics, config);
-        SchematicPresetCommand presetCommand = new SchematicPresetCommand(this, schematics, config);
-        BrushAdminCommand adminCommand = new BrushAdminCommand(this, schematics);
+        Brush brushCommand = new Brush(this, schematics, config);
+        Modify modifyCommand = new Modify(this, schematics, config);
+        Preset presetCommand = new Preset(this, schematics, config);
+        Admin adminCommand = new Admin(this, schematics);
 
         registerCommand("sbr", brushCommand);
         registerCommand("sbrm", modifyCommand);
         registerCommand("sbrp", presetCommand);
         registerCommand("sbra", adminCommand);
 
+        registerListener(new BrushModifier());
+
         enableMetrics();
 
-        getServer().getScheduler().runTaskTimer(this, new RenderService(), 0,40);
+        getServer().getScheduler().runTaskTimer(this, new RenderService(this), 0, 1);
     }
 
     private void enableMetrics() {
@@ -130,6 +132,6 @@ public class SchematicBrushReborn extends EldoPlugin {
 
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfig.class, Preset.class, SchematicConfig.class, SchematicSource.class);
+        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.Preset.class, SchematicConfig.class, SchematicSource.class);
     }
 }

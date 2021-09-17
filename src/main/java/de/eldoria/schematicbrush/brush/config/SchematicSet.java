@@ -2,8 +2,10 @@ package de.eldoria.schematicbrush.brush.config;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
-import de.eldoria.schematicbrush.brush.config.parameter.Flip;
-import de.eldoria.schematicbrush.brush.config.parameter.Rotation;
+import de.eldoria.schematicbrush.brush.config.flip.AFlip;
+import de.eldoria.schematicbrush.brush.config.flip.Flip;
+import de.eldoria.schematicbrush.brush.config.rotation.ARotation;
+import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.util.Randomable;
 
@@ -31,19 +33,19 @@ public class SchematicSet implements Randomable {
      * Rotation of the schematic.
      */
     //TODO: Allow multiple rotations for more specific randomized pasting
-    private final Rotation rotation;
+    private final ARotation rotation;
     /**
      * Flip direction of the schematic
      */
     //TODO: Allow multiple flap values for more specific randomized pasting
-    private final Flip flip;
+    private final AFlip flip;
     /**
      * Weight of the brush. Must be always larger then 1. Is -1 when no weight is applied.
      */
     private int weight;
 
-    public SchematicSet(Set<Schematic> schematics, String arguments, Rotation rotation,
-                        Flip flip, int weight) {
+    public SchematicSet(Set<Schematic> schematics, String arguments, ARotation rotation,
+                        AFlip flip, int weight) {
         this.schematics = new ArrayList<>(schematics);
         this.arguments = arguments;
         this.rotation = rotation;
@@ -51,25 +53,25 @@ public class SchematicSet implements Randomable {
         this.weight = weight;
     }
 
-    public Clipboard getRandomSchematic() {
+    public Schematic getRandomSchematic() {
         if (schematics.isEmpty()) return null;
 
         Clipboard clipboard = null;
 
-        Schematic randomSchematic;
+        Schematic randomSchematic = null;
         // Search for loadable schematic. Should be likely always the first one.
         while (clipboard == null && !schematics.isEmpty()) {
             randomSchematic = schematics.get(randomInt(schematics.size()));
             try {
-                clipboard = randomSchematic.getSchematic();
+                clipboard = randomSchematic.loadSchematic();
             } catch (IOException e) {
                 // Silently fail and search for another schematic.
-                SchematicBrushReborn.logger().info("Schematic \"" + randomSchematic.getPath() + "\" does not exist anymore.");
+                SchematicBrushReborn.logger().info("Schematic \"" + randomSchematic.path() + "\" does not exist anymore.");
                 schematics.remove(randomSchematic);
             }
         }
 
-        return clipboard;
+        return randomSchematic;
     }
 
     /**
@@ -99,11 +101,11 @@ public class SchematicSet implements Randomable {
         return arguments;
     }
 
-    public Rotation rotation() {
+    public ARotation rotation() {
         return rotation;
     }
 
-    public Flip flip() {
+    public AFlip flip() {
         return flip;
     }
 
@@ -117,8 +119,8 @@ public class SchematicSet implements Randomable {
     public static class SchematicSetBuilder {
         private final String arguments;
         private Set<Schematic> schematics = Collections.emptySet();
-        private Rotation rotation = Rotation.ROT_ZERO;
-        private Flip flip = Flip.NONE;
+        private ARotation rotation = ARotation.fixed(Rotation.ROT_ZERO);
+        private AFlip flip = AFlip.fixed(Flip.NONE);
         private int weight = -1;
 
         public SchematicSetBuilder(String arguments) {
@@ -142,7 +144,7 @@ public class SchematicSet implements Randomable {
          * @param rotation rotation of the brush
          * @return instance with rotation set.
          */
-        public SchematicSetBuilder withRotation(Rotation rotation) {
+        public SchematicSetBuilder withRotation(ARotation rotation) {
             this.rotation = rotation;
             return this;
         }
@@ -153,7 +155,7 @@ public class SchematicSet implements Randomable {
          * @param flip flip of the brush
          * @return instance with flip set
          */
-        public SchematicSetBuilder withFlip(Flip flip) {
+        public SchematicSetBuilder withFlip(AFlip flip) {
             this.flip = flip;
             return this;
         }

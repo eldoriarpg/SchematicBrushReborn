@@ -313,8 +313,8 @@ public class SchematicCache {
         List<String> matches = new ArrayList<>();
         for (Map.Entry<String, Set<Schematic>> entry : schematicsCache.entrySet()) {
             for (Schematic schematic : entry.getValue()) {
-                if (schematic.getName().toLowerCase().startsWith(name.toLowerCase())) {
-                    matches.add(schematic.getName());
+                if (schematic.name().toLowerCase().startsWith(name.toLowerCase())) {
+                    matches.add(schematic.name());
                     if (matches.size() > count) break;
 
                 }

@@ -28,11 +28,11 @@ import java.util.Optional;
 /**
  * Command which is used to create a new brush. Rewrite of old schbr command.
  */
-public class BrushCommand extends AdvancedCommand implements Randomable, IPlayerTabExecutor {
+public class Brush extends AdvancedCommand implements Randomable, IPlayerTabExecutor {
     private final SchematicCache schematicCache;
     private final Config config;
 
-    public BrushCommand(Plugin plugin, SchematicCache schematicCache, Config config) {
+    public Brush(Plugin plugin, SchematicCache schematicCache, Config config) {
         super(plugin, CommandMeta.builder("sbr")
                 .withPermission("schematicbrush.brush.use")
                 .build());
@@ -85,7 +85,7 @@ public class BrushCommand extends AdvancedCommand implements Randomable, IPlayer
 
         if (!settings.isPresent()) return;
 
-        Brush schematicBrush = new SchematicBrush(plugin(), player, settings.get());
+        com.sk89q.worldedit.command.tool.brush.Brush schematicBrush = new SchematicBrush(plugin(), player, settings.get());
 
         boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush);
         if (success) {

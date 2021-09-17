@@ -32,20 +32,26 @@ public class SchematicWatchService implements Runnable {
     private final Plugin plugin;
     private final Config config;
     private final SchematicCache cache;
-    private WatchService watchService;
     private final ThreadGroup fileWorker = new ThreadGroup("File worker");
-    private Thread watchThread;
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(r -> {
         Thread thread = new Thread(fileWorker, r);
         thread.setUncaughtExceptionHandler((t, throwable) ->
                 SchematicBrushReborn.logger().log(Level.SEVERE, "And error occured on thread " + t.getName() + ".", throwable));
         return thread;
     });
+    private WatchService watchService;
+    private Thread watchThread;
 
     private SchematicWatchService(Plugin plugin, Config config, SchematicCache cache) {
         this.plugin = plugin;
         this.config = config;
         this.cache = cache;
+    }
+
+    public static SchematicWatchService of(Plugin plugin, Config config, SchematicCache cache) {
+        SchematicWatchService watchService = new SchematicWatchService(plugin, config, cache);
+        watchService.start();
+        return watchService;
     }
 
     @Override
@@ -141,11 +147,5 @@ public class SchematicWatchService implements Runnable {
         watchThread.setName("Schematic Brush Watch Service.");
         watchThread.setDaemon(true);
         watchThread.start();
-    }
-
-    public static SchematicWatchService of(Plugin plugin, Config config, SchematicCache cache) {
-        SchematicWatchService watchService = new SchematicWatchService(plugin, config, cache);
-        watchService.start();
-        return watchService;
     }
 }

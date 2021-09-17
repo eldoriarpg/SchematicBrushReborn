@@ -7,7 +7,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
-import de.eldoria.schematicbrush.commands.SchematicPreset;
+import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.config.Config;
@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class Save extends AdvancedCommand implements IPlayerTabExecutor {
-    private final SchematicPreset preset;
+    private final Preset preset;
     private final Config config;
     private final SchematicCache cache;
 
-    public Save(Plugin plugin, SchematicPreset preset, Config config, SchematicCache cache) {
+    public Save(Plugin plugin, Preset preset, Config config, SchematicCache cache) {
         super(plugin, CommandMeta.builder("save")
                 .withPermission("schematicbrush.preset.save")
                 .addUnlocalizedArgument("name", true)
@@ -49,7 +49,7 @@ public class Save extends AdvancedCommand implements IPlayerTabExecutor {
             return;
         }
 
-        List<String> schematicSets = SchematicPreset.getSchematicSets(settings.get());
+        List<String> schematicSets = Preset.getSchematicSets(settings.get());
 
         if (!preset.savePreset(player, name, schematicSets)) return;
 

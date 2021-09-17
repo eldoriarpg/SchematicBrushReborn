@@ -8,7 +8,7 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -18,8 +18,12 @@ import com.sk89q.worldedit.util.Location;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushPaste;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
-import de.eldoria.schematicbrush.brush.config.FakeWorld;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.event.PasteEvent;
+import de.eldoria.schematicbrush.rendering.BlockChangeCollecter;
+import de.eldoria.schematicbrush.rendering.CapturingExtent;
+import de.eldoria.schematicbrush.rendering.FakeWorld;
+import de.eldoria.schematicbrush.schematics.Schematic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -28,7 +32,6 @@ import org.bukkit.plugin.Plugin;
  * assigned to only one player.
  */
 public class SchematicBrush implements Brush {
-
     private final Plugin plugin;
     private final BrushSettings settings;
     private final Player brushOwner;
@@ -50,15 +53,27 @@ public class SchematicBrush implements Brush {
 
     @Override
     public void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size) {
+        paste(editSession, position);
+    }
+
+    private void paste(EditSession editSession, BlockVector3 position) {
         Operation paste = nextPaste.buildpaste(editSession, BukkitAdapter.adapt(brushOwner), position);
 
         Operations.completeBlindly(paste);
         if (editSession.getWorld() instanceof FakeWorld) return;
+        plugin.getServer().getPluginManager().callEvent(new PasteEvent(brushOwner, nextPaste.schematic()));
         buildNextPaste();
     }
 
-    public FakeWorld pasteFake() {
+    private void performPasteFake(EditSession editSession, Extent targetExtent, BlockVector3 position) {
+        Operation paste = nextPaste.buildpaste(editSession, targetExtent, BukkitAdapter.adapt(brushOwner), position);
+
+        Operations.completeBlindly(paste);
+    }
+
+    public BlockChangeCollecter pasteFake() {
         FakeWorld world = new FakeWorld(brushOwner.getWorld());
+        CapturingExtent capturingExtent;
         try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, 100000)) {
             BukkitPlayer bukkitPlayer = BukkitAdapter.adapt(brushOwner);
             LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
@@ -69,18 +84,19 @@ public class SchematicBrush implements Brush {
                 return null;
             }
             if (!(brushTool.getBrush() instanceof SchematicBrush)) return null;
+            capturingExtent = new CapturingExtent(editSession, world);
             Location target = bukkitPlayer.getBlockTrace(brushTool.getRange(), true, brushTool.getTraceMask());
-            build(editSession, target.toVector().toBlockPoint(), brushTool.getMaterial(), brushTool.getSize());
+            performPasteFake(editSession, capturingExtent, target.toVector().toBlockPoint());
         }
-        return world;
+        return capturingExtent;
     }
 
     private void buildNextPaste() {
         SchematicSet randomSchematicSet = settings.getRandomBrushConfig();
-        Clipboard clipboard = randomSchematicSet.getRandomSchematic();
+        Schematic clipboard = randomSchematicSet.getRandomSchematic();
         if (clipboard == null) {
-            MessageSender.getPluginMessageSender(plugin).sendError(brushOwner, "No valid schematic was found for brush: "
-                                                                               + randomSchematicSet.arguments());
+            MessageSender.getPluginMessageSender(plugin).sendError(brushOwner,
+                    "No valid schematic was found for brush: " + randomSchematicSet.arguments());
             return;
         }
         nextPaste = new BrushPaste(settings, randomSchematicSet, clipboard);
@@ -98,5 +114,9 @@ public class SchematicBrush implements Brush {
 
     public BrushSettings getSettings() {
         return settings;
+    }
+
+    public BrushPaste nextPaste() {
+        return nextPaste;
     }
 }
