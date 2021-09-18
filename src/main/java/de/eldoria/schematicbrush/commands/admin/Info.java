@@ -8,7 +8,6 @@ import de.eldoria.eldoutilities.commands.executor.ITabExecutor;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 
 public class Info extends AdvancedCommand implements ITabExecutor {

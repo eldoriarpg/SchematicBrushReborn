@@ -7,7 +7,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Command which is used to create a new brush. Rewrite of old schbr command.
@@ -80,7 +78,7 @@ public class Brush extends AdvancedCommand implements Randomable, IPlayerTabExec
 
         var settings = BrushSettingsParser.parseBrush(player, config, schematicCache, args.asArray());
 
-        if (!settings.isPresent()) return;
+        if (settings.isEmpty()) return;
 
         com.sk89q.worldedit.command.tool.brush.Brush schematicBrush = new SchematicBrush(plugin(), player, settings.get());
 

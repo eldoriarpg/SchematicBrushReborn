@@ -6,8 +6,6 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -16,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
 
@@ -30,7 +27,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
-        CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
+        CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
 
         var id = args.asInt(0);
         CommandAssertions.isTrue(id < 1 || id > schematicBrush.get().getSettings().schematicSets().size(),

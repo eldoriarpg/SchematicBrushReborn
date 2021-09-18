@@ -2,10 +2,8 @@ package de.eldoria.schematicbrush.schematics;
 
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -13,11 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +49,7 @@ public class SchematicWatchService implements Runnable {
         return watchService;
     }
 
+    @SuppressWarnings({"InfiniteLoopStatement", "CatchMayIgnoreException"})
     @Override
     public void run() {
         while (true) {

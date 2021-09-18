@@ -6,7 +6,6 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.C;
-import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class Save extends AdvancedCommand implements IPlayerTabExecutor {
     private final Preset preset;
@@ -45,7 +43,7 @@ public class Save extends AdvancedCommand implements IPlayerTabExecutor {
 
         var settings = BrushSettingsParser.parseBrush(player, config, cache, brushArgs);
 
-        if (!settings.isPresent()) {
+        if (settings.isEmpty()) {
             return;
         }
 

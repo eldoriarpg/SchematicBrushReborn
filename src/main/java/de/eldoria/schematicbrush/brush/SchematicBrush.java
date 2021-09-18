@@ -1,20 +1,16 @@
 package de.eldoria.schematicbrush.brush;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extent.Extent;
-import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.HandSide;
-import com.sk89q.worldedit.util.Location;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushPaste;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
@@ -23,7 +19,6 @@ import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollecter;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
 import de.eldoria.schematicbrush.rendering.FakeWorld;
-import de.eldoria.schematicbrush.schematics.Schematic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 

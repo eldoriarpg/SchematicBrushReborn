@@ -2,6 +2,7 @@ package de.eldoria.schematicbrush;
 
 import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.eldoutilities.updater.Updater;
@@ -67,6 +68,8 @@ public class SchematicBrushReborn extends EldoPlugin {
         }
 
         MessageSender.create(this, "§6[SB]");
+        var iLocalizer = ILocalizer.create(this, "en_US");
+        iLocalizer.setLocale("en_US");
 
         reload();
 

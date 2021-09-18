@@ -1,11 +1,9 @@
 package de.eldoria.schematicbrush.schematics;
 
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -28,7 +26,6 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SchematicCache {
     private final Logger logger = SchematicBrushReborn.logger();
@@ -76,7 +73,7 @@ public class SchematicCache {
 
         var baseDirectoryData = getDirectoryData(schematicFolder);
 
-        if (!baseDirectoryData.isPresent()) {
+        if (baseDirectoryData.isEmpty()) {
             logger.warning("Could not load schematics from " + schematicFolder + " folder.");
             return;
         }
@@ -93,7 +90,7 @@ public class SchematicCache {
             var path = deepDirectories.poll();
 
             var directoryData = getDirectoryData(path);
-            if (!directoryData.isPresent()) {
+            if (directoryData.isEmpty()) {
                 continue;
             }
             // Queue new directories
@@ -126,7 +123,7 @@ public class SchematicCache {
 
         var sourceForPath = config.getSchematicConfig().getSourceForPath(directory);
 
-        if (!sourceForPath.isPresent()) {
+        if (sourceForPath.isEmpty()) {
             logger.log(Level.CONFIG, "File " + directory + "is not part of a source");
             return;
         }

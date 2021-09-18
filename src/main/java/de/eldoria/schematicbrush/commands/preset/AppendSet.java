@@ -6,8 +6,8 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.schematicbrush.C;
-import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AppendSet extends AdvancedCommand implements IPlayerTabExecutor {
     private final Config config;
@@ -41,12 +40,12 @@ public class AppendSet extends AdvancedCommand implements IPlayerTabExecutor {
         var brushArgs = args.args(1);
         var settings = BrushSettingsParser.parseBrush(player, config, cache, brushArgs.toArray(new String[0]));
 
-        if (!settings.isPresent()) {
+        if (settings.isEmpty()) {
             return;
         }
 
         var preset = config.getPreset(name);
-        CommandAssertions.isTrue(preset.isPresent(), "Preset §b" + name + "§r does not exist.");
+        CommandAssertions.isTrue(preset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
         preset.get().getFilter().addAll(Preset.getSchematicSets(settings.get()));
         config.save();

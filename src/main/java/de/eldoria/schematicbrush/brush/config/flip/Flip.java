@@ -16,7 +16,7 @@ public interface Flip extends IShiftable<Flip> {
      * @return flip enum value
      * @throws IllegalArgumentException when the value can't be parsed.
      */
-    public static Flip asFlip(String input) {
+    static Flip asFlip(String input) {
         for (var value : values()) {
             for (var alias : value.alias()) {
                 if (alias.equalsIgnoreCase(input)) return value;

@@ -6,6 +6,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.config.Config;
 import org.bukkit.entity.Player;
@@ -30,7 +31,8 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
-        CommandAssertions.isTrue(config.removePreset(name), "Preset §b" + name + "§r does not exist.");
+        CommandAssertions.isTrue(config.removePreset(name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
+
         messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!");
     }
 

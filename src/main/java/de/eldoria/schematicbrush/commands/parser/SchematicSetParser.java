@@ -9,7 +9,6 @@ import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class SchematicSetParser {

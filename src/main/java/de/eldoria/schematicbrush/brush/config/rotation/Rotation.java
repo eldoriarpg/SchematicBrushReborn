@@ -10,7 +10,7 @@ public interface Rotation extends IShiftable<Rotation> {
      * @return rotation enum
      * @throws IllegalArgumentException when value cant be parsed
      */
-    public static Rotation asRotation(String value) {
+    static Rotation asRotation(String value) {
         if ("0".equals(value)) return ROT_ZERO;
         if ("270".equals(value)) return ROT_LEFT;
         if ("90".equals(value)) return ROT_RIGHT;

@@ -96,7 +96,7 @@ public final class ParsingUtil {
                 List<T> results = new ArrayList<>();
                 for (var val : entries) {
                     var optional = parser.apply(val);
-                    if (!optional.isPresent()) {
+                    if (optional.isEmpty()) {
                         return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
                     }
                     results.add(optional.get());
@@ -104,11 +104,9 @@ public final class ParsingUtil {
                 return new ParseResult<>(results, ParseResultType.LIST);
             }
         } else {
-            var optionOffset = parser.apply(value);
-            if (!optionOffset.isPresent()) {
-                return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
-            }
-            return new ParseResult<>(Collections.singletonList(optionOffset.get()), ParseResultType.FIXED);
+            return parser.apply(value)
+                    .map(t -> new ParseResult<>(Collections.singletonList(t), ParseResultType.FIXED))
+                    .orElseGet(() -> new ParseResult<>(Collections.emptyList(), ParseResultType.NONE));
         }
         return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
     }

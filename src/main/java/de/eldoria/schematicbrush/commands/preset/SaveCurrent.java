@@ -7,7 +7,6 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.C;
-import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
 import de.eldoria.schematicbrush.config.Config;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class SaveCurrent extends AdvancedCommand implements IPlayerTabExecutor {
     private final Preset preset;
@@ -38,7 +36,7 @@ public class SaveCurrent extends AdvancedCommand implements IPlayerTabExecutor {
         var name = args.asString(0);
 
         var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
-        CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
+        CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
         var brush = schematicBrush.get();
 
         var schematicSets = Preset.getSchematicSets(brush.getSettings());

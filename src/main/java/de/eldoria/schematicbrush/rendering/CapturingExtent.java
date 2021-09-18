@@ -25,9 +25,9 @@ import java.util.List;
 
 public class CapturingExtent implements Extent, BlockChangeCollecter {
     private static final BlockType[] AIR_TYPES = {BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR};
-    Changes.Builder changes = Changes.builder();
-    EditSession session;
-    FakeWorld fakeWorld;
+    final Changes.Builder changes = Changes.builder();
+    final EditSession session;
+    final FakeWorld fakeWorld;
     private final BrushSettings settings;
 
     public CapturingExtent(EditSession session, FakeWorld fakeWorld, BrushSettings settings) {

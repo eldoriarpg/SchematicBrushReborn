@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.commands.parser;
 
-import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.eldoutilities.utils.Parser;
@@ -11,7 +10,6 @@ import de.eldoria.schematicbrush.brush.config.offset.AOffset;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.entity.Player;
@@ -21,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -49,7 +46,7 @@ public class BrushSettingsParser {
         var brushSettings = buildBrushes(player, brushes, config, schematicCache);
 
         // Check if somethin went wrong while creating the brush.
-        if (!brushSettings.isPresent()) return Optional.empty();
+        if (brushSettings.isEmpty()) return Optional.empty();
 
         return buildBrushSettings(player, brushSettings.get(), args);
     }
@@ -74,7 +71,7 @@ public class BrushSettingsParser {
             // Get the brush type
             var optionalBrushType = SchematicSetParser.getBrushType(settingsString);
 
-            if (!optionalBrushType.isPresent()) {
+            if (optionalBrushType.isEmpty()) {
                 messageSender.sendError(player, "Invalid schematic selector");
                 return Optional.empty();
             }
@@ -85,7 +82,7 @@ public class BrushSettingsParser {
             if (subBrushType.selectorType() == SchematicSelector.REGEX) {
                 var brushConfig = buildBrushConfig(player, subBrushType, settingsString, schematicCache);
 
-                if (!brushConfig.isPresent()) {
+                if (brushConfig.isEmpty()) {
                     return Optional.empty();
                 }
                 configurationBuilder.addBrush(brushConfig.get());
@@ -96,7 +93,7 @@ public class BrushSettingsParser {
             if (subBrushType.selectorType() == SchematicSelector.DIRECTORY) {
                 var brushConfig = buildBrushConfig(player, subBrushType, settingsString, schematicCache);
 
-                if (!brushConfig.isPresent()) {
+                if (brushConfig.isEmpty()) {
                     messageSender.sendError(player, settingsString + " is invalid");
                     return Optional.empty();
                 }
@@ -117,7 +114,7 @@ public class BrushSettingsParser {
 
                 var brushConfigs = config.getPreset(subBrushType.selectorValue());
 
-                if (!brushConfigs.isPresent()) {
+                if (brushConfigs.isEmpty()) {
                     messageSender.sendError(player, "The preset " + subBrushType.selectorValue()
                                                     + " does not contain any brushes");
                     return Optional.empty();
@@ -126,7 +123,7 @@ public class BrushSettingsParser {
                 for (var settings : brushConfigs.get().getFilter()) {
                     optionalBrushType = SchematicSetParser.getBrushType(settings);
 
-                    if (!optionalBrushType.isPresent()) {
+                    if (optionalBrushType.isEmpty()) {
                         messageSender.sendError(player, settings + " is invalid");
                         return Optional.empty();
                     }
@@ -138,7 +135,7 @@ public class BrushSettingsParser {
                     }
 
                     var brushConfig = buildBrushConfig(player, optionalBrushType.get(), settings, schematicCache);
-                    if (!brushConfig.isPresent()) {
+                    if (brushConfig.isEmpty()) {
                         messageSender.sendError(player, settings + " is invalid");
                         return Optional.empty();
                     }
@@ -265,7 +262,7 @@ public class BrushSettingsParser {
         if (matcher != null) {
             var value = matcher.group(1);
             var placement = Placement.asPlacement(value);
-            if (!placement.isPresent()) {
+            if (placement.isEmpty()) {
                 MessageSender.getPluginMessageSender(SchematicBrushReborn.class)
                         .sendError(player, "Invalid placement.");
                 return Optional.empty();

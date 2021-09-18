@@ -6,9 +6,9 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.sections.Preset;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
@@ -38,7 +37,7 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
         var ids = args.args(1);
 
         var preset = config.getPreset(name);
-        CommandAssertions.isTrue(preset.isPresent(), "Preset §b" + name + "§r does not exist.");
+        CommandAssertions.isTrue(preset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
         var schematicSets = preset.get().getFilter();
 

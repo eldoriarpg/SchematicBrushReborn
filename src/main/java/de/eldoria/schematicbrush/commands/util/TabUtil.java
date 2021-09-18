@@ -117,7 +117,7 @@ public final class TabUtil {
                     "^<regex>@rotation!flip:weight");
         }
 
-        if (!brushArgumentMarker.isPresent()) {
+        if (brushArgumentMarker.isEmpty()) {
             var matchingSchematics = cache.getMatchingSchematics(arg, 50);
             matchingSchematics.add("<name>@rotation!flip:weight");
             if (matchingSchematics.size() == 1) {
@@ -135,7 +135,7 @@ public final class TabUtil {
             case '@':
                 return completeLegacyArrayFlags(arg, ROTATION_TYPES);
             case '^':
-                if (!firstMarker.isPresent() || firstMarker.get() != '$') {
+                if (firstMarker.isEmpty() || firstMarker.get() != '$') {
                     return Arrays.asList("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
                 }
             case '$': {

@@ -6,8 +6,6 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
@@ -19,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 public class Append extends AdvancedCommand implements IPlayerTabExecutor {
     private final Config config;
@@ -36,13 +33,13 @@ public class Append extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var settings = BrushSettingsParser.parseBrush(player, config, cache, args.asArray());
 
-        if (!settings.isPresent()) {
+        if (settings.isEmpty()) {
             return;
         }
 
         var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
-        CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
+        CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
 
         var combinedBrush = schematicBrush.get().combineBrush(settings.get());
         var success = WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(settings.get()));

@@ -8,12 +8,10 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.weather.WeatherType;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.data.BlockData;
 
 public class FakeWorld extends BukkitWorld implements BlockChangeCollecter {
-    Changes.Builder changes = Changes.builder();
+    final Changes.Builder changes = Changes.builder();
 
     /**
      * Construct the object.
