@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.commands.modify;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
+import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
@@ -25,17 +26,17 @@ public class Reload extends AdvancedCommand implements IPlayerTabExecutor {
     private final SchematicCache cache;
 
     public Reload(Plugin plugin, Config config, SchematicCache cache) {
-        super(plugin);
+        super(plugin, CommandMeta.builder("reload").build());
         this.config = config;
         this.cache = cache;
     }
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
         CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
-        BrushSettings oldSettings = schematicBrush.get().getSettings();
-        Optional<BrushSettings.BrushSettingsBuilder> configurationBuilder = BrushSettingsParser.buildBrushes(player,
+        var oldSettings = schematicBrush.get().getSettings();
+        var configurationBuilder = BrushSettingsParser.buildBrushes(player,
                 oldSettings.schematicSets().stream().map(SchematicSet::arguments).collect(Collectors.toList()),
                 config, cache);
 
@@ -43,17 +44,17 @@ public class Reload extends AdvancedCommand implements IPlayerTabExecutor {
             return;
         }
 
-        BrushSettings.BrushSettingsBuilder builder = configurationBuilder.get();
+        var builder = configurationBuilder.get();
 
-        BrushSettings configuration = builder.includeAir(oldSettings.isIncludeAir())
+        var configuration = builder.includeAir(oldSettings.isIncludeAir())
                 .replaceAll(oldSettings.isReplaceAll())
                 .withPlacementType(oldSettings.placement())
                 .withYOffset(oldSettings.yOffset())
                 .build();
 
-        int oldCount = oldSettings.getSchematicCount();
-        int newcount = configuration.getSchematicCount();
-        int addedSchematics = newcount - oldCount;
+        var oldCount = oldSettings.getSchematicCount();
+        var newcount = configuration.getSchematicCount();
+        var addedSchematics = newcount - oldCount;
         WorldEditBrushAdapter.setBrush(player, new SchematicBrush(plugin(), player, configuration));
         if (addedSchematics > 0) {
             messageSender().sendMessage(player, "Brush reloaded. Added §b" + addedSchematics + "§r schematics" + C.NEW_LINE

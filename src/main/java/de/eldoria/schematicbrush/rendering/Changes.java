@@ -29,7 +29,7 @@ public class Changes {
     }
 
     private void sendChanges(Player player, Map<Location, BlockData> data) {
-        for (Map.Entry<Location, BlockData> entry : data.entrySet()) {
+        for (var entry : data.entrySet()) {
             player.sendBlockChange(entry.getKey(), entry.getValue());
         }
     }

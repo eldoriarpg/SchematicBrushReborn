@@ -25,7 +25,7 @@ public final class ParsingUtil {
     }
 
     public static String parseToLegacyModifier(String modifier) {
-        String result = modifier;
+        var result = modifier;
         result = RANDOM.matcher(result).replaceAll(":*");
         result = FLIP.matcher(result).replaceAll("!");
         result = ROTATION.matcher(result).replaceAll("@");
@@ -33,7 +33,7 @@ public final class ParsingUtil {
     }
 
     public static String parseToLegacySelector(String selector) {
-        String result = selector;
+        var result = selector;
         result = DIRECTORY.matcher(result).replaceAll("\\$");
         result = PRESET.matcher(result).replaceAll("&");
         return REGEX.matcher(result).replaceAll("\\^");
@@ -41,10 +41,10 @@ public final class ParsingUtil {
 
     public static String[] parseToLegacySyntax(String[] args) {
         List<String> parsedInput = new ArrayList<>();
-        boolean open = false;
+        var open = false;
 
-        StringBuilder argumentBuilder = new StringBuilder();
-        for (String arg : args) {
+        var argumentBuilder = new StringBuilder();
+        for (var arg : args) {
             // If a string starts and ends with a double quote we assume, that a new schematic is defined inside
             if (arg.startsWith("\"") && arg.endsWith("\"")) {
                 parsedInput.add(parseToLegacySelector(arg.substring(1, arg.length() - 1)));
@@ -81,21 +81,21 @@ public final class ParsingUtil {
         if ("*".equals(value)) return new ParseResult<>(Collections.emptyList(), ParseResultType.RANDOM);
 
         if (value.startsWith("[") && value.endsWith("]")) {
-            String stripped = value.substring(1, value.length() - 1);
+            var stripped = value.substring(1, value.length() - 1);
             if (stripped.contains(":")) {
-                String[] split = stripped.split(":");
-                Optional<T> min = parser.apply(split[0]);
-                Optional<T> max = parser.apply(split[1]);
+                var split = stripped.split(":");
+                var min = parser.apply(split[0]);
+                var max = parser.apply(split[1]);
                 if (!(min.isPresent() && max.isPresent())) {
                     return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
                 }
                 return new ParseResult<>(Arrays.asList(min.get(), max.get()), ParseResultType.RANGE);
             }
             if (stripped.contains(",")) {
-                String[] entries = stripped.split(",");
+                var entries = stripped.split(",");
                 List<T> results = new ArrayList<>();
-                for (String val : entries) {
-                    Optional<T> optional = parser.apply(val);
+                for (var val : entries) {
+                    var optional = parser.apply(val);
                     if (!optional.isPresent()) {
                         return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
                     }
@@ -104,7 +104,7 @@ public final class ParsingUtil {
                 return new ParseResult<>(results, ParseResultType.LIST);
             }
         } else {
-            Optional<T> optionOffset = parser.apply(value);
+            var optionOffset = parser.apply(value);
             if (!optionOffset.isPresent()) {
                 return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
             }

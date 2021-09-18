@@ -44,15 +44,15 @@ public class Config extends EldoConfig {
         schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfig());
         general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfig());
         presets = new HashMap<>();
-        List<Preset> presets = (List<Preset>) getConfig().getList("presets", new ArrayList<Preset>());
-        for (Preset preset : presets) {
+        var presets = (List<Preset>) getConfig().getList("presets", new ArrayList<Preset>());
+        for (var preset : presets) {
             this.presets.put(preset.getName().toLowerCase(Locale.ROOT), preset);
         }
     }
 
     @Override
     protected void init() {
-        int version = plugin.getConfig().getInt("version", -1);
+        var version = plugin.getConfig().getInt("version", -1);
         if (version == -1) {
             setVersion(3, true);
             return;
@@ -69,7 +69,7 @@ public class Config extends EldoConfig {
         plugin.getLogger().info("Creating backup of config.");
 
         try {
-            Path path = Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml");
+            var path = Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml");
             if (!path.toFile().exists()) {
                 Files.createFile(path);
             }
@@ -79,19 +79,19 @@ public class Config extends EldoConfig {
         }
 
         List<SchematicSource> sources = new ArrayList<>();
-        ConfigurationSection schematicSources = plugin.getConfig().getConfigurationSection("schematicSources");
+        var schematicSources = plugin.getConfig().getConfigurationSection("schematicSources");
 
         if (schematicSources != null) {
-            List<String> excludedPathes = schematicSources.getStringList("excludedPathes");
+            var excludedPathes = schematicSources.getStringList("excludedPathes");
 
-            ConfigurationSection scanPath = schematicSources.getConfigurationSection("scanPathes");
+            var scanPath = schematicSources.getConfigurationSection("scanPathes");
             if (scanPath != null) {
-                for (String key : scanPath.getKeys(false)) {
-                    String path = scanPath.getString(key + ".path");
+                for (var key : scanPath.getKeys(false)) {
+                    var path = scanPath.getString(key + ".path");
                     plugin.getLogger().info("Converting path " + path);
-                    String prefix = scanPath.getString(key + ".prefix", "null");
+                    var prefix = scanPath.getString(key + ".prefix", "null");
                     List<String> excluded = new ArrayList<>();
-                    for (String currpath : excludedPathes) {
+                    for (var currpath : excludedPathes) {
                         if (currpath.startsWith(prefix)) {
                             plugin.getLogger().info("Found exclusion in path for directory " + currpath);
                             excluded.add(currpath.replace(prefix + "/", ""));
@@ -105,9 +105,9 @@ public class Config extends EldoConfig {
         plugin.getConfig().set("schematicSources", null);
         plugin.getLogger().info("Converted schematic sources and deleted.");
 
-        ConfigurationSection selectorSettings = plugin.getConfig().getConfigurationSection("selectorSettings");
-        String pathSeperator = "/";
-        boolean pathSourceAsPrefix = false;
+        var selectorSettings = plugin.getConfig().getConfigurationSection("selectorSettings");
+        var pathSeperator = "/";
+        var pathSourceAsPrefix = false;
         if (selectorSettings != null) {
             pathSeperator = selectorSettings.getString("pathSeperator", "/");
             pathSourceAsPrefix = selectorSettings.getBoolean("pathSourceAsPrefix", false);
@@ -118,12 +118,12 @@ public class Config extends EldoConfig {
 
         plugin.getConfig().set("schematicConfig", new SchematicConfig(sources, pathSeperator, pathSourceAsPrefix));
 
-        ConfigurationSection presetSection = plugin.getConfig().getConfigurationSection("presets");
+        var presetSection = plugin.getConfig().getConfigurationSection("presets");
         List<Preset> presets = new ArrayList<>();
         if (presetSection != null) {
-            for (String key : presetSection.getKeys(false)) {
-                List<String> filter = presetSection.getStringList(key + ".filter");
-                String description = presetSection.getString(key + ".description");
+            for (var key : presetSection.getKeys(false)) {
+                var filter = presetSection.getStringList(key + ".filter");
+                var description = presetSection.getString(key + ".description");
                 presets.add(new Preset(key, description, filter));
                 plugin.getLogger().info("Converted preset " + key);
             }

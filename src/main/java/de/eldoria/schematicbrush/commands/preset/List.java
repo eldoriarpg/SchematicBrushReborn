@@ -25,7 +25,7 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String presetString = config.getPresets().stream()
+        var presetString = config.getPresets().stream()
                 .map(preset -> "§bID: §r" + preset.getName() + C.NEW_LINE + "  §bDesc:§r " + preset.getDescription())
                 .collect(Collectors.joining("\n"));
         messageSender().sendMessage(player, presetString);

@@ -39,8 +39,8 @@ public class Schematic {
      * @return true if the pattern matches the file name with or without extension
      */
     public boolean isSchematic(Pattern pattern) {
-        Matcher matcher = pattern.matcher(file.toPath().getFileName().toString());
-        Matcher matcherExtension = pattern.matcher(name);
+        var matcher = pattern.matcher(file.toPath().getFileName().toString());
+        var matcherExtension = pattern.matcher(name);
 
         return matcherExtension.find() || matcher.find();
     }
@@ -71,7 +71,7 @@ public class Schematic {
      *                     moved.
      */
     public Clipboard loadSchematic() throws IOException {
-        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+        try (var reader = format.getReader(new FileInputStream(file))) {
             return reader.read();
         }
     }
@@ -80,7 +80,7 @@ public class Schematic {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Schematic schematic = (Schematic) o;
+        var schematic = (Schematic) o;
         return format.getName().equals(schematic.format.getName()) &&
                file.getPath().equals(schematic.file.getPath()) &&
                name.equals(schematic.name);

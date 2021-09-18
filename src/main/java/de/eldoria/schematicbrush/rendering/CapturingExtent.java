@@ -15,19 +15,25 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
-import org.bukkit.block.data.BlockData;
+import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
+import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CapturingExtent implements Extent, BlockChangeCollecter {
+    private static final BlockType[] AIR_TYPES = {BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR};
     Changes.Builder changes = Changes.builder();
     EditSession session;
     FakeWorld fakeWorld;
+    private final BrushSettings settings;
 
-    public CapturingExtent(EditSession session, FakeWorld fakeWorld) {
+    public CapturingExtent(EditSession session, FakeWorld fakeWorld, BrushSettings settings) {
         this.session = session;
         this.fakeWorld = fakeWorld;
+        this.settings = settings;
     }
 
     @Override
@@ -73,9 +79,15 @@ public class CapturingExtent implements Extent, BlockChangeCollecter {
 
     @Override
     public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block) throws WorldEditException {
-        BlockData data = BukkitAdapter.adapt(block.toBaseBlock());
-        org.bukkit.Location location = BukkitAdapter.adapt(fakeWorld.getWorld(), position);
-        changes.add(location, location.getBlock().getBlockData(), data);
+        var data = BukkitAdapter.adapt(block.toBaseBlock());
+        var location = BukkitAdapter.adapt(fakeWorld.getWorld(), position);
+        if (settings.isReplaceAll()) {
+            changes.add(location, location.getBlock().getBlockData(), data);
+        } else {
+            if (ArrayUtils.contains(AIR_TYPES, getBlock(position).getBlockType())) {
+                changes.add(location, location.getBlock().getBlockData(), data);
+            }
+        }
         return true;
     }
 

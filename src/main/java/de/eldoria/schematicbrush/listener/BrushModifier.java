@@ -17,10 +17,10 @@ public class BrushModifier implements Listener {
     public void onLeftClick(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
         if (event.getAction() != Action.LEFT_CLICK_AIR) return;
-        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer());
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer());
         if (!schematicBrush.isPresent()) return;
 
-        SchematicBrush brush = schematicBrush.get();
+        var brush = schematicBrush.get();
         if (event.getPlayer().isSneaking()) {
             brush.nextPaste().shiftFlip();
         } else {
@@ -30,8 +30,8 @@ public class BrushModifier implements Listener {
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
-        Material material = event.getItemDrop().getItemStack().getType();
-        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer(), material);
+        var material = event.getItemDrop().getItemStack().getType();
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer(), material);
         if (!schematicBrush.isPresent()) return;
 
         schematicBrush.get().nextPaste().shiftSchematic();

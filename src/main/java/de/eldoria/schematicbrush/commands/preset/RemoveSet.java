@@ -34,17 +34,17 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String name = args.asString(0);
-        List<String> ids = args.args(1);
+        var name = args.asString(0);
+        var ids = args.args(1);
 
-        Optional<Preset> preset = config.getPreset(name);
+        var preset = config.getPreset(name);
         CommandAssertions.isTrue(preset.isPresent(), "Preset §b" + name + "§r does not exist.");
 
-        List<String> schematicSets = preset.get().getFilter();
+        var schematicSets = preset.get().getFilter();
 
-        for (String id : ids) {
+        for (var id : ids) {
             try {
-                int i = Integer.parseInt(id);
+                var i = Integer.parseInt(id);
                 if (i > schematicSets.size() || i < 1) {
                     messageSender().sendError(player, "§b" + id + "§r is not a valid id.");
                     return;
@@ -63,7 +63,7 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 2 && args.asString(1).isEmpty()) {
-            List<String> presets = TabUtil.getPresets(args.asString(1), 50, config);
+            var presets = TabUtil.getPresets(args.asString(1), 50, config);
             presets.add("<name of preset>");
             return presets;
         }

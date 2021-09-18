@@ -63,7 +63,7 @@ public class Brush extends AdvancedCommand implements Randomable, IPlayerTabExec
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
-        String last = args.asString(args.size() - 1);
+        var last = args.asString(args.size() - 1);
         if (TabUtil.isFlag(args.asArray())) {
             return TabUtil.getFlagComplete(last);
         }
@@ -78,13 +78,13 @@ public class Brush extends AdvancedCommand implements Randomable, IPlayerTabExec
             return;
         }
 
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, schematicCache, args.asArray());
+        var settings = BrushSettingsParser.parseBrush(player, config, schematicCache, args.asArray());
 
         if (!settings.isPresent()) return;
 
         com.sk89q.worldedit.command.tool.brush.Brush schematicBrush = new SchematicBrush(plugin(), player, settings.get());
 
-        boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush);
+        var success = WorldEditBrushAdapter.setBrush(player, schematicBrush);
         if (success) {
             messageSender().sendMessage(player,
                     "Brush using " + settings.get().getSchematicCount() + " schematics created.");

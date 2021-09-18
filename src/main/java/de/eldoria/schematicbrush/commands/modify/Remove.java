@@ -28,16 +28,16 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
 
-        int id = args.asInt(0);
+        var id = args.asInt(0);
         CommandAssertions.isTrue(id < 1 || id > schematicBrush.get().getSettings().schematicSets().size(),
                 "Invalid set id.");
 
-        List<SchematicSet> schematicSets = schematicBrush.get().getSettings().schematicSets();
-        SchematicSet remove = schematicSets.remove(id - 1);
+        var schematicSets = schematicBrush.get().getSettings().schematicSets();
+        var remove = schematicSets.remove(id - 1);
 
         messageSender().sendMessage(player, "Set §b" + remove.arguments() + "§r removed!");
     }

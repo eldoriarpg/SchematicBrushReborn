@@ -1,67 +1,83 @@
 package de.eldoria.schematicbrush.rendering;
 
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
-import com.sk89q.worldedit.command.tool.BrushTool;
-import com.sk89q.worldedit.command.tool.InvalidToolBindException;
-import com.sk89q.worldedit.util.HandSide;
-import de.eldoria.schematicbrush.brush.SchematicBrush;
-import org.bukkit.Bukkit;
+import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.event.PasteEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Set;
 import java.util.UUID;
 
 public class RenderService implements Runnable, Listener {
     private final Map<UUID, Changes> changes = new HashMap<>();
     private final PaketWorker worker;
-    private final Set<Player> players = new HashSet<>();
+    private final Queue<Player> players = new ArrayDeque<>();
+    private final Config config;
+    private double count = 1;
 
-    public RenderService(Plugin plugin) {
+    public RenderService(Plugin plugin, Config config) {
+        this.config = config;
         worker = new PaketWorker();
         worker.runTaskTimerAsynchronously(plugin, 0, 1);
     }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        if (event.getPlayer().hasPermission("schematicbrush.brush.preview")) {
+            if (config.getGeneral().isPreviewDefault()) {
+                setState(event.getPlayer(), true);
+            }
+        }
+    }
+
+    @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         players.remove(event.getPlayer());
     }
 
+    @EventHandler
+    public void onPaste(PasteEvent event) {
+        worker.remove(event.getPlayer());
+        changes.remove(event.getPlayer().getUniqueId());
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer());
+        if (schematicBrush.isEmpty()) return;
+        var collector = schematicBrush.get().pasteFake();
+        worker.queue(event.getPlayer(), null, collector.changes());
+    }
+
     @Override
     public void run() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        count += players.size() / (double) config.getGeneral().previewRefreshInterval();
+        var start = System.currentTimeMillis();
+        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < config.getGeneral().maxRenderMs()) {
+            count--;
+            var player = players.poll();
             render(player);
+            players.add(player);
         }
     }
 
     private void render(Player player) {
-        BukkitPlayer bukkitPlayer = BukkitAdapter.adapt(player);
-        LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
-        BrushTool brushTool;
-        bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType().getBlockType();
-        try {
-            brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType());
-        } catch (InvalidToolBindException e) {
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        if (schematicBrush.isEmpty()) {
             resolveChanges(player);
             return;
         }
-
-        if (!(brushTool.getBrush() instanceof SchematicBrush)) {
+        if (schematicBrush.get().nextPaste().clipboardSize() > config.getGeneral().maxRenderSize()) {
             resolveChanges(player);
             return;
         }
-        BlockChangeCollecter collector = ((SchematicBrush) brushTool.getBrush()).pasteFake();
+        var collector = schematicBrush.get().pasteFake();
         renderChanges(player, collector.changes());
     }
 
@@ -84,6 +100,9 @@ public class RenderService implements Runnable, Listener {
 
     public void setState(Player player, boolean state) {
         if (state) {
+            if (players.contains(player)) {
+                return;
+            }
             players.add(player);
         } else {
             players.remove(player);
@@ -92,18 +111,22 @@ public class RenderService implements Runnable, Listener {
     }
 
     private static class PaketWorker extends BukkitRunnable {
-        private Queue<ChangeEntry> queue = new ArrayDeque<>();
+        private final Queue<ChangeEntry> queue = new ArrayDeque<>();
 
         @Override
         public void run() {
             while (!queue.isEmpty()) {
-                ChangeEntry poll = queue.poll();
+                var poll = queue.poll();
                 poll.send();
             }
         }
 
         public void queue(Player player, Changes oldChanges, Changes newChanges) {
             queue.add(new ChangeEntry(player, oldChanges, newChanges));
+        }
+
+        public void remove(Player player) {
+            queue.removeIf(e -> e.player.equals(player));
         }
 
         private static class ChangeEntry {

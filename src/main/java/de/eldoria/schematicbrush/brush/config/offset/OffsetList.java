@@ -21,7 +21,7 @@ class OffsetList extends AOffset {
         if (value() == null) {
             return values.get(ThreadLocalRandom.current().nextInt(values.size()));
         }
-        int index = values.indexOf(value());
+        var index = values.indexOf(value());
         if (index + 1 == values.size()) {
             return values.get(0);
         }

@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.commands.modify;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
+import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
@@ -25,25 +26,26 @@ public class Append extends AdvancedCommand implements IPlayerTabExecutor {
     private final SchematicCache cache;
 
     public Append(Plugin plugin, Config config, SchematicCache cache) {
-        super(plugin);
+        super(plugin, CommandMeta.builder("append")
+                .build());
         this.config = config;
         this.cache = cache;
     }
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, cache, args.asArray());
+        var settings = BrushSettingsParser.parseBrush(player, config, cache, args.asArray());
 
         if (!settings.isPresent()) {
             return;
         }
 
-        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
 
-        SchematicBrush combinedBrush = schematicBrush.get().combineBrush(settings.get());
-        boolean success = WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(settings.get()));
+        var combinedBrush = schematicBrush.get().combineBrush(settings.get());
+        var success = WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(settings.get()));
         if (success) {
             messageSender().sendMessage(player, "Schematic set appended. Using §b"
                                                 + combinedBrush.getSettings().getSchematicCount() + "§r schematics.");

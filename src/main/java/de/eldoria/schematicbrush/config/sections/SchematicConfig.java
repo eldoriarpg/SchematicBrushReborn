@@ -34,7 +34,7 @@ public class SchematicConfig implements ConfigurationSerializable {
     }
 
     public SchematicConfig(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
+        var map = SerializationUtil.mapOf(objectMap);
         sources = map.getValue("sources");
         pathSeparator = map.getValue("pathSeparator");
         pathSourceAsPrefix = map.getValue("pathSourceAsPrefix");

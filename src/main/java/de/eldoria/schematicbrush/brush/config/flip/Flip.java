@@ -17,8 +17,8 @@ public interface Flip extends IShiftable<Flip> {
      * @throws IllegalArgumentException when the value can't be parsed.
      */
     public static Flip asFlip(String input) {
-        for (Flip value : values()) {
-            for (String alias : value.alias()) {
+        for (var value : values()) {
+            for (var alias : value.alias()) {
                 if (alias.equalsIgnoreCase(input)) return value;
             }
         }

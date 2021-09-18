@@ -37,15 +37,15 @@ public class AppendSet extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String name = args.asString(0);
-        List<String> brushArgs = args.args(1);
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, cache, brushArgs.toArray(new String[0]));
+        var name = args.asString(0);
+        var brushArgs = args.args(1);
+        var settings = BrushSettingsParser.parseBrush(player, config, cache, brushArgs.toArray(new String[0]));
 
         if (!settings.isPresent()) {
             return;
         }
 
-        Optional<de.eldoria.schematicbrush.config.sections.Preset> preset = config.getPreset(name);
+        var preset = config.getPreset(name);
         CommandAssertions.isTrue(preset.isPresent(), "Preset §b" + name + "§r does not exist.");
 
         preset.get().getFilter().addAll(Preset.getSchematicSets(settings.get()));
@@ -59,7 +59,7 @@ public class AppendSet extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 2 && args.asString(1).isEmpty()) {
-            List<String> presets = TabUtil.getPresets(args.asString(1), 50, config);
+            var presets = TabUtil.getPresets(args.asString(1), 50, config);
             presets.add("<name of preset>");
             return presets;
         }

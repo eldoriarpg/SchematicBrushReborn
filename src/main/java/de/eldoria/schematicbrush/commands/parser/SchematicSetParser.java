@@ -59,16 +59,16 @@ public final class SchematicSetParser {
         // Check if its a name or regex lookup
 
         // Check if its a directory lookup
-        Matcher nameMatcher = DIRECTORY_PATTERN.matcher(arguments);
+        var nameMatcher = DIRECTORY_PATTERN.matcher(arguments);
         if (nameMatcher.find()) {
-            String directoryName = nameMatcher.group(1);
+            var directoryName = nameMatcher.group(1);
             return Optional.of(new SubBrushType(SchematicSelector.DIRECTORY, directoryName));
         }
 
         // Check if its a preset
         nameMatcher = PRESET_PATTERN.matcher(arguments);
         if (nameMatcher.find()) {
-            String presetName = nameMatcher.group(1);
+            var presetName = nameMatcher.group(1);
             return Optional.of(new SubBrushType(SchematicSelector.PRESET, presetName));
 
         }
@@ -76,7 +76,7 @@ public final class SchematicSetParser {
         // Check if its a name or regex lookup
         nameMatcher = NAME_PATTERN.matcher(arguments);
         if (nameMatcher.find()) {
-            String pattern = nameMatcher.group(1);
+            var pattern = nameMatcher.group(1);
             return Optional.of(new SubBrushType(SchematicSelector.REGEX, pattern));
         }
         return Optional.empty();
@@ -95,10 +95,10 @@ public final class SchematicSetParser {
         @Nullable Integer weight = null;
 
         // Read rotation
-        Matcher matcher = ROTATION_PATTERN.matcher(arguments);
+        var matcher = ROTATION_PATTERN.matcher(arguments);
         if (matcher.find()) {
-            String value = matcher.group(1);
-            ParsingUtil.ParseResult<Rotation> parseResult = ParsingUtil.parseValue(value, r -> Optional.of(Rotation.asRotation(r)));
+            var value = matcher.group(1);
+            var parseResult = ParsingUtil.parseValue(value, r -> Optional.of(Rotation.asRotation(r)));
             switch (parseResult.type()) {
                 case NONE:
                 case RANGE:
@@ -118,8 +118,8 @@ public final class SchematicSetParser {
         // Read flip
         matcher = FLIP_PATTERN.matcher(arguments);
         if (matcher.find()) {
-            String value = matcher.group(1);
-            ParsingUtil.ParseResult<Flip> parseResult = ParsingUtil.parseValue(value, r -> Optional.of(Flip.asFlip(r)));
+            var value = matcher.group(1);
+            var parseResult = ParsingUtil.parseValue(value, r -> Optional.of(Flip.asFlip(r)));
             switch (parseResult.type()) {
                 case NONE:
                 case RANGE:
@@ -139,7 +139,7 @@ public final class SchematicSetParser {
         // Read weight
         matcher = WEIGHT_PATTERN.matcher(arguments);
         if (matcher.find()) {
-            String value = matcher.group(1);
+            var value = matcher.group(1);
             if ("*".equals(value)) {
                 weight = -1;
             } else {

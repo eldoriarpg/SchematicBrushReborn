@@ -26,7 +26,7 @@ public class Preset implements ConfigurationSerializable {
     }
 
     public Preset(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
+        var map = SerializationUtil.mapOf(objectMap);
         name = map.getValue("name");
         description = map.getValue("description");
         if (description == null) {

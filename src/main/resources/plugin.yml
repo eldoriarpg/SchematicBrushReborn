@@ -24,7 +24,7 @@ commands:
   schematicbrushsettings:
     description: Create a new schematic brush
     aliases:
-      - sbs
+      - sbrs
       - schbs
     permission: "schematicbrush.brush.use"
     permission-message: "You dont have the permission to do this!"

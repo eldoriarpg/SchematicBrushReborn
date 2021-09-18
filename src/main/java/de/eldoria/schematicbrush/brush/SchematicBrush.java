@@ -57,7 +57,7 @@ public class SchematicBrush implements Brush {
     }
 
     private void paste(EditSession editSession, BlockVector3 position) {
-        Operation paste = nextPaste.buildpaste(editSession, BukkitAdapter.adapt(brushOwner), position);
+        var paste = nextPaste.buildpaste(editSession, BukkitAdapter.adapt(brushOwner), position);
 
         Operations.completeBlindly(paste);
         if (editSession.getWorld() instanceof FakeWorld) return;
@@ -66,17 +66,17 @@ public class SchematicBrush implements Brush {
     }
 
     private void performPasteFake(EditSession editSession, Extent targetExtent, BlockVector3 position) {
-        Operation paste = nextPaste.buildpaste(editSession, targetExtent, BukkitAdapter.adapt(brushOwner), position);
+        var paste = nextPaste.buildpaste(editSession, targetExtent, BukkitAdapter.adapt(brushOwner), position);
 
         Operations.completeBlindly(paste);
     }
 
     public BlockChangeCollecter pasteFake() {
-        FakeWorld world = new FakeWorld(brushOwner.getWorld());
+        var world = new FakeWorld(brushOwner.getWorld());
         CapturingExtent capturingExtent;
-        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, 100000)) {
-            BukkitPlayer bukkitPlayer = BukkitAdapter.adapt(brushOwner);
-            LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
+        try (var editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, 100000)) {
+            var bukkitPlayer = BukkitAdapter.adapt(brushOwner);
+            var localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
             BrushTool brushTool;
             try {
                 brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType());
@@ -84,16 +84,16 @@ public class SchematicBrush implements Brush {
                 return null;
             }
             if (!(brushTool.getBrush() instanceof SchematicBrush)) return null;
-            capturingExtent = new CapturingExtent(editSession, world);
-            Location target = bukkitPlayer.getBlockTrace(brushTool.getRange(), true, brushTool.getTraceMask());
+            capturingExtent = new CapturingExtent(editSession, world, settings);
+            var target = bukkitPlayer.getBlockTrace(brushTool.getRange(), true, brushTool.getTraceMask());
             performPasteFake(editSession, capturingExtent, target.toVector().toBlockPoint());
         }
         return capturingExtent;
     }
 
     private void buildNextPaste() {
-        SchematicSet randomSchematicSet = settings.getRandomBrushConfig();
-        Schematic clipboard = randomSchematicSet.getRandomSchematic();
+        var randomSchematicSet = settings.getRandomBrushConfig();
+        var clipboard = randomSchematicSet.getRandomSchematic();
         if (clipboard == null) {
             MessageSender.getPluginMessageSender(plugin).sendError(brushOwner,
                     "No valid schematic was found for brush: " + randomSchematicSet.arguments());

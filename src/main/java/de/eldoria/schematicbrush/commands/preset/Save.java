@@ -39,17 +39,17 @@ public class Save extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String name = args.asString(0);
+        var name = args.asString(0);
 
-        String[] brushArgs = args.args(1).toArray(new String[0]);
+        var brushArgs = args.args(1).toArray(new String[0]);
 
-        Optional<BrushSettings> settings = BrushSettingsParser.parseBrush(player, config, cache, brushArgs);
+        var settings = BrushSettingsParser.parseBrush(player, config, cache, brushArgs);
 
         if (!settings.isPresent()) {
             return;
         }
 
-        List<String> schematicSets = Preset.getSchematicSets(settings.get());
+        var schematicSets = Preset.getSchematicSets(settings.get());
 
         if (!preset.savePreset(player, name, schematicSets)) return;
 

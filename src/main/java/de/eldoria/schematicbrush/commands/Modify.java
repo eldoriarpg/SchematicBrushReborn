@@ -23,7 +23,7 @@ public class Modify extends AdvancedCommand implements Randomable {
                 .buildSubCommands((cmds, builder) -> {
                     cmds.add(new Append(plugin, config, schematicCache));
                     cmds.add(new Edit(plugin, config, schematicCache));
-                    Help help = new Help(plugin);
+                    var help = new Help(plugin);
                     cmds.add(help);
                     builder.withDefaultCommand(help);
                     cmds.add(new Info(plugin));

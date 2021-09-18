@@ -1,20 +1,18 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
-import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.session.PasteBuilder;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.eldoutilities.utils.EMath;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.schematics.Schematic;
@@ -86,13 +84,13 @@ public class BrushPaste {
     }
 
     private void replaceAll(EditSession editSession) {
-        Mask preBrushMask = editSession.getMask();
+        var preBrushMask = editSession.getMask();
         // Apply replace mask
         if (!settings.isReplaceAll()) {
             // Check if the user has a block mask defined and append if present.
             //Mask mask = WorldEditBrushAdapter.getMask(brushOwner);
             if (preBrushMask instanceof BlockTypeMask) {
-                BlockTypeMask blockMask = (BlockTypeMask) preBrushMask;
+                var blockMask = (BlockTypeMask) preBrushMask;
                 blockMask.add(BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR);
             } else {
                 editSession.setMask(
@@ -109,14 +107,14 @@ public class BrushPaste {
         flip();
         rotate();
         replaceAll(editSession);
-        ClipboardHolder clipboardHolder = buildClipboard(owner);
+        var clipboardHolder = buildClipboard(owner);
         center();
         return paste(clipboardHolder, capturingExtent, position);
     }
 
     private Operation paste(ClipboardHolder clipboardHolder, Extent targetExtent, BlockVector3 position) {
         // Create paste operation
-        PasteBuilder paste = clipboardHolder.createPaste(targetExtent);
+        var paste = clipboardHolder.createPaste(targetExtent);
         return paste
                 .to(position.add(0, settings.yOffset().value(), 0))
                 .ignoreAirBlocks(!settings.isIncludeAir())
@@ -124,8 +122,8 @@ public class BrushPaste {
     }
 
     private ClipboardHolder buildClipboard(BukkitPlayer owner) {
-        LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(owner);
-        ClipboardHolder clipboardHolder = new ClipboardHolder(clipboard);
+        var localSession = WorldEdit.getInstance().getSessionManager().get(owner);
+        var clipboardHolder = new ClipboardHolder(clipboard);
         localSession.setClipboard(clipboardHolder);
         clipboardHolder.setTransform(clipboardHolder.getTransform().combine(transform));
         return clipboardHolder;
@@ -133,11 +131,11 @@ public class BrushPaste {
 
     private void center() {
         if (centered) return;
-        BlockVector3 dimensions = clipboard.getDimensions();
+        var dimensions = clipboard.getDimensions();
         if (settings.placement() != Placement.ORIGINAL) {
-            int centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
-            int centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
-            int centerY = clipboard.getMinimumPoint().getBlockY() + settings.placement().find(clipboard);
+            var centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
+            var centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
+            var centerY = clipboard.getMinimumPoint().getBlockY() + settings.placement().find(clipboard);
             clipboard.setOrigin(BlockVector3.at(centerX, centerY, centerZ));
         }
         centered = true;
@@ -162,5 +160,18 @@ public class BrushPaste {
 
     public Schematic schematic() {
         return schematic;
+    }
+
+    public Clipboard clipboard() {
+        return clipboard;
+    }
+
+    public long clipboardSize() {
+        var minimumPoint = clipboard.getMinimumPoint();
+        var maximumPoint = clipboard.getMaximumPoint();
+        var x = (long) EMath.diff(minimumPoint.getBlockX(), maximumPoint.getBlockX());
+        var y = (long) EMath.diff(minimumPoint.getBlockY(), maximumPoint.getBlockY());
+        var z = (long) EMath.diff(minimumPoint.getBlockZ(), maximumPoint.getBlockZ());
+        return x * y * z;
     }
 }

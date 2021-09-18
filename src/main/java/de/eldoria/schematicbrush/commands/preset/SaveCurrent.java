@@ -35,13 +35,13 @@ public class SaveCurrent extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String name = args.asString(0);
+        var name = args.asString(0);
 
-        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
         CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
-        SchematicBrush brush = schematicBrush.get();
+        var brush = schematicBrush.get();
 
-        List<String> schematicSets = Preset.getSchematicSets(brush.getSettings());
+        var schematicSets = Preset.getSchematicSets(brush.getSettings());
 
         config.presetExists(name);
 

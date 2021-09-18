@@ -3,10 +3,12 @@ package de.eldoria.schematicbrush.commands.util;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.util.HandSide;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
@@ -30,7 +32,7 @@ public class WorldEditBrushAdapter {
      * @return schematic brush instance if the item is a schematic brush
      */
     public static Optional<SchematicBrush> getSchematicBrush(Player player) {
-        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        var itemInMainHand = player.getInventory().getItemInMainHand();
         return getSchematicBrush(player, itemInMainHand.getType());
     }
 
@@ -41,8 +43,12 @@ public class WorldEditBrushAdapter {
      * @return schematic brush instance if the item is a schematic brush
      */
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
+        var itemType = BukkitAdapter.asItemType(material);
+        if (itemType == null || itemType.hasBlockType()) {
+            return Optional.empty();
+        }
         try {
-            BrushTool brushTool = getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(material));
+            var brushTool = getLocalSession(player).getBrushTool(itemType);
             if (brushTool.getBrush() != null && brushTool.getBrush() instanceof SchematicBrush) {
                 return Optional.of((SchematicBrush) brushTool.getBrush());
             }
@@ -60,7 +66,7 @@ public class WorldEditBrushAdapter {
      * @return true if the brush was set.
      */
     public static boolean setBrush(Player player, Brush brush) {
-        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        var itemInMainHand = player.getInventory().getItemInMainHand();
         try {
             getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType())).setBrush(brush, "schematicbrush.brush.use");
         } catch (InvalidToolBindException e) {

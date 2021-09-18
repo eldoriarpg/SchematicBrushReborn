@@ -27,20 +27,20 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        Optional<SchematicBrush> schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
 
         CommandAssertions.isTrue(schematicBrush.isPresent(), "This is not a schematic brush.");
 
-        BrushSettings settings = schematicBrush.get().getSettings();
-        List<SchematicSet> schematicSets = settings.schematicSets();
+        var settings = schematicBrush.get().getSettings();
+        var schematicSets = settings.schematicSets();
 
         List<String> schematicSetStrings = new ArrayList<>();
-        for (int i = 0; i < schematicSets.size(); i++) {
-            String arguments = schematicSets.get(i).arguments();
+        for (var i = 0; i < schematicSets.size(); i++) {
+            var arguments = schematicSets.get(i).arguments();
             schematicSetStrings.add("§b" + (i + 1) + "|§r " + arguments);
         }
 
-        String schematicSetList = String.join(C.NEW_LINE, schematicSetStrings);
+        var schematicSetList = String.join(C.NEW_LINE, schematicSetStrings);
         messageSender().sendMessage(player,
                 "§bTotal schematics:§r " + settings.getSchematicCount() + C.NEW_LINE
                 + "§bPlacement:§r " + settings.placement().toString() + C.NEW_LINE

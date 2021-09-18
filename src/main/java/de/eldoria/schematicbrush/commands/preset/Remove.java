@@ -29,7 +29,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String name = args.asString(0);
+        var name = args.asString(0);
         CommandAssertions.isTrue(config.removePreset(name), "Preset §b" + name + "§r does not exist.");
         messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!");
     }
@@ -37,7 +37,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 2 && args.asString(1).isEmpty()) {
-            List<String> presets = TabUtil.getPresets(args.asString(1), 50, config);
+            var presets = TabUtil.getPresets(args.asString(1), 50, config);
             presets.add("<name of preset>");
             return presets;
         }

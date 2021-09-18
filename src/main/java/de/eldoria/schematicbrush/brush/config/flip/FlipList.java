@@ -20,7 +20,7 @@ public class FlipList extends AFlip {
         if (value() == null) {
             return values.get(ThreadLocalRandom.current().nextInt(values.size()));
         }
-        int index = values.indexOf(value());
+        var index = values.indexOf(value());
         Flip newValue;
         if (index + 1 == values.size()) {
             newValue = values.get(0);

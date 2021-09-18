@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.commands.modify;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
+import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Help extends AdvancedCommand implements IPlayerTabExecutor {
     public Help(Plugin plugin) {
-        super(plugin);
+        super(plugin, CommandMeta.builder("help").build());
     }
 
     @Override

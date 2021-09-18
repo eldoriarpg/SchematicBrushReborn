@@ -15,7 +15,7 @@ public class Admin extends AdvancedCommand {
         super(instance);
         meta(CommandMeta.builder("sba")
                 .buildSubCommands((cmds, builder) -> {
-                    Info info = new Info(instance);
+                    var info = new Info(instance);
                     builder.withDefaultCommand(info);
                     cmds.add(info);
                     cmds.add(new Debug(instance));

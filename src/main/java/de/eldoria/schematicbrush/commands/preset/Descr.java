@@ -32,9 +32,9 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String name = args.asString(0);
+        var name = args.asString(0);
 
-        Optional<Preset> preset = config.getPreset(name);
+        var preset = config.getPreset(name);
         CommandAssertions.isTrue(preset.isPresent(), "Preset §b" + name + "§r does not exist.");
 
         preset.get().setDescription(args.join(1));
@@ -45,7 +45,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 2 && args.asString(1).isEmpty()) {
-            List<String> presets = TabUtil.getPresets(args.asString(1), 50, config);
+            var presets = TabUtil.getPresets(args.asString(1), 50, config);
             presets.add("<name of preset>");
             return presets;
         }

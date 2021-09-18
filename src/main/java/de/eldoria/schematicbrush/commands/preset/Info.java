@@ -33,16 +33,16 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        String name = args.asString(0);
+        var name = args.asString(0);
 
-        Optional<Preset> optPreset = config.getPreset(name);
+        var optPreset = config.getPreset(name);
 
         CommandAssertions.isTrue(optPreset.isPresent(), "Preset §b" + name + "§r does not exist.");
 
-        Preset preset = optPreset.get();
-        java.util.List<String> schematicSets = preset.getFilter();
+        var preset = optPreset.get();
+        var schematicSets = preset.getFilter();
         List<String> schematicSetsList = new ArrayList<>();
-        for (int i = 0; i < schematicSets.size(); i++) {
+        for (var i = 0; i < schematicSets.size(); i++) {
             schematicSetsList.add("§b" + (i + 1) + "| §r" + schematicSets.get(i));
         }
 
@@ -55,7 +55,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 2 && args.asString(1).isEmpty()) {
-            List<String> presets = TabUtil.getPresets(args.asString(1), 50, config);
+            var presets = TabUtil.getPresets(args.asString(1), 50, config);
             presets.add("<name of preset>");
             return presets;
         }

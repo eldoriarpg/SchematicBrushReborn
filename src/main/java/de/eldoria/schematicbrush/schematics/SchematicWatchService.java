@@ -34,7 +34,7 @@ public class SchematicWatchService implements Runnable {
     private final SchematicCache cache;
     private final ThreadGroup fileWorker = new ThreadGroup("File worker");
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(r -> {
-        Thread thread = new Thread(fileWorker, r);
+        var thread = new Thread(fileWorker, r);
         thread.setUncaughtExceptionHandler((t, throwable) ->
                 SchematicBrushReborn.logger().log(Level.SEVERE, "And error occured on thread " + t.getName() + ".", throwable));
         return thread;
@@ -49,7 +49,7 @@ public class SchematicWatchService implements Runnable {
     }
 
     public static SchematicWatchService of(Plugin plugin, Config config, SchematicCache cache) {
-        SchematicWatchService watchService = new SchematicWatchService(plugin, config, cache);
+        var watchService = new SchematicWatchService(plugin, config, cache);
         watchService.start();
         return watchService;
     }
@@ -66,10 +66,10 @@ public class SchematicWatchService implements Runnable {
     }
 
     private void waitAndHandleEvent() throws InterruptedException {
-        WatchKey key = watchService.take();
+        var key = watchService.take();
         plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
-        for (WatchEvent<?> event : key.pollEvents()) {
-            File file = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
+        for (var event : key.pollEvents()) {
+            var file = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
             switch (event.kind().name()) {
                 case "ENTRY_CREATE":
                     if (file.isFile()) {
@@ -101,7 +101,7 @@ public class SchematicWatchService implements Runnable {
         try {
             registerWatcher(watcher, path);
             // register directory and subdirectories
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(path, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                         throws IOException {
@@ -125,9 +125,9 @@ public class SchematicWatchService implements Runnable {
     }
 
     private void init() {
-        String root = plugin.getDataFolder().toPath().getParent().toString();
+        var root = plugin.getDataFolder().toPath().getParent().toString();
 
-        List<SchematicSource> sources = config.getSchematicConfig().getSources();
+        var sources = config.getSchematicConfig().getSources();
         try {
             watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
@@ -135,8 +135,8 @@ public class SchematicWatchService implements Runnable {
             return;
         }
 
-        for (SchematicSource source : sources) {
-            Path path = Paths.get(root, source.getPath());
+        for (var source : sources) {
+            var path = Paths.get(root, source.getPath());
             watchDirectory(watchService, path);
         }
     }

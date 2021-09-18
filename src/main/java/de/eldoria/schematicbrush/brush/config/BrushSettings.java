@@ -50,11 +50,11 @@ public final class BrushSettings implements Randomable {
         this.placement = placement;
 
         // Count all weights, which have a weight set.
-        int totalWeight = schematicSets.stream().filter(b -> b.weight() > 0).mapToInt(SchematicSet::weight).sum();
+        var totalWeight = schematicSets.stream().filter(b -> b.weight() > 0).mapToInt(SchematicSet::weight).sum();
         // Count all weighted brushes
-        int weighted = (int) schematicSets.stream().filter(b -> b.weight() > 0).count();
+        var weighted = (int) schematicSets.stream().filter(b -> b.weight() > 0).count();
         // Count all unweighted weight
-        int unweighted = (int) schematicSets.stream().filter(b -> b.weight() < 0).count();
+        var unweighted = (int) schematicSets.stream().filter(b -> b.weight() < 0).count();
         int defaultWeight;
         // Handle case, when no brush is weighted
         if (weighted == 0) {
@@ -96,10 +96,10 @@ public final class BrushSettings implements Randomable {
      * @return a random brush
      */
     public SchematicSet getRandomBrushConfig() {
-        int random = randomInt(totalWeight);
+        var random = randomInt(totalWeight);
 
-        int count = 0;
-        for (SchematicSet brush : schematicSets) {
+        var count = 0;
+        for (var brush : schematicSets) {
             if (count + brush.weight() > random) {
                 return brush;
             }

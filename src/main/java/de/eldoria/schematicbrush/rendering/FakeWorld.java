@@ -26,8 +26,8 @@ public class FakeWorld extends BukkitWorld implements BlockChangeCollecter {
 
     @Override
     public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight) throws WorldEditException {
-        BlockData data = BukkitAdapter.adapt(block.toBaseBlock());
-        Location location = BukkitAdapter.adapt(getWorld(), position);
+        var data = BukkitAdapter.adapt(block.toBaseBlock());
+        var location = BukkitAdapter.adapt(getWorld(), position);
         changes.add(location, location.getBlock().getBlockData(), data);
         return true;
     }

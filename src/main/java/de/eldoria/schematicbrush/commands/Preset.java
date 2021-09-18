@@ -30,7 +30,7 @@ public class Preset extends AdvancedCommand {
         super(plugin);
         meta(CommandMeta.builder("sbp")
                 .buildSubCommands((cmds, builder) -> {
-                    Help help = new Help(plugin);
+                    var help = new Help(plugin);
                     builder.withDefaultCommand(help);
                     cmds.add(help);
                     cmds.add(new AppendSet(plugin, config, cache));
