@@ -52,9 +52,11 @@ public class SchematicBrushReborn extends EldoPlugin {
         if (schematics == null) {
             schematics = new SchematicCache(this, config);
             schematics.init();
-            Updater.butler(
-                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.getGeneral().isCheckUpdates(),
-                            false, 12, ButlerUpdateData.HOST)).start();
+            if (config.getGeneral().isCheckUpdates()) {
+                Updater.butler(
+                        new ButlerUpdateData(this, "schematicbrush.admin.reload", config.getGeneral().isCheckUpdates(),
+                                false, 12, ButlerUpdateData.HOST)).start();
+            }
         } else {
             schematics.reload();
         }
