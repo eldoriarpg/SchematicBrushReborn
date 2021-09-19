@@ -66,6 +66,6 @@ public class AppendSet extends AdvancedCommand implements IPlayerTabExecutor {
             return TabUtil.getPresets(args.asString(1), 50, config);
         }
 
-        return TabUtil.getSchematicSetSyntax(args.asArray(), cache, config);
+        return TabUtil.getSchematicSetSyntax(player, args.asArray(), cache, config);
     }
 }

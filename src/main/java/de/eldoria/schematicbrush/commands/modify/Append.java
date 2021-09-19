@@ -51,6 +51,6 @@ public class Append extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
-        return TabUtil.getSchematicSetSyntax(args.asArray(), cache, config);
+        return TabUtil.getSchematicSetSyntax(player, args.asArray(), cache, config);
     }
 }

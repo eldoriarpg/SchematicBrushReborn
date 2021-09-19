@@ -38,6 +38,7 @@ public class WorldEditBrushAdapter {
      * @param player player for lookup
      * @return schematic brush instance if the item is a schematic brush
      */
+    @SuppressWarnings("ProhibitedExceptionCaught")
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
         var itemType = BukkitAdapter.asItemType(material);
         if (itemType == null || itemType.hasBlockType()) {
@@ -49,6 +50,9 @@ public class WorldEditBrushAdapter {
                 return Optional.of((SchematicBrush) brushTool.getBrush());
             }
         } catch (InvalidToolBindException e) {
+            return Optional.empty();
+        } catch (NullPointerException e){
+            // for some reason world edit throws a NPE when this function is called on world edit tools
             return Optional.empty();
         }
         return Optional.empty();

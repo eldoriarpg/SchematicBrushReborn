@@ -64,6 +64,6 @@ public class Save extends AdvancedCommand implements IPlayerTabExecutor {
             }
             return Collections.singletonList("<name of preset>");
         }
-        return TabUtil.getSchematicSetSyntax(args.asArray(), cache, config);
+        return TabUtil.getSchematicSetSyntax(player, args.asArray(), cache, config);
     }
 }

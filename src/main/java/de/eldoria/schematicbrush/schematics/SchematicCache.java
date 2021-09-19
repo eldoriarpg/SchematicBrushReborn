@@ -4,6 +4,7 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.config.Config;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -28,10 +30,12 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 public class SchematicCache {
+    private static final Pattern UUID_PATTERN = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
     private final Logger logger = SchematicBrushReborn.logger();
     private final JavaPlugin plugin;
     private final Config config;
     private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
+    private final Map<UUID, Map<String, Set<Schematic>>> userCache = new HashMap<>();
     private SchematicWatchService watchService;
 
     public SchematicCache(JavaPlugin plugin, Config config) {
@@ -116,10 +120,8 @@ public class SchematicCache {
     }
 
     void addSchematic(File file) {
-
         var directory = file.toPath().getParent();
         directory = directory.subpath(1, directory.getNameCount());
-
 
         var sourceForPath = config.getSchematicConfig().getSourceForPath(directory);
 
@@ -145,6 +147,16 @@ public class SchematicCache {
             key = rawKey;
         }
 
+        UUID playerUid = null;
+
+        var matcher = UUID_PATTERN.matcher(rawKey);
+        if (matcher.find()) {
+            var uuidString = matcher.group();
+            logger.log(Level.CONFIG, "Found UUID " + uuidString);
+            playerUid = UUID.fromString(uuidString);
+            key = key.replaceFirst(uuidString + "/?", "");
+        }
+
         if (config.getSchematicConfig().isPathSourceAsPrefix()) {
             key = source.getPrefix() + config.getSchematicConfig().getPathSeparator() + key;
         }
@@ -157,7 +169,11 @@ public class SchematicCache {
         }
 
         logger.log(Level.CONFIG, "Added " + file.toPath() + " to schematic cache.");
-        schematicsCache.computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
+        if (playerUid != null) {
+            userCache.computeIfAbsent(playerUid, k -> new HashMap<>()).computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
+        } else {
+            schematicsCache.computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
+        }
     }
 
     private Optional<DirectoryData> getDirectoryData(Path directory) {
@@ -185,11 +201,12 @@ public class SchematicCache {
     /**
      * Get a list of schematics which match a name or regex
      *
-     * @param name name which will be parsed to a regex.
+     * @param player player
+     * @param name   name which will be parsed to a regex.
      * @return A brush config builder with assigned schematics.
      */
-    public Set<Schematic> getSchematicsByName(String name) {
-        return filterSchematics(getSchematics(), name);
+    public Set<Schematic> getSchematicsByName(Player player, String name) {
+        return filterSchematics(getSchematics(player), name);
     }
 
     private Set<Schematic> filterSchematics(Set<Schematic> schematics, String filter) {
@@ -210,7 +227,7 @@ public class SchematicCache {
      *
      * @return all schematics inside the directory
      */
-    public Set<Schematic> getSchematicsByDirectory(String name, String filter) {
+    public Set<Schematic> getSchematicsByDirectory(Player player, String name, String filter) {
         // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
         if (name.endsWith("*")) {
             var purename = name.replace("*", "").toLowerCase();
@@ -222,6 +239,14 @@ public class SchematicCache {
                     allSchematics.addAll(entry.getValue());
                 }
             }
+            if (userCache.containsKey(player.getUniqueId())) {
+                for (var entry : userCache.get(player.getUniqueId()).entrySet()) {
+                    if (entry.getKey().toLowerCase().startsWith(purename)) {
+                        // only the schematics in directory will be returned if a directory is found.
+                        allSchematics.addAll(entry.getValue());
+                    }
+                }
+            }
             return filterSchematics(allSchematics, filter);
         }
         // Check if a directory with this name exists if a directory match should be checked.
@@ -229,6 +254,14 @@ public class SchematicCache {
             if (name.equalsIgnoreCase(entry.getKey())) {
                 // only the schematics in directory will be returned if a directory is found.
                 return filterSchematics(entry.getValue(), filter);
+            }
+        }
+        if (userCache.containsKey(player.getUniqueId())) {
+            for (var entry : userCache.get(player.getUniqueId()).entrySet()) {
+                if (name.equalsIgnoreCase(entry.getKey())) {
+                    // only the schematics in directory will be returned if a directory is found.
+                    return filterSchematics(entry.getValue(), filter);
+                }
             }
         }
         return Collections.emptySet();
@@ -239,9 +272,12 @@ public class SchematicCache {
      *
      * @return list of schematics
      */
-    private Set<Schematic> getSchematics() {
+    private Set<Schematic> getSchematics(Player player) {
         Set<Schematic> schematics = new HashSet<>();
         schematicsCache.values().forEach(schematics::addAll);
+        if (userCache.containsKey(player.getUniqueId())) {
+            userCache.get(player.getUniqueId()).values().forEach(schematics::addAll);
+        }
         return schematics;
     }
 
@@ -275,7 +311,7 @@ public class SchematicCache {
      * @param count amount of returned directories
      * @return list of directory names with size of count or shorter
      */
-    public List<String> getMatchingDirectories(String dir, int count) {
+    public List<String> getMatchingDirectories(Player player, String dir, int count) {
         Set<String> matches = new HashSet<>();
         var seperator = config.getSchematicConfig().getPathSeparator().charAt(0);
         var deep = TextUtil.countChars(dir, seperator);
@@ -283,6 +319,14 @@ public class SchematicCache {
             if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
                 matches.add(trimPath(k, seperator, deep));
                 if (matches.size() > count) break;
+            }
+        }
+        if (userCache.containsKey(player.getUniqueId())) {
+            for (var k : userCache.get(player.getUniqueId()).keySet()) {
+                if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
+                    matches.add(trimPath(k, seperator, deep));
+                    if (matches.size() > count) break;
+                }
             }
         }
         return new ArrayList<>(matches);
@@ -306,7 +350,7 @@ public class SchematicCache {
      * @param count amount of returned schematics
      * @return list of schematics names with size of count or shorter
      */
-    public List<String> getMatchingSchematics(String name, int count) {
+    public List<String> getMatchingSchematics(Player player, String name, int count) {
         List<String> matches = new ArrayList<>();
         for (var entry : schematicsCache.entrySet()) {
             for (var schematic : entry.getValue()) {
@@ -314,6 +358,17 @@ public class SchematicCache {
                     matches.add(schematic.name());
                     if (matches.size() > count) break;
 
+                }
+            }
+        }
+        if (userCache.containsKey(player.getUniqueId())) {
+            for (var entry : userCache.get(player.getUniqueId()).entrySet()) {
+                for (var schematic : entry.getValue()) {
+                    if (schematic.name().toLowerCase().startsWith(name.toLowerCase())) {
+                        matches.add(schematic.name());
+                        if (matches.size() > count) break;
+
+                    }
                 }
             }
         }

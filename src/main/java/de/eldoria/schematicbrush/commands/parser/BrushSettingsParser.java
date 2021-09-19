@@ -157,7 +157,7 @@ public class BrushSettingsParser {
 
         // Check if its a name or regex lookup
         if (type.selectorType() == SchematicSelector.REGEX) {
-            schematics = schematicCache.getSchematicsByName(type.selectorValue());
+            schematics = schematicCache.getSchematicsByName(player,type.selectorValue());
             schematicSetBuilder = new SchematicSet.SchematicSetBuilder(settingsString);
         }
 
@@ -165,7 +165,7 @@ public class BrushSettingsParser {
         if (type.selectorType() == SchematicSelector.DIRECTORY) {
             var split = type.selectorValue().split("#");
             var filter = split.length > 1 ? split[1] : null;
-            schematics = schematicCache.getSchematicsByDirectory(split[0], filter);
+            schematics = schematicCache.getSchematicsByDirectory(player,split[0], filter);
             schematicSetBuilder = new SchematicSet.SchematicSetBuilder(settingsString);
         }
 

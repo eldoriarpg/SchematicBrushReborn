@@ -66,7 +66,7 @@ public class Edit extends AdvancedCommand implements IPlayerTabExecutor {
         if (args.size() == 2) {
             return Collections.singletonList("<schematic set>");
         }
-        return TabUtil.getSchematicSetSyntax(args.asArray(), cache, config);
+        return TabUtil.getSchematicSetSyntax(player, args.asArray(), cache, config);
 
     }
 }

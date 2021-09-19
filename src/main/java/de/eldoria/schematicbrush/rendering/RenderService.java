@@ -47,12 +47,12 @@ public class RenderService implements Runnable, Listener {
 
     @EventHandler
     public void onPaste(PasteEvent event) {
-        worker.remove(event.getPlayer());
-        changes.remove(event.getPlayer().getUniqueId());
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer());
+        worker.remove(event.player());
+        changes.remove(event.player().getUniqueId());
+        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.player());
         if (schematicBrush.isEmpty()) return;
         var collector = schematicBrush.get().pasteFake();
-        worker.queue(event.getPlayer(), null, collector.changes());
+        worker.queue(event.player(), null, collector.changes());
     }
 
     @Override

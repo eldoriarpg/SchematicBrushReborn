@@ -22,6 +22,7 @@ public class BrushModifier implements Listener {
         } else {
             brush.nextPaste().shiftRotation();
         }
+        event.setCancelled(true);
     }
 
     @EventHandler

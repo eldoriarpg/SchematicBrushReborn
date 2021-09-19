@@ -5,6 +5,7 @@ import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,17 +44,17 @@ public final class TabUtil {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Config config) {
+    public static List<String> getSchematicSetSyntax(Player player, String[] args, SchematicCache cache, Config config) {
         var quoteCount = TextUtil.countChars(String.join(" ", args), '\"');
         var last = args[args.length - 1];
         if (quoteCount % 2 == 0) {
-            return getLegacySchematicSetSyntax(last, cache, config);
+            return getLegacySchematicSetSyntax(player, last, cache, config);
         }
 
-        return getSchematicSetSyntax(last, cache, config);
+        return getSchematicSetSyntax(player, last, cache, config);
     }
 
-    private static List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Config config) {
+    private static List<String> getSchematicSetSyntax(Player player, String arg, SchematicCache cache, Config config) {
         if (arg.startsWith("\"")) {
             if ("\"".equals(arg)) {
                 return prefixStrings(Arrays.asList(SELECTOR_TYPE), "\"");
@@ -63,7 +64,7 @@ public final class TabUtil {
             var split = arg.split(":");
 
             if (selector.startsWith("dir:") || selector.startsWith("d:")) {
-                var matchingDirectories = cache.getMatchingDirectories(split.length == 1 ? "" : split[1].split("#")[0], 50);
+                var matchingDirectories = cache.getMatchingDirectories(player, split.length == 1 ? "" : split[1].split("#")[0], 50);
                 return prefixStrings(matchingDirectories, split[0] + ":");
             }
 
@@ -77,7 +78,7 @@ public final class TabUtil {
             }
 
             var matches = ArrayUtil.startingWithInArray(selector, SELECTOR_TYPE).collect(Collectors.toList());
-            matches.addAll(cache.getMatchingSchematics(selector, 50));
+            matches.addAll(cache.getMatchingSchematics(player, selector, 50));
             Collections.reverse(matches);
             return prefixStrings(matches, "\"");
         }
@@ -106,7 +107,7 @@ public final class TabUtil {
      * @param cache cache for schematic lookup
      * @return a list of possible completions
      */
-    private static List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Config config) {
+    private static List<String> getLegacySchematicSetSyntax(Player player, String arg, SchematicCache cache, Config config) {
         var brushArgumentMarker = getBrushArgumentMarker(arg);
         var firstMarker = getBrushArgumentMarker(arg, true);
 
@@ -118,7 +119,7 @@ public final class TabUtil {
         }
 
         if (brushArgumentMarker.isEmpty()) {
-            var matchingSchematics = cache.getMatchingSchematics(arg, 50);
+            var matchingSchematics = cache.getMatchingSchematics(player, arg, 50);
             matchingSchematics.add("<name>@rotation!flip:weight");
             if (matchingSchematics.size() == 1) {
                 matchingSchematics.addAll(getMissingSchematicSetArguments(arg));
@@ -140,7 +141,7 @@ public final class TabUtil {
                 }
             case '$': {
                 var directory = arg.substring(1).split("#")[0];
-                var matchingDirectories = cache.getMatchingDirectories(directory, 50);
+                var matchingDirectories = cache.getMatchingDirectories(player, directory, 50);
                 matchingDirectories = prefixStrings(matchingDirectories, "$");
                 // only if a direct match is found add schematic arguments.
                 if (matchingDirectories.stream().anyMatch(d -> d.equalsIgnoreCase(directory)) || directory.endsWith("*")) {

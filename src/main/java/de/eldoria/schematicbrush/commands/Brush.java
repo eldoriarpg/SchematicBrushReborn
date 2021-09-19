@@ -66,7 +66,7 @@ public class Brush extends AdvancedCommand implements Randomable, IPlayerTabExec
             return TabUtil.getFlagComplete(last);
         }
 
-        return TabUtil.getSchematicSetSyntax(args.asArray(), schematicCache, config);
+        return TabUtil.getSchematicSetSyntax(player, args.asArray(), schematicCache, config);
     }
 
     @Override
