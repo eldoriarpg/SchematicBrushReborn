@@ -26,17 +26,18 @@ dependencies {
 group = "de.eldoria"
 version = "1.5.0"
 description = "SchematicBrushReborn"
-java.sourceCompatibility = JavaVersion.VERSION_11
 val shadebase = "de.eldoria.schematicbrush."
 val publishData = PublishData(project)
 
 java {
     withSourcesJar()
     withJavadocJar()
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 publishing {
     publications.create<MavenPublication>("maven") {
+        artifact(tasks["jar"])
         artifact(tasks["shadowJar"])
         artifact(tasks["sourcesJar"])
         artifact(tasks["javadocJar"])
