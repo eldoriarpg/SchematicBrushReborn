@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.rendering;
 
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.event.PasteEvent;
 import org.bukkit.entity.Player;
@@ -49,7 +49,7 @@ public class RenderService implements Runnable, Listener {
     public void onPaste(PasteEvent event) {
         worker.remove(event.player());
         changes.remove(event.player().getUniqueId());
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.player());
+        var schematicBrush = WorldEditBrush.getSchematicBrush(event.player());
         if (schematicBrush.isEmpty()) return;
         var collector = schematicBrush.get().pasteFake();
         worker.queue(event.player(), null, collector.changes());
@@ -68,7 +68,7 @@ public class RenderService implements Runnable, Listener {
     }
 
     private void render(Player player) {
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrush.getSchematicBrush(player);
         if (schematicBrush.isEmpty()) {
             resolveChanges(player);
             return;

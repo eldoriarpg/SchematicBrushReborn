@@ -8,7 +8,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.commands.Preset;
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -35,7 +35,7 @@ public class SaveCurrent extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
 
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrush.getSchematicBrush(player);
         CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
         var brush = schematicBrush.get();
 

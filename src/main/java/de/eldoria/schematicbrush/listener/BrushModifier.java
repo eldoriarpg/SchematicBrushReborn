@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.listener;
 
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -13,7 +13,7 @@ public class BrushModifier implements Listener {
     public void onLeftClick(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
         if (event.getAction() != Action.LEFT_CLICK_AIR) return;
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer());
+        var schematicBrush = WorldEditBrush.getSchematicBrush(event.getPlayer());
         if (schematicBrush.isEmpty()) return;
 
         var brush = schematicBrush.get();
@@ -28,7 +28,7 @@ public class BrushModifier implements Listener {
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
         var material = event.getItemDrop().getItemStack().getType();
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(event.getPlayer(), material);
+        var schematicBrush = WorldEditBrush.getSchematicBrush(event.getPlayer(), material);
         if (schematicBrush.isEmpty()) return;
 
         schematicBrush.get().nextPaste().shiftSchematic();

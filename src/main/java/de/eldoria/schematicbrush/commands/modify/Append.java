@@ -8,7 +8,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.entity.Player;
@@ -37,12 +37,12 @@ public class Append extends AdvancedCommand implements IPlayerTabExecutor {
             return;
         }
 
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrush.getSchematicBrush(player);
 
         CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
 
         var combinedBrush = schematicBrush.get().combineBrush(settings.get());
-        var success = WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(settings.get()));
+        var success = WorldEditBrush.setBrush(player, schematicBrush.get().combineBrush(settings.get()));
         if (success) {
             messageSender().sendMessage(player, "Schematic set appended. Using §b"
                                                 + combinedBrush.getSettings().getSchematicCount() + "§r schematics.");

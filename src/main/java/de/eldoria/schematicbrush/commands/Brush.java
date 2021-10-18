@@ -9,7 +9,7 @@ import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.util.Randomable;
@@ -82,7 +82,7 @@ public class Brush extends AdvancedCommand implements Randomable, IPlayerTabExec
 
         com.sk89q.worldedit.command.tool.brush.Brush schematicBrush = new SchematicBrush(plugin(), player, settings.get());
 
-        var success = WorldEditBrushAdapter.setBrush(player, schematicBrush);
+        var success = WorldEditBrush.setBrush(player, schematicBrush);
         if (success) {
             messageSender().sendMessage(player,
                     "Brush using " + settings.get().getSchematicCount() + " schematics created.");

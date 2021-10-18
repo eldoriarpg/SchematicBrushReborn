@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.commands.util;
+package de.eldoria.schematicbrush.util;
 
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -14,10 +14,10 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public class WorldEditBrushAdapter {
+public class WorldEditBrush {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
 
-    private WorldEditBrushAdapter() {
+    private WorldEditBrush() {
         throw new UnsupportedOperationException("This is a utility class.");
     }
 
@@ -40,14 +40,25 @@ public class WorldEditBrushAdapter {
      */
     @SuppressWarnings("ProhibitedExceptionCaught")
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
+        return getBrush(player, material, SchematicBrush.class);
+    }
+
+    /**
+     * Get the schematic brush of a player registered on the item in its main hand.
+     *
+     * @param player player for lookup
+     * @return schematic brush instance if the item is a schematic brush
+     */
+    @SuppressWarnings({"ProhibitedExceptionCaught", "unchecked"})
+    public static <T extends Brush> Optional<T> getBrush(Player player, Material material, Class<T> clazz) {
         var itemType = BukkitAdapter.asItemType(material);
         if (itemType == null || itemType.hasBlockType()) {
             return Optional.empty();
         }
         try {
             var brushTool = getLocalSession(player).getBrushTool(itemType);
-            if (brushTool.getBrush() != null && brushTool.getBrush() instanceof SchematicBrush) {
-                return Optional.of((SchematicBrush) brushTool.getBrush());
+            if (brushTool.getBrush() != null && clazz.isAssignableFrom(brushTool.getBrush().getClass())) {
+                return Optional.of((T) brushTool.getBrush());
             }
         } catch (InvalidToolBindException e) {
             return Optional.empty();

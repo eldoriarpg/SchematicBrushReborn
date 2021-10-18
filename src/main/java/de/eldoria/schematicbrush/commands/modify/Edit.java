@@ -8,7 +8,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class Edit extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrush.getSchematicBrush(player);
 
         CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
 
@@ -52,7 +52,7 @@ public class Edit extends AdvancedCommand implements IPlayerTabExecutor {
 
         var schematicSets = schematicBrush.get().getSettings().schematicSets();
         var remove = schematicSets.remove(id - 1);
-        WorldEditBrushAdapter.setBrush(player, schematicBrush.get().combineBrush(brushConfiguration.get()));
+        WorldEditBrush.setBrush(player, schematicBrush.get().combineBrush(brushConfiguration.get()));
         messageSender().sendMessage(player, "Set §b" + remove.arguments() + "§r changed to §b"
                                             + brushConfiguration.get().schematicSets().get(0).arguments() + "§r.");
     }

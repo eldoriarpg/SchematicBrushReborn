@@ -10,7 +10,7 @@ import de.eldoria.schematicbrush.C;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
-import de.eldoria.schematicbrush.commands.util.WorldEditBrushAdapter;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class Reload extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var schematicBrush = WorldEditBrushAdapter.getSchematicBrush(player);
+        var schematicBrush = WorldEditBrush.getSchematicBrush(player);
         CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
         var oldSettings = schematicBrush.get().getSettings();
         var configurationBuilder = BrushSettingsParser.buildBrushes(player,
@@ -53,7 +53,7 @@ public class Reload extends AdvancedCommand implements IPlayerTabExecutor {
         var oldCount = oldSettings.getSchematicCount();
         var newcount = configuration.getSchematicCount();
         var addedSchematics = newcount - oldCount;
-        WorldEditBrushAdapter.setBrush(player, new SchematicBrush(plugin(), player, configuration));
+        WorldEditBrush.setBrush(player, new SchematicBrush(plugin(), player, configuration));
         if (addedSchematics > 0) {
             messageSender().sendMessage(player, "Brush reloaded. Added §b" + addedSchematics + "§r schematics" + C.NEW_LINE
                                                 + "Brush is now using §b" + newcount + "§r schematics.");
