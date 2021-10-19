@@ -1,11 +1,10 @@
 package de.eldoria.schematicbrush.event;
 
 import de.eldoria.schematicbrush.schematics.Schematic;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class PasteEvent extends Event {
@@ -14,7 +13,7 @@ public class PasteEvent extends Event {
     private final Schematic schematic;
 
     public PasteEvent(@NotNull Player who, Schematic schematic) {
-        super(true);
+        super(!Bukkit.isPrimaryThread());
         this.who = who;
         this.schematic = schematic;
     }
