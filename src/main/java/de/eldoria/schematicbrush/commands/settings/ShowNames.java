@@ -26,8 +26,8 @@ public class ShowNames extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        listener.setState(player, args.asBoolen(0));
-        if (args.asBoolen(0)) {
+        listener.setState(player, args.asBoolean(0));
+        if (args.asBoolean(0)) {
             messageSender().sendMessage(player, "Names will be pasted.");
         } else {
             messageSender().sendMessage(player, "Names will be hidden.");

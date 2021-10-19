@@ -31,7 +31,7 @@ public class Preview extends AdvancedCommand implements IPlayerTabExecutor {
             messageSender().sendMessage(player, "The preview can not be used with fawe.");
             return;
         }
-        var state = args.asBoolen(0);
+        var state = args.asBoolean(0);
         renderService.setState(player, state);
         if (state) {
             messageSender().sendMessage(player, "Preview active.");
