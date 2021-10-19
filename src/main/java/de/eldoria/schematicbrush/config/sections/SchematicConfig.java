@@ -1,7 +1,6 @@
 package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,7 @@ public class SchematicConfig implements ConfigurationSerializable {
     }
 
     public SchematicConfig(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
+        var map = SerializationUtil.mapOf(objectMap);
         sources = map.getValue("sources");
         pathSeparator = map.getValue("pathSeparator");
         pathSourceAsPrefix = map.getValue("pathSourceAsPrefix");
@@ -47,6 +46,10 @@ public class SchematicConfig implements ConfigurationSerializable {
                 .add("pathSeparator", pathSeparator)
                 .add("pathSourceAsPrefix", pathSourceAsPrefix)
                 .build();
+    }
+
+    public void addSource(SchematicSource source) {
+        sources.add(source);
     }
 
     public List<SchematicSource> getSources() {

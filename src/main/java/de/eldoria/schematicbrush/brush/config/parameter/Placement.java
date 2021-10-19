@@ -63,9 +63,9 @@ public enum Placement {
      * @return placement enum value
      */
     public static Optional<Placement> asPlacement(String value) {
-        for (Placement placement : values()) {
+        for (var placement : values()) {
             if (value.equalsIgnoreCase(placement.toString())) return Optional.of(placement);
-            for (String alias : placement.alias) {
+            for (var alias : placement.alias) {
                 if (alias.equalsIgnoreCase(value)) return Optional.of(placement);
             }
         }
@@ -92,9 +92,9 @@ public enum Placement {
 
     private static ToIntFunction<Clipboard> findDrop() {
         return clipboard -> {
-            BlockVector3 dimensions = clipboard.getDimensions();
+            var dimensions = clipboard.getDimensions();
 
-            for (int y = 0; y < dimensions.getBlockY(); y++) {
+            for (var y = 0; y < dimensions.getBlockY(); y++) {
                 if (levelNonAir(clipboard, dimensions, y)) return y;
             }
             return 0;
@@ -103,8 +103,8 @@ public enum Placement {
 
     private static ToIntFunction<Clipboard> findRaise() {
         return clipboard -> {
-            BlockVector3 dimensions = clipboard.getDimensions();
-            for (int y = dimensions.getBlockY() - 1; y > -1; y--) {
+            var dimensions = clipboard.getDimensions();
+            for (var y = dimensions.getBlockY() - 1; y > -1; y--) {
                 if (levelNonAir(clipboard, dimensions, y)) return y;
             }
             return dimensions.getBlockY();
@@ -112,8 +112,8 @@ public enum Placement {
     }
 
     private static boolean levelNonAir(Clipboard clipboard, BlockVector3 dimensions, int y) {
-        for (int x = 0; x < dimensions.getBlockX(); x++) {
-            for (int z = 0; z < dimensions.getBlockZ(); z++) {
+        for (var x = 0; x < dimensions.getBlockX(); x++) {
+            for (var z = 0; z < dimensions.getBlockZ(); z++) {
                 if (clipboard.getBlock(clipboard.getMinimumPoint().add(x, y, z)).getBlockType() != BlockTypes.AIR) {
                     return true;
                 }

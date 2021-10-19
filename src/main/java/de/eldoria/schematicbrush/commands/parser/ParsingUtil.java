@@ -1,7 +1,13 @@
 package de.eldoria.schematicbrush.commands.parser;
 
+import de.eldoria.eldoutilities.container.Pair;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public final class ParsingUtil {
@@ -19,7 +25,7 @@ public final class ParsingUtil {
     }
 
     public static String parseToLegacyModifier(String modifier) {
-        String result = modifier;
+        var result = modifier;
         result = RANDOM.matcher(result).replaceAll(":*");
         result = FLIP.matcher(result).replaceAll("!");
         result = ROTATION.matcher(result).replaceAll("@");
@@ -27,7 +33,7 @@ public final class ParsingUtil {
     }
 
     public static String parseToLegacySelector(String selector) {
-        String result = selector;
+        var result = selector;
         result = DIRECTORY.matcher(result).replaceAll("\\$");
         result = PRESET.matcher(result).replaceAll("&");
         return REGEX.matcher(result).replaceAll("\\^");
@@ -35,10 +41,10 @@ public final class ParsingUtil {
 
     public static String[] parseToLegacySyntax(String[] args) {
         List<String> parsedInput = new ArrayList<>();
-        boolean open = false;
+        var open = false;
 
-        StringBuilder argumentBuilder = new StringBuilder();
-        for (String arg : args) {
+        var argumentBuilder = new StringBuilder();
+        for (var arg : args) {
             // If a string starts and ends with a double quote we assume, that a new schematic is defined inside
             if (arg.startsWith("\"") && arg.endsWith("\"")) {
                 parsedInput.add(parseToLegacySelector(arg.substring(1, arg.length() - 1)));
@@ -69,5 +75,69 @@ public final class ParsingUtil {
             argumentBuilder.append(parseToLegacyModifier(arg));
         }
         return parsedInput.toArray(new String[0]);
+    }
+
+    public static <T> ParseResult<T> parseValue(String value, Function<String, Optional<T>> parser) {
+        if ("*".equals(value)) return new ParseResult<>(Collections.emptyList(), ParseResultType.RANDOM);
+
+        if (value.startsWith("[") && value.endsWith("]")) {
+            var stripped = value.substring(1, value.length() - 1);
+            if (stripped.contains(":")) {
+                var split = stripped.split(":");
+                var min = parser.apply(split[0]);
+                var max = parser.apply(split[1]);
+                if (!(min.isPresent() && max.isPresent())) {
+                    return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
+                }
+                return new ParseResult<>(Arrays.asList(min.get(), max.get()), ParseResultType.RANGE);
+            }
+            if (stripped.contains(",")) {
+                var entries = stripped.split(",");
+                List<T> results = new ArrayList<>();
+                for (var val : entries) {
+                    var optional = parser.apply(val);
+                    if (optional.isEmpty()) {
+                        return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
+                    }
+                    results.add(optional.get());
+                }
+                return new ParseResult<>(results, ParseResultType.LIST);
+            }
+        } else {
+            return parser.apply(value)
+                    .map(t -> new ParseResult<>(Collections.singletonList(t), ParseResultType.FIXED))
+                    .orElseGet(() -> new ParseResult<>(Collections.emptyList(), ParseResultType.NONE));
+        }
+        return new ParseResult<>(Collections.emptyList(), ParseResultType.NONE);
+    }
+
+    public enum ParseResultType {
+        NONE, LIST, RANDOM, RANGE, FIXED
+    }
+
+    public static class ParseResult<T> {
+        private final List<T> results;
+        private final ParseResultType type;
+
+        public ParseResult(List<T> results, ParseResultType type) {
+            this.results = results;
+            this.type = type;
+        }
+
+        public ParseResultType type() {
+            return type;
+        }
+
+        T result() {
+            return results.get(0);
+        }
+
+        Pair<T, T> range() {
+            return Pair.of(results.get(0), results.get(1));
+        }
+
+        List<T> results() {
+            return results;
+        }
     }
 }

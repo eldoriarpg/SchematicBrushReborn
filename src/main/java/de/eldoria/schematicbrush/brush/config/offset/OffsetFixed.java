@@ -1,15 +1,14 @@
 package de.eldoria.schematicbrush.brush.config.offset;
 
-class OffsetFixed implements IOffset {
+class OffsetFixed extends AOffset {
     private final int offset;
-
 
     public OffsetFixed(int offset) {
         this.offset = offset;
     }
 
     @Override
-    public int offset() {
+    public Integer valueProvider() {
         return offset;
     }
 }

@@ -1,7 +1,6 @@
 package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ public class Preset implements ConfigurationSerializable {
     }
 
     public Preset(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
+        var map = SerializationUtil.mapOf(objectMap);
         name = map.getValue("name");
         description = map.getValue("description");
         if (description == null) {

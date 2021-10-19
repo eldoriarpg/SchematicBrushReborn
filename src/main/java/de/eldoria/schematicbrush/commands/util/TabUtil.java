@@ -5,6 +5,7 @@ import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public final class TabUtil {
     private static final String[] PLACEMENT_TYPES = {"middle", "bottom", "top", "drop", "raise", "original"};
 
     private static final String[] FLIP_TYPES = {"N", "W", "NS", "WE", "*"};
-    private static final String[] ROTATION_TYPES = {"90", "180", "270", "*"};
+    private static final String[] ROTATION_TYPES = {"0", "90", "180", "270", "*"};
 
     private static final String[] SELECTOR_TYPE = {"<name>", "dir:", "regex:", "preset:"};
     private static final String[] SELECTOR_TYPE_MATCH = {"dir:", "d:", "regex:", "r:", "preset:", "p:"};
@@ -43,32 +44,32 @@ public final class TabUtil {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static List<String> getSchematicSetSyntax(String[] args, SchematicCache cache, Config config) {
-        int quoteCount = TextUtil.countChars(String.join(" ", args), '\"');
-        String last = args[args.length - 1];
+    public static List<String> getSchematicSetSyntax(Player player, String[] args, SchematicCache cache, Config config) {
+        var quoteCount = TextUtil.countChars(String.join(" ", args), '\"');
+        var last = args[args.length - 1];
         if (quoteCount % 2 == 0) {
-            return getLegacySchematicSetSyntax(last, cache, config);
+            return getLegacySchematicSetSyntax(player, last, cache, config);
         }
 
-        return getSchematicSetSyntax(last, cache, config);
+        return getSchematicSetSyntax(player, last, cache, config);
     }
 
-    private static List<String> getSchematicSetSyntax(String arg, SchematicCache cache, Config config) {
+    private static List<String> getSchematicSetSyntax(Player player, String arg, SchematicCache cache, Config config) {
         if (arg.startsWith("\"")) {
             if ("\"".equals(arg)) {
                 return prefixStrings(Arrays.asList(SELECTOR_TYPE), "\"");
             }
 
-            String selector = arg.substring(1).toLowerCase();
-            String[] split = arg.split(":");
+            var selector = arg.substring(1).toLowerCase();
+            var split = arg.split(":");
 
             if (selector.startsWith("dir:") || selector.startsWith("d:")) {
-                List<String> matchingDirectories = cache.getMatchingDirectories(split.length == 1 ? "" : split[1].split("#")[0], 50);
+                var matchingDirectories = cache.getMatchingDirectories(player, split.length == 1 ? "" : split[1].split("#")[0], 50);
                 return prefixStrings(matchingDirectories, split[0] + ":");
             }
 
             if (selector.startsWith("preset:") || selector.startsWith("p:")) {
-                List<String> presets = getPresets(split.length == 1 ? "" : split[1], 50, config);
+                var presets = getPresets(split.length == 1 ? "" : split[1], 50, config);
                 return prefixStrings(presets, split[0] + ":");
             }
 
@@ -76,26 +77,20 @@ public final class TabUtil {
                 return Collections.singletonList(selector + "<regex>");
             }
 
-            List<String> matches = ArrayUtil.startingWithInArray(selector, SELECTOR_TYPE).collect(Collectors.toList());
-            matches.addAll(cache.getMatchingSchematics(selector, 50));
+            var matches = ArrayUtil.startingWithInArray(selector, SELECTOR_TYPE).collect(Collectors.toList());
+            matches.addAll(cache.getMatchingSchematics(player, selector, 50));
             Collections.reverse(matches);
             return prefixStrings(matches, "\"");
         }
 
-        String[] split = arg.split(":");
+        var split = arg.split(":");
 
         if (arg.startsWith("-rotate:") || arg.startsWith("-r:")) {
-            if (split.length == 1) {
-                return prefixStrings(Arrays.asList(ROTATION), split[0] + ":");
-            }
-            return prefixStrings(ArrayUtil.startingWithInArray(split[1], ROTATION).collect(Collectors.toList()), split[0] + ":");
+            return completeArrayFlags(arg, ROTATION_TYPES);
         }
 
         if (arg.startsWith("-flip:") || arg.startsWith("-f:")) {
-            if (split.length == 1) {
-                return prefixStrings(Arrays.asList(FLIP), split[0] + ":");
-            }
-            return prefixStrings(ArrayUtil.startingWithInArray(split[1], FLIP).collect(Collectors.toList()), split[0] + ":");
+            return completeArrayFlags(arg, FLIP_TYPES);
         }
 
         if (arg.startsWith("-weight:") || arg.startsWith("-w:")) {
@@ -112,9 +107,9 @@ public final class TabUtil {
      * @param cache cache for schematic lookup
      * @return a list of possible completions
      */
-    private static List<String> getLegacySchematicSetSyntax(String arg, SchematicCache cache, Config config) {
-        Optional<Character> brushArgumentMarker = getBrushArgumentMarker(arg);
-        Optional<Character> firstMarker = getBrushArgumentMarker(arg, true);
+    private static List<String> getLegacySchematicSetSyntax(Player player, String arg, SchematicCache cache, Config config) {
+        var brushArgumentMarker = getBrushArgumentMarker(arg);
+        var firstMarker = getBrushArgumentMarker(arg, true);
 
         if (arg.isEmpty()) {
             return Arrays.asList("<name>@rotation!flip:weight",
@@ -123,8 +118,8 @@ public final class TabUtil {
                     "^<regex>@rotation!flip:weight");
         }
 
-        if (!brushArgumentMarker.isPresent()) {
-            List<String> matchingSchematics = cache.getMatchingSchematics(arg, 50);
+        if (brushArgumentMarker.isEmpty()) {
+            var matchingSchematics = cache.getMatchingSchematics(player, arg, 50);
             matchingSchematics.add("<name>@rotation!flip:weight");
             if (matchingSchematics.size() == 1) {
                 matchingSchematics.addAll(getMissingSchematicSetArguments(arg));
@@ -136,24 +131,17 @@ public final class TabUtil {
         switch (brushArgumentMarker.get()) {
             case ':':
                 return Arrays.asList(arg + "@", arg + "!", "@rotation!flip", arg + "<1-999>");
-            case '!': {
-                if (ArrayUtil.endingWithInArray(arg, FLIP_TYPES)) {
-                    return getMissingSchematicSetArguments(arg);
-                }
-                return prefixStrings(Arrays.asList(FLIP_TYPES), getBrushArgumentStringToLastMarker(arg));
-            }
+            case '!':
+                return completeLegacyArrayFlags(arg, FLIP_TYPES);
             case '@':
-                if (ArrayUtil.endingWithInArray(arg, ROTATION_TYPES)) {
-                    return getMissingSchematicSetArguments(arg);
-                }
-                return prefixStrings(Arrays.asList(ROTATION_TYPES), getBrushArgumentStringToLastMarker(arg));
+                return completeLegacyArrayFlags(arg, ROTATION_TYPES);
             case '^':
-                if (!firstMarker.isPresent() || firstMarker.get() != '$') {
+                if (firstMarker.isEmpty() || firstMarker.get() != '$') {
                     return Arrays.asList("^<regex>@rotation!flip:weight", arg + "@", arg + "!", arg + ":");
                 }
             case '$': {
-                String directory = arg.substring(1).split("#")[0];
-                List<String> matchingDirectories = cache.getMatchingDirectories(directory, 50);
+                var directory = arg.substring(1).split("#")[0];
+                var matchingDirectories = cache.getMatchingDirectories(player, directory, 50);
                 matchingDirectories = prefixStrings(matchingDirectories, "$");
                 // only if a direct match is found add schematic arguments.
                 if (matchingDirectories.stream().anyMatch(d -> d.equalsIgnoreCase(directory)) || directory.endsWith("*")) {
@@ -164,8 +152,8 @@ public final class TabUtil {
                 return matchingDirectories;
             }
             case '&': {
-                String preset = arg.substring(1);
-                List<String> presets = getPresets(preset, 50, config);
+                var preset = arg.substring(1);
+                var presets = getPresets(preset, 50, config);
                 presets = prefixStrings(presets, "&");
                 if (presets.size() < 1) {
                     Collections.reverse(presets);
@@ -200,7 +188,7 @@ public final class TabUtil {
      */
     public static List<String> getFlagComplete(String flag) {
         if (ArrayUtil.stringStartingWithValueInArray(flag, PLACEMENT)) {
-            String[] split = flag.split(":");
+            var split = flag.split(":");
             if (split.length == 1) {
                 return prefixStrings(Arrays.asList(PLACEMENT_TYPES), split[0] + ":");
             }
@@ -210,11 +198,11 @@ public final class TabUtil {
         }
 
         if (ArrayUtil.stringStartingWithValueInArray(flag, Y_OFFSET)) {
-            String[] split = flag.split(":", 2);
+            var split = flag.split(":", 2);
             if (split[1].isEmpty()) {
                 return Arrays.asList(flag + "<number>", flag + "[<min>:<max>]", flag + "[<num1>,<num2>,...]");
             }
-            String value = split[1];
+            var value = split[1];
             if (value.startsWith("[")) {
                 if (value.endsWith("]")) {
                     return Collections.singletonList(flag);
@@ -266,15 +254,15 @@ public final class TabUtil {
      */
     private static Optional<Character> getBrushArgumentMarker(String input, boolean reverse) {
         if (reverse) {
-            for (int i = 0; i < input.length(); i++) {
-                char c = input.charAt(i);
+            for (var i = 0; i < input.length(); i++) {
+                var c = input.charAt(i);
                 if (ArrayUtil.arrayContains(MARKER, c)) {
                     return Optional.of(c);
                 }
             }
         } else {
-            for (int i = input.length() - 1; i >= 0; i--) {
-                char c = input.charAt(i);
+            for (var i = input.length() - 1; i >= 0; i--) {
+                var c = input.charAt(i);
                 if (ArrayUtil.arrayContains(MARKER, c)) {
                     return Optional.of(c);
                 }
@@ -290,8 +278,8 @@ public final class TabUtil {
      * @return substring between end and last argument marker.
      */
     private static String getBrushArgumentStringToLastMarker(String input) {
-        for (int i = input.length() - 1; i >= 0; i--) {
-            char c = input.charAt(i);
+        for (var i = input.length() - 1; i >= 0; i--) {
+            var c = input.charAt(i);
             if (ArrayUtil.arrayContains(MARKER, c)) {
                 return input.substring(0, i + 1);
             }
@@ -308,7 +296,7 @@ public final class TabUtil {
      * @return list of matchin presets of length count or shorter.
      */
     public static List<String> getPresets(String arg, int count, Config config) {
-        List<String> complete = TabCompleteUtil.complete(arg, config.getPresetName());
+        var complete = TabCompleteUtil.complete(arg, config.getPresetName());
         return complete.subList(0, Math.min(count, complete.size()));
     }
 
@@ -333,7 +321,7 @@ public final class TabUtil {
         // A preset cant have modifiers.
         if (arg.startsWith("&")) return Collections.emptyList();
         List<String> result = new ArrayList<>();
-        StringBuilder explanation = new StringBuilder();
+        var explanation = new StringBuilder();
         if (!arg.contains("@")) {
             result.add(arg + "@");
             explanation.append("@rotation");
@@ -352,4 +340,77 @@ public final class TabUtil {
         return result;
     }
 
+    private static List<String> completeLegacyArrayFlags(String arg, String[] values) {
+        var pre = getBrushArgumentStringToLastMarker(arg);
+        var val = arg.replace(pre, "");
+        if (val.startsWith("[")) {
+            if (val.endsWith("]")) {
+                return getMissingSchematicSetArguments(arg);
+            }
+
+            if (val.contains(",")) {
+                if (val.endsWith(",")) {
+                    return prefixStrings(Arrays.asList(values), arg);
+                }
+                if (ArrayUtil.endingWithInArray(arg, values)) {
+                    return Arrays.asList(arg + "]", arg + ",");
+                }
+                var split = val.split(",");
+                var end = split[split.length - 1];
+                var join = String.join(",", Arrays.copyOfRange(split, 0, split.length - 1));
+                return prefixStrings(TabCompleteUtil.complete(end, values), join + ",");
+            }
+            if (ArrayUtil.endingWithInArray(arg, values)) {
+                return Arrays.asList(arg + "]", arg + ",");
+            }
+            return prefixStrings(TabCompleteUtil.complete(val.replace("[", ""), values), pre + "[");
+        }
+        if (ArrayUtil.endingWithInArray(arg, values)) {
+            return getMissingSchematicSetArguments(arg);
+        }
+        var strings = prefixStrings(Arrays.asList(values), arg);
+        strings.add(pre + "[");
+        return strings;
+    }
+
+    private static List<String> completeArrayFlags(String arg, String[] values) {
+        var split = arg.split(":");
+        if (split.length == 1) {
+            var strings = prefixStrings(Arrays.asList(values), split[0] + ":");
+            strings.add(arg + "[");
+            return strings;
+        }
+
+        var val = split[1];
+
+        if (val.startsWith("[")) {
+            if (val.endsWith("]")) {
+                return Collections.emptyList();
+            }
+
+            if (val.contains(",")) {
+                if (val.endsWith(",")) {
+                    return prefixStrings(Arrays.asList(values), arg);
+                }
+                if (ArrayUtil.endingWithInArray(arg, values)) {
+                    return Arrays.asList(arg + "]", arg + ",");
+                }
+                var args = val.split(",");
+                var end = args[args.length - 1];
+                var join = String.join(",", Arrays.copyOfRange(args, 0, args.length - 1));
+                return prefixStrings(TabCompleteUtil.complete(end, values), join + ",");
+            }
+            if (ArrayUtil.endingWithInArray(arg, values)) {
+                return Arrays.asList(arg + "]", arg + ",");
+            }
+            return prefixStrings(Arrays.asList(values), arg);
+        }
+        if (ArrayUtil.endingWithInArray(arg, values)) {
+            return getMissingSchematicSetArguments(arg);
+        }
+
+        var strings = prefixStrings(Arrays.asList(values), arg);
+        strings.add(arg + "[");
+        return strings;
+    }
 }
