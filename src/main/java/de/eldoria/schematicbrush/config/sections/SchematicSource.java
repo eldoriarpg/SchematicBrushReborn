@@ -1,7 +1,6 @@
 package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,7 @@ public class SchematicSource implements ConfigurationSerializable {
     private final List<String> excludedPath;
 
     public SchematicSource(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
+        var map = SerializationUtil.mapOf(objectMap);
         path = map.getValue("path");
         prefix = map.getValue("prefix");
         excludedPath = map.getValue("excludedPath");
@@ -48,9 +47,9 @@ public class SchematicSource implements ConfigurationSerializable {
     }
 
     public boolean isExcluded(Path path) {
-        String[] split = path.toString().split("/");
-        String internalPath = String.join("/", Arrays.copyOfRange(split, 1, split.length));
-        for (String excluded : excludedPath) {
+        var split = path.toString().split("/");
+        var internalPath = String.join("/", Arrays.copyOfRange(split, 1, split.length));
+        for (var excluded : excludedPath) {
             if (excluded.equalsIgnoreCase(internalPath)) return true;
             if (excluded.endsWith("*") && internalPath.startsWith(excluded)) return true;
         }

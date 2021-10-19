@@ -2,13 +2,11 @@ package de.eldoria.schematicbrush.schematics;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Schematic {
@@ -26,7 +24,7 @@ public class Schematic {
     private final File file;
     private final String name;
 
-    Schematic(ClipboardFormat format, File file) {
+    public Schematic(ClipboardFormat format, File file) {
         this.format = format;
         this.file = file;
         this.name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
@@ -39,8 +37,8 @@ public class Schematic {
      * @return true if the pattern matches the file name with or without extension
      */
     public boolean isSchematic(Pattern pattern) {
-        Matcher matcher = pattern.matcher(file.toPath().getFileName().toString());
-        Matcher matcherExtension = pattern.matcher(name);
+        var matcher = pattern.matcher(file.toPath().getFileName().toString());
+        var matcherExtension = pattern.matcher(name);
 
         return matcherExtension.find() || matcher.find();
     }
@@ -50,7 +48,7 @@ public class Schematic {
      *
      * @return path of file as string
      */
-    public String getPath() {
+    public String path() {
         return file.toPath().toString();
     }
 
@@ -59,7 +57,7 @@ public class Schematic {
      *
      * @return name of file
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -70,8 +68,8 @@ public class Schematic {
      * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deletet or
      *                     moved.
      */
-    public Clipboard getSchematic() throws IOException {
-        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+    public Clipboard loadSchematic() throws IOException {
+        try (var reader = format.getReader(new FileInputStream(file))) {
             return reader.read();
         }
     }
@@ -80,10 +78,10 @@ public class Schematic {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Schematic schematic = (Schematic) o;
+        var schematic = (Schematic) o;
         return format.getName().equals(schematic.format.getName()) &&
-                file.getPath().equals(schematic.file.getPath()) &&
-                name.equals(schematic.name);
+               file.getPath().equals(schematic.file.getPath()) &&
+               name.equals(schematic.name);
     }
 
     public File getFile() {

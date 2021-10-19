@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains","annotations","21.0.1")
-    implementation("de.eldoria", "eldo-util", "1.9.6-DEV")
+    implementation("de.eldoria", "eldo-util", "1.10.5-DEV")
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
 
@@ -24,19 +24,20 @@ dependencies {
 }
 
 group = "de.eldoria"
-version = "1.4.5"
+version = "1.5.0"
 description = "SchematicBrushReborn"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
 val shadebase = "de.eldoria.schematicbrush."
 val publishData = PublishData(project)
 
 java {
     withSourcesJar()
     withJavadocJar()
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 publishing {
     publications.create<MavenPublication>("maven") {
+        artifact(tasks["jar"])
         artifact(tasks["shadowJar"])
         artifact(tasks["sourcesJar"])
         artifact(tasks["javadocJar"])
@@ -87,6 +88,15 @@ tasks {
             }
             duplicatesStrategy = DuplicatesStrategy.INCLUDE
         }
+    }
+        register<Copy>("copyToServer") {
+        val path = project.property("targetDir") ?: "";
+        if (path.toString().isEmpty()) {
+            println("targetDir is not set in gradle properties")
+            return@register
+        }
+        from(shadowJar)
+        destinationDir = File(path.toString())
     }
 }
 

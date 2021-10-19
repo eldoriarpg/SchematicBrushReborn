@@ -14,7 +14,7 @@ public final class ConfigUpdater {
     }
 
     public static void validateConfig(Plugin plugin) {
-        int version = plugin.getConfig().getInt("version");
+        var version = plugin.getConfig().getInt("version");
 
         switch (version) {
             case 1:
@@ -34,7 +34,7 @@ public final class ConfigUpdater {
     }
 
     private static void updateToVersion2(Plugin plugin) {
-        FileConfiguration config = plugin.getConfig();
+        var config = plugin.getConfig();
         config.set("version", 2);
 
         setIfAbsent(config, "debug", false);
@@ -46,7 +46,7 @@ public final class ConfigUpdater {
 
 
         // initialise default sources
-        ConfigurationSection sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
+        var sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
         setIfAbsent(sources, "schematicBrush.path", "SchematicBrushReborn\\schematics");
         setIfAbsent(sources, "schematicBrush.prefix", "sbr");
         setIfAbsent(sources, "fawe.path", "FastAsyncWorldEdit\\schematics");
@@ -59,12 +59,12 @@ public final class ConfigUpdater {
     }
 
     private static void ensureConfigConsistency(Plugin plugin) {
-        FileConfiguration config = plugin.getConfig();
+        var config = plugin.getConfig();
         setIfAbsent(config, "debug", false);
         setIfAbsent(config, "updateCheck", true);
-        ConfigurationSection sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
+        var sources = createSectionIfAbsent(config, "schematicSources.scanPathes");
         setIfAbsent(config, "selectorSettings.pathSeperator", "/");
-        String seperator = plugin.getConfig().getString("selectorSettings.pathSeperator", "/");
+        var seperator = plugin.getConfig().getString("selectorSettings.pathSeperator", "/");
         if (seperator.length() != 1) {
             plugin.getLogger().warning("Path seperator invalid. Must be only one char.");
             plugin.getConfig().set("selectorSettings.pathSeperator", "/");
@@ -86,7 +86,7 @@ public final class ConfigUpdater {
     }
 
     private static ConfigurationSection createSectionIfAbsent(FileConfiguration config, String path) {
-        ConfigurationSection section = config.getConfigurationSection(path);
+        var section = config.getConfigurationSection(path);
         if (section == null) {
             return config.createSection(path);
         }
