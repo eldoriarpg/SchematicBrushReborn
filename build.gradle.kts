@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains","annotations","21.0.1")
-    implementation("de.eldoria", "eldo-util", "1.10.1r-SNAPSHOT")
+    implementation("de.eldoria", "eldo-util", "1.10.5-DEV")
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
 
