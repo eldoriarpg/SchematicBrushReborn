@@ -144,4 +144,12 @@ public class SchematicBrushReborn extends EldoPlugin {
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
         return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.Preset.class, SchematicConfig.class, SchematicSource.class);
     }
+
+    public SchematicCache schematics() {
+        return schematics;
+    }
+
+    public Config config() {
+        return config;
+    }
 }

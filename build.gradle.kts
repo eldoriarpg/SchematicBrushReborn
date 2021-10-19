@@ -24,7 +24,7 @@ dependencies {
 }
 
 group = "de.eldoria"
-version = "1.5.0a"
+version = "1.5.0b"
 description = "SchematicBrushReborn"
 val shadebase = "de.eldoria.schematicbrush."
 val publishData = PublishData(project)

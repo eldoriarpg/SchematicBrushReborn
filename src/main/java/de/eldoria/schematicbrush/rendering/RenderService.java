@@ -1,8 +1,8 @@
 package de.eldoria.schematicbrush.rendering;
 
-import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.event.PasteEvent;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,15 +24,20 @@ public class RenderService implements Runnable, Listener {
     private final Queue<Player> players = new ArrayDeque<>();
     private final Config config;
     private double count = 1;
+    private boolean active = false;
 
     public RenderService(Plugin plugin, Config config) {
         this.config = config;
+        active = !plugin.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
         worker = new PaketWorker();
-        worker.runTaskTimerAsynchronously(plugin, 0, 1);
+        if (active) {
+            worker.runTaskTimerAsynchronously(plugin, 0, 1);
+        }
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        if (!active) return;
         if (event.getPlayer().hasPermission("schematicbrush.brush.preview")) {
             if (config.getGeneral().isPreviewDefault()) {
                 setState(event.getPlayer(), true);
@@ -47,6 +52,7 @@ public class RenderService implements Runnable, Listener {
 
     @EventHandler
     public void onPaste(PasteEvent event) {
+        if (!active) return;
         worker.remove(event.player());
         changes.remove(event.player().getUniqueId());
         var schematicBrush = WorldEditBrush.getSchematicBrush(event.player());
@@ -57,6 +63,7 @@ public class RenderService implements Runnable, Listener {
 
     @Override
     public void run() {
+        if (!active) return;
         count += players.size() / (double) config.getGeneral().previewRefreshInterval();
         var start = System.currentTimeMillis();
         while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < config.getGeneral().maxRenderMs()) {
@@ -99,6 +106,7 @@ public class RenderService implements Runnable, Listener {
     }
 
     public void setState(Player player, boolean state) {
+        if (!active) return;
         if (state) {
             if (players.contains(player)) {
                 return;
@@ -108,6 +116,10 @@ public class RenderService implements Runnable, Listener {
             players.remove(player);
             resolveChanges(player);
         }
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     private static class PaketWorker extends BukkitRunnable {

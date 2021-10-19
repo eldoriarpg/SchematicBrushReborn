@@ -27,6 +27,10 @@ public class Preview extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        if(!renderService.isActive()){
+            messageSender().sendMessage(player, "The preview can not be used with fawe.");
+            return;
+        }
         var state = args.asBoolen(0);
         renderService.setState(player, state);
         if (state) {
