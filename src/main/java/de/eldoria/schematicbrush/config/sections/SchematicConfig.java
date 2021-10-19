@@ -48,6 +48,10 @@ public class SchematicConfig implements ConfigurationSerializable {
                 .build();
     }
 
+    public void addSource(SchematicSource source) {
+        sources.add(source);
+    }
+
     public List<SchematicSource> getSources() {
         return sources;
     }
