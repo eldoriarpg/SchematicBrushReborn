@@ -1,10 +1,13 @@
 package de.eldoria.schematicbrush.brush.config.offset;
 
+import com.sk89q.worldedit.math.BlockVector3;
+import de.eldoria.schematicbrush.brush.config.PasteMutation;
+import de.eldoria.schematicbrush.brush.config.SchematicMutator;
 import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 
 import java.util.List;
 
-public abstract class AOffset implements IShiftable<Integer> {
+public abstract class AOffset implements SchematicMutator<Integer> {
     protected int offset;
 
     public static AOffset range(int min, int max) {
@@ -27,5 +30,10 @@ public abstract class AOffset implements IShiftable<Integer> {
     @Override
     public void value(Integer value) {
         offset = value;
+    }
+
+    @Override
+    public void invoke(PasteMutation mutation) {
+        mutation.pasteOffset(BlockVector3.at(0,value(), 0));
     }
 }

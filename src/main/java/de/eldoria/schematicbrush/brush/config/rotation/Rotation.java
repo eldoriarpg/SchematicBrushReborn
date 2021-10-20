@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 
 public interface Rotation extends IShiftable<Rotation> {
@@ -10,12 +11,19 @@ public interface Rotation extends IShiftable<Rotation> {
      * @return rotation enum
      * @throws IllegalArgumentException when value cant be parsed
      */
-    static Rotation asRotation(String value) {
-        if ("0".equals(value)) return ROT_ZERO;
-        if ("270".equals(value)) return ROT_LEFT;
-        if ("90".equals(value)) return ROT_RIGHT;
-        if ("180".equals(value)) return ROT_HALF;
-        throw new IllegalArgumentException(value + " is not a value of Rotation");
+    static Rotation asRotation(String value) throws CommandException {
+        switch (value) {
+            case "0":
+                return ROT_ZERO;
+            case "270":
+                return ROT_LEFT;
+            case "90":
+                return ROT_RIGHT;
+            case "180":
+                return ROT_HALF;
+            default:
+                throw CommandException.message(value + " is not a value of Rotation");
+        }
     }
 
     /**
@@ -23,7 +31,9 @@ public interface Rotation extends IShiftable<Rotation> {
      *
      * @return rotation as positive integer
      */
-    int degree();    /**
+    int degree();
+
+    /**
      * Represents a rotation of 0.
      */
     Rotation ROT_ZERO = new Rotation() {
@@ -50,7 +60,9 @@ public interface Rotation extends IShiftable<Rotation> {
     @Override
     default Rotation value() {
         return this;
-    }    /**
+    }
+
+    /**
      * Represents a rotation of 90 degrees counter clockwise. Alterantive a rotation of -90 or 270 degrees.
      */
     Rotation ROT_LEFT = new Rotation() {
@@ -96,7 +108,6 @@ public interface Rotation extends IShiftable<Rotation> {
     };
 
 
-
     /**
      * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
      */
@@ -116,8 +127,6 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 90";
         }
     };
-
-
 
 
 }

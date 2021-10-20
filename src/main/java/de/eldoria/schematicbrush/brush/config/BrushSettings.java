@@ -1,12 +1,13 @@
 package de.eldoria.schematicbrush.brush.config;
 
-import de.eldoria.schematicbrush.brush.config.offset.AOffset;
-import de.eldoria.schematicbrush.brush.config.parameter.Placement;
+import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 import de.eldoria.schematicbrush.util.Randomable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A brush configuration represents the settings of a single brush. A brush consists of one or more brushes represented
@@ -20,34 +21,16 @@ public final class BrushSettings implements Randomable {
      * List of all sub brushes this brush has.
      */
     private final List<SchematicSet> schematicSets;
-    /**
-     * True if the air of the schematic should replace non air blocks
-     */
-    private final boolean includeAir;
-    /**
-     * True if the schematic should only be pasted where the block material is {@link org.bukkit.Material#AIR}
-     */
-    private final boolean replaceAll;
-    /**
-     * The y offset which will be applied before pasting to the position which was clicked by the user.
-     */
-    private final AOffset yOffset;
-    /**
-     * Method which determins the origin of the schematic.
-     */
-    private final Placement placement;
+
+    private final Map<PlacementModifier, SchematicMutator<?>> placementModifier;
     /**
      * The total weight of all brushes in the {@link #schematicSets} list
      */
     private final int totalWeight;
 
-    private BrushSettings(List<SchematicSet> schematicSets, boolean includeAir, boolean replaceAll, AOffset yOffset,
-                          Placement placement) {
+    private BrushSettings(List<SchematicSet> schematicSets, Map<PlacementModifier, SchematicMutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
-        this.includeAir = includeAir;
-        this.replaceAll = replaceAll;
-        this.yOffset = yOffset;
-        this.placement = placement;
+        this.placementModifier = placementModifier;
 
         // Count all weights, which have a weight set.
         var totalWeight = schematicSets.stream().filter(b -> b.weight() > 0).mapToInt(SchematicSet::weight).sum();
@@ -126,31 +109,23 @@ public final class BrushSettings implements Randomable {
     public BrushSettings combine(BrushSettings brush) {
         List<SchematicSet> brushes = new ArrayList<>(this.schematicSets);
         brushes.addAll(brush.schematicSets);
-        return new BrushSettings(brushes, includeAir, replaceAll, yOffset, placement);
+        return new BrushSettings(brushes, placementModifier);
     }
 
     public List<SchematicSet> schematicSets() {
         return schematicSets;
     }
 
-    public boolean isIncludeAir() {
-        return includeAir;
-    }
-
-    public boolean isReplaceAll() {
-        return replaceAll;
-    }
-
-    public AOffset yOffset() {
-        return yOffset;
-    }
-
-    public Placement placement() {
-        return placement;
-    }
-
     public int totalWeight() {
         return totalWeight;
+    }
+
+    public SchematicMutator<?> getMutator(PlacementModifier type) {
+        return placementModifier.get(type);
+    }
+
+    public void mutate(PasteMutation mutation){
+        placementModifier.values().forEach(m -> m.invoke(mutation));
     }
 
     public static final class BrushSettingsBuilder {
@@ -158,23 +133,7 @@ public final class BrushSettings implements Randomable {
          * List of all sub brushes this brush has.
          */
         private final List<SchematicSet> brushes;
-        /**
-         * True if the air of the schematic should replace non air blocks
-         */
-        private boolean includeAir;
-        /**
-         * False if the schematic should only be pasted where the block material is {@link org.bukkit.Material#AIR}
-         */
-        private boolean replaceAll;
-        /**
-         * The y offset which will be applied before pasting to the position which was clicked by the user.
-         */
-        private AOffset yOffset = AOffset.fixed(0);
-        /**
-         * Method which determins the origin of the schematic.
-         */
-        private Placement placement = Placement.DROP;
-
+        private final Map<PlacementModifier, SchematicMutator<?>> placementModifier = new HashMap<>();
 
         private BrushSettingsBuilder(SchematicSet config) {
             brushes = Collections.singletonList(config);
@@ -197,58 +156,16 @@ public final class BrushSettings implements Randomable {
         }
 
         /**
-         * Defines if the brush should include air when pasting. Default: {@code false}
-         *
-         * @param includeAir True if the air of the schematic should replace non air blocks
-         * @return builder instance with changed state
-         */
-        public BrushSettingsBuilder includeAir(boolean includeAir) {
-            this.includeAir = includeAir;
-            return this;
-        }
-
-        /**
-         * Defines if the brush should only be pasted where the block is air. Default: {@code false}
-         *
-         * @param replaceAirOnly True if the schematic should only be pasted where the block material is {@link
-         *                       org.bukkit.Material#AIR}
-         * @return builder instance with changed state
-         */
-        public BrushSettingsBuilder replaceAll(boolean replaceAirOnly) {
-            this.replaceAll = replaceAirOnly;
-            return this;
-        }
-
-        /**
-         * Set the y offset of the brush. Default: 0
-         *
-         * @param yOffset y offset of the brush
-         * @return builder instance with applied offset
-         */
-        public BrushSettingsBuilder withYOffset(AOffset yOffset) {
-            this.yOffset = yOffset;
-            return this;
-        }
-
-        /**
-         * Set the placement method for the schematics. Default: {@link Placement#DROP}
-         *
-         * @param placement placement method for the schematic
-         * @return builder instance with applied placement
-         */
-        public BrushSettingsBuilder withPlacementType(Placement placement) {
-            this.placement = placement;
-            return this;
-        }
-
-        /**
          * Build the brush configuration.
          *
          * @return A immutable brush config.
          */
         public BrushSettings build() {
-            return new BrushSettings(brushes, includeAir, replaceAll, yOffset, placement);
+            return new BrushSettings(brushes, placementModifier);
         }
 
+        public void setModifier(PlacementModifier type, SchematicMutator<?> mutator) {
+            placementModifier.put(type, mutator);
+        }
     }
 }

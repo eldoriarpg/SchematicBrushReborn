@@ -6,6 +6,7 @@ import de.eldoria.schematicbrush.brush.config.flip.AFlip;
 import de.eldoria.schematicbrush.brush.config.flip.Flip;
 import de.eldoria.schematicbrush.brush.config.rotation.ARotation;
 import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
+import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.util.Randomable;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,36 +23,27 @@ import java.util.Set;
  * one brush. The brush contains one ore more schematics which will be provided by random.
  */
 public class SchematicSet implements Randomable {
+
     /**
      * A list of schematics.
      */
     private final List<Schematic> schematics;
-    /**
-     * The arguments which were used to create this brush
-     */
-    private final String arguments;
-    /**
-     * Rotation of the schematic.
-     */
-    //TODO: Allow multiple rotations for more specific randomized pasting
-    private final ARotation rotation;
-    /**
-     * Flip direction of the schematic
-     */
-    //TODO: Allow multiple flap values for more specific randomized pasting
-    private final AFlip flip;
+    private final Selector selector;
+    private final Map<SchematicModifier, SchematicMutator<?>> schematicModifier;
     /**
      * Weight of the brush. Must be always larger then 1. Is -1 when no weight is applied.
      */
     private int weight;
 
-    public SchematicSet(Set<Schematic> schematics, String arguments, ARotation rotation,
-                        AFlip flip, int weight) {
+    public SchematicSet(Set<Schematic> schematics, Selector selector, Map<SchematicModifier, SchematicMutator<?>> schematicModifier, int weight) {
         this.schematics = new ArrayList<>(schematics);
-        this.arguments = arguments;
-        this.rotation = rotation;
-        this.flip = flip;
+        this.selector = selector;
+        this.schematicModifier = schematicModifier;
         this.weight = weight;
+    }
+
+    public SchematicMutator getMutator(SchematicModifier type){
+        return schematicModifier.get(type);
     }
 
     public Schematic getRandomSchematic() {
@@ -97,34 +90,25 @@ public class SchematicSet implements Randomable {
         return schematics;
     }
 
-    public String arguments() {
-        return arguments;
-    }
-
-    public ARotation rotation() {
-        return rotation;
-    }
-
-    public AFlip flip() {
-        return flip;
-    }
-
     public int weight() {
         return weight;
+    }
+
+    public void mutate(PasteMutation mutation) {
+        schematicModifier.values().forEach(m -> m.invoke(mutation));
     }
 
     /**
      * This class is a builder to build a {@link SchematicSet}.
      */
     public static class SchematicSetBuilder {
-        private final String arguments;
         private Set<Schematic> schematics = Collections.emptySet();
-        private ARotation rotation = ARotation.fixed(Rotation.ROT_ZERO);
-        private AFlip flip = AFlip.fixed(Flip.NONE);
+        Selector selector;
+        Map<SchematicModifier, SchematicMutator<?>> schematicModifier;
         private int weight = -1;
 
-        public SchematicSetBuilder(String arguments) {
-            this.arguments = arguments;
+        public SchematicSetBuilder(Selector selector) {
+            this.selector = selector;
         }
 
         /**
@@ -141,22 +125,11 @@ public class SchematicSet implements Randomable {
         /**
          * Set the rotation of the brush.
          *
-         * @param rotation rotation of the brush
+         * @param mutation rotation of the brush
          * @return instance with rotation set.
          */
-        public SchematicSetBuilder withRotation(ARotation rotation) {
-            this.rotation = rotation;
-            return this;
-        }
-
-        /**
-         * Set the flip of the brush.
-         *
-         * @param flip flip of the brush
-         * @return instance with flip set
-         */
-        public SchematicSetBuilder withFlip(AFlip flip) {
-            this.flip = flip;
+        public SchematicSetBuilder withMutator(SchematicModifier type, SchematicMutator mutation) {
+            schematicModifier.put(type, mutation);
             return this;
         }
 
@@ -177,7 +150,7 @@ public class SchematicSet implements Randomable {
          * @return new sub brush instance with set values and default if not set.
          */
         public SchematicSet build() {
-            return new SchematicSet(schematics, arguments, rotation, flip, weight);
+            return new SchematicSet(schematics, selector, schematicModifier, weight);
         }
     }
 }

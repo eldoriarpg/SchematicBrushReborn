@@ -2,6 +2,7 @@ package de.eldoria.schematicbrush.brush.config.flip;
 
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
+import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 
 public interface Flip extends IShiftable<Flip> {
@@ -16,14 +17,41 @@ public interface Flip extends IShiftable<Flip> {
      * @return flip enum value
      * @throws IllegalArgumentException when the value can't be parsed.
      */
-    static Flip asFlip(String input) {
+    static Flip asFlip(String input) throws CommandException {
         for (var value : values()) {
             for (var alias : value.alias()) {
                 if (alias.equalsIgnoreCase(input)) return value;
             }
         }
-        throw new IllegalArgumentException(input + " is not a valid Flip value");
-    }    Flip NONE = new Flip() {
+        throw CommandException.message("Invalid flip type");
+    }
+
+    String name();
+
+    String[] alias();
+
+    Vector3 direction();
+
+    @Override
+    default void value(Flip value) {
+    }
+
+    @Override
+    default Flip value() {
+        return this;
+    }
+
+    @Override
+    default Flip valueProvider() {
+        return this;
+    }
+
+    Flip NONE = new Flip() {
+        @Override
+        public String name() {
+            return "none";
+        }
+
         @Override
         public String[] alias() {
             return new String[0];
@@ -45,9 +73,12 @@ public interface Flip extends IShiftable<Flip> {
         }
     };
 
-    String[] alias();
+    Flip EAST_WEST = new Flip() {
+        @Override
+        public String name() {
+            return "east";
+        }
 
-    Vector3 direction();    Flip EAST_WEST = new Flip() {
         @Override
         public String[] alias() {
             return new String[]{"E", "W", "EW", "WE"};
@@ -69,14 +100,12 @@ public interface Flip extends IShiftable<Flip> {
         }
     };
 
-    @Override
-    default void value(Flip value) {
-    }
+    Flip NORTH_SOUTH = new Flip() {
+        @Override
+        public String name() {
+            return "north";
+        }
 
-    @Override
-    default Flip value() {
-        return this;
-    }    Flip NORTH_SOUTH = new Flip() {
         @Override
         public String[] alias() {
             return new String[]{"NS", "SN", "N", "S"};
@@ -98,12 +127,12 @@ public interface Flip extends IShiftable<Flip> {
         }
     };
 
-    @Override
-    default Flip valueProvider() {
-        return this;
-    }
-
     Flip UP_DOWN = new Flip() {
+        @Override
+        public String name() {
+            return "up";
+        }
+
         @Override
         public String[] alias() {
             return new String[]{"U", "D", "UD", "DU"};
@@ -124,12 +153,4 @@ public interface Flip extends IShiftable<Flip> {
             return "UP DOWN";
         }
     };
-
-
-
-
-
-
-
-
 }

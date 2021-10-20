@@ -1,10 +1,12 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.schematicbrush.brush.config.PasteMutation;
+import de.eldoria.schematicbrush.brush.config.SchematicMutator;
 import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 
 import java.util.List;
 
-public abstract class ARotation implements IShiftable<Rotation> {
+public abstract class ARotation implements SchematicMutator<Rotation> {
     protected Rotation rotation;
 
     public static ARotation fixed(Rotation rotation) {
@@ -29,4 +31,10 @@ public abstract class ARotation implements IShiftable<Rotation> {
         return rotation;
     }
 
+    @Override
+    public void invoke(PasteMutation mutation) {
+        if (rotation.value().degree() != 0) {
+            mutation.transform(mutation.transform().rotateY(rotation.value().degree()));
+        }
+    }
 }

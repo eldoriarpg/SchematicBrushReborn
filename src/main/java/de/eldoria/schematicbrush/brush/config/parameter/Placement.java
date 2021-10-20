@@ -3,10 +3,15 @@ package de.eldoria.schematicbrush.brush.config.parameter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.schematicbrush.brush.config.placement.APlacement;
 
 import java.util.Optional;
 import java.util.function.ToIntFunction;
 
+/**
+ * @deprecated Replaced by {@link APlacement}.
+ */
+@Deprecated(forRemoval = true)
 public enum Placement {
     /**
      * Use the center of the schematic as origin
