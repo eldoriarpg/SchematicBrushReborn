@@ -1,18 +1,36 @@
 package de.eldoria.schematicbrush.brush.config.offset;
 
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-class OffsetRange extends AOffset {
+public class OffsetRange extends AOffset {
 
     private final int min;
     private final int max;
-    private int offset;
 
     public OffsetRange(int min, int max) {
         this.min = min;
         this.max = max;
         shift();
     }
+
+    public OffsetRange(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        min = map.getValue("min");
+        max = map.getValue("max");
+        shift();
+    }
+
+    @Override
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .build();
+    }
+
 
     @Override
     public Integer valueProvider() {

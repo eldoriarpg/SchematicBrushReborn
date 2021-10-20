@@ -1,13 +1,24 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class RotationList extends ARotation {
     private final List<Rotation> values;
 
     public RotationList(List<Rotation> values) {
         this.values = values;
+    }
+
+    public RotationList(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        List<Integer> values = map.getValue("values");
+        this.values = values.stream().map(Rotation::asRotation).collect(Collectors.toList());
     }
 
     @Override
@@ -30,4 +41,13 @@ public class RotationList extends ARotation {
         value(newValue);
         return value();
     }
+
+    @Override
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("values", values.stream().map(Rotation::degree).collect(Collectors.toList()))
+                .build();
+    }
+
 }

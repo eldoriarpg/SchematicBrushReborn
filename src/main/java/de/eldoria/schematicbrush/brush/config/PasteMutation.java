@@ -10,7 +10,7 @@ public class PasteMutation {
     private AffineTransform transform = new AffineTransform();
     private EditSession session;
     private BlockVector3 pasteOffset = BlockVector3.ZERO;
-    private boolean includeAir = false;
+    private boolean includeAir;
 
     public PasteMutation(Clipboard clipboard, EditSession session) {
         this.clipboard = clipboard;

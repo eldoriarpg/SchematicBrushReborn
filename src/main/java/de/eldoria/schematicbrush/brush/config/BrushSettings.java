@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.brush.config;
 
-import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 import de.eldoria.schematicbrush.util.Randomable;
 
 import java.util.ArrayList;
@@ -22,13 +21,13 @@ public final class BrushSettings implements Randomable {
      */
     private final List<SchematicSet> schematicSets;
 
-    private final Map<PlacementModifier, SchematicMutator<?>> placementModifier;
+    private final Map<PlacementModifier, Mutator<?>> placementModifier;
     /**
      * The total weight of all brushes in the {@link #schematicSets} list
      */
     private final int totalWeight;
 
-    private BrushSettings(List<SchematicSet> schematicSets, Map<PlacementModifier, SchematicMutator<?>> placementModifier) {
+    private BrushSettings(List<SchematicSet> schematicSets, Map<PlacementModifier, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
         this.placementModifier = placementModifier;
 
@@ -107,7 +106,7 @@ public final class BrushSettings implements Randomable {
      * @return new brush configuration.
      */
     public BrushSettings combine(BrushSettings brush) {
-        List<SchematicSet> brushes = new ArrayList<>(this.schematicSets);
+        List<SchematicSet> brushes = new ArrayList<>(schematicSets);
         brushes.addAll(brush.schematicSets);
         return new BrushSettings(brushes, placementModifier);
     }
@@ -120,11 +119,11 @@ public final class BrushSettings implements Randomable {
         return totalWeight;
     }
 
-    public SchematicMutator<?> getMutator(PlacementModifier type) {
+    public Mutator<?> getMutator(PlacementModifier type) {
         return placementModifier.get(type);
     }
 
-    public void mutate(PasteMutation mutation){
+    public void mutate(PasteMutation mutation) {
         placementModifier.values().forEach(m -> m.invoke(mutation));
     }
 
@@ -133,7 +132,7 @@ public final class BrushSettings implements Randomable {
          * List of all sub brushes this brush has.
          */
         private final List<SchematicSet> brushes;
-        private final Map<PlacementModifier, SchematicMutator<?>> placementModifier = new HashMap<>();
+        private final Map<PlacementModifier, Mutator<?>> placementModifier = new HashMap<>();
 
         private BrushSettingsBuilder(SchematicSet config) {
             brushes = Collections.singletonList(config);
@@ -164,7 +163,7 @@ public final class BrushSettings implements Randomable {
             return new BrushSettings(brushes, placementModifier);
         }
 
-        public void setModifier(PlacementModifier type, SchematicMutator<?> mutator) {
+        public void setModifier(PlacementModifier type, Mutator<?> mutator) {
             placementModifier.put(type, mutator);
         }
     }

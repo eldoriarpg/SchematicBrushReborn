@@ -2,14 +2,31 @@ package de.eldoria.schematicbrush.brush.config.replaceall;
 
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.PasteMutation;
-import de.eldoria.schematicbrush.brush.config.SchematicMutator;
+import org.jetbrains.annotations.NotNull;
 
-public class ReplaceAll implements SchematicMutator<Boolean> {
+import java.util.Map;
+
+public class ReplaceAll implements Mutator<Boolean> {
     private final boolean value;
 
     public ReplaceAll(boolean value) {
         this.value = value;
+    }
+
+    public ReplaceAll(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        value = map.getValue("value");
+    }
+
+    @Override
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("value", value)
+                .build();
     }
 
     @Override

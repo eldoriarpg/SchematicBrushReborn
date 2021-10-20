@@ -12,22 +12,6 @@ import java.util.function.Function;
 
 public abstract class SelectorProvider extends SettingProvider<Selector> {
 
-    private final SchematicCache cache;
-
-    protected SelectorProvider(String name, SchematicCache cache) {
-        super(name);
-        this.cache = cache;
-    }
-
-    @Override
-    public Selector defaultSetting() {
-        return new NameSelector("*", cache);
-    }
-
-    public SchematicCache cache() {
-        return cache;
-    }
-
     public static final Function<SchematicCache, SelectorProvider> DIRECTORY = cache ->
             new SelectorProvider("directory", cache) {
                 @Override
@@ -49,7 +33,6 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                 }
 
             };
-
     public static final Function<SchematicCache, SelectorProvider> NAME = cache ->
             new SelectorProvider("name", cache) {
                 @Override
@@ -65,7 +48,6 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                     return Collections.emptyList();
                 }
             };
-
     public static final Function<SchematicCache, SelectorProvider> REGEX = cache ->
             new SelectorProvider("regex", cache) {
                 @Override
@@ -81,4 +63,19 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                     return Collections.emptyList();
                 }
             };
+    private final SchematicCache cache;
+
+    protected SelectorProvider(String name, SchematicCache cache) {
+        super(name);
+        this.cache = cache;
+    }
+
+    @Override
+    public Selector defaultSetting() {
+        return new NameSelector("*", cache);
+    }
+
+    public SchematicCache cache() {
+        return cache;
+    }
 }

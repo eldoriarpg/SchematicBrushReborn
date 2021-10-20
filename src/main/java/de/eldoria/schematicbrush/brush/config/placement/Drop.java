@@ -2,7 +2,16 @@ package de.eldoria.schematicbrush.brush.config.placement;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 
-public class Drop extends APlacement{
+import java.util.Map;
+
+public class Drop extends APlacement {
+    public Drop() {
+    }
+
+    public Drop(Map<String, Object> objectMap) {
+        super(objectMap);
+    }
+
     @Override
     public int find(Clipboard clipboard) {
         var dimensions = clipboard.getDimensions();

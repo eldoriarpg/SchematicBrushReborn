@@ -4,7 +4,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.ModifierProvider;
-import de.eldoria.schematicbrush.brush.config.SchematicMutator;
+import de.eldoria.schematicbrush.brush.config.Mutator;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public abstract class FlipProvider extends ModifierProvider {
 
     public static final FlipProvider FIXED = new FlipProvider("fixed") {
         @Override
-        public SchematicMutator parse(Arguments args) throws CommandException {
+        public Mutator parse(Arguments args) throws CommandException {
             return new FlipFixed(Flip.asFlip(args.asString(0)));
         }
 
@@ -29,14 +29,14 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public SchematicMutator defaultSetting() {
+        public Mutator defaultSetting() {
             return new FlipFixed(Flip.NONE);
         }
     };
 
     public static final FlipProvider LIST = new FlipProvider("list") {
         @Override
-        public SchematicMutator parse(Arguments args) throws CommandException {
+        public Mutator parse(Arguments args) throws CommandException {
             List<Flip> flips = new ArrayList<>();
             for (var arg : args.args()) {
                 flips.add(Flip.asFlip(arg));
@@ -50,14 +50,14 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public SchematicMutator defaultSetting() {
+        public Mutator defaultSetting() {
             return new FlipList(Collections.singletonList(Flip.NONE));
         }
     };
 
     public static final FlipProvider RANDOM = new FlipProvider("random") {
         @Override
-        public SchematicMutator parse(Arguments args) throws CommandException {
+        public Mutator parse(Arguments args) throws CommandException {
             return new FlipRandom();
         }
 
@@ -67,7 +67,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public SchematicMutator defaultSetting() {
+        public Mutator defaultSetting() {
             return new FlipRandom();
         }
     };

@@ -6,7 +6,7 @@ import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.ModifierProvider;
-import de.eldoria.schematicbrush.brush.config.SchematicMutator;
+import de.eldoria.schematicbrush.brush.config.Mutator;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -15,13 +15,9 @@ import java.util.List;
 
 public abstract class OffsetProvider extends ModifierProvider {
 
-    public OffsetProvider(String name) {
-        super(name);
-    }
-
     public static final OffsetProvider FIXED = new OffsetProvider("fixed") {
         @Override
-        public SchematicMutator parse(Arguments args) throws CommandException {
+        public Mutator parse(Arguments args) throws CommandException {
             return new OffsetFixed(args.asInt(0));
         }
 
@@ -34,14 +30,13 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public SchematicMutator defaultSetting() {
+        public Mutator defaultSetting() {
             return new OffsetFixed(0);
         }
     };
-
     public static final OffsetProvider LIST = new OffsetProvider("list") {
         @Override
-        public SchematicMutator parse(Arguments args) throws CommandException {
+        public Mutator parse(Arguments args) throws CommandException {
             List<Integer> values = new ArrayList<>();
             for (var i = 0; i < args.size(); i++) {
                 values.add(args.asInt(i));
@@ -55,14 +50,13 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public SchematicMutator defaultSetting() {
+        public Mutator defaultSetting() {
             return new OffsetList(Collections.singletonList(0));
         }
     };
-
     public static final OffsetProvider RANGE = new OffsetProvider("range") {
         @Override
-        public SchematicMutator parse(Arguments args) throws CommandException {
+        public Mutator parse(Arguments args) throws CommandException {
             var lower = args.asInt(0);
             var upper = args.asInt(1);
             return new OffsetRange(lower, upper);
@@ -70,15 +64,19 @@ public abstract class OffsetProvider extends ModifierProvider {
 
         @Override
         public List<String> complete(Arguments args, Player player) {
-            if(!args.isEmpty() && args.size() < 3){
+            if (!args.isEmpty() && args.size() < 3) {
                 return TabCompleteUtil.completeInt(args.asString(-1), -100, 100, ILocalizer.getPluginLocalizer(SchematicBrushReborn.class));
             }
             return Collections.emptyList();
         }
 
         @Override
-        public SchematicMutator defaultSetting() {
-            return new OffsetRange(0,0);
+        public Mutator defaultSetting() {
+            return new OffsetRange(0, 0);
         }
     };
+
+    public OffsetProvider(String name) {
+        super(name);
+    }
 }

@@ -73,15 +73,15 @@ public class BrushSettingsRegistry {
         return selector.get(0).defaultSetting();
     }
 
-    public Map<SchematicModifier, SchematicMutator> defaultSchematicModifier() {
+    public Map<SchematicModifier, Mutator> defaultSchematicModifier() {
         return getDefaultMap(schematicModifier);
     }
 
-    public Map<PlacementModifier, SchematicMutator> defaultPlacementModifier() {
+    public Map<PlacementModifier, Mutator> defaultPlacementModifier() {
         return getDefaultMap(placementModifier);
     }
 
-    private <T> Map<T, SchematicMutator> getDefaultMap(Map<T, List<ModifierProvider>> map) {
+    private <T> Map<T, Mutator> getDefaultMap(Map<T, List<ModifierProvider>> map) {
         return map
                 .entrySet()
                 .stream()
@@ -96,12 +96,12 @@ public class BrushSettingsRegistry {
         return getSettingProvider(args, selector).parse(args.subArguments());
     }
 
-    public Pair<SchematicModifier, SchematicMutator> parseSchematicModifier(Arguments args) throws CommandException {
+    public Pair<SchematicModifier, Mutator> parseSchematicModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, schematicModifier);
         return Pair.of(provider.first, provider.second.parse(args.subArguments().subArguments()));
     }
 
-    public Pair<PlacementModifier, SchematicMutator> parsePlacementModifier(Arguments args) throws CommandException {
+    public Pair<PlacementModifier, Mutator> parsePlacementModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, placementModifier);
         return Pair.of(provider.first, provider.second.parse(args.subArguments().subArguments()));
     }

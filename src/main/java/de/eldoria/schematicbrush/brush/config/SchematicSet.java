@@ -2,10 +2,6 @@ package de.eldoria.schematicbrush.brush.config;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
-import de.eldoria.schematicbrush.brush.config.flip.AFlip;
-import de.eldoria.schematicbrush.brush.config.flip.Flip;
-import de.eldoria.schematicbrush.brush.config.rotation.ARotation;
-import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.util.Randomable;
@@ -29,20 +25,20 @@ public class SchematicSet implements Randomable {
      */
     private final List<Schematic> schematics;
     private final Selector selector;
-    private final Map<SchematicModifier, SchematicMutator<?>> schematicModifier;
+    private final Map<SchematicModifier, Mutator<?>> schematicModifier;
     /**
      * Weight of the brush. Must be always larger then 1. Is -1 when no weight is applied.
      */
     private int weight;
 
-    public SchematicSet(Set<Schematic> schematics, Selector selector, Map<SchematicModifier, SchematicMutator<?>> schematicModifier, int weight) {
+    public SchematicSet(Set<Schematic> schematics, Selector selector, Map<SchematicModifier, Mutator<?>> schematicModifier, int weight) {
         this.schematics = new ArrayList<>(schematics);
         this.selector = selector;
         this.schematicModifier = schematicModifier;
         this.weight = weight;
     }
 
-    public SchematicMutator getMutator(SchematicModifier type){
+    public Mutator getMutator(SchematicModifier type) {
         return schematicModifier.get(type);
     }
 
@@ -102,9 +98,9 @@ public class SchematicSet implements Randomable {
      * This class is a builder to build a {@link SchematicSet}.
      */
     public static class SchematicSetBuilder {
-        private Set<Schematic> schematics = Collections.emptySet();
         Selector selector;
-        Map<SchematicModifier, SchematicMutator<?>> schematicModifier;
+        Map<SchematicModifier, Mutator<?>> schematicModifier;
+        private Set<Schematic> schematics = Collections.emptySet();
         private int weight = -1;
 
         public SchematicSetBuilder(Selector selector) {
@@ -128,7 +124,7 @@ public class SchematicSet implements Randomable {
          * @param mutation rotation of the brush
          * @return instance with rotation set.
          */
-        public SchematicSetBuilder withMutator(SchematicModifier type, SchematicMutator mutation) {
+        public SchematicSetBuilder withMutator(SchematicModifier type, Mutator mutation) {
             schematicModifier.put(type, mutation);
             return this;
         }

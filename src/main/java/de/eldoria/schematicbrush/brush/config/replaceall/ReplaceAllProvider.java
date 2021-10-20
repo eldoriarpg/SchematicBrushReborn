@@ -4,7 +4,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.ModifierProvider;
-import de.eldoria.schematicbrush.brush.config.SchematicMutator;
+import de.eldoria.schematicbrush.brush.config.Mutator;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -12,13 +12,9 @@ import java.util.List;
 
 public abstract class ReplaceAllProvider extends ModifierProvider {
 
-    public ReplaceAllProvider(String name) {
-        super(name);
-    }
-
     public static final ReplaceAllProvider FIXED = new ReplaceAllProvider("fixed") {
         @Override
-        public SchematicMutator parse(Arguments args) throws CommandException {
+        public Mutator parse(Arguments args) throws CommandException {
             return new ReplaceAll(args.asBoolean(0));
         }
 
@@ -31,8 +27,12 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         }
 
         @Override
-        public SchematicMutator defaultSetting() {
+        public Mutator defaultSetting() {
             return new ReplaceAll(false);
         }
     };
+
+    public ReplaceAllProvider(String name) {
+        super(name);
+    }
 }

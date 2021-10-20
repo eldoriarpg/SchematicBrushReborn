@@ -37,7 +37,7 @@ public class ConfigBuilder {
         return builder;
     }
 
-    public void setPlacementModifier(PlacementModifier type, SchematicMutator provider) {
+    public void setPlacementModifier(PlacementModifier type, Mutator provider) {
         brushSettingsBuilder.setModifier(type, provider);
     }
 

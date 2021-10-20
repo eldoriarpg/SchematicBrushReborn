@@ -1,21 +1,31 @@
 package de.eldoria.schematicbrush.brush.config.selector;
 
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseSelector implements Selector{
+import java.util.Map;
+
+public abstract class BaseSelector implements Selector {
     private final String term;
-    private final SchematicCache cache;
 
-    public BaseSelector(String term, SchematicCache cache) {
+    public BaseSelector(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        term = map.getValue("term");
+    }
+
+    public BaseSelector(String term) {
         this.term = term;
-        this.cache = cache;
+    }
+
+    @Override
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("term", term)
+                .build();
     }
 
     public String term() {
         return term;
-    }
-
-    public SchematicCache cache() {
-        return cache;
     }
 }

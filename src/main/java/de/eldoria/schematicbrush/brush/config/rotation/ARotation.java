@@ -1,12 +1,11 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.PasteMutation;
-import de.eldoria.schematicbrush.brush.config.SchematicMutator;
-import de.eldoria.schematicbrush.brush.config.values.IShiftable;
 
 import java.util.List;
 
-public abstract class ARotation implements SchematicMutator<Rotation> {
+public abstract class ARotation implements Mutator<Rotation> {
     protected Rotation rotation;
 
     public static ARotation fixed(Rotation rotation) {

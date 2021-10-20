@@ -57,7 +57,7 @@ public enum Placement {
 
     Placement(ToIntFunction<Clipboard> yCenter, String... alias) {
         this.alias = alias;
-        this.find = yCenter;
+        find = yCenter;
     }
 
 
@@ -134,11 +134,11 @@ public enum Placement {
      * @return relative y origin position of clipboard
      */
     public int find(Clipboard clipboard) {
-        return this.find.applyAsInt(clipboard);
+        return find.applyAsInt(clipboard);
     }
 
     @Override
     public String toString() {
-        return this.name().toLowerCase();
+        return name().toLowerCase();
     }
 }

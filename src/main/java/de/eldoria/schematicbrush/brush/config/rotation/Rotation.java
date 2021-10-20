@@ -27,13 +27,36 @@ public interface Rotation extends IShiftable<Rotation> {
     }
 
     /**
+     * Get a string as rotation value.
+     *
+     * @param value value to parse
+     * @return rotation enum
+     * @throws IllegalArgumentException when value cant be parsed
+     */
+    static Rotation asRotation(int value) {
+        switch (value) {
+            case 0:
+                return ROT_ZERO;
+            case 270:
+                return ROT_LEFT;
+            case 90:
+                return ROT_RIGHT;
+            case 180:
+                return ROT_HALF;
+        }
+        return ROT_ZERO;
+    }
+
+    /**
      * Rotation represented as postive int value.
      *
      * @return rotation as positive integer
      */
     int degree();
 
-    /**
+    @Override
+    default void value(Rotation value) {
+    }    /**
      * Represents a rotation of 0.
      */
     Rotation ROT_ZERO = new Rotation() {
@@ -54,11 +77,12 @@ public interface Rotation extends IShiftable<Rotation> {
     };
 
     @Override
-    default void value(Rotation value) {
+    default Rotation value() {
+        return this;
     }
 
     @Override
-    default Rotation value() {
+    default Rotation valueProvider() {
         return this;
     }
 
@@ -82,10 +106,7 @@ public interface Rotation extends IShiftable<Rotation> {
         }
     };
 
-    @Override
-    default Rotation valueProvider() {
-        return this;
-    }
+
 
     /**
      * Represents a rotation of 180 degrees.
