@@ -2,9 +2,11 @@ package de.eldoria.schematicbrush.brush.config.replaceall;
 
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.PasteMutation;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -59,5 +61,17 @@ public class ReplaceAll implements Mutator<Boolean> {
     @Override
     public Boolean valueProvider() {
         return value;
+    }
+
+    @Override
+    public String name() {
+        return "Fixed";
+    }
+
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>%s", Colors.HEADING, Colors.VALUE, value)
+                .build();
     }
 }

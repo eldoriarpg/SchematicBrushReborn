@@ -1,6 +1,8 @@
 package de.eldoria.schematicbrush.brush.config.offset;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -27,5 +29,17 @@ public class OffsetFixed extends AOffset {
     @Override
     public Integer valueProvider() {
         return offset;
+    }
+
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>Fixed: <%s>%s", Colors.NAME, Colors.VALUE, offset)
+                .build();
+    }
+
+    @Override
+    public String name() {
+        return "Fixed";
     }
 }

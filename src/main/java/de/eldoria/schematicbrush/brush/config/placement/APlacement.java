@@ -3,10 +3,12 @@ package de.eldoria.schematicbrush.brush.config.placement;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.PasteMutation;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -67,5 +69,12 @@ public abstract class APlacement implements Mutator<APlacement> {
     @Override
     public APlacement valueProvider() {
         return this;
+    }
+
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>%s", Colors.HEADING, Colors.NAME, name())
+                .build();
     }
 }

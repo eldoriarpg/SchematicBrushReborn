@@ -22,4 +22,9 @@ public class Original extends APlacement {
     public void invoke(PasteMutation mutation) {
         // do nothing
     }
+
+    @Override
+    public String name() {
+        return "Original";
+    }
 }

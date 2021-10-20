@@ -1,6 +1,8 @@
 package de.eldoria.schematicbrush.brush.config.flip;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -23,4 +25,15 @@ public class FlipRandom extends FlipList {
                 .build();
     }
 
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>Random", Colors.NAME)
+                .build();
+    }
+
+    @Override
+    public String name() {
+        return "Random";
+    }
 }

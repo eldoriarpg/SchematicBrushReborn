@@ -1,10 +1,10 @@
 package de.eldoria.schematicbrush.brush.config;
 
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
+import de.eldoria.schematicbrush.brush.config.builder.BrushSettingsBuilder;
 import de.eldoria.schematicbrush.util.Randomable;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public final class BrushSettings implements Randomable {
      */
     private final int totalWeight;
 
-    private BrushSettings(List<SchematicSet> schematicSets, Map<PlacementModifier, Mutator<?>> placementModifier) {
+    public BrushSettings(List<SchematicSet> schematicSets, Map<PlacementModifier, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
         this.placementModifier = placementModifier;
 
@@ -127,44 +127,10 @@ public final class BrushSettings implements Randomable {
         placementModifier.values().forEach(m -> m.invoke(mutation));
     }
 
-    public static final class BrushSettingsBuilder {
-        /**
-         * List of all sub brushes this brush has.
-         */
-        private final List<SchematicSet> brushes;
-        private final Map<PlacementModifier, Mutator<?>> placementModifier = new HashMap<>();
-
-        private BrushSettingsBuilder(SchematicSet config) {
-            brushes = Collections.singletonList(config);
-        }
-
-        private BrushSettingsBuilder() {
-            brushes = new ArrayList<>();
-        }
-
-
-        /**
-         * Add a brush to the brush configuration.
-         *
-         * @param brush brush which should be added
-         * @return builder instance with brush added
-         */
-        public BrushSettingsBuilder addBrush(SchematicSet brush) {
-            brushes.add(brush);
-            return this;
-        }
-
-        /**
-         * Build the brush configuration.
-         *
-         * @return A immutable brush config.
-         */
-        public BrushSettings build() {
-            return new BrushSettings(brushes, placementModifier);
-        }
-
-        public void setModifier(PlacementModifier type, Mutator<?> mutator) {
-            placementModifier.put(type, mutator);
-        }
+    public BrushBuilder toBuilder(BrushSettingsRegistry settingsRegistry) {
+        var brushBuilder = new BrushBuilder(settingsRegistry);
+        placementModifier.forEach(brushBuilder::setPlacementModifier);
+        schematicSets.stream().map(SchematicSet::toBuilder).forEach(brushBuilder::addSchematicSet);
+        return brushBuilder;
     }
 }

@@ -1,8 +1,10 @@
 package de.eldoria.schematicbrush.brush.config.includeair;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.PasteMutation;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -46,5 +48,17 @@ public class IncludeAir implements Mutator<Boolean> {
     @Override
     public Boolean valueProvider() {
         return value;
+    }
+
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>%s", Colors.HEADING, Colors.VALUE, value)
+                .build();
+    }
+
+    @Override
+    public String name() {
+        return "Fixed";
     }
 }

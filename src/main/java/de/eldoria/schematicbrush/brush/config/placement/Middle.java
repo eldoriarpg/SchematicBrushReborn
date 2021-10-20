@@ -16,4 +16,9 @@ public class Middle extends APlacement {
     public int find(Clipboard clipboard) {
         return clipboard.getDimensions().getY() / 2;
     }
+
+    @Override
+    public String name() {
+        return "Middle";
+    }
 }

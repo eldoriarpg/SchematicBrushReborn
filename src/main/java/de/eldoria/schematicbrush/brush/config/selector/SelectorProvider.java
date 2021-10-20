@@ -16,7 +16,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
             new SelectorProvider("directory", cache) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
-                    return new DirectorySelector(args.asString(0), args.asString(1), cache());
+                    return new DirectorySelector(args.asString(0), args.asString(1));
                 }
 
                 @Override
@@ -37,7 +37,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
             new SelectorProvider("name", cache) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
-                    return new NameSelector(args.asString(0), cache());
+                    return new NameSelector(args.asString(0));
                 }
 
                 @Override
@@ -52,7 +52,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
             new SelectorProvider("regex", cache) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
-                    return new NameSelector(args.asString(0), cache());
+                    return new NameSelector(args.asString(0));
                 }
 
                 @Override
@@ -72,7 +72,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
 
     @Override
     public Selector defaultSetting() {
-        return new NameSelector("*", cache);
+        return new NameSelector("*");
     }
 
     public SchematicCache cache() {

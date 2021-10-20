@@ -20,4 +20,9 @@ public class Raise extends APlacement {
         }
         return dimensions.getBlockY();
     }
+
+    @Override
+    public String name() {
+        return "Raise";
+    }
 }

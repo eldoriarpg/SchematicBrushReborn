@@ -1,6 +1,8 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -32,5 +34,17 @@ public class RotationFixed extends ARotation {
     @Override
     public Rotation valueProvider() {
         return rotation;
+    }
+
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>Fixed: <%s>%s", Colors.NAME, Colors.VALUE, rotation.degree())
+                .build();
+    }
+
+    @Override
+    public String name() {
+        return "Fixed";
     }
 }

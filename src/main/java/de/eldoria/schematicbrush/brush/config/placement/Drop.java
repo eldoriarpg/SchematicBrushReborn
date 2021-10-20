@@ -21,4 +21,9 @@ public class Drop extends APlacement {
         }
         return 0;
     }
+
+    @Override
+    public String name() {
+        return "Drop";
+    }
 }

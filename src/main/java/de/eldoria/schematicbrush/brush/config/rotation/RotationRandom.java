@@ -1,6 +1,8 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -21,4 +23,10 @@ public class RotationRandom extends RotationList {
         return SerializationUtil.newBuilder().build();
     }
 
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>Random", Colors.NAME)
+                .build();
+    }
 }

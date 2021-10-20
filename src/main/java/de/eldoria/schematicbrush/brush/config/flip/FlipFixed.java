@@ -1,6 +1,8 @@
 package de.eldoria.schematicbrush.brush.config.flip;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -31,5 +33,17 @@ public class FlipFixed extends AFlip {
     @Override
     public Flip valueProvider() {
         return flip;
+    }
+
+    @Override
+    public String asComponent() {
+        return MessageComposer.create()
+                .text("  <%s>Fixed: <%s>%s", Colors.HEADING, Colors.NAME, Colors.VALUE, flip.name())
+                .build();
+    }
+
+    @Override
+    public String name() {
+        return "Fixed";
     }
 }
