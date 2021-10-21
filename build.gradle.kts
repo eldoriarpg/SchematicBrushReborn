@@ -12,9 +12,14 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains","annotations","21.0.1")
-    implementation("de.eldoria", "eldo-util", "1.10.5-DEV")
+    implementation("de.eldoria", "eldo-util", "1.10.6-DEV")
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
+
+    // text
+    implementation("net.kyori", "adventure-api", "4.9.1")
+    implementation("net.kyori", "adventure-platform-bukkit", "4.0.0")
+    implementation("net.kyori", "adventure-text-minimessage", "4.1.0-SNAPSHOT")
 
     testImplementation("org.jetbrains","annotations","21.0.1")
     testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")

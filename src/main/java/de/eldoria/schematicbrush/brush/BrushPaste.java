@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.brush.config;
+package de.eldoria.schematicbrush.brush;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -10,6 +10,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import de.eldoria.eldoutilities.utils.EMath;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
+import de.eldoria.schematicbrush.brush.config.PasteMutation;
+import de.eldoria.schematicbrush.brush.config.PlacementModifier;
+import de.eldoria.schematicbrush.brush.config.SchematicModifier;
+import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
 import java.io.IOException;

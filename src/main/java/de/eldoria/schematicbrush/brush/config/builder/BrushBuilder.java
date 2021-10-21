@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,5 +64,13 @@ public final class BrushBuilder {
 
     public void addSchematicSet(SchematicSetBuilder schematicSetBuilder) {
         schematicSets.add(schematicSetBuilder);
+    }
+
+    public List<SchematicSetBuilder> schematicSets() {
+        return Collections.unmodifiableList(schematicSets);
+    }
+
+    public Map<PlacementModifier, Mutator<?>> placementModifier() {
+        return Collections.unmodifiableMap(placementModifier);
     }
 }

@@ -3,6 +3,7 @@ package de.eldoria.schematicbrush.commands.brush;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -13,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -48,10 +50,6 @@ public class Sessions {
 
     public void showBrush(Player player) {
         var builder = getOrCreateSession(player);
-        var selector = "Selector:\n" + registry.selector().stream()
-                .map(SettingProvider::name)
-                .map(sel -> String.format("<click:suggest_command:'/sbr modify selector %s '>[%s]</click>", sel, sel))
-                .collect(Collectors.joining(", "));
         var count = new AtomicInteger(0);
         var sets = String.format("Schematic Sets:<click:run_command:'/sbr addSet'><%s>[Add]</click>%n", Colors.ADD) + builder.schematicSets().stream()
                 .map(set -> String.format("%s <%s><click:run_command:'sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
@@ -69,12 +67,40 @@ public class Sessions {
             modifierStrings.add(format);
         }
         var modifier = String.join("\n", modifierStrings);
-        var panel = String.format("%s\n%s\n%s\n", selector, sets, modifier);
+        var panel = String.format("%s\n%s", sets, modifier);
         var buttons = "<click:run_command:'/sbr bind'>[Bind]</click> <click:run_command:'/sbr clear'>[Clear]</click>";
         audiences.player(player).sendMessage(miniMessage.parse(panel + "\n" + buttons));
     }
 
     public void showSet(Player player, int id) {
-        // TODO
+        var builder = getOrCreateSession(player);
+        var optSet = builder.getSchematicSet(id);
+        if(optSet.isEmpty()){
+            audiences.player(player).sendMessage(miniMessage.parse("[SBR] Invalid set."));
+            return;
+        }
+
+        var set = optSet.get();
+
+        var selector = "Selector:" + registry.selector().stream()
+                .map(SettingProvider::name)
+                .map(sel -> String.format("<click:suggest_command:'/sbr modify selector %s '>[%s]</click>", sel, sel))
+                .collect(Collectors.joining(", "));
+        selector += "\n" + set.selector().asComponent();
+
+        var mutatorMap = set.schematicModifier();
+        var modifierStrings = new ArrayList<String>();
+        for (var entry : registry.placementModifier().entrySet()) {
+            var type = entry.getValue().stream()
+                    .map(SettingProvider::name)
+                    .map(name -> String.format("<click:suggest_command:'/sbr modifyset %s %s %s '>[%s]</click>", id, entry.getKey().name(), name, name))
+                    .collect(Collectors.joining(", "));
+
+            var format = String.format("<%s>%s: %s\n%s", Colors.HEADING, entry.getKey().name(), type, mutatorMap.get(entry.getKey()).asComponent());
+            modifierStrings.add(format);
+        }
+        var modifier = String.join("\n", modifierStrings);
+        var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset weight '><%s>[change]</click>", Colors.NAME, Colors.VALUE, set.weight(), Colors.CHANGE);
+        var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
     }
 }

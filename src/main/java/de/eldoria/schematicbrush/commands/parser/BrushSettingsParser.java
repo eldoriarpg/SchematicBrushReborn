@@ -6,6 +6,8 @@ import de.eldoria.eldoutilities.utils.Parser;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.builder.BrushSettingsBuilder;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.offset.AOffset;
 import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static de.eldoria.schematicbrush.commands.parser.ParsingUtil.parseToLegacySyntax;
 
+@Deprecated(forRemoval = true)
 public class BrushSettingsParser {
     private static final Pattern Y_OFFSET = Pattern.compile("-(?:yoff|yoffset|y):(-?[0-9]{1,3}|\\[-?[0-9]{1,3}:-?[0-9]{1,3}\\]|\\[(?:-?[0-9]{1,3},?)*?[^,]\\])$", Pattern.CASE_INSENSITIVE);
     private static final Pattern Y_OFFSET_FLAG = Pattern.compile("-(?:yoff|yoffset|y).*", Pattern.CASE_INSENSITIVE);
@@ -58,11 +61,11 @@ public class BrushSettingsParser {
      * @param settingsStrings one or more brushes
      * @param config          plugin config
      * @param schematicCache  schematic cache instance
-     * @return A optional, which returns a unconfigured {@link BrushSettings.BrushSettingsBuilder} with brushes already
+     * @return A optional, which returns a unconfigured {@link BrushSettingsBuilder} with brushes already
      * set or empty if a brush string could not be parsed
      */
-    public static Optional<BrushSettings.BrushSettingsBuilder> buildBrushes(Player player, List<String> settingsStrings, Config config,
-                                                                            SchematicCache schematicCache) {
+    public static Optional<BrushSettingsBuilder> buildBrushes(Player player, List<String> settingsStrings, Config config,
+                                                              SchematicCache schematicCache) {
         var configurationBuilder = BrushSettings.newBrushSettingsBuilder();
 
         var messageSender = MessageSender.getPluginMessageSender(SchematicBrushReborn.class);
@@ -149,7 +152,7 @@ public class BrushSettingsParser {
 
     private static Optional<SchematicSet> buildBrushConfig(Player player, SchematicSetParser.SubBrushType type,
                                                            String settingsString, SchematicCache schematicCache) {
-        SchematicSet.SchematicSetBuilder schematicSetBuilder = null;
+        SchematicSetBuilder schematicSetBuilder = null;
 
         Set<Schematic> schematics = Collections.emptySet();
 
@@ -158,7 +161,7 @@ public class BrushSettingsParser {
         // Check if its a name or regex lookup
         if (type.selectorType() == SchematicSelector.REGEX) {
             schematics = schematicCache.getSchematicsByName(player,type.selectorValue());
-            schematicSetBuilder = new SchematicSet.SchematicSetBuilder(settingsString);
+            schematicSetBuilder = new SchematicSetBuilder(settingsString);
         }
 
         // Check if its a directory lookup
@@ -166,7 +169,7 @@ public class BrushSettingsParser {
             var split = type.selectorValue().split("#");
             var filter = split.length > 1 ? split[1] : null;
             schematics = schematicCache.getSchematicsByDirectory(player,split[0], filter);
-            schematicSetBuilder = new SchematicSet.SchematicSetBuilder(settingsString);
+            schematicSetBuilder = new SchematicSetBuilder(settingsString);
         }
 
         // If no builder was initialized the expession is invalid.
@@ -212,14 +215,14 @@ public class BrushSettingsParser {
     }
 
     /**
-     * Build a new Brush from a {@link BrushSettings.BrushSettingsBuilder}
+     * Build a new Brush from a {@link BrushSettingsBuilder}
      *
      * @param player          executor of the brush
      * @param settingsBuilder Unconfigures builder for brush settings
      * @param args            arguments of the brush
      * @return optional configured brush settings object or empty if something could not be parsed
      */
-    private static Optional<BrushSettings> buildBrushSettings(Player player, BrushSettings.BrushSettingsBuilder settingsBuilder,
+    private static Optional<BrushSettings> buildBrushSettings(Player player, BrushSettingsBuilder settingsBuilder,
                                                               String[] args) {
         if (ArrayUtil.arrayContains(args, "-includeair", "-incair", "-a")) {
             settingsBuilder.includeAir(true);

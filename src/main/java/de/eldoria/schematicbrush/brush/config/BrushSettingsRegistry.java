@@ -15,15 +15,17 @@ import de.eldoria.schematicbrush.brush.config.selector.SelectorProvider;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BrushSettingsRegistry {
     private final List<SelectorProvider> selector = new ArrayList<>();
-    private final Map<SchematicModifier, List<ModifierProvider>> schematicModifier = new HashMap<>();
-    private final Map<PlacementModifier, List<ModifierProvider>> placementModifier = new HashMap<>();
+    private final Map<SchematicModifier, List<ModifierProvider>> schematicModifier = new LinkedHashMap<>();
+    private final Map<PlacementModifier, List<ModifierProvider>> placementModifier = new LinkedHashMap<>();
 
     public void registerSelector(SelectorProvider selectorProvider) {
         selector.add(selectorProvider);
@@ -104,6 +106,18 @@ public class BrushSettingsRegistry {
     public Pair<PlacementModifier, Mutator> parsePlacementModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, placementModifier);
         return Pair.of(provider.first, provider.second.parse(args.subArguments().subArguments()));
+    }
+
+    public List<SelectorProvider> selector() {
+        return Collections.unmodifiableList(selector);
+    }
+
+    public Map<SchematicModifier, List<ModifierProvider>> schematicModifier() {
+        return Collections.unmodifiableMap(schematicModifier);
+    }
+
+    public Map<PlacementModifier, List<ModifierProvider>> placementModifier() {
+        return Collections.unmodifiableMap(placementModifier);
     }
 
     // Tab completion

@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+@Deprecated(forRemoval = true)
 public final class SchematicSetParser {
     private static final String NAME = ".+?)";
     private static final String ENDINGS = "(\\s|:|@|!|$)";

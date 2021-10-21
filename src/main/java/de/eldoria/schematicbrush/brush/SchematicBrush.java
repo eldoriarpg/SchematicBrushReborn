@@ -12,15 +12,17 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.HandSide;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.schematicbrush.brush.config.BrushPaste;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
+import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollecter;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
 import de.eldoria.schematicbrush.rendering.FakeWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents the schematic brush as a {@link Brush} instance. A brush is immutable after creation and is always
@@ -31,6 +33,8 @@ public class SchematicBrush implements Brush {
     private final BrushSettings settings;
     private final Player brushOwner;
     private BrushPaste nextPaste;
+    @Nullable
+    private BrushBuilder builder;
 
     /**
      * Create a new schematic brush for a player.
@@ -91,7 +95,7 @@ public class SchematicBrush implements Brush {
         var clipboard = randomSchematicSet.getRandomSchematic();
         if (clipboard == null) {
             MessageSender.getPluginMessageSender(plugin).sendError(brushOwner,
-                    "No valid schematic was found for brush: " + randomSchematicSet.arguments());
+                    "No valid schematic was found for brush: ");
             return;
         }
         nextPaste = new BrushPaste(settings, randomSchematicSet, clipboard);
@@ -113,5 +117,12 @@ public class SchematicBrush implements Brush {
 
     public BrushPaste nextPaste() {
         return nextPaste;
+    }
+
+    public BrushBuilder toBuilder(BrushSettingsRegistry registry) {
+        if (builder == null) {
+            builder = settings.toBuilder(registry);
+        }
+        return builder;
     }
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+@Deprecated(forRemoval = true)
 public final class ParsingUtil {
     // Legacy pattern parser
     private static final Pattern FLIP = Pattern.compile("-flip:|-f:", Pattern.CASE_INSENSITIVE);
