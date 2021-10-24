@@ -1,9 +1,10 @@
 package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.brush.config.Mutator;
+import de.eldoria.schematicbrush.brush.config.Nameable;
 import de.eldoria.schematicbrush.brush.config.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
-import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -13,8 +14,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -65,6 +66,7 @@ public class Sessions {
 
             var format = String.format("<%s>%s: %s\n%s", Colors.HEADING, entry.getKey().name(), type, mutatorMap.get(entry.getKey()).asComponent());
             modifierStrings.add(format);
+            modifierStrings.add(buildModifier("/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
         var modifier = String.join("\n", modifierStrings);
         var panel = String.format("%s\n%s", sets, modifier);
@@ -75,7 +77,7 @@ public class Sessions {
     public void showSet(Player player, int id) {
         var builder = getOrCreateSession(player);
         var optSet = builder.getSchematicSet(id);
-        if(optSet.isEmpty()){
+        if (optSet.isEmpty()) {
             audiences.player(player).sendMessage(miniMessage.parse("[SBR] Invalid set."));
             return;
         }
@@ -90,17 +92,24 @@ public class Sessions {
 
         var mutatorMap = set.schematicModifier();
         var modifierStrings = new ArrayList<String>();
-        for (var entry : registry.placementModifier().entrySet()) {
-            var type = entry.getValue().stream()
-                    .map(SettingProvider::name)
-                    .map(name -> String.format("<click:suggest_command:'/sbr modifyset %s %s %s '>[%s]</click>", id, entry.getKey().name(), name, name))
-                    .collect(Collectors.joining(", "));
-
-            var format = String.format("<%s>%s: %s\n%s", Colors.HEADING, entry.getKey().name(), type, mutatorMap.get(entry.getKey()).asComponent());
-            modifierStrings.add(format);
+        for (var entry : registry.schematicModifier().entrySet()) {
+            modifierStrings.add(buildModifier("/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
         var modifier = String.join("\n", modifierStrings);
         var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset weight '><%s>[change]</click>", Colors.NAME, Colors.VALUE, set.weight(), Colors.CHANGE);
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
+    }
+
+    private String buildModifier(String baseCommand, Nameable type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
+        String types;
+        if (provider.size() > 1) {
+            types = provider.stream()
+                    .map(SettingProvider::name)
+                    .map(name -> String.format("<click:suggest_command:'%s %s %s '>[%s]</click>", baseCommand, type.name(), name, name))
+                    .collect(Collectors.joining(", "));
+        } else {
+            types = String.format("<click:suggest_command:'%s %s %s '>[Change]</click>", baseCommand, type.name(), provider.get(0));
+        }
+        return String.format("<%s>%s: %s\n%s", Colors.HEADING, type.name(), types, current.asComponent());
     }
 }
