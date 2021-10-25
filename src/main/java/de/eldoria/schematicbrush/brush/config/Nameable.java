@@ -11,6 +11,11 @@ public abstract class Nameable {
         return name;
     }
 
+    public static Nameable of(String name){
+        return new Nameable(name) {
+        };
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

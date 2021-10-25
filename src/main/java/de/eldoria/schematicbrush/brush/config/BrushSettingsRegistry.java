@@ -12,11 +12,11 @@ import de.eldoria.schematicbrush.brush.config.replaceall.ReplaceAllProvider;
 import de.eldoria.schematicbrush.brush.config.rotation.RotationProvider;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.selector.SelectorProvider;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class BrushSettingsRegistry {
         placementModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
     }
 
-    public void registerDefault(SchematicCache cache) {
+    public void registerDefault(SchematicRegistry cache) {
         // SELECTORS
         registerSelector(SelectorProvider.NAME.apply(cache));
         registerSelector(SelectorProvider.REGEX.apply(cache));

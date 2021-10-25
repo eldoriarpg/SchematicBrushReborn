@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.schematics;
+package de.eldoria.schematicbrush.schematics.impl;
 
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.config.Config;
@@ -26,7 +26,7 @@ public class SchematicWatchService implements Runnable {
     private final Logger logger = SchematicBrushReborn.logger();
     private final Plugin plugin;
     private final Config config;
-    private final SchematicCache cache;
+    private final SchematicBrushCache cache;
     private final ThreadGroup fileWorker = new ThreadGroup("File worker");
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(r -> {
         var thread = new Thread(fileWorker, r);
@@ -37,13 +37,13 @@ public class SchematicWatchService implements Runnable {
     private WatchService watchService;
     private Thread watchThread;
 
-    private SchematicWatchService(Plugin plugin, Config config, SchematicCache cache) {
+    private SchematicWatchService(Plugin plugin, Config config, SchematicBrushCache cache) {
         this.plugin = plugin;
         this.config = config;
         this.cache = cache;
     }
 
-    public static SchematicWatchService of(Plugin plugin, Config config, SchematicCache cache) {
+    public static SchematicWatchService of(Plugin plugin, Config config, SchematicBrushCache cache) {
         var watchService = new SchematicWatchService(plugin, config, cache);
         watchService.start();
         return watchService;

@@ -7,6 +7,7 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
+import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
 import de.eldoria.schematicbrush.commands.Modify;
@@ -21,6 +22,8 @@ import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.Arrays;
@@ -28,7 +31,8 @@ import java.util.List;
 
 public class SchematicBrushReborn extends EldoPlugin {
 
-    private SchematicCache schematics;
+    private BrushSettingsRegistry settingsRegistry;
+    private SchematicRegistry schematics;
     private Config config;
 
     @Override
@@ -50,8 +54,9 @@ public class SchematicBrushReborn extends EldoPlugin {
         }
 
         if (schematics == null) {
-            schematics = new SchematicCache(this, config);
-            schematics.init();
+            schematics = new SchematicRegistry();
+            var cache = new SchematicBrushCache(this, config);
+            schematics.register(SchematicBrushCache.key, cache);
             if (config.getGeneral().isCheckUpdates()) {
                 Updater.butler(
                         new ButlerUpdateData(this, "schematicbrush.admin.reload", config.getGeneral().isCheckUpdates(),
@@ -59,6 +64,11 @@ public class SchematicBrushReborn extends EldoPlugin {
             }
         } else {
             schematics.reload();
+        }
+
+        if(settingsRegistry == null){
+            settingsRegistry = new BrushSettingsRegistry();
+            settingsRegistry.registerDefault(schematics);
         }
     }
 
@@ -145,8 +155,12 @@ public class SchematicBrushReborn extends EldoPlugin {
         return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.Preset.class, SchematicConfig.class, SchematicSource.class);
     }
 
-    public SchematicCache schematics() {
+    public SchematicRegistry schematics() {
         return schematics;
+    }
+
+    public BrushSettingsRegistry brushSettingsRegistry(){
+        return
     }
 
     public Config config() {

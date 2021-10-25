@@ -3,7 +3,8 @@ package de.eldoria.schematicbrush.brush.config.selector;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.SettingProvider;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -12,8 +13,8 @@ import java.util.function.Function;
 
 public abstract class SelectorProvider extends SettingProvider<Selector> {
 
-    public static final Function<SchematicCache, SelectorProvider> DIRECTORY = cache ->
-            new SelectorProvider("directory", cache) {
+    public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
+            new SelectorProvider("directory", registry) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
                     return new DirectorySelector(args.asString(0), args.asString(1));
@@ -22,7 +23,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                 @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
-                        return cache().getMatchingDirectories(player, args.asString(0), 50);
+                        return registry().getCache(SchematicBrushCache.key).getMatchingDirectories(player, args.asString(0), 50);
                     }
 
                     if (args.size() == 2) {
@@ -33,8 +34,8 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                 }
 
             };
-    public static final Function<SchematicCache, SelectorProvider> NAME = cache ->
-            new SelectorProvider("name", cache) {
+    public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
+            new SelectorProvider("name", registry) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
                     return new NameSelector(args.asString(0));
@@ -43,13 +44,13 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                 @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
-                        return cache().getMatchingSchematics(player, args.asString(0), 50);
+                        return registry().getCache(SchematicBrushCache.key).getMatchingSchematics(player, args.asString(0), 50);
                     }
                     return Collections.emptyList();
                 }
             };
-    public static final Function<SchematicCache, SelectorProvider> REGEX = cache ->
-            new SelectorProvider("regex", cache) {
+    public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
+            new SelectorProvider("regex", registry) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
                     return new NameSelector(args.asString(0));
@@ -63,11 +64,11 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                     return Collections.emptyList();
                 }
             };
-    private final SchematicCache cache;
+    private final SchematicRegistry registry;
 
-    protected SelectorProvider(String name, SchematicCache cache) {
+    protected SelectorProvider(String name, SchematicRegistry registry) {
         super(name);
-        this.cache = cache;
+        this.registry = registry;
     }
 
     @Override
@@ -75,7 +76,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
         return new NameSelector("*");
     }
 
-    public SchematicCache cache() {
-        return cache;
+    public SchematicRegistry registry() {
+        return registry;
     }
 }

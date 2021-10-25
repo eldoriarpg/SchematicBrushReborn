@@ -3,7 +3,8 @@ package de.eldoria.schematicbrush.brush.config.selector;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import de.eldoria.schematicbrush.util.Colors;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +36,8 @@ public class DirectorySelector extends BaseSelector {
     }
 
     @Override
-    public Set<Schematic> select(Player player, SchematicCache cache) {
-        return cache.getSchematicsByDirectory(player, directory, term());
+    public Set<Schematic> select(Player player, SchematicRegistry registry) {
+        return registry.getCache(SchematicBrushCache.key).getSchematicsByDirectory(player, directory, term());
     }
 
     @Override

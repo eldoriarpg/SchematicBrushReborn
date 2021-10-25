@@ -39,13 +39,13 @@ public final class BrushBuilder {
         return true;
     }
 
-    public SchematicSetBuilder createSchematicSet() {
+    public int createSchematicSet() {
         var builder = new SchematicSetBuilder(settingsRegistry.defaultSelector());
         for (var entry : settingsRegistry.defaultSchematicModifier().entrySet()) {
             builder.withMutator(entry.getKey(), entry.getValue());
         }
         schematicSets.add(builder);
-        return builder;
+        return schematicSets.size() - 1;
     }
 
     public void setPlacementModifier(PlacementModifier type, Mutator provider) {
@@ -72,5 +72,12 @@ public final class BrushBuilder {
 
     public Map<PlacementModifier, Mutator<?>> placementModifier() {
         return Collections.unmodifiableMap(placementModifier);
+    }
+
+    public void clear(){
+        for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {
+            setPlacementModifier(entry.getKey(), entry.getValue());
+        }
+        schematicSets.clear();
     }
 }
