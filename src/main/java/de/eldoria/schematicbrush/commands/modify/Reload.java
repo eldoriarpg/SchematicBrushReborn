@@ -12,7 +12,7 @@ import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 
 public class Reload extends AdvancedCommand implements IPlayerTabExecutor {
     private final Config config;
-    private final SchematicCache cache;
+    private final SchematicBrushCache cache;
 
-    public Reload(Plugin plugin, Config config, SchematicCache cache) {
+    public Reload(Plugin plugin, Config config, SchematicBrushCache cache) {
         super(plugin, CommandMeta.builder("reload").build());
         this.config = config;
         this.cache = cache;

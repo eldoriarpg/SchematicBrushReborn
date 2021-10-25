@@ -13,7 +13,7 @@ import de.eldoria.schematicbrush.commands.preset.RemoveSet;
 import de.eldoria.schematicbrush.commands.preset.Save;
 import de.eldoria.schematicbrush.commands.preset.SaveCurrent;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class Preset extends AdvancedCommand {
     private final Config config;
 
-    public Preset(Plugin plugin, SchematicCache cache, Config config) {
+    public Preset(Plugin plugin, SchematicBrushCache cache, Config config) {
         super(plugin);
         meta(CommandMeta.builder("sbp")
                 .buildSubCommands((cmds, builder) -> {

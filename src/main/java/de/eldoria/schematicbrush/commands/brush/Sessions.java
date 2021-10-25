@@ -98,6 +98,7 @@ public class Sessions {
         var modifier = String.join("\n", modifierStrings);
         var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset weight '><%s>[change]</click>", Colors.NAME, Colors.VALUE, set.weight(), Colors.CHANGE);
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
+
     }
 
     private String buildModifier(String baseCommand, Nameable type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {

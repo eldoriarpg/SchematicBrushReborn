@@ -9,12 +9,15 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 public class Show extends AdvancedCommand implements IPlayerTabExecutor {
-    public Show(Plugin plugin) {
+    private final Sessions sessions;
+
+    public Show(Plugin plugin, Sessions sessions) {
         super(plugin);
+        this.sessions = sessions;
     }
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-
+        sessions.showBrush(player);
     }
 }

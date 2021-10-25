@@ -10,7 +10,7 @@ import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -20,9 +20,9 @@ import java.util.List;
 
 public class Append extends AdvancedCommand implements IPlayerTabExecutor {
     private final Config config;
-    private final SchematicCache cache;
+    private final SchematicBrushCache cache;
 
-    public Append(Plugin plugin, Config config, SchematicCache cache) {
+    public Append(Plugin plugin, Config config, SchematicBrushCache cache) {
         super(plugin, CommandMeta.builder("append")
                 .build());
         this.config = config;

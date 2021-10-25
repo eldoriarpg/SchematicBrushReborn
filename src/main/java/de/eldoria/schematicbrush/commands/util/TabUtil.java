@@ -4,7 +4,7 @@ import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.eldoutilities.utils.ArrayUtil;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public final class TabUtil {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static List<String> getSchematicSetSyntax(Player player, String[] args, SchematicCache cache, Config config) {
+    public static List<String> getSchematicSetSyntax(Player player, String[] args, SchematicBrushCache cache, Config config) {
         var quoteCount = TextUtil.countChars(String.join(" ", args), '\"');
         var last = args[args.length - 1];
         if (quoteCount % 2 == 0) {
@@ -54,7 +54,7 @@ public final class TabUtil {
         return getSchematicSetSyntax(player, last, cache, config);
     }
 
-    private static List<String> getSchematicSetSyntax(Player player, String arg, SchematicCache cache, Config config) {
+    private static List<String> getSchematicSetSyntax(Player player, String arg, SchematicBrushCache cache, Config config) {
         if (arg.startsWith("\"")) {
             if ("\"".equals(arg)) {
                 return prefixStrings(Arrays.asList(SELECTOR_TYPE), "\"");
@@ -107,7 +107,7 @@ public final class TabUtil {
      * @param cache cache for schematic lookup
      * @return a list of possible completions
      */
-    private static List<String> getLegacySchematicSetSyntax(Player player, String arg, SchematicCache cache, Config config) {
+    private static List<String> getLegacySchematicSetSyntax(Player player, String arg, SchematicBrushCache cache, Config config) {
         var brushArgumentMarker = getBrushArgumentMarker(arg);
         var firstMarker = getBrushArgumentMarker(arg, true);
 

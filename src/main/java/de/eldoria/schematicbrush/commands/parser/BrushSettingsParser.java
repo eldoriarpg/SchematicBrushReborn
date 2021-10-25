@@ -13,7 +13,7 @@ import de.eldoria.schematicbrush.brush.config.parameter.Placement;
 import de.eldoria.schematicbrush.brush.config.parameter.SchematicSelector;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class BrushSettingsParser {
     }
 
 
-    public static Optional<BrushSettings> parseBrush(Player player, Config config, SchematicCache schematicCache,
+    public static Optional<BrushSettings> parseBrush(Player player, Config config, SchematicBrushCache schematicCache,
                                                      String[] args) {
 
 
@@ -65,7 +65,7 @@ public class BrushSettingsParser {
      * set or empty if a brush string could not be parsed
      */
     public static Optional<BrushSettingsBuilder> buildBrushes(Player player, List<String> settingsStrings, Config config,
-                                                              SchematicCache schematicCache) {
+                                                              SchematicBrushCache schematicCache) {
         var configurationBuilder = BrushSettings.newBrushSettingsBuilder();
 
         var messageSender = MessageSender.getPluginMessageSender(SchematicBrushReborn.class);
@@ -151,7 +151,7 @@ public class BrushSettingsParser {
     }
 
     private static Optional<SchematicSet> buildBrushConfig(Player player, SchematicSetParser.SubBrushType type,
-                                                           String settingsString, SchematicCache schematicCache) {
+                                                           String settingsString, SchematicBrushCache schematicCache) {
         SchematicSetBuilder schematicSetBuilder = null;
 
         Set<Schematic> schematics = Collections.emptySet();

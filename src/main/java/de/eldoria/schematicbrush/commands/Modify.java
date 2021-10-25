@@ -9,7 +9,7 @@ import de.eldoria.schematicbrush.commands.modify.Info;
 import de.eldoria.schematicbrush.commands.modify.Reload;
 import de.eldoria.schematicbrush.commands.modify.Remove;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import de.eldoria.schematicbrush.util.Randomable;
 import org.bukkit.plugin.Plugin;
 
@@ -17,17 +17,17 @@ import org.bukkit.plugin.Plugin;
  * Command to modify a current used brush.
  */
 public class Modify extends AdvancedCommand implements Randomable {
-    public Modify(Plugin plugin, SchematicCache schematicCache, Config config) {
+    public Modify(Plugin plugin, SchematicBrushCache schematicBrushCache, Config config) {
         super(plugin, CommandMeta.builder("sbm")
                 .withPermission("schematicbrush.brush.use")
                 .buildSubCommands((cmds, builder) -> {
-                    cmds.add(new Append(plugin, config, schematicCache));
-                    cmds.add(new Edit(plugin, config, schematicCache));
+                    cmds.add(new Append(plugin, config, schematicBrushCache));
+                    cmds.add(new Edit(plugin, config, schematicBrushCache));
                     var help = new Help(plugin);
                     cmds.add(help);
                     builder.withDefaultCommand(help);
                     cmds.add(new Info(plugin));
-                    cmds.add(new Reload(plugin, config, schematicCache));
+                    cmds.add(new Reload(plugin, config, schematicBrushCache));
                     cmds.add(new Remove(plugin));
                 })
                 .build());

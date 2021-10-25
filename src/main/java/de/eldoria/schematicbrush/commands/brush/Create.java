@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class Create extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
 
-    public Create(Plugin plugin, Sessions sessions, BrushSettingsRegistry registry) {
+    public Create(Plugin plugin, Sessions sessions) {
         super(plugin, CommandMeta.builder("create")
                 .build());
         this.sessions = sessions;

@@ -10,7 +10,7 @@ import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.parser.BrushSettingsParser;
 import de.eldoria.schematicbrush.commands.util.TabUtil;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +22,9 @@ import java.util.List;
 public class Save extends AdvancedCommand implements IPlayerTabExecutor {
     private final Preset preset;
     private final Config config;
-    private final SchematicCache cache;
+    private final SchematicBrushCache cache;
 
-    public Save(Plugin plugin, Preset preset, Config config, SchematicCache cache) {
+    public Save(Plugin plugin, Preset preset, Config config, SchematicBrushCache cache) {
         super(plugin, CommandMeta.builder("save")
                 .withPermission("schematicbrush.preset.save")
                 .addUnlocalizedArgument("name", true)
