@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -12,16 +13,16 @@ import java.util.Map;
 public class Preset implements ConfigurationSerializable {
     private final String name;
     private String description;
-    private List<String> filter;
+    private List<SchematicSetBuilder> schematicSets;
 
-    public Preset(String name, List<String> filter) {
-        this(name, "none", filter);
+    public Preset(String name, List<SchematicSetBuilder> schematicSets) {
+        this(name, "none", schematicSets);
     }
 
-    public Preset(String name, String description, List<String> filter) {
+    public Preset(String name, String description, List<SchematicSetBuilder> schematicSets) {
         this.name = name;
         this.description = description;
-        this.filter = filter;
+        this.schematicSets = schematicSets;
     }
 
     public Preset(Map<String, Object> objectMap) {
@@ -31,7 +32,7 @@ public class Preset implements ConfigurationSerializable {
         if (description == null) {
             description = "none";
         }
-        filter = map.getValue("filter");
+        schematicSets = map.getValue("sets");
     }
 
     @Override
@@ -39,11 +40,11 @@ public class Preset implements ConfigurationSerializable {
         return SerializationUtil.newBuilder()
                 .add("name", name)
                 .add("description", description)
-                .add("filter", filter)
+                .add("sets", schematicSets)
                 .build();
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -55,11 +56,7 @@ public class Preset implements ConfigurationSerializable {
         this.description = description;
     }
 
-    public List<String> getFilter() {
-        return filter;
-    }
-
-    public void setFilter(List<String> filter) {
-        this.filter = filter;
+    public List<SchematicSetBuilder> schematicSets() {
+        return schematicSets;
     }
 }
