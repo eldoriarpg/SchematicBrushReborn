@@ -2,9 +2,9 @@ package de.eldoria.schematicbrush.config;
 
 import de.eldoria.eldoutilities.configuration.EldoConfig;
 import de.eldoria.schematicbrush.config.sections.GeneralConfig;
-import de.eldoria.schematicbrush.config.sections.Preset;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
+import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
@@ -12,19 +12,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class Config extends EldoConfig {
     private SchematicConfig schematicConfig;
-    private Map<String, Preset> presets;
     private GeneralConfig general;
+    private PresetRegistry presets;
 
     public Config(Plugin plugin) {
         super(plugin);
@@ -33,7 +27,7 @@ public class Config extends EldoConfig {
     @Override
     protected void saveConfigs() {
         getConfig().set("schematicConfig", schematicConfig);
-        getConfig().set("presets", new ArrayList<>(presets.values()));
+        getConfig().set("presets", presets);
         getConfig().set("general", general);
     }
 
@@ -41,16 +35,12 @@ public class Config extends EldoConfig {
     protected void reloadConfigs() {
         schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfig());
         general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfig());
-        presets = new HashMap<>();
-        var presets = (List<Preset>) getConfig().getList("presets", new ArrayList<Preset>());
-        for (var preset : presets) {
-            this.presets.put(preset.getName().toLowerCase(Locale.ROOT), preset);
-        }
+        presets = getConfig().getObject("presets", PresetRegistry.class, new PresetRegistry());
     }
 
     @Override
     protected void init() {
-        var version = plugin.getConfig().getInt("version", -1);
+        var version = getConfig().getInt("version", -1);
         if (version == -1) {
             setVersion(3, true);
             return;
@@ -59,6 +49,16 @@ public class Config extends EldoConfig {
         if (version == 2) {
             upgradeToV3();
         }
+
+        if (version == 3) {
+            migrateToV4();
+        }
+    }
+
+    private void migrateToV4() {
+        plugin.getLogger().info("Converting config to Version 4");
+        getConfig().set("presets", null);
+        setVersion(4, true);
     }
 
     private void upgradeToV3() {
@@ -71,13 +71,13 @@ public class Config extends EldoConfig {
             if (!path.toFile().exists()) {
                 Files.createFile(path);
             }
-            Files.write(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"), plugin.getConfig().saveToString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"), getConfig().saveToString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not create backup. Converting aborted", e);
         }
 
         List<SchematicSource> sources = new ArrayList<>();
-        var schematicSources = plugin.getConfig().getConfigurationSection("schematicSources");
+        var schematicSources = getConfig().getConfigurationSection("schematicSources");
 
         if (schematicSources != null) {
             var excludedPathes = schematicSources.getStringList("excludedPathes");
@@ -100,10 +100,10 @@ public class Config extends EldoConfig {
                 }
             }
         }
-        plugin.getConfig().set("schematicSources", null);
+        getConfig().set("schematicSources", null);
         plugin.getLogger().info("Converted schematic sources and deleted.");
 
-        var selectorSettings = plugin.getConfig().getConfigurationSection("selectorSettings");
+        var selectorSettings = getConfig().getConfigurationSection("selectorSettings");
         var pathSeperator = "/";
         var pathSourceAsPrefix = false;
         if (selectorSettings != null) {
@@ -112,56 +112,24 @@ public class Config extends EldoConfig {
         }
 
         plugin.getLogger().info("Converted selector setting and deleted.");
-        plugin.getConfig().set("selectorSettings", null);
+        getConfig().set("selectorSettings", null);
 
-        plugin.getConfig().set("schematicConfig", new SchematicConfig(sources, pathSeperator, pathSourceAsPrefix));
+        getConfig().set("schematicConfig", new SchematicConfig(sources, pathSeperator, pathSourceAsPrefix));
 
-        var presetSection = plugin.getConfig().getConfigurationSection("presets");
-        List<Preset> presets = new ArrayList<>();
-        if (presetSection != null) {
-            for (var key : presetSection.getKeys(false)) {
-                var filter = presetSection.getStringList(key + ".filter");
-                var description = presetSection.getString(key + ".description");
-                presets.add(new Preset(key, description, filter));
-                plugin.getLogger().info("Converted preset " + key);
-            }
-        }
+        getConfig().set("presets", null);
 
-        plugin.getLogger().info("Converted presets.");
-        plugin.getConfig().set("presets", presets);
-        plugin.getConfig().set("version", 3);
-        plugin.saveConfig();
+        setVersion(3, false);
     }
 
-    public boolean presetExists(String name) {
-        return getPreset(name).isPresent();
-    }
-
-    public Optional<Preset> getPreset(String name) {
-        return Optional.ofNullable(presets.get(name.toLowerCase(Locale.ROOT)));
-    }
-
-    public void addPreset(Preset preset) {
-        presets.put(preset.getName().toLowerCase(Locale.ROOT), preset);
-    }
-
-    public boolean removePreset(String name) {
-        return presets.remove(name.toLowerCase(Locale.ROOT)) != null;
-    }
-
-    public Collection<Preset> getPresets() {
-        return presets.values();
-    }
-
-    public List<String> getPresetName() {
-        return presets.values().stream().map(Preset::getName).collect(Collectors.toList());
-    }
-
-    public SchematicConfig getSchematicConfig() {
+    public SchematicConfig schematicConfig() {
         return schematicConfig;
     }
 
-    public GeneralConfig getGeneral() {
+    public GeneralConfig general() {
         return general;
+    }
+
+    public PresetRegistry presets() {
+        return presets;
     }
 }

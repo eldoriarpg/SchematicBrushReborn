@@ -7,16 +7,22 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.messages.MessageType;
+import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
     private final BrushSettingsRegistry registry;
+    private final SchematicRegistry schematics;
 
-    public ModifySet(Plugin plugin, Sessions sessions, BrushSettingsRegistry registry) {
+    public ModifySet(Plugin plugin, Sessions sessions, BrushSettingsRegistry registry, SchematicRegistry schematics) {
         super(plugin, CommandMeta.builder("modifySet")
                 .addUnlocalizedArgument("id", true)
                 .addUnlocalizedArgument("type", true)
@@ -24,6 +30,7 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
                 .build());
         this.sessions = sessions;
         this.registry = registry;
+        this.schematics = schematics;
     }
 
     @Override
@@ -34,9 +41,30 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
             messageSender().send(MessageChannel.ACTION_BAR, MessageType.ERROR, player, "Invalid set");
             return;
         }
-        //TODO: Add selector parsing
-        var mutator = registry.parseSchematicModifier(args.subArguments());
-        set.get().withMutator(mutator.first, mutator.second);
+
+        if ("selector".equalsIgnoreCase(args.asString(0))) {
+            var selector = registry.parseSelector(args.subArguments());
+            set.get().selector(selector);
+            set.get().refreshSchematics(player, schematics);
+        } else {
+            var mutator = registry.parseSchematicModifier(args.subArguments());
+            set.get().withMutator(mutator.first, mutator.second);
+        }
+
         sessions.showSet(player, args.asInt(0));
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        if (args.size() == 1) {
+            var strings = registry.completeSchematicModifier(args);
+            strings.addAll(TabCompleteUtil.complete(args.asString(0), "selector"));
+            return strings;
+        }
+
+        if (args.asString(0).equals("selector")) {
+            registry.completeSelector(args.subArguments());
+        }
+        return registry.completeSelector(args);
     }
 }

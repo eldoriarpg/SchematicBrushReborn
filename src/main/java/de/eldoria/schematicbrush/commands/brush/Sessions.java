@@ -5,6 +5,7 @@ import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.Nameable;
 import de.eldoria.schematicbrush.brush.config.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -24,11 +25,13 @@ public class Sessions {
     private final MiniMessage miniMessage = MiniMessage.get();
     private final BukkitAudiences audiences;
     private final BrushSettingsRegistry registry;
+    private final SchematicRegistry schematicRegistry;
     private final Map<UUID, BrushBuilder> session = new HashMap<>();
 
-    public Sessions(Plugin plugin, BrushSettingsRegistry registry) {
+    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
         this.registry = registry;
         audiences = BukkitAudiences.create(plugin);
+        this.schematicRegistry = schematicRegistry;
     }
 
     public void setSession(Player player, BrushBuilder builder) {
@@ -45,16 +48,19 @@ public class Sessions {
 
     private BrushBuilder getOrCreateBuilder(Player player) {
         return WorldEditBrush.getSchematicBrush(player)
-                .map(brush -> brush.toBuilder(registry))
-                .orElse(new BrushBuilder(registry));
+                .map(brush -> brush.toBuilder(registry, schematicRegistry))
+                .orElse(new BrushBuilder(player, registry, schematicRegistry));
     }
 
     public void showBrush(Player player) {
         var builder = getOrCreateSession(player);
         var count = new AtomicInteger(0);
-        var sets = String.format("Schematic Sets:<click:run_command:'/sbr addSet'><%s>[Add]</click>%n", Colors.ADD) + builder.schematicSets().stream()
-                .map(set -> String.format("%s <%s><click:run_command:'sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
-                        set.selector().asComponent(), Colors.CHANGE, count.getAndIncrement(), Colors.REMOVE, count.get()))
+        var sets = String.format("Schematic Sets:<click:run_command:'/sbr addSet'><%s>[Add]</click>%n", Colors.ADD);
+        sets = String.format("  <click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>%n", Colors.ADD);
+
+        sets += builder.schematicSets().stream()
+                .map(set -> String.format("<%s>%s <%s><click:run_command:'sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
+                        set.selector().asComponent(), Colors.VALUE, set.selector().descriptor(), Colors.CHANGE, count.getAndIncrement(), Colors.REMOVE, count.get()))
                 .collect(Collectors.joining("\n"));
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
@@ -83,22 +89,11 @@ public class Sessions {
         }
 
         var set = optSet.get();
+        var s = set.interactComponent(registry, id);
 
-        var selector = "Selector:" + registry.selector().stream()
-                .map(SettingProvider::name)
-                .map(sel -> String.format("<click:suggest_command:'/sbr modify selector %s '>[%s]</click>", sel, sel))
-                .collect(Collectors.joining(", "));
-        selector += "\n" + set.selector().asComponent();
-
-        var mutatorMap = set.schematicModifier();
-        var modifierStrings = new ArrayList<String>();
-        for (var entry : registry.schematicModifier().entrySet()) {
-            modifierStrings.add(buildModifier("/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
-        }
-        var modifier = String.join("\n", modifierStrings);
-        var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset weight '><%s>[change]</click>", Colors.NAME, Colors.VALUE, set.weight(), Colors.CHANGE);
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
-
+        var message = String.join("\n", s,  buttons);
+        audiences.player(player).sendMessage(miniMessage.parse(message));
     }
 
     private String buildModifier(String baseCommand, Nameable type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {

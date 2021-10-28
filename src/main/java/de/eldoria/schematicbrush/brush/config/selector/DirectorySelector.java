@@ -51,4 +51,12 @@ public class DirectorySelector extends BaseSelector {
     public String name() {
         return "Directory";
     }
+
+    @Override
+    public String descriptor() {
+        if (term() != null && !term().isBlank()) {
+            return directory + " - " + term();
+        }
+        return directory;
+    }
 }

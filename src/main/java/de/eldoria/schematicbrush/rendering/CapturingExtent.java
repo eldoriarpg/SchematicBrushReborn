@@ -18,6 +18,7 @@ import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
+import de.eldoria.schematicbrush.brush.config.PlacementModifier;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +82,7 @@ public class CapturingExtent implements Extent, BlockChangeCollecter {
     public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block) throws WorldEditException {
         var data = BukkitAdapter.adapt(block.toBaseBlock());
         var location = BukkitAdapter.adapt(fakeWorld.getWorld(), position);
-        if (settings.isReplaceAll()) {
+        if ((boolean) settings.getMutator(PlacementModifier.REPLACE_ALL).value()) {
             changes.add(location, location.getBlock().getBlockData(), data);
         } else {
             if (ArrayUtils.contains(AIR_TYPES, getBlock(position).getBlockType())) {

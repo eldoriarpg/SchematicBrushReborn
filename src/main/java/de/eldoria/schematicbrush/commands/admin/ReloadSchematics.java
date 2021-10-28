@@ -6,14 +6,14 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.ITabExecutor;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
-import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class ReloadSchematics extends AdvancedCommand implements ITabExecutor {
-    private final SchematicBrushCache cache;
+    private final SchematicRegistry cache;
 
-    public ReloadSchematics(SchematicBrushReborn plugin, SchematicBrushCache cache) {
+    public ReloadSchematics(SchematicBrushReborn plugin, SchematicRegistry cache) {
         super(plugin, CommandMeta.builder("reloadSchematics")
                 .withPermission("schematicbrush.admin.reloadschematics")
                 .build());

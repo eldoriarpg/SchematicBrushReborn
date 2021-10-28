@@ -1,23 +1,52 @@
 package de.eldoria.schematicbrush.brush.config.builder;
 
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.Mutator;
-import de.eldoria.schematicbrush.brush.config.SchematicModifier;
+import de.eldoria.schematicbrush.brush.config.Nameable;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.Schematic;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.util.Colors;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModifier;
 
 /**
  * This class is a builder to build a {@link SchematicSet}.
  */
-public class SchematicSetBuilder {
-    Selector selector;
-    Map<SchematicModifier, Mutator<?>> schematicModifier;
+public class SchematicSetBuilder implements ConfigurationSerializable {
+    private Selector selector;
+    private Map<Nameable, Mutator<?>> schematicModifier;
     private Set<Schematic> schematics = Collections.emptySet();
     private int weight = -1;
+
+    public SchematicSetBuilder(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        selector = map.getValue("selector");
+        schematicModifier = map.getMap("modifiers", (k, v) -> Nameable.of(k));
+        weight = map.getValue("weight");
+    }
+
+    @Override
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("selector", selector)
+                .addMap("schematicModifier", schematicModifier, (k, v) -> k.name())
+                .add("weight", weight)
+                .build();
+    }
 
     public SchematicSetBuilder(Selector selector) {
         this.selector = selector;
@@ -40,7 +69,7 @@ public class SchematicSetBuilder {
      * @param mutation rotation of the brush
      * @return instance with rotation set.
      */
-    public SchematicSetBuilder withMutator(SchematicModifier type, Mutator mutation) {
+    public <T extends Nameable> SchematicSetBuilder withMutator(T type, Mutator<?> mutation) {
         schematicModifier.put(type, mutation);
         return this;
     }
@@ -69,7 +98,7 @@ public class SchematicSetBuilder {
         return selector;
     }
 
-    public Map<SchematicModifier, Mutator<?>> schematicModifier() {
+    public Map<? extends Nameable, Mutator<?>> schematicModifier() {
         return schematicModifier;
     }
 
@@ -79,5 +108,47 @@ public class SchematicSetBuilder {
 
     public int weight() {
         return weight;
+    }
+
+    public void selector(Selector selector) {
+        this.selector = selector;
+    }
+
+    public void refreshSchematics(Player player, SchematicRegistry registry) {
+        schematics = selector.select(player, registry);
+    }
+
+    public int schematicCount() {
+        return schematics.size();
+    }
+
+    public String interactComponent(BrushSettingsRegistry registry, int id) {
+        var selector = "Selector:" + registry.selector().stream()
+                .map(SettingProvider::name)
+                .map(sel -> String.format("<click:suggest_command:'/sbr modify selector %s '>[%s]</click>", sel, sel))
+                .collect(Collectors.joining(", "));
+        selector += "\n" + selector().asComponent();
+
+        var mutatorMap = schematicModifier();
+        var modifierStrings = new ArrayList<String>();
+        for (var entry : registry.schematicModifier().entrySet()) {
+            modifierStrings.add(buildModifier("/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
+        }
+        var modifier = String.join("\n", modifierStrings);
+        var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset weight '><%s>[change]</click>", Colors.NAME, Colors.VALUE, weight(), Colors.CHANGE);
+        return String.join("\n", selector, modifier, weight);
+    }
+
+    public String infoComponent() {
+        var selector = selector().asComponent();
+
+        var mutatorMap = schematicModifier();
+        var modifierStrings = new ArrayList<String>();
+        for (var entry : mutatorMap.entrySet()) {
+            modifierStrings.add(entry.getKey().name() + "\n  " + entry.getValue().asComponent());
+        }
+        var modifier = String.join("\n", modifierStrings);
+        var weight = String.format("<%s>Weight: <%s>%s ", Colors.NAME, Colors.VALUE, weight());
+        return String.join("\n", selector, modifier, weight);
     }
 }

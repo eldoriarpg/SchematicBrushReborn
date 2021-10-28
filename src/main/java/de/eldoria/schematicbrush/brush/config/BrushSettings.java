@@ -1,8 +1,9 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
-import de.eldoria.schematicbrush.brush.config.builder.BrushSettingsBuilder;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.Randomable;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,25 +52,6 @@ public final class BrushSettings implements Randomable {
 
         // Calculate the total weight of all brushes
         this.totalWeight = schematicSets.stream().mapToInt(SchematicSet::weight).sum();
-    }
-
-    /**
-     * Get a new builder for a brush configuration.
-     *
-     * @param brush brush which should be added
-     * @return a brush builder with one brush added
-     */
-    public static BrushSettingsBuilder newSingleBrushSettingsBuilder(SchematicSet brush) {
-        return new BrushSettingsBuilder(brush);
-    }
-
-    /**
-     * Get a new builder for a brush configuration.
-     *
-     * @return a brush builder without any configuration
-     */
-    public static BrushSettingsBuilder newBrushSettingsBuilder() {
-        return new BrushSettingsBuilder();
     }
 
     /**
@@ -127,8 +109,8 @@ public final class BrushSettings implements Randomable {
         placementModifier.values().forEach(m -> m.invoke(mutation));
     }
 
-    public BrushBuilder toBuilder(BrushSettingsRegistry settingsRegistry) {
-        var brushBuilder = new BrushBuilder(settingsRegistry);
+    public BrushBuilder toBuilder(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
+        var brushBuilder = new BrushBuilder(player, settingsRegistry, schematicRegistry);
         placementModifier.forEach(brushBuilder::setPlacementModifier);
         schematicSets.stream().map(SchematicSet::toBuilder).forEach(brushBuilder::addSchematicSet);
         return brushBuilder;

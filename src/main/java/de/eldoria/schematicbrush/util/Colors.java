@@ -9,4 +9,5 @@ public class Colors {
     public static final String CHANGE = NamedTextColor.YELLOW.toString();
     public static final String REMOVE = NamedTextColor.RED.toString();
     public static final String ADD = NamedTextColor.GREEN.toString();
+    public static final String NEUTRAL = NamedTextColor.AQUA.toString();
 }

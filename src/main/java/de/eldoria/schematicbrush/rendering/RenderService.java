@@ -39,7 +39,7 @@ public class RenderService implements Runnable, Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (!active) return;
         if (event.getPlayer().hasPermission("schematicbrush.brush.preview")) {
-            if (config.getGeneral().isPreviewDefault()) {
+            if (config.general().isPreviewDefault()) {
                 setState(event.getPlayer(), true);
             }
         }
@@ -64,9 +64,9 @@ public class RenderService implements Runnable, Listener {
     @Override
     public void run() {
         if (!active) return;
-        count += players.size() / (double) config.getGeneral().previewRefreshInterval();
+        count += players.size() / (double) config.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
-        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < config.getGeneral().maxRenderMs()) {
+        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < config.general().maxRenderMs()) {
             count--;
             var player = players.poll();
             render(player);
@@ -80,7 +80,7 @@ public class RenderService implements Runnable, Listener {
             resolveChanges(player);
             return;
         }
-        if (schematicBrush.get().nextPaste().clipboardSize() > config.getGeneral().maxRenderSize()) {
+        if (schematicBrush.get().nextPaste().clipboardSize() > config.general().maxRenderSize()) {
             resolveChanges(player);
             return;
         }

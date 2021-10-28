@@ -123,7 +123,7 @@ public class SchematicWatchService implements Runnable {
     private void init() {
         var root = plugin.getDataFolder().toPath().getParent().toString();
 
-        var sources = config.getSchematicConfig().getSources();
+        var sources = config.schematicConfig().getSources();
         try {
             watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {

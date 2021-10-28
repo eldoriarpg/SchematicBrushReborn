@@ -47,4 +47,9 @@ public class NameSelector extends BaseSelector {
     public String name() {
         return "Name";
     }
+
+    @Override
+    public String descriptor() {
+        return term();
+    }
 }

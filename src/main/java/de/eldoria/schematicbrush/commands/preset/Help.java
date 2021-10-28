@@ -19,6 +19,7 @@ public class Help extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        //TODO rewrite this funny stuff or just delete it...
         messageSender().sendMessage(player,
                 "This command allows you to save and modify schematic set presets." + C.NEW_LINE
                 + "§b/sbrp save§nc§r§burrent <id> §r- Save your current equiped schematic set as a preset." + C.NEW_LINE

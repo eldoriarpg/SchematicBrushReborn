@@ -12,4 +12,6 @@ public interface Selector extends ConfigurationSerializable, ComponentProvider {
     Set<Schematic> select(Player player, SchematicRegistry registry);
 
     String name();
+
+    String descriptor();
 }

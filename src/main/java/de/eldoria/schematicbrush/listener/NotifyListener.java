@@ -34,7 +34,7 @@ public class NotifyListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().hasPermission("schematicbrush.brush.use")) {
-            if (config.getGeneral().isShowNameDefault()) {
+            if (config.general().isShowNameDefault()) {
                 setState(event.getPlayer(), true);
             }
         }

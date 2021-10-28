@@ -28,4 +28,9 @@ public abstract class BaseSelector implements Selector {
     public String term() {
         return term;
     }
+
+    @Override
+    public String descriptor() {
+        return term;
+    }
 }

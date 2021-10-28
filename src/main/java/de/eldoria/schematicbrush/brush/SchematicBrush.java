@@ -20,6 +20,7 @@ import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollecter;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
 import de.eldoria.schematicbrush.rendering.FakeWorld;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -119,9 +120,9 @@ public class SchematicBrush implements Brush {
         return nextPaste;
     }
 
-    public BrushBuilder toBuilder(BrushSettingsRegistry registry) {
+    public BrushBuilder toBuilder(BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
         if (builder == null) {
-            builder = settings.toBuilder(registry);
+            builder = settings.toBuilder(brushOwner, registry, schematicRegistry);
         }
         return builder;
     }

@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.commands.preset;
+package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
@@ -6,33 +6,31 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.schematicbrush.config.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
+public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
+    private final Sessions sessions;
     private final Config config;
 
-    public Remove(Plugin plugin, Config config) {
-        super(plugin, CommandMeta.builder("remove")
-                .withPermission("schematicbrush.preset.remove")
+    public AddPreset(Plugin plugin, Sessions sessions, Config config) {
+        super(plugin, CommandMeta.builder("addpreset")
                 .addUnlocalizedArgument("name", true)
                 .build());
+        this.sessions = sessions;
         this.config = config;
     }
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var name = args.asString(0);
-        if (args.hasFlag("g")) {
+        var session = sessions.getOrCreateSession(player);
 
-            CommandAssertions.isTrue(config.presets().removePreset(name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
-        } else {
-            CommandAssertions.isTrue(config.presets().removePreset(player, name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
-        }
+        var preset = config.presets().getPreset(player, args.asString(0));
+        CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
 
-        messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!");
+        preset.get().schematicSets().forEach(session::addSchematicSet);
+        sessions.showBrush(player);
     }
 }

@@ -5,6 +5,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.PlacementModifier;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -18,11 +19,15 @@ import java.util.stream.Collectors;
 
 public final class BrushBuilder {
     private final List<SchematicSetBuilder> schematicSets = new ArrayList<>();
+    private final Player owner;
     private final BrushSettingsRegistry settingsRegistry;
+    private final SchematicRegistry schematicRegistry;
     private final Map<PlacementModifier, Mutator<?>> placementModifier = new HashMap<>();
 
-    public BrushBuilder(BrushSettingsRegistry settingsRegistry) {
+    public BrushBuilder(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
+        owner = player;
         this.settingsRegistry = settingsRegistry;
+        this.schematicRegistry = schematicRegistry;
         for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {
             setPlacementModifier(entry.getKey(), entry.getValue());
         }
@@ -58,11 +63,12 @@ public final class BrushBuilder {
         return new SchematicBrush(plugin, owner, settings);
     }
 
-    public static BrushBuilder fromBrush(SchematicBrush brush, BrushSettingsRegistry registry) {
-        return brush.toBuilder(registry);
+    public static BrushBuilder fromBrush(SchematicBrush brush, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
+        return brush.toBuilder(registry, schematicRegistry);
     }
 
     public void addSchematicSet(SchematicSetBuilder schematicSetBuilder) {
+        schematicSetBuilder.refreshSchematics(owner, schematicRegistry);
         schematicSets.add(schematicSetBuilder);
     }
 
@@ -80,4 +86,6 @@ public final class BrushBuilder {
         }
         schematicSets.clear();
     }
+
+    // TODO add method and command to reload all current selectors
 }

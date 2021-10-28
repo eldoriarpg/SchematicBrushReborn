@@ -1,12 +1,16 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.util.Randomable;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.NotNull;
 
+import javax.naming.Name;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +29,13 @@ public class SchematicSet implements Randomable {
      */
     private final List<Schematic> schematics;
     private final Selector selector;
-    private final Map<SchematicModifier, Mutator<?>> schematicModifier;
+    private final Map<? extends Nameable, Mutator<?>> schematicModifier;
     /**
      * Weight of the brush. Must be always larger then 1. Is -1 when no weight is applied.
      */
     private int weight;
 
-    public SchematicSet(Set<Schematic> schematics, Selector selector, Map<SchematicModifier, Mutator<?>> schematicModifier, int weight) {
+    public SchematicSet(Set<Schematic> schematics, Selector selector, Map<? extends Nameable, Mutator<?>> schematicModifier, int weight) {
         this.schematics = new ArrayList<>(schematics);
         this.selector = selector;
         this.schematicModifier = schematicModifier;

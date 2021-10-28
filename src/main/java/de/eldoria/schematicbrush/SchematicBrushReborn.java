@@ -10,7 +10,6 @@ import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
-import de.eldoria.schematicbrush.commands.Modify;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Config;
@@ -21,7 +20,6 @@ import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
-import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -57,16 +55,16 @@ public class SchematicBrushReborn extends EldoPlugin {
             schematics = new SchematicRegistry();
             var cache = new SchematicBrushCache(this, config);
             schematics.register(SchematicBrushCache.key, cache);
-            if (config.getGeneral().isCheckUpdates()) {
+            if (config.general().isCheckUpdates()) {
                 Updater.butler(
-                        new ButlerUpdateData(this, "schematicbrush.admin.reload", config.getGeneral().isCheckUpdates(),
+                        new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
                                 false, 12, ButlerUpdateData.HOST)).start();
             }
         } else {
             schematics.reload();
         }
 
-        if(settingsRegistry == null){
+        if (settingsRegistry == null) {
             settingsRegistry = new BrushSettingsRegistry();
             settingsRegistry.registerDefault(schematics);
         }
@@ -85,9 +83,8 @@ public class SchematicBrushReborn extends EldoPlugin {
 
         reload();
 
-        var brushCommand = new Brush(this, schematics, config);
-        var modifyCommand = new Modify(this, schematics, config);
-        var presetCommand = new Preset(this, schematics, config);
+        var brushCommand = new Brush(this, schematics, config, settingsRegistry);
+        var presetCommand = new Preset(this, config);
         var adminCommand = new Admin(this, schematics);
 
         var notifyListener = new NotifyListener(this, config);
@@ -100,7 +97,6 @@ public class SchematicBrushReborn extends EldoPlugin {
         registerListener(new BrushModifier(), renderService, notifyListener);
 
         registerCommand("sbr", brushCommand);
-        registerCommand("sbrm", modifyCommand);
         registerCommand("sbrp", presetCommand);
         registerCommand("sbra", adminCommand);
         registerCommand("sbrs", settingsCommand);
@@ -152,15 +148,15 @@ public class SchematicBrushReborn extends EldoPlugin {
 
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.Preset.class, SchematicConfig.class, SchematicSource.class);
+        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.presets.Preset.class, SchematicConfig.class, SchematicSource.class);
     }
 
     public SchematicRegistry schematics() {
         return schematics;
     }
 
-    public BrushSettingsRegistry brushSettingsRegistry(){
-        return
+    public BrushSettingsRegistry brushSettingsRegistry() {
+        return settingsRegistry;
     }
 
     public Config config() {

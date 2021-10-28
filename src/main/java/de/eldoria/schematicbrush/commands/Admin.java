@@ -7,11 +7,12 @@ import de.eldoria.schematicbrush.commands.admin.Debug;
 import de.eldoria.schematicbrush.commands.admin.Info;
 import de.eldoria.schematicbrush.commands.admin.Reload;
 import de.eldoria.schematicbrush.commands.admin.ReloadSchematics;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
 
 public class Admin extends AdvancedCommand {
     public Admin(SchematicBrushReborn instance,
-                 SchematicBrushCache cache) {
+                 SchematicRegistry cache) {
         super(instance);
         meta(CommandMeta.builder("sba")
                 .buildSubCommands((cmds, builder) -> {

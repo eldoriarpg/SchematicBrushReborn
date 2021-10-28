@@ -64,7 +64,7 @@ public class SchematicBrushCache implements SchematicCache {
 
         schematicsCache.clear();
 
-        for (var key : config.getSchematicConfig().getSources()) {
+        for (var key : config.schematicConfig().getSources()) {
             var path = key.getPath();
             if (path == null || path.isEmpty()) {
                 plugin.getLogger().log(Level.CONFIG, "Path " + key + " has no path. Skipping!");
@@ -129,7 +129,7 @@ public class SchematicBrushCache implements SchematicCache {
         var directory = file.toPath().getParent();
         directory = directory.subpath(1, directory.getNameCount());
 
-        var sourceForPath = config.getSchematicConfig().getSourceForPath(directory);
+        var sourceForPath = config.schematicConfig().getSourceForPath(directory);
 
         if (sourceForPath.isEmpty()) {
             logger.log(Level.CONFIG, "File " + directory + "is not part of a source");
@@ -148,7 +148,7 @@ public class SchematicBrushCache implements SchematicCache {
 
         String key;
         if (!rawKey.isEmpty()) {
-            key = rawKey.replace(" ", "_").substring(1).replace("\\", config.getSchematicConfig().getPathSeparator());
+            key = rawKey.replace(" ", "_").substring(1).replace("\\", config.schematicConfig().getPathSeparator());
         } else {
             key = rawKey;
         }
@@ -163,8 +163,8 @@ public class SchematicBrushCache implements SchematicCache {
             key = key.replaceFirst(uuidString + "/?", "");
         }
 
-        if (config.getSchematicConfig().isPathSourceAsPrefix()) {
-            key = source.getPrefix() + config.getSchematicConfig().getPathSeparator() + key;
+        if (config.schematicConfig().isPathSourceAsPrefix()) {
+            key = source.getPrefix() + config.schematicConfig().getPathSeparator() + key;
         }
 
         var format = ClipboardFormats.findByFile(file);
@@ -322,7 +322,7 @@ public class SchematicBrushCache implements SchematicCache {
     @Override
     public List<String> getMatchingDirectories(Player player, String dir, int count) {
         Set<String> matches = new HashSet<>();
-        var seperator = config.getSchematicConfig().getPathSeparator().charAt(0);
+        var seperator = config.schematicConfig().getPathSeparator().charAt(0);
         var deep = TextUtil.countChars(dir, seperator);
         for (var k : schematicsCache.keySet()) {
             if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {

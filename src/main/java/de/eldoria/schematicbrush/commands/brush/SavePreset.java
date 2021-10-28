@@ -1,4 +1,4 @@
-package de.eldoria.schematicbrush.commands.preset;
+package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
@@ -6,33 +6,37 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.sections.presets.Preset;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Config config;
+public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
-    public Remove(Plugin plugin, Config config) {
-        super(plugin, CommandMeta.builder("remove")
-                .withPermission("schematicbrush.preset.remove")
+    private final Config config;
+    private final Sessions sessions;
+
+    public SavePreset(Plugin plugin, Sessions sessions, Config config) {
+        super(plugin, CommandMeta.builder("savePreset")
                 .addUnlocalizedArgument("name", true)
                 .build());
         this.config = config;
+        this.sessions = sessions;
     }
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var name = args.asString(0);
+        var session = sessions.getOrCreateSession(player);
+
+        var schematicSets = session.schematicSets();
+        CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
+        var preset = new Preset(args.asString(0), schematicSets);
         if (args.hasFlag("g")) {
-
-            CommandAssertions.isTrue(config.presets().removePreset(name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
+            config.presets().addPreset(preset);
         } else {
-            CommandAssertions.isTrue(config.presets().removePreset(player, name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
+            config.presets().addPreset(player, preset);
         }
-
-        messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!");
+        messageSender().sendMessage(player, "Preset saved.");
     }
 }
