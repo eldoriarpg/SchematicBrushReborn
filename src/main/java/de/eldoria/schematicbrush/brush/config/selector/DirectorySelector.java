@@ -41,13 +41,6 @@ public class DirectorySelector extends BaseSelector {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Directory: <%s>%s <%s>", Colors.NAME, Colors.VALUE, directory, term())
-                .build();
-    }
-
-    @Override
     public String name() {
         return "Directory";
     }

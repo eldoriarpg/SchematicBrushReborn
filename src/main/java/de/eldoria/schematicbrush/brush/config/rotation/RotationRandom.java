@@ -24,9 +24,7 @@ public class RotationRandom extends RotationList {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Random", Colors.NAME)
-                .build();
+    public String descriptor() {
+        return "";
     }
 }

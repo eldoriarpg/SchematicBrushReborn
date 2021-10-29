@@ -11,6 +11,10 @@ import de.eldoria.schematicbrush.config.sections.presets.Preset;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
@@ -38,5 +42,13 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
             config.presets().addPreset(player, preset);
         }
         messageSender().sendMessage(player, "Preset saved.");
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        if(args.size() == 1){
+            return Collections.singletonList("<name>");
+        }
+        return Collections.emptyList();
     }
 }

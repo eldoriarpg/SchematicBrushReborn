@@ -69,9 +69,7 @@ public class ReplaceAll implements Mutator<Boolean> {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>%s", Colors.HEADING, Colors.VALUE, value)
-                .build();
+    public String descriptor() {
+        return String.format("%s", value);
     }
 }

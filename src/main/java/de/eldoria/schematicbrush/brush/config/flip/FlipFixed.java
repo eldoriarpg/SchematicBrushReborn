@@ -36,10 +36,8 @@ public class FlipFixed extends AFlip {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Fixed: <%s>%s", Colors.HEADING, Colors.NAME, Colors.VALUE, flip.name())
-                .build();
+    public String descriptor() {
+        return flip.name();
     }
 
     @Override

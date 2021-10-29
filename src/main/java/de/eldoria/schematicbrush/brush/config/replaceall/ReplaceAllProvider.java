@@ -5,6 +5,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.Mutator;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public abstract class ReplaceAllProvider extends ModifierProvider {
 
-    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider("fixed") {
+    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class,"fixed") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             return new ReplaceAll(args.asBoolean(0));
@@ -32,7 +33,7 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         }
     };
 
-    public ReplaceAllProvider(String name) {
-        super(name);
+    public ReplaceAllProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
+        super(clazz, name);
     }
 }

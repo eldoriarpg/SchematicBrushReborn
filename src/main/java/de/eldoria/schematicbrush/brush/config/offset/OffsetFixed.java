@@ -32,10 +32,8 @@ public class OffsetFixed extends AOffset {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Fixed: <%s>%s", Colors.NAME, Colors.VALUE, offset)
-                .build();
+    public String descriptor() {
+        return String.format("%s", offset);
     }
 
     @Override

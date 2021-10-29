@@ -18,18 +18,16 @@ import java.util.stream.Collectors;
 
 public class PresetRegistry implements ConfigurationSerializable {
 
-    private Map<UUID, PresetContainer> playerPresets;
-    private PresetContainer globalPresets;
+    private Map<UUID, PresetContainer> playerPresets = new HashMap<>();
+    private PresetContainer globalPresets = new PresetContainer();
 
     public PresetRegistry(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
-        map.getMap("playerPresets", (k, v) -> UUID.fromString(k));
-        map.getValue("globalPresets");
+        playerPresets = map.getMap("playerPresets", (k, v) -> UUID.fromString(k));
+        globalPresets = map.getValueOrDefault("globalPresets", new PresetContainer());
     }
 
     public PresetRegistry() {
-        playerPresets = new HashMap<>();
-        globalPresets = new PresetContainer();
     }
 
     @Override

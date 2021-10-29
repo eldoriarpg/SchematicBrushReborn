@@ -28,10 +28,12 @@ public class Brush extends AdvancedCommand {
                 .withPermission("schematicbrush.brush.use")
                 .buildSubCommands((cmds, self) -> {
                     var sessions = new Sessions(plugin, registry, schematics);
+                    var create = new Create(plugin, sessions);
+                    self.withDefaultCommand(create);
                     cmds.add(new AddSet(plugin, sessions));
                     cmds.add(new Bind(plugin, sessions));
                     cmds.add(new Clear(plugin, sessions));
-                    cmds.add(new Create(plugin, sessions));
+                    cmds.add(create);
                     cmds.add(new Modify(plugin, sessions, registry));
                     cmds.add(new ModifySet(plugin, sessions, registry, schematics));
                     cmds.add(new RemoveSet(plugin, sessions));

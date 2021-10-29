@@ -9,6 +9,9 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class Modify extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
@@ -29,5 +32,10 @@ public class Modify extends AdvancedCommand implements IPlayerTabExecutor {
         var mutatorPair = registry.parsePlacementModifier(args);
         session.setPlacementModifier(mutatorPair.first, mutatorPair.second);
         sessions.showBrush(player);
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        return registry.completePlacementModifier(args);
     }
 }

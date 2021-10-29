@@ -37,10 +37,8 @@ public class RotationFixed extends ARotation {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Fixed: <%s>%s", Colors.NAME, Colors.VALUE, rotation.degree())
-                .build();
+    public String descriptor() {
+        return String.format("%s", rotation.degree());
     }
 
     @Override

@@ -5,13 +5,14 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.Mutator;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
 
 public abstract class IncludeAirProvider extends ModifierProvider {
-    public static final IncludeAirProvider FIXED = new IncludeAirProvider("fixed") {
+    public static final IncludeAirProvider FIXED = new IncludeAirProvider(IncludeAir.class, "fixed") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             return new IncludeAir(args.asBoolean(0));
@@ -31,7 +32,7 @@ public abstract class IncludeAirProvider extends ModifierProvider {
         }
     };
 
-    public IncludeAirProvider(String name) {
-        super(name);
+    public IncludeAirProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
+        super(clazz, name);
     }
 }

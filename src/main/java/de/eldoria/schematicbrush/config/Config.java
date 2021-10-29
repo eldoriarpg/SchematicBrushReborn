@@ -46,6 +46,11 @@ public class Config extends EldoConfig {
             return;
         }
 
+        if (version == 1) {
+            // v1 config does not really contain important data anyway...
+            getConfig().getKeys(false).forEach(k -> getConfig().set(k, null));
+        }
+
         if (version == 2) {
             upgradeToV3();
         }
@@ -57,7 +62,7 @@ public class Config extends EldoConfig {
 
     private void migrateToV4() {
         plugin.getLogger().info("Converting config to Version 4");
-        getConfig().set("presets", null);
+        plugin.getConfig().set("presets", null);
         setVersion(4, true);
     }
 

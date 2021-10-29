@@ -21,5 +21,6 @@ public class Clear extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         sessions.getOrCreateSession(player).clear();
+        sessions.showBrush(player);
     }
 }

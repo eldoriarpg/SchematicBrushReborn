@@ -5,6 +5,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.Mutator;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public abstract class FlipProvider extends ModifierProvider {
 
-    public static final FlipProvider FIXED = new FlipProvider("fixed") {
+    public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class,"fixed") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             return new FlipFixed(Flip.asFlip(args.asString(0)));
@@ -34,7 +35,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider LIST = new FlipProvider("list") {
+    public static final FlipProvider LIST = new FlipProvider(FlipList.class,"list") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             List<Flip> flips = new ArrayList<>();
@@ -55,7 +56,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider RANDOM = new FlipProvider("random") {
+    public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class,"random") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             return new FlipRandom();
@@ -72,7 +73,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public FlipProvider(String name) {
-        super(name);
+    public FlipProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
+        super(clazz, name);
     }
 }

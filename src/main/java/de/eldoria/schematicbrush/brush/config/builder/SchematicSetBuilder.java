@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
  */
 public class SchematicSetBuilder implements ConfigurationSerializable {
     private Selector selector;
-    private Map<Nameable, Mutator<?>> schematicModifier;
+    private Map<Nameable, Mutator<?>> schematicModifier = new HashMap<>();
     private Set<Schematic> schematics = Collections.emptySet();
     private int weight = -1;
 
@@ -123,11 +124,12 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     }
 
     public String interactComponent(BrushSettingsRegistry registry, int id) {
-        var selector = "Selector:" + registry.selector().stream()
+        var selector = String.format("<%s>Selector: <%s>", Colors.HEADING, Colors.CHANGE);
+        selector += registry.selector().stream()
                 .map(SettingProvider::name)
-                .map(sel -> String.format("<click:suggest_command:'/sbr modify selector %s '>[%s]</click>", sel, sel))
+                .map(sel -> String.format("<click:suggest_command:'/sbr modifyset %s selector %s '>[%s]</click>", id, sel, sel))
                 .collect(Collectors.joining(", "));
-        selector += "\n" + selector().asComponent();
+        selector += "\n" + BuildUtil.renderProvider(selector());
 
         var mutatorMap = schematicModifier();
         var modifierStrings = new ArrayList<String>();
@@ -140,12 +142,12 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     }
 
     public String infoComponent() {
-        var selector = selector().asComponent();
+        var selector = BuildUtil.renderProvider(selector());
 
         var mutatorMap = schematicModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : mutatorMap.entrySet()) {
-            modifierStrings.add(entry.getKey().name() + "\n  " + entry.getValue().asComponent());
+            modifierStrings.add(entry.getKey().name() + "\n  " + BuildUtil.renderProvider(entry.getValue()));
         }
         var modifier = String.join("\n", modifierStrings);
         var weight = String.format("<%s>Weight: <%s>%s ", Colors.NAME, Colors.VALUE, weight());

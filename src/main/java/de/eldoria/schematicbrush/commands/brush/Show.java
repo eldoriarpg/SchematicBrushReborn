@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
+import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
@@ -12,7 +13,7 @@ public class Show extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
 
     public Show(Plugin plugin, Sessions sessions) {
-        super(plugin);
+        super(plugin, CommandMeta.builder("show").build());
         this.sessions = sessions;
     }
 

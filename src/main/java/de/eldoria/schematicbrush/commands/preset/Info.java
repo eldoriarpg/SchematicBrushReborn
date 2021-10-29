@@ -13,6 +13,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     private final Config config;
@@ -39,5 +43,13 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
         var preset = optPreset.get();
 
         audiences.player(player).sendMessage(miniMessage.parse(preset.detailComponent()));
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        if (args.size() == 1) {
+            return config.presets().complete(player, args.asString(0));
+        }
+        return Collections.emptyList();
     }
 }

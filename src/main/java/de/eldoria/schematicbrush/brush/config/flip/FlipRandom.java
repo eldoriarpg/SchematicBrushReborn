@@ -26,10 +26,8 @@ public class FlipRandom extends FlipList {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Random", Colors.NAME)
-                .build();
+    public String descriptor() {
+        return "";
     }
 
     @Override

@@ -7,6 +7,7 @@ import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.Mutator;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public abstract class OffsetProvider extends ModifierProvider {
 
-    public static final OffsetProvider FIXED = new OffsetProvider("fixed") {
+    public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class,"fixed") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             return new OffsetFixed(args.asInt(0));
@@ -34,7 +35,7 @@ public abstract class OffsetProvider extends ModifierProvider {
             return new OffsetFixed(0);
         }
     };
-    public static final OffsetProvider LIST = new OffsetProvider("list") {
+    public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class,"list") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             List<Integer> values = new ArrayList<>();
@@ -54,7 +55,7 @@ public abstract class OffsetProvider extends ModifierProvider {
             return new OffsetList(Collections.singletonList(0));
         }
     };
-    public static final OffsetProvider RANGE = new OffsetProvider("range") {
+    public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "range") {
         @Override
         public Mutator parse(Arguments args) throws CommandException {
             var lower = args.asInt(0);
@@ -76,7 +77,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public OffsetProvider(String name) {
-        super(name);
+    public OffsetProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
+        super(clazz, name);
     }
 }

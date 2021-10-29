@@ -25,10 +25,8 @@ public class RegexSelector extends BaseSelector {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Regex: <%s>%s", Colors.NAME, Colors.VALUE, term())
-                .build();
+    public String descriptor() {
+        return term();
     }
 
     @Override

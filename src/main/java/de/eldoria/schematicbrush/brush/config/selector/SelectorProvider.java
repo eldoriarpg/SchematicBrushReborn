@@ -5,6 +5,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.SettingProvider;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -14,7 +15,7 @@ import java.util.function.Function;
 public abstract class SelectorProvider extends SettingProvider<Selector> {
 
     public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
-            new SelectorProvider("directory", registry) {
+            new SelectorProvider(DirectorySelector.class, "directory", registry) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
                     return new DirectorySelector(args.asString(0), args.asString(1));
@@ -35,7 +36,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
 
             };
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
-            new SelectorProvider("name", registry) {
+            new SelectorProvider(NameSelector.class, "name", registry) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
                     return new NameSelector(args.asString(0));
@@ -50,7 +51,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                 }
             };
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
-            new SelectorProvider("regex", registry) {
+            new SelectorProvider(RegexSelector.class, "regex", registry) {
                 @Override
                 public Selector parse(Arguments args) throws CommandException {
                     return new NameSelector(args.asString(0));
@@ -66,8 +67,8 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
             };
     private final SchematicRegistry registry;
 
-    protected SelectorProvider(String name, SchematicRegistry registry) {
-        super(name);
+    public SelectorProvider(Class<? extends ConfigurationSerializable> clazz, String name, SchematicRegistry registry) {
+        super(clazz, name);
         this.registry = registry;
     }
 

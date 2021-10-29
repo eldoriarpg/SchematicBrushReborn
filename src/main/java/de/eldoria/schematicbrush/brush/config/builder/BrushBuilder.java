@@ -50,10 +50,11 @@ public final class BrushBuilder {
             builder.withMutator(entry.getKey(), entry.getValue());
         }
         schematicSets.add(builder);
+        builder.refreshSchematics(owner, schematicRegistry);
         return schematicSets.size() - 1;
     }
 
-    public void setPlacementModifier(PlacementModifier type, Mutator provider) {
+    public void setPlacementModifier(PlacementModifier type, Mutator<?> provider) {
         placementModifier.put(type, provider);
     }
 
@@ -80,7 +81,7 @@ public final class BrushBuilder {
         return Collections.unmodifiableMap(placementModifier);
     }
 
-    public void clear(){
+    public void clear() {
         for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {
             setPlacementModifier(entry.getKey(), entry.getValue());
         }

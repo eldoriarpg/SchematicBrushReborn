@@ -37,13 +37,6 @@ public class NameSelector extends BaseSelector {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>Name: <%s>%s", Colors.NAME, Colors.VALUE, term())
-                .build();
-    }
-
-    @Override
     public String name() {
         return "Name";
     }

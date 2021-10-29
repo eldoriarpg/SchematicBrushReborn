@@ -2,20 +2,27 @@ package de.eldoria.schematicbrush.brush.config;
 
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public abstract class SettingProvider<T> {
     protected final String name;
+    private final Class<? extends ConfigurationSerializable> clazz;
 
-    public SettingProvider(String name) {
+    public SettingProvider(Class<? extends ConfigurationSerializable> clazz,String name) {
+        this.clazz = clazz;
         assert !name.isBlank();
         this.name = name;
     }
 
     public boolean isMatch(Arguments args) {
         return name.equalsIgnoreCase(args.asString(0));
+    }
+
+    public Class<? extends ConfigurationSerializable> serializationClass(){
+        return clazz;
     }
 
     public abstract T parse(Arguments args) throws CommandException;

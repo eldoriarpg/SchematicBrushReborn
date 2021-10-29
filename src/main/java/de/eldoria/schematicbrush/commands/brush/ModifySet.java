@@ -15,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
@@ -42,8 +43,8 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
             return;
         }
 
-        if ("selector".equalsIgnoreCase(args.asString(0))) {
-            var selector = registry.parseSelector(args.subArguments());
+        if ("selector".equalsIgnoreCase(args.asString(1))) {
+            var selector = registry.parseSelector(args.subArguments().subArguments());
             set.get().selector(selector);
             set.get().refreshSchematics(player, schematics);
         } else {
@@ -57,14 +58,18 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         if (args.size() == 1) {
-            var strings = registry.completeSchematicModifier(args);
-            strings.addAll(TabCompleteUtil.complete(args.asString(0), "selector"));
+            return Collections.singletonList("<id>");
+        }
+
+        if (args.size() == 2) {
+            var strings = registry.completeSchematicModifier(args.subArguments());
+            strings.addAll(TabCompleteUtil.complete(args.asString(1), "selector"));
             return strings;
         }
 
-        if (args.asString(0).equals("selector")) {
-            registry.completeSelector(args.subArguments());
+        if ("selector".equalsIgnoreCase(args.asString(1))) {
+            return registry.completeSelector(args.subArguments().subArguments(), player);
         }
-        return registry.completeSelector(args);
+        return registry.completeSchematicModifier(args.subArguments());
     }
 }

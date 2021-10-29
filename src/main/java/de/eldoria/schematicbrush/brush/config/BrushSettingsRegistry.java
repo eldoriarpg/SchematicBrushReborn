@@ -14,6 +14,8 @@ import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.selector.SelectorProvider;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.impl.SchematicBrushCache;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,15 +29,18 @@ public class BrushSettingsRegistry {
     private final Map<SchematicModifier, List<ModifierProvider>> schematicModifier = new LinkedHashMap<>();
     private final Map<PlacementModifier, List<ModifierProvider>> placementModifier = new LinkedHashMap<>();
 
-    public void registerSelector(SelectorProvider selectorProvider) {
-        selector.add(selectorProvider);
+    public void registerSelector(SelectorProvider provider) {
+        ConfigurationSerialization.registerClass(provider.serializationClass());
+        selector.add(provider);
     }
 
     public void registerSchematicModifier(SchematicModifier type, ModifierProvider provider) {
+        ConfigurationSerialization.registerClass(provider.serializationClass());
         schematicModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
     }
 
     public void registerPlacementModifier(PlacementModifier type, ModifierProvider provider) {
+        ConfigurationSerialization.registerClass(provider.serializationClass());
         placementModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
     }
 
@@ -122,11 +127,11 @@ public class BrushSettingsRegistry {
 
     // Tab completion
 
-    public List<String> completeSelector(Arguments args) throws CommandException {
+    public List<String> completeSelector(Arguments args, Player player) throws CommandException {
         if (args.size() == 1) {
             return TabCompleteUtil.complete(args.asString(0), selector.stream().map(SettingProvider::name));
         }
-        return getSettingProvider(args.subArguments(), selector).complete(args, null);
+        return getSettingProvider(args, selector).complete(args.subArguments(), player);
     }
 
     public List<String> completePlacementModifier(Arguments args) throws CommandException {
@@ -142,7 +147,7 @@ public class BrushSettingsRegistry {
             return TabCompleteUtil.complete(args.asString(0), map.keySet().stream().map(Nameable::name));
         }
         if (args.size() == 2) {
-            return TabCompleteUtil.complete(args.asString(1), getProviders(args, map).second.stream().map(SettingProvider::name));
+            return completeProvider(args, getProviders(args, map).second);
         }
         return getProvider(args, map).second.complete(args.subArguments().subArguments(), null);
     }
@@ -169,5 +174,9 @@ public class BrushSettingsRegistry {
                 .filter(p -> p.isMatch(args))
                 .findFirst()
                 .orElseThrow(() -> CommandException.message("Unkown modifier"));
+    }
+
+    private <T extends SettingProvider<?>> List<String> completeProvider(Arguments args, List<T> provider) throws CommandException {
+        return TabCompleteUtil.complete(args.asString(0), provider.stream().map(p -> p.name()));
     }
 }

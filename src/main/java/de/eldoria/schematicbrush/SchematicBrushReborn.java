@@ -14,9 +14,11 @@ import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.config.ConfigUpdater;
+import de.eldoria.schematicbrush.config.PresetContainer;
 import de.eldoria.schematicbrush.config.sections.GeneralConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
+import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
@@ -148,7 +150,8 @@ public class SchematicBrushReborn extends EldoPlugin {
 
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.presets.Preset.class, SchematicConfig.class, SchematicSource.class);
+        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.presets.Preset.class, SchematicConfig.class,
+                SchematicSource.class, PresetContainer.class, PresetRegistry.class);
     }
 
     public SchematicRegistry schematics() {

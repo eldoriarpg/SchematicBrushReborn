@@ -72,9 +72,7 @@ public abstract class APlacement implements Mutator<APlacement> {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>%s", Colors.HEADING, Colors.NAME, name())
-                .build();
+    public String descriptor() {
+        return name();
     }
 }

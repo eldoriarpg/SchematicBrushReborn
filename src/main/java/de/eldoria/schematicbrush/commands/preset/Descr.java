@@ -11,6 +11,10 @@ import de.eldoria.schematicbrush.config.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     private final Config config;
@@ -35,5 +39,13 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
         preset.get().setDescription(args.join(1));
         messageSender().sendMessage(player, "Changed description of preset §b" + name + "§r!");
         config.save();
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        if (args.size() == 1) {
+            return config.presets().complete(player, args.asString(0));
+        }
+        return Collections.emptyList();
     }
 }

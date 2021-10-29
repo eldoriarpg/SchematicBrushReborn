@@ -53,11 +53,8 @@ public class RotationList extends ARotation {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>List: <%s>%s", Colors.NAME, Colors.VALUE,
-                        values.stream().map(Rotation::degree).map(String::valueOf).collect(Collectors.joining(", ")))
-                .build();
+    public String descriptor() {
+        return values.stream().map(Rotation::degree).map(String::valueOf).collect(Collectors.joining(", "));
     }
 
     @Override

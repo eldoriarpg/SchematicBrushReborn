@@ -1,8 +1,6 @@
 package de.eldoria.schematicbrush.brush.config.flip;
 
-import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.schematicbrush.util.Colors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -54,13 +52,8 @@ public class FlipList extends AFlip {
     }
 
     @Override
-    public String asComponent() {
-        return MessageComposer.create()
-                .text("  <%s>List: <%s>%s", Colors.NAME, Colors.VALUE,
-                        values.stream()
-                                .map(Flip::name)
-                                .collect(Collectors.joining(", ")))
-                .build();
+    public String descriptor() {
+        return values.stream().map(Flip::name).collect(Collectors.joining(", "));
     }
 
     @Override

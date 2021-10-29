@@ -1,7 +1,9 @@
 package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
+import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
+import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
@@ -13,7 +15,7 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
 
     public Bind(Plugin plugin, Sessions sessions) {
-        super(plugin);
+        super(plugin, CommandMeta.builder("bind").build());
         this.sessions = sessions;
     }
 
@@ -22,6 +24,9 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         var session = sessions.getOrCreateSession(player);
         // TODO: check if brush is valid
         var brush = session.build(plugin(), player);
+
+        CommandAssertions.isFalse(brush.getSettings().getSchematicCount() == 0, "Brush is empty.");
+
         WorldEditBrush.setBrush(player, brush);
         messageSender().sendMessage(player, "Brush bound.");
     }

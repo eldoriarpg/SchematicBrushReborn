@@ -1,5 +1,7 @@
 package de.eldoria.schematicbrush.util;
 
 public interface ComponentProvider {
-    String asComponent();
+    String name();
+
+    String descriptor();
 }

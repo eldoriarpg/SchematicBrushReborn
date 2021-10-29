@@ -7,9 +7,14 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.messages.MessageType;
+import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
@@ -28,5 +33,14 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
             messageSender().send(MessageChannel.ACTION_BAR, MessageType.ERROR, player, "Invalid set.");
         }
         sessions.showBrush(player);
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        if (args.size() == 1) {
+            var size = sessions.getOrCreateSession(player).schematicSets().size();
+            return TabCompleteUtil.completeInt(args.asString(0), 0, size - 1, localizer());
+        }
+        return Collections.emptyList();
     }
 }

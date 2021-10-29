@@ -6,6 +6,4 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 public interface Mutator<T> extends IShiftable<T>, ConfigurationSerializable, ComponentProvider {
     void invoke(PasteMutation mutation);
-
-    String name();
 }

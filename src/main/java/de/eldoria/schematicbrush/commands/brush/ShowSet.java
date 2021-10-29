@@ -14,7 +14,7 @@ public class ShowSet extends AdvancedCommand implements IPlayerTabExecutor {
 
     public ShowSet(Plugin plugin, Sessions sessions) {
         super(plugin, CommandMeta.builder("showset")
-                .addArgument("id", true)
+                .addUnlocalizedArgument("id", true)
                 .build());
         this.sessions = sessions;
     }
