@@ -17,7 +17,7 @@ public abstract class FlipProvider extends ModifierProvider {
 
     public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class,"fixed") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             return new FlipFixed(Flip.asFlip(args.asString(0)));
         }
 
@@ -30,14 +30,14 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new FlipFixed(Flip.NONE);
         }
     };
 
     public static final FlipProvider LIST = new FlipProvider(FlipList.class,"list") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             List<Flip> flips = new ArrayList<>();
             for (var arg : args.args()) {
                 flips.add(Flip.asFlip(arg));
@@ -51,14 +51,14 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new FlipList(Collections.singletonList(Flip.NONE));
         }
     };
 
     public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class,"random") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             return new FlipRandom();
         }
 
@@ -68,8 +68,13 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new FlipRandom();
+        }
+
+        @Override
+        public boolean hasArguments() {
+            return false;
         }
     };
 

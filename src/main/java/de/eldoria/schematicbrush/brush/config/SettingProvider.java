@@ -11,7 +11,7 @@ public abstract class SettingProvider<T> {
     protected final String name;
     private final Class<? extends ConfigurationSerializable> clazz;
 
-    public SettingProvider(Class<? extends ConfigurationSerializable> clazz,String name) {
+    public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
         this.clazz = clazz;
         assert !name.isBlank();
         this.name = name;
@@ -21,11 +21,19 @@ public abstract class SettingProvider<T> {
         return name.equalsIgnoreCase(args.asString(0));
     }
 
-    public Class<? extends ConfigurationSerializable> serializationClass(){
+    public Class<? extends ConfigurationSerializable> serializationClass() {
         return clazz;
     }
 
     public abstract T parse(Arguments args) throws CommandException;
+
+    public boolean hasArguments() {
+        return true;
+    }
+
+    public String commandType() {
+        return hasArguments() ? "suggest_command" : "run_command";
+    }
 
     public abstract List<String> complete(Arguments args, Player player);
 

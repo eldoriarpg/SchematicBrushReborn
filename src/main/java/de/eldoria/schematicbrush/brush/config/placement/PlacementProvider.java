@@ -31,7 +31,7 @@ public abstract class PlacementProvider extends ModifierProvider {
     private static PlacementProvider of(String name, APlacement placement) {
         return new PlacementProvider(placement.getClass(), name) {
             @Override
-            public Mutator parse(Arguments args) throws CommandException {
+            public Mutator<?> parse(Arguments args) throws CommandException {
                 return placement;
             }
         };
@@ -43,7 +43,12 @@ public abstract class PlacementProvider extends ModifierProvider {
     }
 
     @Override
-    public Mutator defaultSetting() {
+    public Mutator<?> defaultSetting() {
         return new Drop();
+    }
+
+    @Override
+    public boolean hasArguments() {
+        return false;
     }
 }

@@ -16,7 +16,7 @@ public abstract class RotationProvider extends ModifierProvider {
     private static final String[] ROTATIONS = {"0", "90", "180", "270"};
     public static final RotationProvider RANDOM = new RotationProvider(RotationRandom.class, "random") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             return new RotationRandom();
         }
 
@@ -24,10 +24,16 @@ public abstract class RotationProvider extends ModifierProvider {
         public List<String> complete(Arguments args, Player player) {
             return Collections.emptyList();
         }
+
+        @Override
+        public boolean hasArguments() {
+            return false;
+        }
     };
+
     public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class,"fixed") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             return new RotationFixed(Rotation.asRotation(args.asString(0)));
         }
 
@@ -39,9 +45,10 @@ public abstract class RotationProvider extends ModifierProvider {
             return Collections.emptyList();
         }
     };
+
     public static final RotationProvider LIST = new RotationProvider(RotationList.class,"list") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             List<Rotation> values = new ArrayList<>();
             for (var arg : args) {
                 values.add(Rotation.asRotation(arg));
@@ -60,7 +67,7 @@ public abstract class RotationProvider extends ModifierProvider {
     }
 
     @Override
-    public Mutator defaultSetting() {
+    public Mutator<?> defaultSetting() {
         return new RotationFixed(Rotation.ROT_ZERO);
     }
 }

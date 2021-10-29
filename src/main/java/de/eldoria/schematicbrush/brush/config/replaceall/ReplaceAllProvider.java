@@ -15,7 +15,7 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
 
     public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class,"fixed") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             return new ReplaceAll(args.asBoolean(0));
         }
 
@@ -28,7 +28,7 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new ReplaceAll(false);
         }
     };

@@ -27,4 +27,9 @@ public class RotationRandom extends RotationList {
     public String descriptor() {
         return "";
     }
+
+    @Override
+    public String name() {
+        return "Random";
+    }
 }

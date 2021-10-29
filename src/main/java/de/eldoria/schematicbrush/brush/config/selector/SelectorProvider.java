@@ -33,8 +33,8 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
 
                     return Collections.emptyList();
                 }
-
             };
+
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
             new SelectorProvider(NameSelector.class, "name", registry) {
                 @Override
@@ -50,6 +50,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                     return Collections.emptyList();
                 }
             };
+
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
             new SelectorProvider(RegexSelector.class, "regex", registry) {
                 @Override
@@ -65,6 +66,7 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
                     return Collections.emptyList();
                 }
             };
+
     private final SchematicRegistry registry;
 
     public SelectorProvider(Class<? extends ConfigurationSerializable> clazz, String name, SchematicRegistry registry) {

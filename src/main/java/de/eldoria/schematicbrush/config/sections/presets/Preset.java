@@ -2,22 +2,21 @@ package de.eldoria.schematicbrush.config.sections.presets;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
-import de.eldoria.schematicbrush.config.PresetContainer;
 import de.eldoria.schematicbrush.util.Colors;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @SerializableAs("sbrPreset")
 public class Preset implements ConfigurationSerializable {
     private final String name;
     private String description;
-    private List<SchematicSetBuilder> schematicSets;
+    private final List<SchematicSetBuilder> schematicSets;
 
     public Preset(String name, List<SchematicSetBuilder> schematicSets) {
         this(name, "none", schematicSets);
@@ -56,15 +55,14 @@ public class Preset implements ConfigurationSerializable {
         return String.format("<%s>%s <%s><click:run_command:/preset info %s>[Info]</click>", Colors.NAME, name, Colors.ADD, (global ? "g:" : "") + name);
     }
 
-    public String detailComponent(){
-        List<String> sets = new ArrayList<>();
-        for (var set : schematicSets) {
-            sets.add(String.format("<hover:show_text:'%s'>%s</hover>", set.infoComponent(), set.selector().descriptor()));
-        }
+    public String detailComponent() {
+        var sets = schematicSets.stream()
+                .map(set -> String.format("<hover:show_text:'%s'>%s</hover>", set.infoComponent(), set.selector().descriptor()))
+                .collect(Collectors.joining("\n"));
 
         var message = String.format("<%s>Information about preset %s", Colors.HEADING, Colors.NAME);
         message += String.format("<%s>Description: <%s>%s", Colors.NAME, Colors.VALUE, description());
-        message += String.format("<%s>Schematic Sets:%n%s", String.join("\n", sets));
+        message += String.format("<%s>Schematic Sets:%n%s", Colors.NAME, sets);
         return message;
     }
 

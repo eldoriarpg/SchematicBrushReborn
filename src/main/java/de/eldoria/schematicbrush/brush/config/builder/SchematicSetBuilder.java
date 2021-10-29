@@ -5,7 +5,6 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.Nameable;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
-import de.eldoria.schematicbrush.brush.config.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
@@ -126,10 +125,9 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     public String interactComponent(BrushSettingsRegistry registry, int id) {
         var selector = String.format("<%s>Selector: <%s>", Colors.HEADING, Colors.CHANGE);
         selector += registry.selector().stream()
-                .map(SettingProvider::name)
-                .map(sel -> String.format("<click:suggest_command:'/sbr modifyset %s selector %s '>[%s]</click>", id, sel, sel))
+                .map(sel -> String.format("<click:%s:'/sbr modifyset %s selector %s '>[%s]</click>", sel.commandType(), id, sel.name(), sel.name()))
                 .collect(Collectors.joining(", "));
-        selector += "\n" + BuildUtil.renderProvider(selector());
+        selector += String.format("%n  <hover:show_text:'%s'>%s</hover>", schematicInfo(), BuildUtil.renderProvider(selector()));
 
         var mutatorMap = schematicModifier();
         var modifierStrings = new ArrayList<String>();
@@ -137,7 +135,8 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
             modifierStrings.add(buildModifier("/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
         var modifier = String.join("\n", modifierStrings);
-        var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset weight '><%s>[change]</click>", Colors.NAME, Colors.VALUE, weight(), Colors.CHANGE);
+        var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
+                Colors.NAME, Colors.VALUE, weight(), id, Colors.CHANGE);
         return String.join("\n", selector, modifier, weight);
     }
 
@@ -147,10 +146,24 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
         var mutatorMap = schematicModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : mutatorMap.entrySet()) {
-            modifierStrings.add(entry.getKey().name() + "\n  " + BuildUtil.renderProvider(entry.getValue()));
+            modifierStrings.add(String.format("<%s>%s%n  %s", Colors.HEADING, entry.getKey().name(), BuildUtil.renderProvider(entry.getValue())));
         }
         var modifier = String.join("\n", modifierStrings);
         var weight = String.format("<%s>Weight: <%s>%s ", Colors.NAME, Colors.VALUE, weight());
         return String.join("\n", selector, modifier, weight);
+    }
+
+    private String schematicInfo() {
+        var result = String.format("<%s>%s<%s> Schematics%n", Colors.NAME, schematics.size(), Colors.HEADING);
+
+        result += schematics.stream()
+                .limit(10)
+                .map(n -> String.format("<%s>%s", Colors.VALUE, n.name()))
+                .collect(Collectors.joining("\n"));
+
+        if (schematicCount() > 10) {
+            result += String.format("%n<%s>... and %s more.", Colors.NEUTRAL, schematics.size() - 10);
+        }
+        return result;
     }
 }

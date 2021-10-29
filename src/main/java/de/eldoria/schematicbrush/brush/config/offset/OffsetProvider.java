@@ -18,7 +18,7 @@ public abstract class OffsetProvider extends ModifierProvider {
 
     public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class,"fixed") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             return new OffsetFixed(args.asInt(0));
         }
 
@@ -31,13 +31,13 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new OffsetFixed(0);
         }
     };
     public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class,"list") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             List<Integer> values = new ArrayList<>();
             for (var i = 0; i < args.size(); i++) {
                 values.add(args.asInt(i));
@@ -51,13 +51,13 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new OffsetList(Collections.singletonList(0));
         }
     };
     public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "range") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             var lower = args.asInt(0);
             var upper = args.asInt(1);
             return new OffsetRange(lower, upper);
@@ -72,7 +72,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new OffsetRange(0, 0);
         }
     };

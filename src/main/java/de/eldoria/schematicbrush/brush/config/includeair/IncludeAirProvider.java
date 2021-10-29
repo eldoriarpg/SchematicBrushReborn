@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class IncludeAirProvider extends ModifierProvider {
     public static final IncludeAirProvider FIXED = new IncludeAirProvider(IncludeAir.class, "fixed") {
         @Override
-        public Mutator parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) throws CommandException {
             return new IncludeAir(args.asBoolean(0));
         }
 
@@ -27,7 +27,7 @@ public abstract class IncludeAirProvider extends ModifierProvider {
         }
 
         @Override
-        public Mutator defaultSetting() {
+        public Mutator<?> defaultSetting() {
             return new IncludeAir(false);
         }
     };

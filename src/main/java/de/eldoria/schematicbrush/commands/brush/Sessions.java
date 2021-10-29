@@ -1,5 +1,7 @@
 package de.eldoria.schematicbrush.commands.brush;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
+import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.Nameable;
@@ -62,8 +64,8 @@ public class Sessions {
         sets += String.format("  <click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>%n", Colors.ADD);
 
         sets += builder.schematicSets().stream()
-                .map(set -> String.format("<%s>%s <%s><click:run_command:'sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
-                        Colors.NAME, BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.getAndIncrement(), Colors.REMOVE, count.get()))
+                .map(set -> String.format("<%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
+                        Colors.NAME, set.infoComponent(), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
                 .collect(Collectors.joining("\n"));
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
@@ -73,7 +75,7 @@ public class Sessions {
         var modifier = String.join("\n", modifierStrings);
         var panel = String.format("%s\n%s", sets, modifier);
         var buttons = String.format("<click:run_command:'/sbr bind'><%s>[Bind]</click> <click:run_command:'/sbr clear'><%s>[Clear]</click>", Colors.ADD, Colors.REMOVE);
-        audiences.player(player).sendMessage(miniMessage.parse(panel + "\n" + buttons));
+        audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(panel).newLine().text(buttons).prependLines(20).build()));
     }
 
     public void showSet(Player player, int id) {
@@ -89,6 +91,6 @@ public class Sessions {
 
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
         var message = String.join("\n", s, buttons);
-        audiences.player(player).sendMessage(miniMessage.parse(message));
+        audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(message).prependLines(20).build()));
     }
 }

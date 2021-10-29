@@ -47,6 +47,8 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
             var selector = registry.parseSelector(args.subArguments().subArguments());
             set.get().selector(selector);
             set.get().refreshSchematics(player, schematics);
+        } else if ("weight".equalsIgnoreCase(args.asString(1))) {
+            set.get().withWeight(args.asInt(2));
         } else {
             var mutator = registry.parseSchematicModifier(args.subArguments());
             set.get().withMutator(mutator.first, mutator.second);
@@ -63,12 +65,15 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
 
         if (args.size() == 2) {
             var strings = registry.completeSchematicModifier(args.subArguments());
-            strings.addAll(TabCompleteUtil.complete(args.asString(1), "selector"));
+            strings.addAll(TabCompleteUtil.complete(args.asString(1), "selector", "weight"));
             return strings;
         }
 
         if ("selector".equalsIgnoreCase(args.asString(1))) {
             return registry.completeSelector(args.subArguments().subArguments(), player);
+        }
+        if ("weight".equalsIgnoreCase(args.asString(1))) {
+            return TabCompleteUtil.completeInt(args.asString(2), -1, 100, localizer());
         }
         return registry.completeSchematicModifier(args.subArguments());
     }

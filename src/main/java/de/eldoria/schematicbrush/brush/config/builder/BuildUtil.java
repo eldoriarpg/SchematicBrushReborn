@@ -14,16 +14,19 @@ public class BuildUtil {
         String types;
         if (provider.size() > 1) {
             types = provider.stream()
-                    .map(SettingProvider::name)
-                    .map(name -> String.format("<click:suggest_command:'%s %s %s '>[%s]</click>", baseCommand, type.name(), name, name))
+                    .map(p -> String.format("<click:%s:'%s %s %s '>[%s]</click>", p.commandType(), baseCommand, type.name(), p.name(), p.name()))
                     .collect(Collectors.joining(", "));
         } else {
-            types = String.format("<click:suggest_command:'%s %s %s '>[Change]</click>", baseCommand, type.name(), provider.get(0).name());
+            types = String.format("<click:%s:'%s %s %s '>[Change]</click>",provider.get(0).commandType(), baseCommand, type.name(), provider.get(0).name());
         }
-        return String.format("<%s>%s: <%s>%s\n  %s", Colors.HEADING, type.name(), Colors.CHANGE, types, renderProvider(current));
+        return String.format("<%s>%s: <%s>%s\n  %s", Colors.HEADING, type.name(), Colors.CHANGE, types, provider.size() > 1 ? renderProvider(current) : renderSingleProvider(current));
     }
 
     public static String renderProvider(ComponentProvider provider) {
         return String.format("<%s>%s%s<%s>%s", Colors.NAME, provider.name(), provider.descriptor().isBlank() ? "" : ": ", Colors.VALUE, provider.descriptor());
+    }
+
+    public static String renderSingleProvider(ComponentProvider provider) {
+        return String.format("<%s>%s", Colors.VALUE, provider.descriptor());
     }
 }

@@ -88,5 +88,9 @@ public final class BrushBuilder {
         schematicSets.clear();
     }
 
+    public int getSchematicCount() {
+        return schematicSets.stream().mapToInt(SchematicSetBuilder::schematicCount).sum();
+    }
+
     // TODO add method and command to reload all current selectors
 }
