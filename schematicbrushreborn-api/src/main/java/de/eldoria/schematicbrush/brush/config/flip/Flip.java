@@ -26,7 +26,7 @@ public interface Flip extends IShiftable<Flip> {
         throw CommandException.message("Invalid flip type");
     }
 
-    static Flip value(String input) {
+    static Flip valueOf(String input) {
         for (var value : values()) {
             if (value.name().equals(input)) {
                 return value;

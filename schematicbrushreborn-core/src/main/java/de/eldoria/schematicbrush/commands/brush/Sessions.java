@@ -69,7 +69,9 @@ public class Sessions {
         }
         var modifier = String.join("\n", modifierStrings);
         var panel = String.format("%s\n%s", sets, modifier);
-        var buttons = String.format("<click:run_command:'/sbr bind'><%s>[Bind]</click> <click:run_command:'/sbr clear'><%s>[Clear]</click>", Colors.ADD, Colors.REMOVE);
+        var buttons = String.format("<click:run_command:'/sbr bind'><%s>[Bind]</click> " +
+                                    "<click:run_command:'/sbr clear'><%s>[Clear]</click> " +
+                                    "<click:suggest_command:'/sbr savepreset '><%s>[Save]</click>", Colors.ADD, Colors.REMOVE, Colors.CHANGE);
         audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(panel).newLine().text(buttons).prependLines(20).build()));
     }
 

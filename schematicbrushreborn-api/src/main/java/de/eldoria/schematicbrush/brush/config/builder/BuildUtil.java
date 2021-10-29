@@ -23,7 +23,9 @@ public class BuildUtil {
     }
 
     public static String renderProvider(ComponentProvider provider) {
-        return String.format("<%s>%s%s<%s>%s", Colors.NAME, provider.name(), provider.descriptor().isBlank() ? "" : ": ", Colors.VALUE, provider.descriptor());
+        return String.format("<%s>%s%s<%s>%s", Colors.NAME, provider.name(),
+                provider.descriptor() == null || provider.descriptor().isBlank() ? "" : ": ", Colors.VALUE,
+                provider.descriptor() == null || provider.descriptor().isBlank() ? "" : provider.descriptor());
     }
 
     public static String renderSingleProvider(ComponentProvider provider) {

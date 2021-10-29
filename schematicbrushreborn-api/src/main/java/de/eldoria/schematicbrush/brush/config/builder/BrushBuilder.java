@@ -50,9 +50,7 @@ public final class BrushBuilder {
 
     public int createSchematicSet() {
         var builder = new SchematicSetBuilder(settingsRegistry.defaultSelector());
-        for (var entry : settingsRegistry.defaultSchematicModifier().entrySet()) {
-            builder.withMutator(entry.getKey(), entry.getValue());
-        }
+        builder.enforceDefaultModifier(settingsRegistry);
         schematicSets.add(builder);
         builder.refreshSchematics(owner, schematicRegistry);
         return schematicSets.size() - 1;
@@ -70,6 +68,7 @@ public final class BrushBuilder {
 
     public void addSchematicSet(SchematicSetBuilder schematicSetBuilder) {
         schematicSetBuilder.refreshSchematics(owner, schematicRegistry);
+        schematicSetBuilder.enforceDefaultModifier(settingsRegistry);
         schematicSets.add(schematicSetBuilder);
     }
 

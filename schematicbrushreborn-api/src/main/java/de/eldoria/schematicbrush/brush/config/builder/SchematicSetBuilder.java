@@ -47,7 +47,7 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
                 .add("selector", selector)
-                .addMap("schematicModifier", schematicModifier, (k, v) -> k.name())
+                .addMap("modifiers", schematicModifier, (k, v) -> k.name())
                 .add("weight", weight)
                 .build();
     }
@@ -72,6 +72,12 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     public <T extends Nameable> SchematicSetBuilder withMutator(T type, Mutator<?> mutation) {
         schematicModifier.put(type, mutation);
         return this;
+    }
+
+    public void enforceDefaultModifier(BrushSettingsRegistry registry) {
+        for (var entry : registry.defaultSchematicModifier().entrySet()) {
+            schematicModifier.computeIfAbsent(entry.getKey(), k -> entry.getValue());
+        }
     }
 
     /**

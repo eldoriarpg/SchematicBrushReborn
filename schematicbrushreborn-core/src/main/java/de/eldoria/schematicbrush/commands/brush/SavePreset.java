@@ -41,6 +41,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         } else {
             config.presets().addPreset(player, preset);
         }
+        config.save();
         messageSender().sendMessage(player, "Preset saved.");
     }
 

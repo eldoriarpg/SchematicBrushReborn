@@ -7,6 +7,7 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.provider.FlipProvider;
@@ -21,7 +22,6 @@ import de.eldoria.schematicbrush.commands.Brush;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.ConfigUpdater;
 import de.eldoria.schematicbrush.config.PresetContainer;
 import de.eldoria.schematicbrush.config.sections.GeneralConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
@@ -50,11 +50,14 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     public void reload() {
+        if (settingsRegistry == null) {
+            settingsRegistry = new BrushSettingsRegistry();
+            registerDefaults();
+        }
+
         // Nothing to be proud of...
         // Needs to be reworked.
         saveDefaultConfig();
-        this.reloadConfig();
-        ConfigUpdater.validateConfig(this);
 
         if (config == null) {
             config = new Config(this);
@@ -75,10 +78,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
             schematics.reload();
         }
 
-        if (settingsRegistry == null) {
-            settingsRegistry = new BrushSettingsRegistry();
-            registerDefaults();
-        }
     }
 
     @Override
@@ -159,8 +158,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.presets.Preset.class, SchematicConfig.class,
-                SchematicSource.class, PresetContainer.class, PresetRegistry.class);
+        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.presets.Preset.class,
+                SchematicConfig.class, SchematicSource.class, PresetContainer.class, PresetRegistry.class,
+                SchematicSetBuilder.class);
     }
 
     @Override

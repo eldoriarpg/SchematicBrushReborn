@@ -23,14 +23,6 @@ public class NameSelector extends BaseSelector {
     }
 
     @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .build();
-    }
-
-
-    @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
         return registry.getCache(SchematicCache.DEFAULT_CACHE).getSchematicsByName(player, term());
     }

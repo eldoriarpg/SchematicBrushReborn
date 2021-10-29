@@ -46,7 +46,7 @@ public class Config extends EldoConfig {
             return;
         }
 
-        if (version == 1) {
+        if (version < 2) {
             // v1 config does not really contain important data anyway...
             getConfig().getKeys(false).forEach(k -> getConfig().set(k, null));
         }

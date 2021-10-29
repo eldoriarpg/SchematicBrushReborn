@@ -31,8 +31,7 @@ tasks {
             filesMatching("plugin.yml") {
                 expand(
                     "name" to project.rootProject.name,
-                    "version" to data.getVersion(true),
-                    "description" to project.description
+                    "version" to data.getVersion(true)
                 )
             }
             duplicatesStrategy = DuplicatesStrategy.INCLUDE

@@ -1,12 +1,14 @@
 package de.eldoria.schematicbrush.config.sections.presets;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.util.Colors;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class Preset implements ConfigurationSerializable {
     public Preset(String name, String description, List<SchematicSetBuilder> schematicSets) {
         this.name = name.toLowerCase(Locale.ROOT);
         this.description = description;
-        this.schematicSets = schematicSets;
+        this.schematicSets = new ArrayList<>(schematicSets);
     }
 
     public Preset(Map<String, Object> objectMap) {
@@ -52,16 +54,26 @@ public class Preset implements ConfigurationSerializable {
     }
 
     public String infoComponent(boolean global) {
-        return String.format("<%s>%s <%s><click:run_command:/preset info %s>[Info]</click>", Colors.NAME, name, Colors.ADD, (global ? "g:" : "") + name);
+        return String.format("<%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:/sbrp info %s>[Info]</click>", Colors.NAME, simpleComponent(), name, Colors.ADD, (global ? "g:" : "") + name);
     }
 
     public String detailComponent() {
         var sets = schematicSets.stream()
-                .map(set -> String.format("<hover:show_text:'%s'>%s</hover>", set.infoComponent(), set.selector().descriptor()))
+                .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
                 .collect(Collectors.joining("\n"));
 
-        var message = String.format("<%s>Information about preset %s", Colors.HEADING, Colors.NAME);
-        message += String.format("<%s>Description: <%s>%s", Colors.NAME, Colors.VALUE, description());
+        var message = String.format("<%s>Information about preset <%s>%s%n", Colors.HEADING, Colors.NAME, name);
+        message += String.format("<%s>Description: <%s>%s%n", Colors.NAME, Colors.VALUE, description());
+        message += String.format("<%s>Schematic Sets:%n%s", Colors.NAME, sets);
+        return message;
+    }
+
+    public String simpleComponent() {
+        var sets = schematicSets.stream()
+                .map(set -> "  " + BuildUtil.renderProvider(set.selector()))
+                .collect(Collectors.joining("\n"));
+
+        var message = String.format("<%s>%s%n", Colors.VALUE, description());
         message += String.format("<%s>Schematic Sets:%n%s", Colors.NAME, sets);
         return message;
     }

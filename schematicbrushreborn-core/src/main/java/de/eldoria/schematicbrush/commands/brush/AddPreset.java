@@ -6,6 +6,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.config.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -34,7 +35,9 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
         var preset = config.presets().getPreset(player, args.asString(0));
         CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
 
-        preset.get().schematicSets().forEach(session::addSchematicSet);
+        for (var builder : preset.get().schematicSets()) {
+            session.addSchematicSet(builder);
+        }
         sessions.showBrush(player);
     }
 
