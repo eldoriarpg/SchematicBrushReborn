@@ -50,38 +50,18 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     public void reload() {
-        if (settingsRegistry == null) {
-            settingsRegistry = new BrushSettingsRegistry();
-            registerDefaults();
+        schematics.reload();
+        config.reload();
+
+        if (config.general().isCheckUpdates()) {
+            Updater.butler(
+                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
+                            false, 12, ButlerUpdateData.HOST)).start();
         }
-
-        // Nothing to be proud of...
-        // Needs to be reworked.
-        saveDefaultConfig();
-
-        if (config == null) {
-            config = new Config(this);
-        } else {
-            config.reload();
-        }
-
-        if (schematics == null) {
-            schematics = new SchematicRegistry();
-            var cache = new SchematicBrushCache(this, config);
-            schematics.register(SchematicCache.DEFAULT_CACHE, cache);
-            if (config.general().isCheckUpdates()) {
-                Updater.butler(
-                        new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
-                                false, 12, ButlerUpdateData.HOST)).start();
-            }
-        } else {
-            schematics.reload();
-        }
-
     }
 
     @Override
-    public void onPluginEnable(boolean reload) {
+    public void onPluginEnable() {
         if (!getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
             logger().warning("WorldEdit is not installed on this Server!");
             return;
@@ -90,6 +70,17 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         MessageSender.create(this, "§6[SB]");
         var iLocalizer = ILocalizer.create(this, "en_US");
         iLocalizer.setLocale("en_US");
+
+        schematics = new SchematicRegistry();
+
+        settingsRegistry = new BrushSettingsRegistry();
+        registerDefaults();
+
+        saveDefaultConfig();
+        config = new Config(this);
+
+        var cache = new SchematicBrushCache(this, config);
+        schematics.register(SchematicCache.DEFAULT_CACHE, cache);
 
         reload();
 
