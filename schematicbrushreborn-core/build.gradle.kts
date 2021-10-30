@@ -16,7 +16,7 @@ dependencies {
 
     implementation("net.kyori", "adventure-platform-bukkit", "4.0.0")
     implementation("net.kyori", "adventure-text-minimessage", "4.1.0-SNAPSHOT")
-
+    implementation("de.eldoria", "messageblocker", "1.0.3c-DEV")
     testImplementation("org.jetbrains", "annotations", "21.0.1")
     testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.7.1")
@@ -44,6 +44,7 @@ tasks {
 
     shadowJar {
         relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         relocate("net.kyori", shadebase + "kyori")
         mergeServiceFiles()
         minimize()

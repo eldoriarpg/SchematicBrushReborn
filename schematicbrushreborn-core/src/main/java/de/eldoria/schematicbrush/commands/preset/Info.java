@@ -7,7 +7,9 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
+import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
@@ -22,14 +24,16 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     private final Config config;
     private final MiniMessage miniMessage = MiniMessage.get();
     private final BukkitAudiences audiences;
+    private final IMessageBlockerService messageBlocker;
 
-    public Info(Plugin plugin, Config config) {
+    public Info(Plugin plugin, Config config, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("info")
                 .withPermission("schematicbrush.brush.use")
                 .addUnlocalizedArgument("name", true)
                 .build());
         this.config = config;
         audiences = BukkitAudiences.create(plugin);
+        this.messageBlocker = messageBlocker;
     }
 
     @Override
@@ -41,8 +45,9 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
         CommandAssertions.isTrue(optPreset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
         var preset = optPreset.get();
-
-        audiences.player(player).sendMessage(miniMessage.parse(preset.detailComponent()));
+        var message = messageBlocker.ifEnabled(preset.detailComponent(), m -> m + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.announce(player, "[x]");
+        audiences.player(player).sendMessage(miniMessage.parse(message));
     }
 
     @Override

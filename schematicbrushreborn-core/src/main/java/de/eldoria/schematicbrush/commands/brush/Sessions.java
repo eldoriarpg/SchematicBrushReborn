@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.localization.MessageComposer;
+import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
@@ -26,12 +27,14 @@ public class Sessions {
     private final BukkitAudiences audiences;
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
+    private final IMessageBlockerService messageBlocker;
     private final Map<UUID, BrushBuilder> session = new HashMap<>();
 
-    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
+    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry, IMessageBlockerService messageBlocker) {
         this.registry = registry;
         audiences = BukkitAudiences.create(plugin);
         this.schematicRegistry = schematicRegistry;
+        this.messageBlocker = messageBlocker;
     }
 
     public void setSession(Player player, BrushBuilder builder) {
@@ -53,6 +56,7 @@ public class Sessions {
     }
 
     public void showBrush(Player player) {
+        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
         var count = new AtomicInteger(0);
         var sets = String.format("<%s>Schematic Sets: <click:run_command:'/sbr addSet'><%s>[Add]</click>", Colors.HEADING, Colors.ADD);
@@ -72,10 +76,14 @@ public class Sessions {
         var buttons = String.format("<click:run_command:'/sbr bind'><%s>[Bind]</click> " +
                                     "<click:run_command:'/sbr clear'><%s>[Clear]</click> " +
                                     "<click:suggest_command:'/sbr savepreset '><%s>[Save]</click>", Colors.ADD, Colors.REMOVE, Colors.CHANGE);
-        audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(panel).newLine().text(buttons).prependLines(20).build()));
+        var composer = MessageComposer.create().text(panel).newLine().text(buttons).prependLines(20);
+        messageBlocker.ifEnabled(composer, c -> c.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.announce(player, "[x]");
+        audiences.player(player).sendMessage(miniMessage.parse(composer.build()));
     }
 
     public void showSet(Player player, int id) {
+        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
         var optSet = builder.getSchematicSet(id);
         if (optSet.isEmpty()) {
@@ -88,6 +96,9 @@ public class Sessions {
 
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
         var message = String.join("\n", s, buttons);
+
+        message = messageBlocker.ifEnabled(message, m -> m + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.announce(player, "[x]");
         audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(message).prependLines(20).build()));
     }
 }

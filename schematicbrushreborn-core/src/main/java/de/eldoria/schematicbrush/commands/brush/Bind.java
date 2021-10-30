@@ -6,6 +6,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -13,10 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
+    private final IMessageBlockerService messageBlocker;
 
-    public Bind(Plugin plugin, Sessions sessions) {
+    public Bind(Plugin plugin, Sessions sessions, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("bind").build());
         this.sessions = sessions;
+        this.messageBlocker = messageBlocker;
     }
 
     @Override
@@ -28,6 +31,6 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         var brush = session.build(plugin(), player);
 
         WorldEditBrush.setBrush(player, brush);
-        messageSender().sendMessage(player, "Brush bound.");
+        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, "Brush bound."));
     }
 }

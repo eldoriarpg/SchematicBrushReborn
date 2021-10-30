@@ -6,6 +6,8 @@ import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
+import de.eldoria.messageblocker.MessageBlockerAPI;
+import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
@@ -84,16 +86,18 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         reload();
 
-        var brushCommand = new Brush(this, schematics, config, settingsRegistry);
-        var presetCommand = new Preset(this, config);
-        var adminCommand = new Admin(this, schematics);
-
         var notifyListener = new NotifyListener(this, config);
+        var renderService = new RenderService(this, config);
+
+        var messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
+
+        var brushCommand = new Brush(this, schematics, config, settingsRegistry, messageBlocker);
+        var presetCommand = new Preset(this, config, messageBlocker);
+        var adminCommand = new Admin(this, schematics);
+        var settingsCommand = new Settings(this, renderService, notifyListener, messageBlocker);
 
         enableMetrics();
 
-        var renderService = new RenderService(this, config);
-        var settingsCommand = new Settings(this, renderService, notifyListener);
         getServer().getScheduler().runTaskTimer(this, renderService, 0, 1);
         registerListener(new BrushModifier(), renderService, notifyListener);
 
