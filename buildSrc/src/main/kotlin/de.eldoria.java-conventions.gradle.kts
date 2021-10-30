@@ -17,6 +17,7 @@ dependencies {
     implementation("de.eldoria", "eldo-util", "1.10.13-DEV")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
 
+    testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
     testImplementation(platform("org.junit:junit-bom:5.7.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
