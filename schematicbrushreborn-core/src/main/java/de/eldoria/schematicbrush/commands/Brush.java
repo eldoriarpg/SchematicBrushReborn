@@ -18,6 +18,7 @@ import de.eldoria.schematicbrush.commands.brush.Show;
 import de.eldoria.schematicbrush.commands.brush.ShowSet;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -26,7 +27,7 @@ import org.bukkit.plugin.Plugin;
 public class Brush extends AdvancedCommand {
     public Brush(Plugin plugin, SchematicRegistry schematics, Config config, BrushSettingsRegistry registry, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("sbr")
-                .withPermission("schematicbrush.brush.use")
+                .withPermission(Permissions.Brush.USE)
                 .buildSubCommands((cmds, self) -> {
                     var sessions = new Sessions(plugin, registry, schematics, messageBlocker);
                     var create = new Create(plugin, sessions);

@@ -8,6 +8,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.config.sections.presets.Preset;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
     public SavePreset(Plugin plugin, Sessions sessions, Config config) {
         super(plugin, CommandMeta.builder("savePreset")
                 .addUnlocalizedArgument("name", true)
+                .withPermission(Permissions.Preset.USE)
                 .build());
         this.config = config;
         this.sessions = sessions;
@@ -37,6 +39,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
         var preset = new Preset(args.asString(0), schematicSets);
         if (args.hasFlag("g")) {
+            CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
             config.presets().addPreset(preset);
         } else {
             config.presets().addPreset(player, preset);

@@ -8,6 +8,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,6 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
 
     public Descr(Plugin plugin, Config config) {
         super(plugin, CommandMeta.builder("descr")
-                .withPermission("schematicbrush.preset.modify")
                 .addUnlocalizedArgument("name", true)
                 .addUnlocalizedArgument("descr", true)
                 .build());
@@ -31,6 +31,10 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
+
+        if(name.startsWith("g:")){
+            CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
+        }
 
         var preset = config.presets().getPreset(player, name);
 

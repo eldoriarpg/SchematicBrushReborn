@@ -7,6 +7,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.ITabExecutor;
 import de.eldoria.eldoutilities.debug.DebugSettings;
 import de.eldoria.eldoutilities.debug.DebugUtil;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class Debug extends AdvancedCommand implements ITabExecutor {
     public Debug(Plugin plugin) {
         super(plugin, CommandMeta.builder("debug")
-                .withPermission("schematicbrush.admin.debug")
+                .withPermission(Permissions.Admin.DEBUG)
                 .build());
     }
 

@@ -7,6 +7,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.listener.NotifyListener;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class ShowNames extends AdvancedCommand implements IPlayerTabExecutor {
 
     public ShowNames(Plugin plugin, NotifyListener listener) {
         super(plugin, CommandMeta.builder("showNames")
-                .withPermission("schematicbrush.brush.use")
+                .withPermission(Permissions.Brush.USE)
                 .build());
         this.listener = listener;
     }

@@ -7,6 +7,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.rendering.RenderService;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class Preview extends AdvancedCommand implements IPlayerTabExecutor {
 
     public Preview(Plugin plugin, RenderService renderService) {
         super(plugin, CommandMeta.builder("preview")
-                .withPermission("schematicbrush.brush.preview")
+                .withPermission(Permissions.Brush.PREVIEW)
                 .addUnlocalizedArgument("state", true)
                 .build());
         this.renderService = renderService;

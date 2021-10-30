@@ -28,7 +28,6 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
 
     public Info(Plugin plugin, Config config, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("info")
-                .withPermission("schematicbrush.brush.use")
                 .addUnlocalizedArgument("name", true)
                 .build());
         this.config = config;

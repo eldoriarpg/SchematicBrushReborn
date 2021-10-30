@@ -6,6 +6,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.ITabExecutor;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ public class Reload extends AdvancedCommand implements ITabExecutor {
 
     public Reload(SchematicBrushRebornImpl plugin) {
         super(plugin, CommandMeta.builder("reload")
-                .withPermission("schematicbrush.admin.reload")
+                .withPermission(Permissions.Admin.RELOAD)
                 .build());
         instance = plugin;
     }

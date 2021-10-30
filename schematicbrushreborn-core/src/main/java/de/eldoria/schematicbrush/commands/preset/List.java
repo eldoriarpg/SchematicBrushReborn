@@ -25,7 +25,6 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
 
     public List(Plugin plugin, Config config, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("list")
-                .withPermission("schematicbrush.brush.use")
                 .build());
         this.config = config;
         this.messageBlocker = messageBlocker;
