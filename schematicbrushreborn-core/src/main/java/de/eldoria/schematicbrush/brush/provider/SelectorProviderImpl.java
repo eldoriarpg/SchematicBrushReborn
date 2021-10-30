@@ -72,7 +72,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 }
             };
 
-    public SelectorProviderImpl(Class<? extends ConfigurationSerializable> clazz, String name, SchematicRegistry registry) {
+    public SelectorProviderImpl(Class<? extends Selector> clazz, String name, SchematicRegistry registry) {
         super(clazz, name, registry);
     }
 

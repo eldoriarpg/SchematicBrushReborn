@@ -2,7 +2,7 @@ package de.eldoria.schematicbrush.brush.provider;
 
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.schematicbrush.brush.config.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.placement.APlacement;
 import de.eldoria.schematicbrush.brush.config.placement.Bottom;
 import de.eldoria.schematicbrush.brush.config.placement.Drop;

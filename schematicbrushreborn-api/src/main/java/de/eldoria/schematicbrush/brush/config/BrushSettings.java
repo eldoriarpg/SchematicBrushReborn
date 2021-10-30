@@ -3,6 +3,7 @@ package de.eldoria.schematicbrush.brush.config;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Randomable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
@@ -95,22 +96,50 @@ public final class BrushSettings implements Randomable {
         return new BrushSettings(brushes, placementModifier);
     }
 
+    /**
+     * Get the schematic sets of this brush
+     *
+     * @return list of {@link SchematicSet}
+     */
     public List<SchematicSet> schematicSets() {
         return schematicSets;
     }
 
+    /**
+     * Get the total weight of all {@link BrushSettings#schematicSets()}
+     *
+     * @return total weight
+     */
     public int totalWeight() {
         return totalWeight;
     }
 
+    /**
+     * Get a mutator of the brush
+     *
+     * @param type type to request
+     * @return the mutator.
+     */
     public Mutator<?> getMutator(PlacementModifier type) {
         return placementModifier.get(type);
     }
 
+    /**
+     * Mutate the {@link PasteMutation} and apply the changes by the {@link BrushSettings#placementModifier}
+     *
+     * @param mutation mutation instance
+     */
     public void mutate(PasteMutation mutation) {
         placementModifier.values().forEach(m -> m.invoke(mutation));
     }
 
+    /**
+     * Converts the brush setting to a {@link BrushBuilder} representing all settings applied.
+     * @param player player
+     * @param settingsRegistry setting registry
+     * @param schematicRegistry schematic registry
+     * @return new brush builder instance
+     */
     public BrushBuilder toBuilder(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         var brushBuilder = new BrushBuilder(player, settingsRegistry, schematicRegistry);
         placementModifier.forEach(brushBuilder::setPlacementModifier);

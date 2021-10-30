@@ -14,7 +14,6 @@ import com.sk89q.worldedit.util.HandSide;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollecter;
@@ -71,6 +70,11 @@ public class SchematicBrush implements Brush {
         Operations.completeBlindly(paste);
     }
 
+    /**
+     * Paste the brush and capture changes.
+     *
+     * @return changes which will be made to the world
+     */
     public BlockChangeCollecter pasteFake() {
         var world = new FakeWorld(brushOwner.getWorld());
         CapturingExtent capturingExtent;
@@ -103,26 +107,30 @@ public class SchematicBrush implements Brush {
     }
 
     /**
-     * Combine the current configuration with a new brush configuration to get a new brush
-     *
-     * @param brush Brush to combine. Only the {@link SchematicSet} list is updated.
-     * @return a new schematic brush with the sub brushes of both brush configurations.
+     * Get the settings of the brush
+     * @return settings
      */
-    public SchematicBrush combineBrush(BrushSettings brush) {
-        return new SchematicBrush(plugin, brushOwner, settings.combine(brush));
-    }
-
     public BrushSettings getSettings() {
         return settings;
     }
 
+    /**
+     * Get the next paste which will be executed
+     * @return next paste
+     */
     public BrushPaste nextPaste() {
         return nextPaste;
     }
 
-    public BrushBuilder toBuilder(BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
+    /**
+     * Convert the settings of the brush to a builder
+     * @param settingsRegistry settings registry
+     * @param schematicRegistry schematic registry
+     * @return brush as builder
+     */
+    public BrushBuilder toBuilder(BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         if (builder == null) {
-            builder = settings.toBuilder(brushOwner, registry, schematicRegistry);
+            builder = settings.toBuilder(brushOwner, settingsRegistry, schematicRegistry);
         }
         return builder;
     }

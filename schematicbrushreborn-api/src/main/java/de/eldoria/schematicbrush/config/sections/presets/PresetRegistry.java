@@ -43,6 +43,12 @@ public class PresetRegistry implements ConfigurationSerializable {
         return getPreset(player, name).isPresent();
     }
 
+    /**
+     * Get a preset container of a player
+     *
+     * @param player player
+     * @return preset container if exists
+     */
     private Optional<PresetContainer> getPlayerPresets(Player player) {
         return Optional.ofNullable(playerPresets.get(player.getUniqueId()));
     }
@@ -51,6 +57,13 @@ public class PresetRegistry implements ConfigurationSerializable {
         return playerPresets.computeIfAbsent(player.getUniqueId(), k -> new PresetContainer());
     }
 
+    /**
+     * Get presets of a player by name
+     *
+     * @param player player to add
+     * @param name   name
+     * @return preset with this name if exists
+     */
     public Optional<Preset> getPreset(Player player, String name) {
         if (name.startsWith("g:")) {
             return globalPresets.getPreset(name.substring(2));
@@ -58,30 +71,72 @@ public class PresetRegistry implements ConfigurationSerializable {
         return getPlayerPresets(player).flatMap(p -> p.getPreset(name));
     }
 
+    /**
+     * Add a player preset
+     *
+     * @param player player
+     * @param preset preset
+     */
     public void addPreset(Player player, Preset preset) {
         getOrCreatePlayerPresets(player).addPreset(preset);
     }
 
+    /**
+     * Add a global preset
+     *
+     * @param preset preset
+     */
     public void addPreset(Preset preset) {
         globalPresets.addPreset(preset);
     }
 
+    /**
+     * Remove a player preset
+     *
+     * @param player player
+     * @param name   name
+     * @return true if preset was removed
+     */
     public boolean removePreset(Player player, String name) {
         return getPlayerPresets(player).map(p -> p.remove(name)).orElse(false);
     }
 
+    /**
+     * Remove a global preset
+     *
+     * @param name name
+     * @return true if preset was removed
+     */
     public boolean removePreset(String name) {
         return globalPresets.remove(name);
     }
 
+    /**
+     * Get presets of a player
+     *
+     * @param player player
+     * @return all presets of the player
+     */
     public Collection<Preset> getPresets(Player player) {
         return getPlayerPresets(player).map(PresetContainer::getPresets).orElse(Collections.emptyList());
     }
 
+    /**
+     * Get global presets
+     *
+     * @return all global presets
+     */
     public Collection<Preset> getPresets() {
         return globalPresets.getPresets();
     }
 
+    /**
+     * Complete presets
+     *
+     * @param player player
+     * @param arg    arguments to complete
+     * @return list of possible values
+     */
     public List<String> complete(Player player, String arg) {
         if (arg.startsWith("g:")) {
             return TabCompleteUtil.complete(arg.substring(2), globalPresets.names()).stream().map(m -> "g:" + m).collect(Collectors.toList());

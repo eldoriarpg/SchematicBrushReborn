@@ -5,7 +5,9 @@ import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
+import de.eldoria.schematicbrush.brush.config.util.IValue;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.Randomable;
 import de.eldoria.schematicbrush.schematics.Schematic;
@@ -41,10 +43,19 @@ public class SchematicSet implements Randomable {
         this.weight = weight;
     }
 
-    public Mutator getMutator(SchematicModifier type) {
+    /**
+     * Get the mutator
+     * @param type type
+     * @return mutator
+     */
+    public Mutator<?> getMutator(SchematicModifier type) {
         return schematicModifier.get(type);
     }
 
+    /**
+     * Get a random schematic from the set
+     * @return schematic
+     */
     public Schematic getRandomSchematic() {
         if (schematics.isEmpty()) return null;
 
@@ -85,21 +96,44 @@ public class SchematicSet implements Randomable {
         this.weight = weight;
     }
 
+    /**
+     * Schematics
+     * @return schematics
+     */
     public List<Schematic> schematics() {
         return schematics;
     }
 
+    /**
+     * Weight of set
+     * @return weight
+     */
     public int weight() {
         return weight;
     }
 
+    /**
+     * Mutate the paste mutation with all mutators
+     * @param mutation mujtation
+     */
     public void mutate(PasteMutation mutation) {
         schematicModifier.values().forEach(m -> m.invoke(mutation));
     }
 
+    /**
+     * Convert the set into a builder
+     * @return new builder instance
+     */
     public SchematicSetBuilder toBuilder() {
         var builder = new SchematicSetBuilder(selector);
         schematicModifier.forEach(builder::withMutator);
         return builder;
+    }
+
+    /**
+     * Refresh the values of all mutators
+     */
+    public void refreshMutator() {
+        schematicModifier.values().forEach(IValue::refresh);
     }
 }

@@ -19,6 +19,9 @@ import de.eldoria.schematicbrush.schematics.Schematic;
 import java.io.IOException;
 import java.util.logging.Level;
 
+/**
+ * Represents the next paste executed by the brush.
+ */
 public class BrushPaste {
     private final BrushSettings settings;
     private final SchematicSet schematicSet;
@@ -30,42 +33,61 @@ public class BrushPaste {
         this.schematicSet = schematicSet;
         this.schematic = schematic;
         reloadSchematic();
-        changeFlip();
-        changeRotation();
-        changeOffset();
+        refresh();
     }
 
-    public void changeFlip() {
-        schematicSet.getMutator(SchematicModifier.FLIP).refresh();
+    /**
+     * Refresh all mutator values
+     */
+    public void refresh() {
+        schematicSet.refreshMutator();
     }
 
-    public void changeRotation() {
-        schematicSet.getMutator(SchematicModifier.ROTATION).refresh();
-    }
-
-    public void changeOffset() {
-        settings.getMutator(PlacementModifier.OFFSET).refresh();
-    }
-
+    /**
+     * Shift to next flip value
+     */
     public void shiftFlip() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.FLIP).shift();
     }
 
+    /**
+     * Shift to next rotation value
+     */
     public void shiftRotation() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.ROTATION).shift();
     }
 
+    /**
+     * Shift to next offset value
+     */
     public void shiftOffset() {
         reloadSchematic();
         settings.getMutator(PlacementModifier.OFFSET).shift();
     }
 
+    /**
+     * Build a paste operation
+     *
+     * @param editSession edit session
+     * @param owner       owner of brush
+     * @param position    position to paste
+     * @return operation
+     */
     public Operation buildpaste(EditSession editSession, BukkitPlayer owner, BlockVector3 position) {
         return buildpaste(editSession, editSession, owner, position);
     }
 
+    /**
+     * Build a paste operation
+     *
+     * @param editSession     edit session
+     * @param capturingExtent extend to caputure cchanges
+     * @param owner           owner of brush
+     * @param position        position to paste
+     * @return operation
+     */
     public Operation buildpaste(EditSession editSession, Extent capturingExtent, BukkitPlayer owner, BlockVector3 position) {
         var pasteMutation = new PasteMutation(clipboard, editSession);
         // TODO: Check for infinite rotation and flip again.
@@ -92,11 +114,17 @@ public class BrushPaste {
         return clipboardHolder;
     }
 
+    /**
+     * Shift to the next schematic
+     */
     public void shiftSchematic() {
         schematic = schematicSet.getRandomSchematic();
         reloadSchematic();
     }
 
+    /**
+     * Load a new clipboard from schematic file
+     */
     public void reloadSchematic() {
         try {
             clipboard = schematic.loadSchematic();
@@ -105,14 +133,29 @@ public class BrushPaste {
         }
     }
 
+    /**
+     * Current schematic
+     *
+     * @return schematic
+     */
     public Schematic schematic() {
         return schematic;
     }
 
+    /**
+     * Current clipboard
+     *
+     * @return clipboard
+     */
     public Clipboard clipboard() {
         return clipboard;
     }
 
+    /**
+     * Size of the clipboard in blocks
+     *
+     * @return true
+     */
     public long clipboardSize() {
         var minimumPoint = clipboard.getMinimumPoint();
         var maximumPoint = clipboard.getMaximumPoint();

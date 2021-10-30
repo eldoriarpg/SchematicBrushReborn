@@ -4,7 +4,7 @@ import com.sk89q.worldedit.function.mask.BlockTypeMask;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
-import de.eldoria.schematicbrush.brush.config.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

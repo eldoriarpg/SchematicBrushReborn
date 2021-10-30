@@ -2,7 +2,7 @@ package de.eldoria.schematicbrush.brush.config.offset;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import de.eldoria.schematicbrush.brush.PasteMutation;
-import de.eldoria.schematicbrush.brush.config.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 
 import java.util.List;
 

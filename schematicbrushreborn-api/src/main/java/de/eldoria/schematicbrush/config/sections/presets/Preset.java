@@ -82,7 +82,7 @@ public class Preset implements ConfigurationSerializable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void description(String description) {
         this.description = description;
     }
 

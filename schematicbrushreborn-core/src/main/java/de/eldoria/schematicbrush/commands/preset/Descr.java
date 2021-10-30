@@ -36,7 +36,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
 
         CommandAssertions.isTrue(preset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
-        preset.get().setDescription(args.join(1));
+        preset.get().description(args.join(1));
         messageSender().sendMessage(player, "Changed description of preset §b" + name + "§r!");
         config.save();
     }

@@ -3,6 +3,9 @@ package de.eldoria.schematicbrush.brush.config.rotation;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.util.IShiftable;
 
+/**
+ * Represents a rotation.
+ */
 public interface Rotation extends IShiftable<Rotation> {
     /**
      * Get a string as rotation value.

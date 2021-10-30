@@ -1,5 +1,8 @@
 package de.eldoria.schematicbrush.brush.config.util;
 
+/**
+ * Represents a key.
+ */
 public abstract class Nameable {
     private final String name;
 
@@ -7,11 +10,20 @@ public abstract class Nameable {
         this.name = name;
     }
 
+    /**
+     * Creates a new nameable with the name
+     * @param name name of nameable
+     * @return new nameable instance
+     */
     public static Nameable of(String name) {
         return new Nameable(name) {
         };
     }
 
+    /**
+     * name of the namable
+     * @return name
+     */
     public String name() {
         return name;
     }

@@ -8,6 +8,16 @@ import org.bukkit.entity.Player;
 
 import java.util.Set;
 
+/**
+ * Represents a selector.
+ */
 public interface Selector extends ConfigurationSerializable, ComponentProvider {
+    /**
+     * Select matching schematics from a cache in the registry
+     *
+     * @param player   player which wants to select schematics
+     * @param registry registry instance
+     * @return set of schematics
+     */
     Set<Schematic> select(Player player, SchematicRegistry registry);
 }

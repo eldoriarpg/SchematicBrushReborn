@@ -2,8 +2,8 @@ package de.eldoria.schematicbrush.brush.config.builder;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.brush.config.Mutator;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.Schematic;
@@ -66,7 +66,9 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     /**
      * Set the rotation of the brush.
      *
+     * @param type     type of mutator
      * @param mutation rotation of the brush
+     * @param <T>      type of mutator
      * @return instance with rotation set.
      */
     public <T extends Nameable> SchematicSetBuilder withMutator(T type, Mutator<?> mutation) {
@@ -74,6 +76,11 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
         return this;
     }
 
+    /**
+     * Set the default modifier
+     *
+     * @param registry registry
+     */
     public void enforceDefaultModifier(BrushSettingsRegistry registry) {
         for (var entry : registry.defaultSchematicModifier().entrySet()) {
             schematicModifier.computeIfAbsent(entry.getKey(), k -> entry.getValue());
@@ -100,34 +107,73 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
         return new SchematicSet(schematics, selector, schematicModifier, weight);
     }
 
+    /**
+     * Selector
+     * @return selector
+     */
     public Selector selector() {
         return selector;
     }
 
+    /**
+     * Schematic modifier
+     * @return unmodifiable map
+     */
     public Map<? extends Nameable, Mutator<?>> schematicModifier() {
-        return schematicModifier;
+        return Collections.unmodifiableMap(schematicModifier);
     }
 
+    /**
+     * Schematics
+     * @return schematics
+     */
     public Set<Schematic> schematics() {
         return schematics;
     }
 
+    /**
+     * Weight
+     * @return weight
+     */
     public int weight() {
         return weight;
     }
 
+    /**
+     * Selector
+     *
+     * @param selector selector
+     */
     public void selector(Selector selector) {
         this.selector = selector;
     }
 
+    /**
+     * refresh all selected schematics
+     *
+     * @param player   player
+     * @param registry registry
+     */
     public void refreshSchematics(Player player, SchematicRegistry registry) {
         schematics = selector.select(player, registry);
     }
 
+    /**
+     * Schematic count of set
+     *
+     * @return schematic count
+     */
     public int schematicCount() {
         return schematics.size();
     }
 
+    /**
+     * Schematic set as interactable component
+     *
+     * @param registry registry
+     * @param id       id
+     * @return component
+     */
     public String interactComponent(BrushSettingsRegistry registry, int id) {
         var selector = String.format("<%s>Selector: <%s>", Colors.HEADING, Colors.CHANGE);
         selector += registry.selector().stream()
@@ -146,6 +192,11 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
         return String.join("\n", selector, modifier, weight);
     }
 
+    /**
+     * Schematic set as component
+     *
+     * @return component
+     */
     public String infoComponent() {
         var selector = BuildUtil.renderProvider(selector());
 

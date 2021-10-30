@@ -1,7 +1,7 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
 import de.eldoria.schematicbrush.brush.PasteMutation;
-import de.eldoria.schematicbrush.brush.config.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 
 import java.util.List;
 

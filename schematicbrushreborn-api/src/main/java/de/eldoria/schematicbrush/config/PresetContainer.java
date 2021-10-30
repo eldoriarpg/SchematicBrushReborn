@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,26 +35,55 @@ public class PresetContainer implements ConfigurationSerializable {
                 .build();
     }
 
+    /**
+     * Checks if a preset exists
+     *
+     * @param name name of preset
+     * @return true if the preset exists
+     */
     public boolean presetExists(String name) {
         return getPreset(name).isPresent();
     }
 
+    /**
+     * Get a preset by name
+     *
+     * @param name name of preset
+     * @return optional containing the preset if found
+     */
     public Optional<Preset> getPreset(String name) {
         return Optional.ofNullable(presets.get(name.toLowerCase(Locale.ROOT)));
     }
 
+    /**
+     * Add a preset
+     * @param preset preset to add
+     */
     public void addPreset(Preset preset) {
         presets.put(preset.name(), preset);
     }
 
+    /**
+     * Remove a preset by name
+     * @param name name of preset
+     * @return true if the preset was removed
+     */
     public boolean remove(String name) {
         return presets.remove(name.toLowerCase(Locale.ROOT)) != null;
     }
 
+    /**
+     * Get all presets in this container
+     * @return unmodifyable collection
+     */
     public Collection<Preset> getPresets() {
-        return presets.values();
+        return Collections.unmodifiableCollection(presets.values());
     }
 
+    /**
+     * Returns all names in this preset container
+     * @return set of names
+     */
     public Set<String> names() {
         return presets.keySet();
     }

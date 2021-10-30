@@ -5,6 +5,9 @@ import com.sk89q.worldedit.util.Direction;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.util.IShiftable;
 
+/**
+ * Represents a flip of a schematic.
+ */
 public interface Flip extends IShiftable<Flip> {
     static Flip[] values() {
         return new Flip[]{NONE, NORTH_SOUTH, EAST_WEST, UP_DOWN};

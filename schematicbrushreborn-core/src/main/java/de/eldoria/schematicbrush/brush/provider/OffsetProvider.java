@@ -5,7 +5,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
-import de.eldoria.schematicbrush.brush.config.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetFixed;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetList;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetRange;

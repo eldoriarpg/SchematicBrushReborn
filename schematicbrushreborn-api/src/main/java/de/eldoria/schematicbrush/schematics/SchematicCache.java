@@ -9,8 +9,14 @@ import java.util.Set;
 public interface SchematicCache {
     Nameable DEFAULT_CACHE = Nameable.of("default");
 
+    /**
+     * Init method which will be executes when registered via {@link SchematicRegistry#register(Nameable, SchematicCache)}
+     */
     void init();
 
+    /**
+     * Reload all schematics of the cache.
+     */
     void reload();
 
     /**
@@ -47,7 +53,15 @@ public interface SchematicCache {
      */
     List<String> getMatchingSchematics(Player player, String name, int count);
 
+    /**
+     * Get schematic count
+     * @return schematic count
+     */
     int schematicCount();
 
+    /**
+     * Get directory coun
+     * @return directory count
+     */
     int directoryCount();
 }
