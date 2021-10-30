@@ -1,0 +1,39 @@
+package de.eldoria.schematicbrush.brush.config.selector;
+
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.schematics.Schematic;
+import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
+import de.eldoria.schematicbrush.schematics.SchematicCache;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.Set;
+
+public class NameSelector extends BaseSelector {
+
+
+    public NameSelector(String term) {
+        super(term);
+    }
+
+    public NameSelector(Map<String, Object> objectMap) {
+        super(objectMap);
+    }
+
+    @Override
+    public Set<Schematic> select(Player player, SchematicRegistry registry) {
+        return registry.getCache(SchematicCache.DEFAULT_CACHE).getSchematicsByName(player, term());
+    }
+
+    @Override
+    public String name() {
+        return "Name";
+    }
+
+    @Override
+    public String descriptor() {
+        return term();
+    }
+}
