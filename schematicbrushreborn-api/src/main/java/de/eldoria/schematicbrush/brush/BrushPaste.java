@@ -90,7 +90,6 @@ public class BrushPaste {
      */
     public Operation buildpaste(EditSession editSession, Extent capturingExtent, BukkitPlayer owner, BlockVector3 position) {
         var pasteMutation = new PasteMutation(clipboard, editSession);
-        // TODO: Check for infinite rotation and flip again.
         settings.mutate(pasteMutation);
         schematicSet.mutate(pasteMutation);
         var clipboardHolder = buildClipboard(owner, pasteMutation);

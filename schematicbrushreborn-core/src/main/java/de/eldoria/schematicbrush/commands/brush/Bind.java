@@ -25,7 +25,6 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var session = sessions.getOrCreateSession(player);
-        // TODO: check if brush is valid
 
         CommandAssertions.isFalse(session.getSchematicCount() == 0, "Brush is empty.");
         var brush = session.build(plugin(), player);
