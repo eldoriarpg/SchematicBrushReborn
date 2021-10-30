@@ -30,7 +30,9 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         CommandAssertions.isFalse(session.getSchematicCount() == 0, "Brush is empty.");
         var brush = session.build(plugin(), player);
 
-        WorldEditBrush.setBrush(player, brush);
+        if (!WorldEditBrush.setBrush(player, brush)) {
+            return;
+        }
         messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, "Brush bound."));
     }
 }
