@@ -76,7 +76,6 @@ public interface Flip extends IShiftable<Flip> {
 
         @Override
         public void shift() {
-            return NONE;
         }
 
         @Override
@@ -102,11 +101,6 @@ public interface Flip extends IShiftable<Flip> {
         }
 
         @Override
-        public void shift() {
-            return NORTH_SOUTH;
-        }
-
-        @Override
         public String toString() {
             return "EAST WEST";
         }
@@ -129,11 +123,6 @@ public interface Flip extends IShiftable<Flip> {
         }
 
         @Override
-        public void shift() {
-            return UP_DOWN;
-        }
-
-        @Override
         public String toString() {
             return "NORTH SOUTH";
         }
@@ -153,11 +142,6 @@ public interface Flip extends IShiftable<Flip> {
         @Override
         public Vector3 direction() {
             return Direction.UP.toVector();
-        }
-
-        @Override
-        public void shift() {
-            return EAST_WEST;
         }
 
         @Override

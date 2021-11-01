@@ -81,11 +81,6 @@ public interface Rotation extends IShiftable<Rotation> {
         }
 
         @Override
-        public void shift() {
-            return ROT_RIGHT;
-        }
-
-        @Override
         public String toString() {
             return "Rot 0";
         }
@@ -101,11 +96,6 @@ public interface Rotation extends IShiftable<Rotation> {
         }
 
         @Override
-        public void shift() {
-            return ROT_ZERO;
-        }
-
-        @Override
         public String toString() {
             return "Rot 270";
         }
@@ -118,11 +108,6 @@ public interface Rotation extends IShiftable<Rotation> {
         @Override
         public int degree() {
             return 180;
-        }
-
-        @Override
-        public void shift() {
-            return ROT_LEFT;
         }
 
         @Override
