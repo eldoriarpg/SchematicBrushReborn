@@ -111,7 +111,7 @@ public class SchematicSet implements Randomable {
      * @param mutation mutation
      */
     public void mutate(PasteMutation mutation) {
-        schematicModifier.values().forEach(m -> m.invoke(mutation));
+        schematicModifier.values().forEach(mod -> mod.invoke(mutation));
     }
 
     /**

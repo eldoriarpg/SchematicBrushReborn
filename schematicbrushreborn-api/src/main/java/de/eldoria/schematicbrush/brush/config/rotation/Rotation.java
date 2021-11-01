@@ -14,7 +14,7 @@ public interface Rotation extends IShiftable<Rotation> {
      * @return rotation enum
      * @throws IllegalArgumentException when value can't be parsed
      */
-    static Rotation asRotation(String value) throws CommandException {
+    static Rotation parse(String value) throws CommandException {
         switch (value) {
             case "0":
                 return ROT_ZERO;
@@ -36,7 +36,7 @@ public interface Rotation extends IShiftable<Rotation> {
      * @return rotation enum
      * @throws IllegalArgumentException when value can't be parsed
      */
-    static Rotation asRotation(int value) {
+    static Rotation valueOf(int value) {
         switch (value) {
             case 0:
                 return ROT_ZERO;
@@ -69,7 +69,9 @@ public interface Rotation extends IShiftable<Rotation> {
     @Override
     default Rotation valueProvider() {
         return this;
-    }    /**
+    }
+
+    /**
      * Represents a rotation of 0.
      */
     Rotation ROT_ZERO = new Rotation() {
@@ -79,7 +81,7 @@ public interface Rotation extends IShiftable<Rotation> {
         }
 
         @Override
-        public Rotation shift() {
+        public void shift() {
             return ROT_RIGHT;
         }
 
@@ -88,9 +90,6 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 0";
         }
     };
-
-
-
 
     /**
      * Represents a rotation of 90 degrees counterclockwise. Alterantive a rotation of -90 or 270 degrees.
@@ -102,7 +101,7 @@ public interface Rotation extends IShiftable<Rotation> {
         }
 
         @Override
-        public Rotation shift() {
+        public void shift() {
             return ROT_ZERO;
         }
 
@@ -111,7 +110,6 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 270";
         }
     };
-
 
     /**
      * Represents a rotation of 180 degrees.
@@ -123,7 +121,7 @@ public interface Rotation extends IShiftable<Rotation> {
         }
 
         @Override
-        public Rotation shift() {
+        public void shift() {
             return ROT_LEFT;
         }
 
@@ -132,7 +130,6 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 180";
         }
     };
-
 
     /**
      * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
@@ -153,6 +150,4 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 90";
         }
     };
-
-
 }

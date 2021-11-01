@@ -36,9 +36,9 @@ public final class BrushSettings implements Randomable {
         this.placementModifier = placementModifier;
 
         // Count all weights, which have a weight set.
-        var totalWeight = schematicSets.stream().filter(b -> b.weight() > 0).mapToInt(SchematicSet::weight).sum();
+        var totalWeight = schematicSets.stream().filter(set -> set.weight() > 0).mapToInt(SchematicSet::weight).sum();
         // Count all weighted brushes
-        var weighted = (int) schematicSets.stream().filter(b -> b.weight() > 0).count();
+        var weighted = (int) schematicSets.stream().filter(set -> set.weight() > 0).count();
         int defaultWeight;
         // Handle case, when no brush is weighted
         if (weighted == 0) {
@@ -49,7 +49,7 @@ public final class BrushSettings implements Randomable {
         }
 
         // Set the weight of all unweighted brushes
-        schematicSets.stream().filter(b -> b.weight() < 0).forEach(b -> b.updateWeight(defaultWeight));
+        schematicSets.stream().filter(set -> set.weight() < 0).forEach(set -> set.updateWeight(defaultWeight));
 
         // Calculate the total weight of all brushes
         this.totalWeight = schematicSets.stream().mapToInt(SchematicSet::weight).sum();
@@ -79,7 +79,7 @@ public final class BrushSettings implements Randomable {
      * @return total number of schematics in all brushes.
      */
     public int getSchematicCount() {
-        return schematicSets.stream().map(b -> b.schematics().size()).mapToInt(Integer::intValue).sum();
+        return schematicSets.stream().map(set -> set.schematics().size()).mapToInt(Integer::intValue).sum();
     }
 
     /**
@@ -128,7 +128,7 @@ public final class BrushSettings implements Randomable {
      * @param mutation mutation instance
      */
     public void mutate(PasteMutation mutation) {
-        placementModifier.values().forEach(m -> m.invoke(mutation));
+        placementModifier.values().forEach(mod -> mod.invoke(mutation));
     }
 
     /**

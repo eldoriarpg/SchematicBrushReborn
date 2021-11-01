@@ -3,12 +3,14 @@ package de.eldoria.schematicbrush.brush.provider;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
+import de.eldoria.schematicbrush.brush.config.flip.AFlip;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.flip.Flip;
 import de.eldoria.schematicbrush.brush.config.flip.FlipFixed;
 import de.eldoria.schematicbrush.brush.config.flip.FlipList;
 import de.eldoria.schematicbrush.brush.config.flip.FlipRandom;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
+import it.unimi.dsi.fastutil.bytes.AbstractByte2FloatFunction;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
@@ -22,7 +24,7 @@ public abstract class FlipProvider extends ModifierProvider {
     public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class, "fixed") {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
-            return new FlipFixed(Flip.asFlip(args.asString(0)));
+            return AFlip.fixed(Flip.asFlip(args.asString(0)));
         }
 
         @Override
@@ -46,7 +48,7 @@ public abstract class FlipProvider extends ModifierProvider {
             for (var arg : args.args()) {
                 flips.add(Flip.asFlip(arg));
             }
-            return new FlipList(flips);
+            return AFlip.list(flips);
         }
 
         @Override
@@ -62,8 +64,8 @@ public abstract class FlipProvider extends ModifierProvider {
 
     public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class, "random") {
         @Override
-        public Mutator<?> parse(Arguments args) throws CommandException {
-            return new FlipRandom();
+        public Mutator<?> parse(Arguments args) {
+            return AFlip.random();
         }
 
         @Override

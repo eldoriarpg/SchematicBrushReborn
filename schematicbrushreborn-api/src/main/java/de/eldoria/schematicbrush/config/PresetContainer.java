@@ -36,16 +36,6 @@ public class PresetContainer implements ConfigurationSerializable {
     }
 
     /**
-     * Checks if a preset exists
-     *
-     * @param name name of preset
-     * @return true if the preset exists
-     */
-    public boolean presetExists(String name) {
-        return getPreset(name).isPresent();
-    }
-
-    /**
      * Get a preset by name
      *
      * @param name name of preset

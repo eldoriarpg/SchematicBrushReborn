@@ -12,7 +12,6 @@ import de.eldoria.eldoutilities.utils.EMath;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
-import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
@@ -57,14 +56,6 @@ public class BrushPaste {
     public void shiftRotation() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.ROTATION).shift();
-    }
-
-    /**
-     * Shift to next offset value
-     */
-    public void shiftOffset() {
-        reloadSchematic();
-        settings.getMutator(PlacementModifier.OFFSET).shift();
     }
 
     /**
@@ -124,11 +115,12 @@ public class BrushPaste {
     /**
      * Load a new clipboard from schematic file
      */
-    public void reloadSchematic() {
+    public final void reloadSchematic() {
         try {
             clipboard = schematic.loadSchematic();
         } catch (IOException e) {
             SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load schematic", e);
+            clipboard = null;
         }
     }
 

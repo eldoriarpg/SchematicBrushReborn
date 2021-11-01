@@ -36,7 +36,7 @@ public class FlipList extends AFlip {
     }
 
     @Override
-    public Flip shift() {
+    public void shift() {
         if (value() == null) {
             return values.get(ThreadLocalRandom.current().nextInt(values.size()));
         }

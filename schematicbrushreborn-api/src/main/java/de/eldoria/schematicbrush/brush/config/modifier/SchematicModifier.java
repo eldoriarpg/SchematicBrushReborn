@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.brush.config.modifier;
 
-import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;

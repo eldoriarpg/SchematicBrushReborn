@@ -1,16 +1,13 @@
 package de.eldoria.schematicbrush.brush.provider;
 
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
-import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
 import de.eldoria.schematicbrush.brush.config.selector.DirectorySelector;
 import de.eldoria.schematicbrush.brush.config.selector.NameSelector;
 import de.eldoria.schematicbrush.brush.config.selector.RegexSelector;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
-import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -22,7 +19,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
     public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
             new SelectorProviderImpl(DirectorySelector.class, "directory", registry) {
                 @Override
-                public Selector parse(Arguments args) throws CommandException {
+                public Selector parse(Arguments args) {
                     return new DirectorySelector(args.asString(0), args.asString(1));
                 }
 
@@ -43,7 +40,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
             new SelectorProviderImpl(NameSelector.class, "name", registry) {
                 @Override
-                public Selector parse(Arguments args) throws CommandException {
+                public Selector parse(Arguments args) {
                     return new NameSelector(args.asString(0));
                 }
 
@@ -59,7 +56,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
             new SelectorProviderImpl(RegexSelector.class, "regex", registry) {
                 @Override
-                public Selector parse(Arguments args) throws CommandException {
+                public Selector parse(Arguments args) {
                     return new NameSelector(args.asString(0));
                 }
 

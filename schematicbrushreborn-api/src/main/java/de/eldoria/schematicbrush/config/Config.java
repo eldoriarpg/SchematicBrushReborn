@@ -8,6 +8,7 @@ import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -48,7 +49,7 @@ public class Config extends EldoConfig {
 
         if (version < 2) {
             // v1 config does not really contain important data anyway...
-            getConfig().getKeys(false).forEach(k -> getConfig().set(k, null));
+            getConfig().getKeys(false).forEach(key -> getConfig().set(key, null));
         }
 
         if (version == 2) {
@@ -76,7 +77,8 @@ public class Config extends EldoConfig {
             if (!path.toFile().exists()) {
                 Files.createFile(path);
             }
-            Files.write(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"), getConfig().saveToString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"),
+                    getConfig().saveToString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not create backup. Converting aborted", e);
         }

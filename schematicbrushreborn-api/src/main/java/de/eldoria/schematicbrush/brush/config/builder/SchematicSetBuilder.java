@@ -34,7 +34,7 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     public SchematicSetBuilder(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         selector = map.getValue("selector");
-        schematicModifier = map.getMap("modifiers", (k, v) -> Nameable.of(k));
+        schematicModifier = map.getMap("modifiers", (key, v) -> Nameable.of(key));
         weight = map.getValue("weight");
     }
 
@@ -47,33 +47,20 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
                 .add("selector", selector)
-                .addMap("modifiers", schematicModifier, (k, v) -> k.name())
+                .addMap("modifiers", schematicModifier, (key, v) -> key.name())
                 .add("weight", weight)
                 .build();
     }
 
     /**
-     * Set the schematic list of brush.
-     *
-     * @param schematics schematics to set
-     * @return instance with schematics set
-     */
-    public SchematicSetBuilder withSchematics(Set<Schematic> schematics) {
-        this.schematics = schematics;
-        return this;
-    }
-
-    /**
      * Set the rotation of the brush.
      *
+     * @param <T>      type of mutator
      * @param type     type of mutator
      * @param mutation rotation of the brush
-     * @param <T>      type of mutator
-     * @return instance with rotation set.
      */
-    public <T extends Nameable> SchematicSetBuilder withMutator(T type, Mutator<?> mutation) {
+    public <T extends Nameable> void withMutator(T type, Mutator<?> mutation) {
         schematicModifier.put(type, mutation);
-        return this;
     }
 
     /**
@@ -83,7 +70,7 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
      */
     public void enforceDefaultModifier(BrushSettingsRegistry registry) {
         for (var entry : registry.defaultSchematicModifier().entrySet()) {
-            schematicModifier.computeIfAbsent(entry.getKey(), k -> entry.getValue());
+            schematicModifier.computeIfAbsent(entry.getKey(), key -> entry.getValue());
         }
     }
 
@@ -91,11 +78,9 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
      * Set the weight of the brush.
      *
      * @param weight weight of the brush
-     * @return instance with weight set
      */
-    public SchematicSetBuilder withWeight(int weight) {
+    public void withWeight(int weight) {
         this.weight = weight;
-        return this;
     }
 
     /**
@@ -215,7 +200,7 @@ public class SchematicSetBuilder implements ConfigurationSerializable {
 
         result += schematics.stream()
                 .limit(10)
-                .map(n -> String.format("<%s>%s", Colors.VALUE, n.name()))
+                .map(schem -> String.format("<%s>%s", Colors.VALUE, schem.name()))
                 .collect(Collectors.joining("\n"));
 
         if (schematicCount() > 10) {

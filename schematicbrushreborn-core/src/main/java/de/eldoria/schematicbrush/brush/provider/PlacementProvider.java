@@ -1,7 +1,6 @@
 package de.eldoria.schematicbrush.brush.provider;
 
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
-import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.placement.APlacement;
 import de.eldoria.schematicbrush.brush.config.placement.Bottom;
@@ -38,7 +37,7 @@ public abstract class PlacementProvider extends ModifierProvider {
     private static PlacementProvider of(String name, APlacement placement) {
         return new PlacementProvider(placement.getClass(), name) {
             @Override
-            public Mutator<?> parse(Arguments args) throws CommandException {
+            public Mutator<?> parse(Arguments args) {
                 return placement;
             }
         };

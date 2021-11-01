@@ -3,10 +3,8 @@ package de.eldoria.schematicbrush.commands.preset;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
-import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
-import de.eldoria.messageblocker.blocker.MessageBlockerService;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -33,7 +31,7 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
     }
 
     @Override
-    public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+    public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         messageBlocker.blockPlayer(player);
         var global = config.presets().getPresets()
                 .stream()
@@ -45,7 +43,7 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
                 .collect(Collectors.joining("\n"));
 
         var message = String.format("<%s>Presets:%n%s%n<%s>Global:%s", Colors.HEADING, local, Colors.HEADING, global);
-        message = messageBlocker.ifEnabled(message, m -> m + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.sender(player).sendMessage(miniMessage.parse(message));
     }

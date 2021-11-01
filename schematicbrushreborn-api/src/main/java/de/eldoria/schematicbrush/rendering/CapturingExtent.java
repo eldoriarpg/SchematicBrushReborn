@@ -1,7 +1,6 @@
 package de.eldoria.schematicbrush.rendering;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
@@ -26,9 +25,9 @@ import java.util.List;
 
 public class CapturingExtent implements Extent, BlockChangeCollector {
     private static final BlockType[] AIR_TYPES = {BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR};
-    final Changes.Builder changes = Changes.builder();
-    final EditSession session;
-    final FakeWorld fakeWorld;
+    private final Changes.Builder changes = Changes.builder();
+    private final EditSession session;
+    private final FakeWorld fakeWorld;
     private final BrushSettings settings;
 
     public CapturingExtent(EditSession session, FakeWorld fakeWorld, BrushSettings settings) {
@@ -79,7 +78,7 @@ public class CapturingExtent implements Extent, BlockChangeCollector {
     }
 
     @Override
-    public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block) throws WorldEditException {
+    public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block) {
         var data = BukkitAdapter.adapt(block.toBaseBlock());
         var location = BukkitAdapter.adapt(fakeWorld.getWorld(), position);
         if ((boolean) settings.getMutator(PlacementModifier.REPLACE_ALL).value()) {

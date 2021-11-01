@@ -59,7 +59,7 @@ public class BrushSettingsRegistry {
     public void registerSchematicModifier(SchematicModifier type, ModifierProvider provider) {
         ConfigurationSerialization.registerClass(provider.serializationClass());
         if (schematicModifier.containsKey(type) && schematicModifier.get(type).contains(provider)) {
-            throw new AlreadyRegisteredException(provider);
+            throw new AlreadyRegisteredException(type, provider);
         }
         schematicModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
     }
@@ -76,7 +76,7 @@ public class BrushSettingsRegistry {
     public void registerPlacementModifier(PlacementModifier type, ModifierProvider provider) {
         ConfigurationSerialization.registerClass(provider.serializationClass());
         if (placementModifier.containsKey(type) && placementModifier.get(type).contains(provider)) {
-            throw new AlreadyRegisteredException(provider);
+            throw new AlreadyRegisteredException(type, provider);
         }
         placementModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
     }
@@ -254,7 +254,7 @@ public class BrushSettingsRegistry {
                 .orElseThrow(() -> CommandException.message("Unkown modifier"));
     }
 
-    private <T extends SettingProvider<?>> List<String> completeProvider(Arguments args, List<T> provider) throws CommandException {
+    private <T extends SettingProvider<?>> List<String> completeProvider(Arguments args, List<T> provider) {
         return TabCompleteUtil.complete(args.asString(0), provider.stream().map(p -> p.name()));
     }
 }

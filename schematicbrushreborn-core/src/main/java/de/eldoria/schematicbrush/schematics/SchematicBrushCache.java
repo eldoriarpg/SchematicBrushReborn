@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 public class SchematicBrushCache implements SchematicCache {
     private static final Pattern UUID_PATTERN = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
-    private final Logger logger = SchematicBrushRebornImpl.logger();
+    private static final Logger logger = SchematicBrushRebornImpl.logger();
     private final JavaPlugin plugin;
     private final Config config;
     private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
@@ -142,11 +142,11 @@ public class SchematicBrushCache implements SchematicCache {
         // remove path to get relative path in schematic folder.
         var rawKey = directory.toString().replace(source.getPath(), "");
 
-        String key;
+        String cleanKey;
         if (!rawKey.isEmpty()) {
-            key = rawKey.replace(" ", "_").substring(1).replace("\\", config.schematicConfig().getPathSeparator());
+            cleanKey = rawKey.replace(" ", "_").substring(1).replace("\\", config.schematicConfig().getPathSeparator());
         } else {
-            key = rawKey;
+            cleanKey = rawKey;
         }
 
         UUID playerUid = null;
@@ -156,11 +156,11 @@ public class SchematicBrushCache implements SchematicCache {
             var uuidString = matcher.group();
             logger.log(Level.CONFIG, "Found UUID " + uuidString);
             playerUid = UUID.fromString(uuidString);
-            key = key.replaceFirst(uuidString + "/?", "");
+            cleanKey = cleanKey.replaceFirst(uuidString + "/?", "");
         }
 
         if (config.schematicConfig().isPathSourceAsPrefix()) {
-            key = source.getPrefix() + config.schematicConfig().getPathSeparator() + key;
+            cleanKey = source.getPrefix() + config.schematicConfig().getPathSeparator() + cleanKey;
         }
 
         var format = ClipboardFormats.findByFile(file);
@@ -172,9 +172,11 @@ public class SchematicBrushCache implements SchematicCache {
 
         logger.log(Level.CONFIG, "Added " + file.toPath() + " to schematic cache.");
         if (playerUid != null) {
-            userCache.computeIfAbsent(playerUid, k -> new HashMap<>()).computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
+            userCache.computeIfAbsent(playerUid, key -> new HashMap<>())
+                    .computeIfAbsent(cleanKey, key -> new HashSet<>())
+                    .add(new Schematic(format, file));
         } else {
-            schematicsCache.computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
+            schematicsCache.computeIfAbsent(cleanKey, key -> new HashSet<>()).add(new Schematic(format, file));
         }
     }
 
@@ -222,7 +224,7 @@ public class SchematicBrushCache implements SchematicCache {
             return null;
         }
 
-        return schematics.stream().filter(c -> c.isSchematic(pattern)).collect(Collectors.toSet());
+        return schematics.stream().filter(schem -> schem.isSchematic(pattern)).collect(Collectors.toSet());
     }
 
     /**
@@ -320,16 +322,16 @@ public class SchematicBrushCache implements SchematicCache {
         Set<String> matches = new HashSet<>();
         var separator = config.schematicConfig().getPathSeparator().charAt(0);
         var deep = TextUtil.countChars(dir, separator);
-        for (var k : schematicsCache.keySet()) {
-            if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
-                matches.add(trimPath(k, separator, deep));
+        for (var key : schematicsCache.keySet()) {
+            if (key.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
+                matches.add(trimPath(key, separator, deep));
                 if (matches.size() > count) break;
             }
         }
         if (userCache.containsKey(player.getUniqueId())) {
-            for (var k : userCache.get(player.getUniqueId()).keySet()) {
-                if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
-                    matches.add(trimPath(k, separator, deep));
+            for (var key : userCache.get(player.getUniqueId()).keySet()) {
+                if (key.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
+                    matches.add(trimPath(key, separator, deep));
                     if (matches.size() > count) break;
                 }
             }
@@ -396,10 +398,10 @@ public class SchematicBrushCache implements SchematicCache {
     }
 
     private static class DirectoryData {
-        private List<Path> directories;
-        private List<File> files;
+        private final List<Path> directories;
+        private final List<File> files;
 
-        public DirectoryData(List<Path> directories, List<File> files) {
+        private DirectoryData(List<Path> directories, List<File> files) {
             this.directories = directories;
             this.files = files;
         }
@@ -408,16 +410,9 @@ public class SchematicBrushCache implements SchematicCache {
             return directories;
         }
 
-        public void directories(List<Path> directories) {
-            this.directories = directories;
-        }
-
         public List<File> files() {
             return files;
         }
 
-        public void files(List<File> files) {
-            this.files = files;
-        }
     }
 }

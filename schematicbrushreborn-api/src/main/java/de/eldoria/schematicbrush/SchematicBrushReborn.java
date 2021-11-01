@@ -5,6 +5,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.config.Config;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 
+@SuppressWarnings("unused")
 public abstract class SchematicBrushReborn extends EldoPlugin {
 
     /**

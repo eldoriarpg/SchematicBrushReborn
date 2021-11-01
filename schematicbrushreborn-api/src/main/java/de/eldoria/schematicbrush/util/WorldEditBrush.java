@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public class WorldEditBrush {
+public final class WorldEditBrush {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
 
     private WorldEditBrush() {
@@ -38,7 +38,6 @@ public class WorldEditBrush {
      * @param player player for lookup
      * @return schematic brush instance if the item is a schematic brush
      */
-    @SuppressWarnings("ProhibitedExceptionCaught")
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
         return getBrush(player, material, SchematicBrush.class);
     }
@@ -60,12 +59,10 @@ public class WorldEditBrush {
             if (brushTool.getBrush() != null && clazz.isAssignableFrom(brushTool.getBrush().getClass())) {
                 return Optional.of((T) brushTool.getBrush());
             }
-        } catch (InvalidToolBindException e) {
+        } catch (InvalidToolBindException | NullPointerException e) {
             return Optional.empty();
-        } catch (NullPointerException e) {
-            // for some reason world edit throws a NPE when this function is called on world edit tools
-            return Optional.empty();
-        }
+        } // for some reason world edit throws a NPE when this function is called on world edit tools
+
         return Optional.empty();
     }
 

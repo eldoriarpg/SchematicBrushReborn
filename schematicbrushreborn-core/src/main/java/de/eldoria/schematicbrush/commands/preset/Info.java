@@ -44,13 +44,13 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
         CommandAssertions.isTrue(optPreset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
         var preset = optPreset.get();
-        var message = messageBlocker.ifEnabled(preset.detailComponent(), m -> m + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        var message = messageBlocker.ifEnabled(preset.detailComponent(), mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.player(player).sendMessage(miniMessage.parse(message));
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
             return config.presets().complete(player, args.asString(0));
         }

@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings({"unused", "SameReturnValue"})
 public class PasteEvent extends Event {
     public static final HandlerList HANDLERS = new HandlerList();
     private final Player who;

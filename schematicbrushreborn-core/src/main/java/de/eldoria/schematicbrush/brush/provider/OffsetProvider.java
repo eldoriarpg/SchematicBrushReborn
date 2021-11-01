@@ -5,6 +5,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
+import de.eldoria.schematicbrush.brush.config.offset.AOffset;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetFixed;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetList;
@@ -22,7 +23,7 @@ public abstract class OffsetProvider extends ModifierProvider {
     public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class, "fixed") {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
-            return new OffsetFixed(args.asInt(0));
+            return AOffset.fixed(args.asInt(0));
         }
 
         @Override
@@ -38,6 +39,7 @@ public abstract class OffsetProvider extends ModifierProvider {
             return new OffsetFixed(0);
         }
     };
+
     public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class, "list") {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
@@ -45,7 +47,7 @@ public abstract class OffsetProvider extends ModifierProvider {
             for (var i = 0; i < args.size(); i++) {
                 values.add(args.asInt(i));
             }
-            return new OffsetList(values);
+            return AOffset.list(values);
         }
 
         @Override
@@ -58,12 +60,13 @@ public abstract class OffsetProvider extends ModifierProvider {
             return new OffsetList(Collections.singletonList(0));
         }
     };
+
     public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "range") {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             var lower = args.asInt(0);
             var upper = args.asInt(1);
-            return new OffsetRange(lower, upper);
+            return AOffset.range(lower, upper);
         }
 
         @Override

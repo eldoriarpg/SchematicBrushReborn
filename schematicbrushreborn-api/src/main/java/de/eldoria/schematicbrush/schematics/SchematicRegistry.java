@@ -6,6 +6,7 @@ import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class SchematicRegistry {
     private final Map<Nameable, SchematicCache> caches = new HashMap<>();
 

@@ -75,7 +75,7 @@ public interface Flip extends IShiftable<Flip> {
         }
 
         @Override
-        public Flip shift() {
+        public void shift() {
             return NONE;
         }
 
@@ -102,7 +102,7 @@ public interface Flip extends IShiftable<Flip> {
         }
 
         @Override
-        public Flip shift() {
+        public void shift() {
             return NORTH_SOUTH;
         }
 
@@ -129,7 +129,7 @@ public interface Flip extends IShiftable<Flip> {
         }
 
         @Override
-        public Flip shift() {
+        public void shift() {
             return UP_DOWN;
         }
 
@@ -156,7 +156,7 @@ public interface Flip extends IShiftable<Flip> {
         }
 
         @Override
-        public Flip shift() {
+        public void shift() {
             return EAST_WEST;
         }
 

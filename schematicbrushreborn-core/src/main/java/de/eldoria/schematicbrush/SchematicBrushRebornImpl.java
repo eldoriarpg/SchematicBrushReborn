@@ -4,10 +4,10 @@ import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
@@ -45,22 +45,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private BrushSettingsRegistry settingsRegistry;
     private SchematicRegistry schematics;
     private Config config;
-
-    @Override
-    public void onPluginDisable() {
-
-    }
-
-    public void reload() {
-        schematics.reload();
-        config.reload();
-
-        if (config.general().isCheckUpdates()) {
-            Updater.butler(
-                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
-                            false, 12, ButlerUpdateData.HOST)).start();
-        }
-    }
+    private SchematicBrushCache cache;
 
     @Override
     public void onPluginEnable() {
@@ -81,7 +66,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         saveDefaultConfig();
         config = new Config(this);
 
-        var cache = new SchematicBrushCache(this, config);
+        cache = new SchematicBrushCache(this, config);
         schematics.register(SchematicCache.DEFAULT_CACHE, cache);
 
         reload();
@@ -107,11 +92,29 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand("sbrs", settingsCommand);
     }
 
+    public void reload() {
+        schematics.reload();
+        config.reload();
+
+        if (config.general().isCheckUpdates()) {
+            Updater.butler(
+                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
+                            false, 12, ButlerUpdateData.HOST)).start();
+        }
+    }
+
+    @Override
+    public void onPluginDisable() {
+        cache.shutdown();
+    }
+
     private void enableMetrics() {
         var metrics = new EldoMetrics(this, 7683);
         if (metrics.isEnabled()) {
             logger().info("§2Metrics enabled. Thank you <3");
         }
+
+        // TODO refactor
         metrics.addCustomChart(new SimplePie("schematic_count",
                 () -> {
                     var sCount = schematics.schematicCount();
@@ -144,7 +147,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
                 () -> {
-                    if (this.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
+                    if (getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
                         return "FAWE";
                     }
                     return "WorldEdit";

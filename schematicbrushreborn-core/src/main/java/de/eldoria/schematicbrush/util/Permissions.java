@@ -12,19 +12,31 @@ public final class Permissions {
         throw new UnsupportedOperationException("This is a utility class.");
     }
 
-    public static class Brush{
+    public static final class Brush {
+        private Brush() {
+            throw new UnsupportedOperationException("This is a utility class.");
+        }
+
         private static final String BRUSH = perm(BASE, "brush");
         public static final String USE = perm(BRUSH, "use");
         public static final String PREVIEW = perm(BRUSH, "preview");
     }
 
-    public static class Preset{
+    public static final class Preset {
+        private Preset() {
+            throw new UnsupportedOperationException("This is a utility class.");
+        }
+
         private static final String PRESET = perm(BASE, "preset");
         public static final String USE = perm(PRESET, "use");
         public static final String GLOBAL = perm(PRESET, "global");
     }
 
-    public static class Admin{
+    public static final class Admin {
+        private Admin() {
+            throw new UnsupportedOperationException("This is a utility class.");
+        }
+
         private static final String ADMIN = perm(BASE, "admin");
         public static final String RELOAD = perm(ADMIN, "reload");
         public static final String RELOAD_CACHE = perm(ADMIN, "reloadcache");

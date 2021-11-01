@@ -4,7 +4,6 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +15,6 @@ public abstract class APlacement implements Mutator<APlacement> {
     }
 
     public APlacement(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
     }
 
     protected static boolean levelNonAir(Clipboard clipboard, BlockVector3 dimensions, int y) {
@@ -51,7 +49,7 @@ public abstract class APlacement implements Mutator<APlacement> {
     }
 
     @Override
-    public APlacement shift() {
+    public void shift() {
         return this;
     }
 

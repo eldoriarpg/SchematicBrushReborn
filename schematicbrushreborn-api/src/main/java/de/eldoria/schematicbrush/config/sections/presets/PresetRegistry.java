@@ -23,7 +23,7 @@ public class PresetRegistry implements ConfigurationSerializable {
 
     public PresetRegistry(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
-        playerPresets = map.getMap("playerPresets", (k, v) -> UUID.fromString(k));
+        playerPresets = map.getMap("playerPresets", (key, v) -> UUID.fromString(key));
         globalPresets = map.getValueOrDefault("globalPresets", new PresetContainer());
     }
 
@@ -34,13 +34,9 @@ public class PresetRegistry implements ConfigurationSerializable {
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
-                .addMap("playerPresets", playerPresets, (k, v) -> k.toString())
+                .addMap("playerPresets", playerPresets, (key, v) -> key.toString())
                 .add("globalPresets", globalPresets)
                 .build();
-    }
-
-    public boolean presetExists(Player player, String name) {
-        return getPreset(player, name).isPresent();
     }
 
     /**
@@ -54,7 +50,7 @@ public class PresetRegistry implements ConfigurationSerializable {
     }
 
     private PresetContainer getOrCreatePlayerPresets(Player player) {
-        return playerPresets.computeIfAbsent(player.getUniqueId(), k -> new PresetContainer());
+        return playerPresets.computeIfAbsent(player.getUniqueId(), key -> new PresetContainer());
     }
 
     /**
@@ -139,7 +135,10 @@ public class PresetRegistry implements ConfigurationSerializable {
      */
     public List<String> complete(Player player, String arg) {
         if (arg.startsWith("g:")) {
-            return TabCompleteUtil.complete(arg.substring(2), globalPresets.names()).stream().map(m -> "g:" + m).collect(Collectors.toList());
+            return TabCompleteUtil.complete(arg.substring(2), globalPresets.names())
+                    .stream()
+                    .map(name -> "g:" + name)
+                    .collect(Collectors.toList());
         }
         var names = getPlayerPresets(player).map(PresetContainer::names).orElse(Collections.emptySet());
         return TabCompleteUtil.complete(arg, names);

@@ -29,7 +29,9 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      */
     public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
         this.clazz = clazz;
-        assert !name.isBlank();
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Name of provider can not be blank");
+        }
         this.name = name;
     }
 

@@ -57,7 +57,7 @@ public abstract class AFlip implements Mutator<Flip> {
     @Override
     public void invoke(PasteMutation mutation) {
         if (value().direction() != Vector3.ZERO) {
-            mutation.transform(mutation.transform().scale(value().direction().abs().multiply(-2).add(1, 1, 1)));
+            mutation.transform(mutation.transform().scale(value().direction().abs().multiply(-2.0).add(1.0, 1.0, 1.0)));
         }
     }
 }

@@ -65,6 +65,6 @@ public class SchematicConfig implements ConfigurationSerializable {
     }
 
     public Optional<SchematicSource> getSourceForPath(Path path) {
-        return sources.stream().filter(s -> path.startsWith(s.getPath())).findFirst();
+        return sources.stream().filter(source -> path.startsWith(source.getPath())).findFirst();
     }
 }

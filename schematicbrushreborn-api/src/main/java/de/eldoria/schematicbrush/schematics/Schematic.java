@@ -27,7 +27,7 @@ public class Schematic {
     public Schematic(ClipboardFormat format, File file) {
         this.format = format;
         this.file = file;
-        this.name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
+        name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
     }
 
     /**

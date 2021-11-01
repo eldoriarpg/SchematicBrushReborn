@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class RotationProvider extends ModifierProvider {
     public static final RotationProvider RANDOM = new RotationProvider(RotationRandom.class, "random") {
         @Override
-        public Mutator<?> parse(Arguments args) throws CommandException {
+        public Mutator<?> parse(Arguments args) {
             return new RotationRandom();
         }
 
@@ -37,7 +37,7 @@ public abstract class RotationProvider extends ModifierProvider {
     public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class, "fixed") {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
-            return new RotationFixed(Rotation.asRotation(args.asString(0)));
+            return new RotationFixed(Rotation.parse(args.asString(0)));
         }
 
         @Override
@@ -54,7 +54,7 @@ public abstract class RotationProvider extends ModifierProvider {
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Rotation> values = new ArrayList<>();
             for (var arg : args) {
-                values.add(Rotation.asRotation(arg));
+                values.add(Rotation.parse(arg));
             }
             return new RotationList(values);
         }

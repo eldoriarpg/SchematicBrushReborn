@@ -38,10 +38,6 @@ public class Sessions {
         this.messageBlocker = messageBlocker;
     }
 
-    public void setSession(Player player, BrushBuilder builder) {
-        session.put(player.getUniqueId(), builder);
-    }
-
     public BrushBuilder getOrCreateSession(Player player) {
         return session.computeIfAbsent(player.getUniqueId(), key -> getOrCreateBuilder(player));
     }
@@ -90,7 +86,7 @@ public class Sessions {
         }
 
         composer.prependLines(20);
-        messageBlocker.ifEnabled(composer, c -> c.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.player(player).sendMessage(miniMessage.parse(composer.build()));
     }
@@ -105,12 +101,12 @@ public class Sessions {
         }
 
         var set = optSet.get();
-        var s = set.interactComponent(registry, id);
+        var interactComponent = set.interactComponent(registry, id);
 
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
-        var message = String.join("\n", s, buttons);
+        var message = String.join("\n", interactComponent, buttons);
 
-        message = messageBlocker.ifEnabled(message, m -> m + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(message).prependLines(20).build()));
     }

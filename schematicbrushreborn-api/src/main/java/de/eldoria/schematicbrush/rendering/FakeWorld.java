@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.rendering;
 
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -11,7 +10,7 @@ import com.sk89q.worldedit.world.weather.WeatherType;
 import org.bukkit.World;
 
 public class FakeWorld extends BukkitWorld implements BlockChangeCollector {
-    final Changes.Builder changes = Changes.builder();
+    private final Changes.Builder changes = Changes.builder();
 
     /**
      * Construct the object.
@@ -23,7 +22,7 @@ public class FakeWorld extends BukkitWorld implements BlockChangeCollector {
     }
 
     @Override
-    public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight) throws WorldEditException {
+    public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight) {
         var data = BukkitAdapter.adapt(block.toBaseBlock());
         var location = BukkitAdapter.adapt(getWorld(), position);
         changes.add(location, location.getBlock().getBlockData(), data);

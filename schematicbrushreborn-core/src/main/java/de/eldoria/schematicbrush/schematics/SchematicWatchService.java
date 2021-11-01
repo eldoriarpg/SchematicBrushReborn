@@ -23,7 +23,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 
 public class SchematicWatchService implements Runnable {
-    private final Logger logger = SchematicBrushRebornImpl.logger();
+    private static final Logger logger = SchematicBrushRebornImpl.logger();
     private final Plugin plugin;
     private final Config config;
     private final SchematicBrushCache cache;

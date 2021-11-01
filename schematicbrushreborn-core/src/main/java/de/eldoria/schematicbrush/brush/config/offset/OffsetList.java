@@ -36,7 +36,7 @@ public class OffsetList extends AOffset {
 
 
     @Override
-    public Integer shift() {
+    public void shift() {
         if (value() == null) {
             return values.get(ThreadLocalRandom.current().nextInt(values.size()));
         }

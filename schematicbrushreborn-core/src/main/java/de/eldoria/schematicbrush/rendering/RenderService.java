@@ -89,7 +89,7 @@ public class RenderService implements Runnable, Listener {
     }
 
     private void resolveChanges(Player player) {
-        getChanges(player).ifPresent(c -> worker.queue(player, c, null));
+        getChanges(player).ifPresent(change -> worker.queue(player, change, null));
     }
 
     private void renderChanges(Player player, Changes newChanges) {
@@ -102,7 +102,7 @@ public class RenderService implements Runnable, Listener {
     }
 
     private Optional<Changes> getChanges(Player player) {
-        return Optional.ofNullable(this.changes.get(player.getUniqueId()));
+        return Optional.ofNullable(changes.get(player.getUniqueId()));
     }
 
     public void setState(Player player, boolean state) {
@@ -129,7 +129,7 @@ public class RenderService implements Runnable, Listener {
         public void run() {
             while (!queue.isEmpty()) {
                 var poll = queue.poll();
-                poll.send();
+                poll.sendChanges();
             }
         }
 
@@ -152,7 +152,7 @@ public class RenderService implements Runnable, Listener {
                 this.newChanges = newChanges;
             }
 
-            private void send() {
+            private void sendChanges() {
                 if (oldChanges != null) oldChanges.hide(player);
                 if (newChanges != null) newChanges.show(player);
             }
