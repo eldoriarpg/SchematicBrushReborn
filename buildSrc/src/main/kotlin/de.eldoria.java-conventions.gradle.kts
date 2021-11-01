@@ -14,7 +14,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     implementation("org.jetbrains", "annotations", "20.1.0")
-    implementation("de.eldoria", "eldo-util", "1.10.13-DEV")
+    implementation("de.eldoria", "eldo-util", "1.10.14-DEV")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
 
     testImplementation(platform("org.junit:junit-bom:5.7.2"))

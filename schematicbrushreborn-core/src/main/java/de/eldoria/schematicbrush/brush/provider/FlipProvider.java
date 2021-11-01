@@ -10,7 +10,6 @@ import de.eldoria.schematicbrush.brush.config.flip.FlipFixed;
 import de.eldoria.schematicbrush.brush.config.flip.FlipList;
 import de.eldoria.schematicbrush.brush.config.flip.FlipRandom;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
-import it.unimi.dsi.fastutil.bytes.AbstractByte2FloatFunction;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 

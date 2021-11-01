@@ -2,7 +2,7 @@ package de.eldoria.schematicbrush.util;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class Colors {
+public final class Colors {
     private Colors() {
         throw new UnsupportedOperationException("This is a utility class.");
     }

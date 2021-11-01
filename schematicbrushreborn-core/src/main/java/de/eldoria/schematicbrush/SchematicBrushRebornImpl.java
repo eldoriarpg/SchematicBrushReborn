@@ -4,7 +4,6 @@ import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
@@ -40,6 +39,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistry settingsRegistry;

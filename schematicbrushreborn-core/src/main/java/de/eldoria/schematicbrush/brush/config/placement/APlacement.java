@@ -50,7 +50,6 @@ public abstract class APlacement implements Mutator<APlacement> {
 
     @Override
     public void shift() {
-        return this;
     }
 
     @Override
