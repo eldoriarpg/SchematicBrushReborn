@@ -135,7 +135,7 @@ public class SchematicBrushCache implements SchematicCache {
         var source = sourceForPath.get();
 
         if (source.isExcluded(directory)) {
-            logger.log(Level.CONFIG, "Directory " + directory + "is exluded.");
+            logger.log(Level.CONFIG, "Directory " + directory + "is excluded.");
             return;
         }
 
@@ -184,7 +184,7 @@ public class SchematicBrushCache implements SchematicCache {
 
         // Get a list of all files and directories in a directory
         try (var paths = Files.list(directory)) {
-            // Check for each file if its a directory or a file.
+            // Check for each file if it's a directory or a file.
             for (var path : paths.collect(Collectors.toList())) {
                 if (path.equals(directory)) continue;
                 var file = path.toFile();
@@ -234,18 +234,18 @@ public class SchematicBrushCache implements SchematicCache {
     public Set<Schematic> getSchematicsByDirectory(Player player, String name, String filter) {
         // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
         if (name.endsWith("*")) {
-            var purename = name.replace("*", "").toLowerCase();
+            var pureName = name.replace("*", "").toLowerCase();
             Set<Schematic> allSchematics = new HashSet<>();
             // Check if a directory with this name exists if a directory match should be checked.
             for (var entry : schematicsCache.entrySet()) {
-                if (entry.getKey().toLowerCase().startsWith(purename)) {
+                if (entry.getKey().toLowerCase().startsWith(pureName)) {
                     // only the schematics in directory will be returned if a directory is found.
                     allSchematics.addAll(entry.getValue());
                 }
             }
             if (userCache.containsKey(player.getUniqueId())) {
                 for (var entry : userCache.get(player.getUniqueId()).entrySet()) {
-                    if (entry.getKey().toLowerCase().startsWith(purename)) {
+                    if (entry.getKey().toLowerCase().startsWith(pureName)) {
                         // only the schematics in directory will be returned if a directory is found.
                         allSchematics.addAll(entry.getValue());
                     }
@@ -318,18 +318,18 @@ public class SchematicBrushCache implements SchematicCache {
     @Override
     public List<String> getMatchingDirectories(Player player, String dir, int count) {
         Set<String> matches = new HashSet<>();
-        var seperator = config.schematicConfig().getPathSeparator().charAt(0);
-        var deep = TextUtil.countChars(dir, seperator);
+        var separator = config.schematicConfig().getPathSeparator().charAt(0);
+        var deep = TextUtil.countChars(dir, separator);
         for (var k : schematicsCache.keySet()) {
             if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
-                matches.add(trimPath(k, seperator, deep));
+                matches.add(trimPath(k, separator, deep));
                 if (matches.size() > count) break;
             }
         }
         if (userCache.containsKey(player.getUniqueId())) {
             for (var k : userCache.get(player.getUniqueId()).keySet()) {
                 if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
-                    matches.add(trimPath(k, seperator, deep));
+                    matches.add(trimPath(k, separator, deep));
                     if (matches.size() > count) break;
                 }
             }
@@ -337,10 +337,10 @@ public class SchematicBrushCache implements SchematicCache {
         return new ArrayList<>(matches);
     }
 
-    private String trimPath(String input, char seperator, int deep) {
+    private String trimPath(String input, char separator, int deep) {
         var count = deep;
         for (var i = 0; i < input.length(); i++) {
-            if (input.charAt(i) != seperator) continue;
+            if (input.charAt(i) != separator) continue;
             count--;
             if (count != -1) continue;
             return input.substring(0, i + 1);

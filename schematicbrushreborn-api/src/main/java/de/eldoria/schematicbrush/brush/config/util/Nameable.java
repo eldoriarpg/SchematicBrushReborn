@@ -3,7 +3,7 @@ package de.eldoria.schematicbrush.brush.config.util;
 /**
  * Represents a key.
  */
-public abstract class Nameable {
+public class Nameable {
     private final String name;
 
     public Nameable(String name) {
@@ -21,7 +21,7 @@ public abstract class Nameable {
     }
 
     /**
-     * name of the namable
+     * name of the nameable
      * @return name
      */
     public String name() {

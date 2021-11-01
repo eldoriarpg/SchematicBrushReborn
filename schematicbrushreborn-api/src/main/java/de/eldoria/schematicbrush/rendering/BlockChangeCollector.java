@@ -1,5 +1,5 @@
 package de.eldoria.schematicbrush.rendering;
 
-public interface BlockChangeCollecter {
+public interface BlockChangeCollector {
     Changes changes();
 }

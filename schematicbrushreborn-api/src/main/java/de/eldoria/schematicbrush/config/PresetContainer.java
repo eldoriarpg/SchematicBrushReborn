@@ -74,7 +74,7 @@ public class PresetContainer implements ConfigurationSerializable {
 
     /**
      * Get all presets in this container
-     * @return unmodifyable collection
+     * @return unmodifiable collection
      */
     public Collection<Preset> getPresets() {
         return Collections.unmodifiableCollection(presets.values());

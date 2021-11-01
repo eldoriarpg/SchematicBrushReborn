@@ -11,7 +11,7 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 public class PasteMutation {
     private Clipboard clipboard;
     private AffineTransform transform = new AffineTransform();
-    private EditSession session;
+    private final EditSession session;
     private BlockVector3 pasteOffset = BlockVector3.ZERO;
     private boolean includeAir;
 

@@ -10,9 +10,9 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
  * <p>
  * A placement modifier must be added via {@link BrushSettingsRegistry#registerPlacementModifier(PlacementModifier, ModifierProvider)}.
  *
- * A Placement modifier is a key represented by a strin
+ * A Placement modifier is a key represented by a string
  */
-public abstract class PlacementModifier extends Nameable {
+public class PlacementModifier extends Nameable {
     /**
      * Placement modifier key
      */

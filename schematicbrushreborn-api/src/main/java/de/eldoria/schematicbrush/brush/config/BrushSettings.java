@@ -39,14 +39,12 @@ public final class BrushSettings implements Randomable {
         var totalWeight = schematicSets.stream().filter(b -> b.weight() > 0).mapToInt(SchematicSet::weight).sum();
         // Count all weighted brushes
         var weighted = (int) schematicSets.stream().filter(b -> b.weight() > 0).count();
-        // Count all unweighted weight
-        var unweighted = (int) schematicSets.stream().filter(b -> b.weight() < 0).count();
         int defaultWeight;
         // Handle case, when no brush is weighted
         if (weighted == 0) {
             defaultWeight = 1;
         } else {
-            // Calculate the default weight which is the average of all weightes brushes
+            // Calculate the default weight which is the average of all brushes weights
             defaultWeight = totalWeight / weighted;
         }
 

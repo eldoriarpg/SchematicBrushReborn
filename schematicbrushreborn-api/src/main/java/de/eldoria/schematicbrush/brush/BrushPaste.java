@@ -83,7 +83,7 @@ public class BrushPaste {
      * Build a paste operation
      *
      * @param editSession     edit session
-     * @param capturingExtent extend to caputure cchanges
+     * @param capturingExtent extend to caputure changes
      * @param owner           owner of brush
      * @param position        position to paste
      * @return operation
@@ -128,7 +128,7 @@ public class BrushPaste {
         try {
             clipboard = schematic.loadSchematic();
         } catch (IOException e) {
-            SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load schemartic", e);
+            SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load schematic", e);
         }
     }
 

@@ -12,7 +12,7 @@ public interface Rotation extends IShiftable<Rotation> {
      *
      * @param value value to parse
      * @return rotation enum
-     * @throws IllegalArgumentException when value cant be parsed
+     * @throws IllegalArgumentException when value can't be parsed
      */
     static Rotation asRotation(String value) throws CommandException {
         switch (value) {
@@ -34,7 +34,7 @@ public interface Rotation extends IShiftable<Rotation> {
      *
      * @param value value to parse
      * @return rotation enum
-     * @throws IllegalArgumentException when value cant be parsed
+     * @throws IllegalArgumentException when value can't be parsed
      */
     static Rotation asRotation(int value) {
         switch (value) {
@@ -51,7 +51,7 @@ public interface Rotation extends IShiftable<Rotation> {
     }
 
     /**
-     * Rotation represented as postive int value.
+     * Rotation represented as positive int value.
      *
      * @return rotation as positive integer
      */
@@ -93,7 +93,7 @@ public interface Rotation extends IShiftable<Rotation> {
 
 
     /**
-     * Represents a rotation of 90 degrees counter clockwise. Alterantive a rotation of -90 or 270 degrees.
+     * Represents a rotation of 90 degrees counterclockwise. Alterantive a rotation of -90 or 270 degrees.
      */
     Rotation ROT_LEFT = new Rotation() {
         @Override

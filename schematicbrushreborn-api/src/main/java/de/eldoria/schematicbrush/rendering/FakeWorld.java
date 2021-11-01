@@ -10,7 +10,7 @@ import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.weather.WeatherType;
 import org.bukkit.World;
 
-public class FakeWorld extends BukkitWorld implements BlockChangeCollecter {
+public class FakeWorld extends BukkitWorld implements BlockChangeCollector {
     final Changes.Builder changes = Changes.builder();
 
     /**

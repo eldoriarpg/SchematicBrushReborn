@@ -10,11 +10,11 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
  * <p>
  * A placement modifier must be added via {@link BrushSettingsRegistry#registerSchematicModifier(SchematicModifier, ModifierProvider)} (PlacementModifier, ModifierProvider)}.
  *
- * A Placement modifier is a key represented by a strin
+ * A Placement modifier is a key represented by a string
  */
-public abstract class SchematicModifier extends Nameable {
+public class SchematicModifier extends Nameable {
     /**
-     * Roation modifier key
+     * Rotation modifier key
      */
     public static final SchematicModifier ROTATION = of("rotation");
     /**

@@ -13,7 +13,7 @@ public class SchematicRegistry {
      * Gets a cache by key
      *
      * @param key key of cache
-     * @return the cache. If the cache whas not registered this will be null
+     * @return the cache. If the cache was not registered this will be null
      */
     public SchematicCache getCache(Nameable key) {
         return caches.get(key);
@@ -35,7 +35,7 @@ public class SchematicRegistry {
     }
 
     /**
-     * Unregisers a cache
+     * Unregister a cache
      *
      * @param key key
      */

@@ -10,7 +10,7 @@ public interface SchematicCache {
     Nameable DEFAULT_CACHE = Nameable.of("default");
 
     /**
-     * Init method which will be executes when registered via {@link SchematicRegistry#register(Nameable, SchematicCache)}
+     * Init method which will be executed when registered via {@link SchematicRegistry#register(Nameable, SchematicCache)}
      */
     void init();
 
@@ -60,7 +60,7 @@ public interface SchematicCache {
     int schematicCount();
 
     /**
-     * Get directory coun
+     * Get directory count
      * @return directory count
      */
     int directoryCount();

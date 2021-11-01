@@ -21,19 +21,13 @@ import java.util.Set;
 /**
  * The schematic set represents a part of a brush, which will be combined to a brush by the {@link BrushSettings} A
  * brush can have a weight which indicates how often it should be used, when a {@link BrushSettings} contains more than
- * one brush. The brush contains one ore more schematics which will be provided by random.
+ * one brush. The brush contains one or more schematics which will be provided by random.
  */
 public class SchematicSet implements Randomable {
 
-    /**
-     * A list of schematics.
-     */
     private final List<Schematic> schematics;
     private final Selector selector;
     private final Map<? extends Nameable, Mutator<?>> schematicModifier;
-    /**
-     * Weight of the brush. Must be always larger then 1. Is -1 when no weight is applied.
-     */
     private int weight;
 
     public SchematicSet(Set<Schematic> schematics, Selector selector, Map<? extends Nameable, Mutator<?>> schematicModifier, int weight) {
@@ -114,7 +108,7 @@ public class SchematicSet implements Randomable {
 
     /**
      * Mutate the paste mutation with all mutators
-     * @param mutation mujtation
+     * @param mutation mutation
      */
     public void mutate(PasteMutation mutation) {
         schematicModifier.values().forEach(m -> m.invoke(mutation));

@@ -31,7 +31,7 @@ public class SchematicWatchService implements Runnable {
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(r -> {
         var thread = new Thread(fileWorker, r);
         thread.setUncaughtExceptionHandler((t, throwable) ->
-                SchematicBrushRebornImpl.logger().log(Level.SEVERE, "And error occured on thread " + t.getName() + ".", throwable));
+                SchematicBrushRebornImpl.logger().log(Level.SEVERE, "And error occurred on thread " + t.getName() + ".", throwable));
         return thread;
     });
     private WatchService watchService;

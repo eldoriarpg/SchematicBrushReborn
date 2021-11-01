@@ -53,7 +53,7 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     }
 
     /**
-     * Parse the argumenmts to the provided class if possible
+     * Parse the arguments to the provided class if possible
      *
      * @param args args to parse
      * @return instance of the provided class

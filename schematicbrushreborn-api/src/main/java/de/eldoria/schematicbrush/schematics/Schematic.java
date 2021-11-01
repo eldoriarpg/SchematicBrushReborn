@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class Schematic {
     /**
-     * Regex wich matches the end of a filename.
+     * Regex which matches the end of a filename.
      */
     private static final String EXTENSION = "\\..+$";
     /**
@@ -31,7 +31,7 @@ public class Schematic {
     }
 
     /**
-     * Matches a pattern agains the file name.
+     * Matches a pattern against the file name.
      *
      * @param pattern pattern to match
      * @return true if the pattern matches the file name with or without extension
@@ -65,7 +65,7 @@ public class Schematic {
      * Load the schematic from file.
      *
      * @return the schematic wrapped in a clipboard object
-     * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deletet or
+     * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deleted or
      *                     moved.
      */
     public Clipboard loadSchematic() throws IOException {

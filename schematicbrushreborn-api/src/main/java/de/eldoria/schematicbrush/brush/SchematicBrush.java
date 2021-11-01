@@ -16,7 +16,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.event.PasteEvent;
-import de.eldoria.schematicbrush.rendering.BlockChangeCollecter;
+import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
 import de.eldoria.schematicbrush.rendering.FakeWorld;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
@@ -75,7 +75,7 @@ public class SchematicBrush implements Brush {
      *
      * @return changes which will be made to the world
      */
-    public BlockChangeCollecter pasteFake() {
+    public BlockChangeCollector pasteFake() {
         var world = new FakeWorld(brushOwner.getWorld());
         CapturingExtent capturingExtent;
         try (var editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, 100000)) {

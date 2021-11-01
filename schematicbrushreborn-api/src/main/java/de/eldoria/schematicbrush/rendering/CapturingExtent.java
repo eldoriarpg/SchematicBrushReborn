@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapturingExtent implements Extent, BlockChangeCollecter {
+public class CapturingExtent implements Extent, BlockChangeCollector {
     private static final BlockType[] AIR_TYPES = {BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR};
     final Changes.Builder changes = Changes.builder();
     final EditSession session;
