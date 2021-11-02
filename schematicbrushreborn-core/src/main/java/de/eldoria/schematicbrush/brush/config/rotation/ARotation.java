@@ -20,6 +20,9 @@ public abstract class ARotation implements Mutator<Rotation> {
         rotation = Rotation.valueOf(map.getValue("value"));
     }
 
+    public ARotation() {
+    }
+
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()

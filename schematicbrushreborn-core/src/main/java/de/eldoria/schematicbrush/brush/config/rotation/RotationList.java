@@ -12,10 +12,12 @@ public class RotationList extends ARotation {
     private final List<Rotation> values;
 
     public RotationList(List<Rotation> values) {
+        super();
         this.values = values;
     }
 
     public RotationList(Map<String, Object> objectMap) {
+        super();
         var map = SerializationUtil.mapOf(objectMap);
         List<Integer> values = map.getValue("values");
         this.values = values.stream().map(Rotation::valueOf).collect(Collectors.toList());
@@ -29,7 +31,7 @@ public class RotationList extends ARotation {
     @Override
     public void shift() {
         if (value() == null) {
-            return values.get(ThreadLocalRandom.current().nextInt(values.size()));
+            value(values.get(ThreadLocalRandom.current().nextInt(values.size())));
         }
         var index = values.indexOf(value());
         Rotation newValue;
@@ -39,7 +41,6 @@ public class RotationList extends ARotation {
             newValue = values.get(index + 1);
         }
         value(newValue);
-        return value();
     }
 
     @Override

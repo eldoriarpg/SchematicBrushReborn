@@ -12,11 +12,6 @@ public class FlipFixed extends AFlip {
     }
 
     @Override
-    public void shift() {
-        return flip;
-    }
-
-    @Override
     public Flip valueProvider() {
         return flip;
     }

@@ -11,12 +11,6 @@ public class RotationFixed extends ARotation {
         super(objectMap);
     }
 
-
-    @Override
-    public void shift() {
-        return rotation;
-    }
-
     @Override
     public Rotation valueProvider() {
         return rotation;

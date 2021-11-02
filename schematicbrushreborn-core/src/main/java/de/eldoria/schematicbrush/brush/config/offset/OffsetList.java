@@ -38,13 +38,13 @@ public class OffsetList extends AOffset {
     @Override
     public void shift() {
         if (value() == null) {
-            return values.get(ThreadLocalRandom.current().nextInt(values.size()));
+            value(values.get(ThreadLocalRandom.current().nextInt(values.size())));
         }
         var index = values.indexOf(value());
         if (index + 1 == values.size()) {
-            return values.get(0);
+            value(values.get(0));
         }
-        return values.get(index + 1);
+        value(values.get(index + 1));
     }
 
     @Override
