@@ -3,7 +3,9 @@ package de.eldoria.schematicbrush.util;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
+import com.sk89q.worldedit.command.tool.Tool;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
 import de.eldoria.eldoutilities.messages.MessageSender;
@@ -55,11 +57,15 @@ public final class WorldEditBrush {
             return Optional.empty();
         }
         try {
-            var brushTool = getLocalSession(player).getBrushTool(itemType);
+            var tool = getLocalSession(player).getTool(itemType);
+            if(!(tool instanceof BrushTool)){
+                return Optional.empty();
+            }
+            var brushTool = (BrushTool) tool;
             if (brushTool.getBrush() != null && clazz.isAssignableFrom(brushTool.getBrush().getClass())) {
                 return Optional.of((T) brushTool.getBrush());
             }
-        } catch (InvalidToolBindException | NullPointerException e) {
+        } catch (NullPointerException e) {
             return Optional.empty();
         } // for some reason world edit throws a NPE when this function is called on world edit tools
 
