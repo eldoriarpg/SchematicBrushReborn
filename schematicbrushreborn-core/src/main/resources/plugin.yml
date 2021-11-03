@@ -3,6 +3,8 @@ version: ${version}
 api-version: "1.13"
 depend:
   - "WorldEdit"
+softdepend:
+  - "ProtocolLib"
 main: de.eldoria.schematicbrush.SchematicBrushRebornImpl
 authors: [ Hadde, SirYwell ]
 website: "https://www.spigotmc.org/resources/79441/"
