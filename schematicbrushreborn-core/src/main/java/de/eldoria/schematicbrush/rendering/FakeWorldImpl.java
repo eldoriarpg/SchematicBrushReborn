@@ -10,7 +10,7 @@ import com.sk89q.worldedit.world.weather.WeatherType;
 import org.bukkit.World;
 
 public class FakeWorldImpl extends BukkitWorld implements  FakeWorld {
-    private final Changes.Builder changes = Changes.builder();
+    private final ChangesImpl.Builder changes = ChangesImpl.builder();
 
     /**
      * Construct the object.

@@ -45,7 +45,7 @@ public class ChangesImpl implements Changes {
         }
 
         public Changes build() {
-            return new Changes(changed, original);
+            return new ChangesImpl(changed, original);
         }
     }
 }
