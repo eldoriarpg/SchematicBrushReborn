@@ -17,13 +17,30 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.Optional;
 import java.util.logging.Level;
 
 public final class WorldEditBrush {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
-    private static final boolean FAWE = Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
+    private static final boolean FAWE;
+    private static final MethodHandle GET_BRUSH;
+
+    static {
+        MethodHandle handle = null;
+        FAWE = Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
+        if (!FAWE) {
+            var lookup = MethodHandles.lookup();
+            try {
+                handle = lookup.findVirtual(LocalSession.class, "getTool", MethodType.methodType(Tool.class, ItemType.class));
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                SchematicBrushReborn.logger().log(Level.WARNING, "Could not build reflections for world edit.", e);
+            }
+        }
+        GET_BRUSH = handle;
+    }
 
     private WorldEditBrush() {
         throw new UnsupportedOperationException("This is a utility class.");
@@ -94,7 +111,7 @@ public final class WorldEditBrush {
         var itemInMainHand = player.getInventory().getItemInMainHand();
         try {
             var brushTool = new BrushTool("schematicbrush.brush.use");
-            brushTool.setBrush(brush,"schematicbrush.brush.use" );
+            brushTool.setBrush(brush, "schematicbrush.brush.use");
             getLocalSession(player).setTool(BukkitAdapter.asItemType(itemInMainHand.getType()), brushTool);
         } catch (InvalidToolBindException e) {
             MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
@@ -117,9 +134,8 @@ public final class WorldEditBrush {
 
     private static Tool getWorldEditTool(Player player, ItemType itemType) {
         try {
-            var getTool = LocalSession.class.getMethod("getTool", ItemType.class);
-            return (Tool) getTool.invoke(getLocalSession(player), itemType);
-        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            return (Tool) GET_BRUSH.invoke(getLocalSession(player), itemType);
+        } catch (Throwable e) {
             SchematicBrushReborn.logger().log(Level.WARNING, "Could not extract Tool.", e);
         }
         return null;
