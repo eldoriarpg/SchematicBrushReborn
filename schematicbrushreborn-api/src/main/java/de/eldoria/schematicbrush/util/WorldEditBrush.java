@@ -2,22 +2,28 @@ package de.eldoria.schematicbrush.util;
 
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.blocks.BaseItem;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.Tool;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.world.item.ItemType;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+import java.util.logging.Level;
 
 public final class WorldEditBrush {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
+    private static final boolean FAWE = Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
 
     private WorldEditBrush() {
         throw new UnsupportedOperationException("This is a utility class.");
@@ -57,8 +63,13 @@ public final class WorldEditBrush {
             return Optional.empty();
         }
         try {
-            var tool = getLocalSession(player).getTool(itemType);
-            if(!(tool instanceof BrushTool)){
+            Tool tool;
+            if (FAWE) {
+                tool = getLocalSession(player).getTool(new BaseItem(itemType), BukkitAdapter.adapt(player));
+            } else {
+                tool = getWorldEditTool(player, itemType);
+            }
+            if (!(tool instanceof BrushTool)) {
                 return Optional.empty();
             }
             var brushTool = (BrushTool) tool;
@@ -82,7 +93,9 @@ public final class WorldEditBrush {
     public static boolean setBrush(Player player, Brush brush) {
         var itemInMainHand = player.getInventory().getItemInMainHand();
         try {
-            getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType())).setBrush(brush, "schematicbrush.brush.use");
+            var brushTool = new BrushTool("schematicbrush.brush.use");
+            brushTool.setBrush(brush,"schematicbrush.brush.use" );
+            getLocalSession(player).setTool(BukkitAdapter.asItemType(itemInMainHand.getType()), brushTool);
         } catch (InvalidToolBindException e) {
             MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
             return false;
@@ -100,5 +113,15 @@ public final class WorldEditBrush {
         Actor actor = BukkitAdapter.adapt(player);
 
         return WORLD_EDIT.getSessionManager().get(actor);
+    }
+
+    private static Tool getWorldEditTool(Player player, ItemType itemType) {
+        try {
+            var getTool = LocalSession.class.getMethod("getTool", ItemType.class);
+            return (Tool) getTool.invoke(getLocalSession(player), itemType);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            SchematicBrushReborn.logger().log(Level.WARNING, "Could not extract Tool.", e);
+        }
+        return null;
     }
 }

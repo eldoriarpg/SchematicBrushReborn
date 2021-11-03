@@ -4,13 +4,6 @@ plugins {
     id("de.eldoria.java-conventions")
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-    sourceCompatibility = JavaVersion.VERSION_11
-}
-
-
 publishing {
     val publishData = PublishData(project)
     publications {
