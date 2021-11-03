@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
 import de.eldoria.schematicbrush.brush.config.selector.DirectorySelector;
@@ -18,9 +19,17 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
             new SelectorProviderImpl(DirectorySelector.class, "directory", registry) {
+                private final Argument[] arguments = {Argument.unlocalizedInput("directory", true),
+                        Argument.unlocalizedInput("name_filter", false)};
+
                 @Override
                 public Selector parse(Arguments args) {
                     return new DirectorySelector(args.asString(0), args.asString(1));
+                }
+
+                @Override
+                public Argument[] arguments() {
+                    return arguments;
                 }
 
                 @Override
@@ -39,9 +48,15 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
             new SelectorProviderImpl(NameSelector.class, "name", registry) {
+                private final Argument[] arguments = {Argument.unlocalizedInput("name", true)};
                 @Override
                 public Selector parse(Arguments args) {
                     return new NameSelector(args.asString(0));
+                }
+
+                @Override
+                public Argument[] arguments() {
+                    return arguments;
                 }
 
                 @Override
@@ -55,9 +70,15 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
             new SelectorProviderImpl(RegexSelector.class, "regex", registry) {
+                private final Argument[] arguments = {Argument.unlocalizedInput("regex", true)};
                 @Override
                 public Selector parse(Arguments args) {
                     return new NameSelector(args.asString(0));
+                }
+
+                @Override
+                public Argument[] arguments() {
+                    return arguments;
                 }
 
                 @Override

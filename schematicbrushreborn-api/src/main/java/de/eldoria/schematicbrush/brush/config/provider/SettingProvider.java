@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.brush.config.provider;
 
+import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -64,12 +65,20 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     public abstract T parse(Arguments args) throws CommandException;
 
     /**
+     * Return the required and optional arguments to parse this setting.
+     * @return the arguments of the setting
+     */
+    public Argument[] arguments() {
+        return new Argument[0];
+    }
+
+    /**
      * Defines whether the provider requires arguments or not.
      *
      * @return true if arguments are required
      */
     public boolean hasArguments() {
-        return true;
+        return arguments().length != 0;
     }
 
     /**

@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
@@ -36,9 +37,15 @@ public abstract class RotationProvider extends ModifierProvider {
         }
     };
     public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class, "fixed") {
+        private final Argument[] arguments = {Argument.unlocalizedInput("rotation", true)};
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return ARotation.fixed(Rotation.parse(args.asString(0)));
+        }
+
+        @Override
+        public Argument[] arguments() {
+            return arguments;
         }
 
         @Override
@@ -51,6 +58,7 @@ public abstract class RotationProvider extends ModifierProvider {
     };
 
     public static final RotationProvider LIST = new RotationProvider(RotationList.class, "list") {
+        private final Argument[] arguments = {Argument.unlocalizedInput("rotations...", true)};
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Rotation> values = new ArrayList<>();
@@ -58,6 +66,11 @@ public abstract class RotationProvider extends ModifierProvider {
                 values.add(Rotation.parse(arg));
             }
             return ARotation.list(values);
+        }
+
+        @Override
+        public Argument[] arguments() {
+            return arguments;
         }
 
         @Override

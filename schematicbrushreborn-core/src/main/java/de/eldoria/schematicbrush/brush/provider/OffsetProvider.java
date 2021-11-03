@@ -1,6 +1,8 @@
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
+import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
@@ -21,9 +23,15 @@ import java.util.List;
 public abstract class OffsetProvider extends ModifierProvider {
 
     public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class, "fixed") {
+        private final Argument[] arguments = {Argument.unlocalizedInput("offset", true)};
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return AOffset.fixed(args.asInt(0));
+        }
+
+        @Override
+        public Argument[] arguments() {
+            return arguments;
         }
 
         @Override
@@ -41,6 +49,7 @@ public abstract class OffsetProvider extends ModifierProvider {
     };
 
     public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class, "list") {
+        private final Argument[] arguments = {Argument.unlocalizedInput("offsets...", true)};
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Integer> values = new ArrayList<>();
@@ -48,6 +57,11 @@ public abstract class OffsetProvider extends ModifierProvider {
                 values.add(args.asInt(i));
             }
             return AOffset.list(values);
+        }
+
+        @Override
+        public Argument[] arguments() {
+            return arguments;
         }
 
         @Override
@@ -62,11 +76,17 @@ public abstract class OffsetProvider extends ModifierProvider {
     };
 
     public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "range") {
+        private final Argument[] arguments = {Argument.unlocalizedInput("offset_min", true), Argument.unlocalizedInput("offset_max", true)};
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             var lower = args.asInt(0);
             var upper = args.asInt(1);
             return AOffset.range(lower, upper);
+        }
+
+        @Override
+        public Argument[] arguments() {
+            return arguments;
         }
 
         @Override

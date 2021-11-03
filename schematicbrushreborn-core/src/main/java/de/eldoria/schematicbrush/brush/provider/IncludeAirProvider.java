@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
@@ -14,9 +15,15 @@ import java.util.List;
 
 public abstract class IncludeAirProvider extends ModifierProvider {
     public static final IncludeAirProvider FIXED = new IncludeAirProvider(IncludeAir.class, "fixed") {
+        private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return new IncludeAir(args.asBoolean(0));
+        }
+
+        @Override
+        public Argument[] arguments() {
+            return arguments;
         }
 
         @Override

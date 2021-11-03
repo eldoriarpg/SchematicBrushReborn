@@ -1,6 +1,7 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
+import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
@@ -127,7 +128,9 @@ public class BrushSettingsRegistry {
      * @throws CommandException if the arguments could not be parsed
      */
     public Selector parseSelector(Arguments args) throws CommandException {
-        return getSettingProvider(args, selector).parse(args.subArguments());
+        var provider = getSettingProvider(args, selector);
+        CommandAssertions.invalidArguments(args.subArguments(), provider.arguments());
+        return provider.parse(args.subArguments());
     }
 
     /**
@@ -139,7 +142,9 @@ public class BrushSettingsRegistry {
      */
     public Pair<SchematicModifier, Mutator<?>> parseSchematicModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, schematicModifier);
-        return Pair.of(provider.first, provider.second.parse(args.subArguments().subArguments()));
+        var subArguments = args.subArguments().subArguments();
+        CommandAssertions.invalidArguments(subArguments, provider.second.arguments());
+        return Pair.of(provider.first, provider.second.parse(subArguments));
     }
 
     /**
@@ -151,7 +156,9 @@ public class BrushSettingsRegistry {
      */
     public Pair<PlacementModifier, Mutator<?>> parsePlacementModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, placementModifier);
-        return Pair.of(provider.first, provider.second.parse(args.subArguments().subArguments()));
+        var subArguments = args.subArguments().subArguments();
+        CommandAssertions.invalidArguments(subArguments, provider.second.arguments());
+        return Pair.of(provider.first, provider.second.parse(subArguments));
     }
 
     /**
