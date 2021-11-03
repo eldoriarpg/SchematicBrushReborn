@@ -4,9 +4,9 @@ import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
-import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.includeair.IncludeAir;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
@@ -16,6 +16,7 @@ import java.util.List;
 public abstract class IncludeAirProvider extends ModifierProvider {
     public static final IncludeAirProvider FIXED = new IncludeAirProvider(IncludeAir.class, "fixed") {
         private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
+
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return new IncludeAir(args.asBoolean(0));

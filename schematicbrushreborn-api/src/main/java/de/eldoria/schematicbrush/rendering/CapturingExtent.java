@@ -1,9 +1,7 @@
 package de.eldoria.schematicbrush.rendering;
 
 import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.Extent;
@@ -16,101 +14,49 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
-import com.sk89q.worldedit.world.block.BlockType;
-import com.sk89q.worldedit.world.block.BlockTypes;
-import de.eldoria.schematicbrush.brush.config.BrushSettings;
-import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
-import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapturingExtent implements Extent, BlockChangeCollector {
-    private static final BlockType[] AIR_TYPES = {BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR};
-    private final Changes.Builder changes = Changes.builder();
-    private final EditSession session;
-    private final FakeWorld fakeWorld;
-    private final BrushSettings settings;
-
-    public CapturingExtent(EditSession session, FakeWorld fakeWorld, BrushSettings settings) {
-        this.session = session;
-        this.fakeWorld = fakeWorld;
-        this.settings = settings;
-    }
+public interface CapturingExtent extends Extent, BlockChangeCollector {
+    @Override
+    BlockVector3 getMinimumPoint();
 
     @Override
-    public BlockVector3 getMinimumPoint() {
-        return session.getMinimumPoint();
-    }
+    BlockVector3 getMaximumPoint();
 
     @Override
-    public BlockVector3 getMaximumPoint() {
-        return session.getMaximumPoint();
-    }
+    List<? extends Entity> getEntities(Region region);
 
     @Override
-    public List<? extends Entity> getEntities(Region region) {
-        return session.getEntities();
-    }
-
-    @Override
-    public List<? extends Entity> getEntities() {
-        return session.getEntities();
-    }
+    List<? extends Entity> getEntities();
 
     @Nullable
     @Override
-    public Entity createEntity(Location location, BaseEntity entity) {
-        return session.createEntity(location, entity);
-    }
+    Entity createEntity(Location location, BaseEntity entity);
 
     @Override
-    public BlockState getBlock(BlockVector3 position) {
-        return session.getBlock(position);
-    }
+    BlockState getBlock(BlockVector3 position);
 
     @Override
-    public BaseBlock getFullBlock(BlockVector3 position) {
-        return session.getFullBlock(position);
-    }
+    BaseBlock getFullBlock(BlockVector3 position);
 
     @Override
-    public BiomeType getBiome(BlockVector2 position) {
-        return session.getBiome(position);
-    }
+    BiomeType getBiome(BlockVector2 position);
 
     @Override
-    public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block) {
-        var data = BukkitAdapter.adapt(block.toBaseBlock());
-        var location = BukkitAdapter.adapt(fakeWorld.getWorld(), position);
-        if ((boolean) settings.getMutator(PlacementModifier.REPLACE_ALL).value()) {
-            changes.add(location, location.getBlock().getBlockData(), data);
-        } else {
-            if (ArrayUtils.contains(AIR_TYPES, getBlock(position).getBlockType())) {
-                changes.add(location, location.getBlock().getBlockData(), data);
-            }
-        }
-        return true;
-    }
+    <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block);
 
     @Override
-    public boolean setTile(int x, int y, int z, CompoundTag tile) throws WorldEditException {
-        return false;
-    }
+    boolean setTile(int x, int y, int z, CompoundTag tile) throws WorldEditException;
 
     @Override
-    public boolean setBiome(BlockVector2 position, BiomeType biome) {
-        return true;
-    }
+    boolean setBiome(BlockVector2 position, BiomeType biome);
 
     @Nullable
     @Override
-    public Operation commit() {
-        return null;
-    }
+    Operation commit();
 
     @Override
-    public Changes changes() {
-        return changes.build();
-    }
+    Changes changes();
 }

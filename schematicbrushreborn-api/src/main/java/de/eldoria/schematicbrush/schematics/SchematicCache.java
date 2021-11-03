@@ -55,12 +55,14 @@ public interface SchematicCache {
 
     /**
      * Get schematic count
+     *
      * @return schematic count
      */
     int schematicCount();
 
     /**
      * Get directory count
+     *
      * @return directory count
      */
     int directoryCount();

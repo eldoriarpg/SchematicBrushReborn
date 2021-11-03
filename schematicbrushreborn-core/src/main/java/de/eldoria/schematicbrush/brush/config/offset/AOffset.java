@@ -24,15 +24,6 @@ public abstract class AOffset implements Mutator<Integer> {
         offset = map.getValue("value");
     }
 
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("value", offset)
-                .build();
-    }
-
-
     public static AOffset range(int min, int max) {
         return new OffsetRange(min, max);
     }
@@ -43,6 +34,14 @@ public abstract class AOffset implements Mutator<Integer> {
 
     public static AOffset list(List<Integer> values) {
         return new OffsetList(values);
+    }
+
+    @Override
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("value", offset)
+                .build();
     }
 
     @Override

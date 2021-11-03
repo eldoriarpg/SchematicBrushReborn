@@ -8,6 +8,68 @@ import de.eldoria.schematicbrush.brush.config.util.IShiftable;
  */
 public interface Rotation extends IShiftable<Rotation> {
     /**
+     * Represents a rotation of 0.
+     */
+    Rotation ROT_ZERO = new Rotation() {
+        @Override
+        public int degree() {
+            return 0;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 0";
+        }
+    };
+    /**
+     * Represents a rotation of 90 degrees counterclockwise. Alterantive a rotation of -90 or 270 degrees.
+     */
+    Rotation ROT_LEFT = new Rotation() {
+        @Override
+        public int degree() {
+            return 270;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 270";
+        }
+    };
+    /**
+     * Represents a rotation of 180 degrees.
+     */
+    Rotation ROT_HALF = new Rotation() {
+        @Override
+        public int degree() {
+            return 180;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 180";
+        }
+    };
+    /**
+     * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
+     */
+    Rotation ROT_RIGHT = new Rotation() {
+        @Override
+        public int degree() {
+            return 90;
+        }
+
+        @Override
+        public Rotation valueProvider() {
+            return ROT_HALF;
+        }
+
+        @Override
+        public String toString() {
+            return "Rot 90";
+        }
+    };
+
+    /**
      * Get a string as rotation value.
      *
      * @param value value to parse
@@ -70,69 +132,4 @@ public interface Rotation extends IShiftable<Rotation> {
     default Rotation valueProvider() {
         return this;
     }
-
-    /**
-     * Represents a rotation of 0.
-     */
-    Rotation ROT_ZERO = new Rotation() {
-        @Override
-        public int degree() {
-            return 0;
-        }
-
-        @Override
-        public String toString() {
-            return "Rot 0";
-        }
-    };
-
-    /**
-     * Represents a rotation of 90 degrees counterclockwise. Alterantive a rotation of -90 or 270 degrees.
-     */
-    Rotation ROT_LEFT = new Rotation() {
-        @Override
-        public int degree() {
-            return 270;
-        }
-
-        @Override
-        public String toString() {
-            return "Rot 270";
-        }
-    };
-
-    /**
-     * Represents a rotation of 180 degrees.
-     */
-    Rotation ROT_HALF = new Rotation() {
-        @Override
-        public int degree() {
-            return 180;
-        }
-
-        @Override
-        public String toString() {
-            return "Rot 180";
-        }
-    };
-
-    /**
-     * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
-     */
-    Rotation ROT_RIGHT = new Rotation() {
-        @Override
-        public int degree() {
-            return 90;
-        }
-
-        @Override
-        public Rotation valueProvider() {
-            return ROT_HALF;
-        }
-
-        @Override
-        public String toString() {
-            return "Rot 90";
-        }
-    };
 }

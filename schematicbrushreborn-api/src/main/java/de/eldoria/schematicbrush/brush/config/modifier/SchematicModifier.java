@@ -1,14 +1,15 @@
 package de.eldoria.schematicbrush.brush.config.modifier;
 
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 
 /**
- * Represents a placement modifier which is applied to a {@link de.eldoria.schematicbrush.brush.config.SchematicSet}.
+ * Represents a placement modifier which is applied to a {@link SchematicSet}.
  * <p>
  * A placement modifier must be added via {@link BrushSettingsRegistry#registerSchematicModifier(SchematicModifier, ModifierProvider)} (PlacementModifier, ModifierProvider)}.
- *
+ * <p>
  * A Placement modifier is a key represented by a string
  */
 public class SchematicModifier extends Nameable {

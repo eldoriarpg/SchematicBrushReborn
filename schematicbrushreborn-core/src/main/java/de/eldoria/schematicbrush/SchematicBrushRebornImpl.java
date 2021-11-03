@@ -8,7 +8,8 @@ import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
+import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.provider.FlipProvider;
@@ -23,17 +24,20 @@ import de.eldoria.schematicbrush.commands.Brush;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.PresetContainer;
-import de.eldoria.schematicbrush.config.sections.GeneralConfig;
-import de.eldoria.schematicbrush.config.sections.SchematicConfig;
-import de.eldoria.schematicbrush.config.sections.SchematicSource;
-import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
+import de.eldoria.schematicbrush.config.ConfigImpl;
+import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
+import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
+import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
+import de.eldoria.schematicbrush.config.sections.presets.PresetContainerImpl;
+import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
+import de.eldoria.schematicbrush.config.sections.presets.PresetRegistryImpl;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
 import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.Arrays;
@@ -44,7 +48,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistry settingsRegistry;
     private SchematicRegistry schematics;
-    private Config config;
+    private ConfigImpl config;
     private SchematicBrushCache cache;
 
     @Override
@@ -58,13 +62,13 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var iLocalizer = ILocalizer.create(this, "en_US");
         iLocalizer.setLocale("en_US");
 
-        schematics = new SchematicRegistry();
+        schematics = new SchematicRegistryImpl();
 
-        settingsRegistry = new BrushSettingsRegistry();
+        settingsRegistry = new BrushSettingsRegistryImpl();
         registerDefaults();
 
         saveDefaultConfig();
-        config = new Config(this);
+        config = new ConfigImpl(this);
 
         cache = new SchematicBrushCache(this, config);
         schematics.register(SchematicCache.DEFAULT_CACHE, cache);
@@ -156,9 +160,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.presets.Preset.class,
-                SchematicConfig.class, SchematicSource.class, PresetContainer.class, PresetRegistry.class,
-                SchematicSetBuilder.class);
+        return Arrays.asList(GeneralConfigImpl.class, PresetImpl.class,
+                SchematicConfigImpl.class, SchematicSourceImpl.class, PresetContainerImpl.class, PresetRegistryImpl.class,
+                SchematicSetBuilderImpl.class);
     }
 
     @Override

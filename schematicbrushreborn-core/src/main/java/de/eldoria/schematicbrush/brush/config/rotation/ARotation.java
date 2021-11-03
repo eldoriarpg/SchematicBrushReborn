@@ -23,13 +23,6 @@ public abstract class ARotation implements Mutator<Rotation> {
     public ARotation() {
     }
 
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("value", rotation.degree())
-                .build();
-    }
-
     public static ARotation fixed(Rotation rotation) {
         return new RotationFixed(rotation);
     }
@@ -40,6 +33,13 @@ public abstract class ARotation implements Mutator<Rotation> {
 
     public static ARotation random() {
         return new RotationRandom();
+    }
+
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("value", rotation.degree())
+                .build();
     }
 
     @Override

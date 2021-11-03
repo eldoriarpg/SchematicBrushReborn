@@ -86,10 +86,9 @@ public final class WorldEditBrush {
             } else {
                 tool = getWorldEditTool(player, itemType);
             }
-            if (!(tool instanceof BrushTool)) {
+            if (!(tool instanceof BrushTool brushTool)) {
                 return Optional.empty();
             }
-            var brushTool = (BrushTool) tool;
             if (brushTool.getBrush() != null && clazz.isAssignableFrom(brushTool.getBrush().getClass())) {
                 return Optional.of((T) brushTool.getBrush());
             }

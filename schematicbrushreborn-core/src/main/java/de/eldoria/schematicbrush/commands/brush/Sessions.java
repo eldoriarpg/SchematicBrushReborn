@@ -4,6 +4,7 @@ import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.Colors;
@@ -49,7 +50,7 @@ public class Sessions {
     private BrushBuilder getOrCreateBuilder(Player player) {
         return WorldEditBrush.getSchematicBrush(player)
                 .map(brush -> brush.toBuilder(registry, schematicRegistry))
-                .orElse(new BrushBuilder(player, registry, schematicRegistry));
+                .orElse(new BrushBuilderImpl(player, registry, schematicRegistry));
     }
 
     public void showBrush(Player player) {

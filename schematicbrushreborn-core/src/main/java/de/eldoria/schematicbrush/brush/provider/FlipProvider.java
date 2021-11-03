@@ -50,6 +50,7 @@ public abstract class FlipProvider extends ModifierProvider {
 
     public static final FlipProvider LIST = new FlipProvider(FlipList.class, "list") {
         private final Argument[] arguments = {Argument.unlocalizedInput("flip...", true)};
+
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Flip> flips = new ArrayList<>();

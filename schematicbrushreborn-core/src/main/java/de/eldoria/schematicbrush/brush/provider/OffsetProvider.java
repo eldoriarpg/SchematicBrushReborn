@@ -2,17 +2,16 @@ package de.eldoria.schematicbrush.brush.provider;
 
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
-import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.brush.config.offset.AOffset;
-import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetFixed;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetList;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetRange;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
@@ -24,6 +23,7 @@ public abstract class OffsetProvider extends ModifierProvider {
 
     public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class, "fixed") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset", true)};
+
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return AOffset.fixed(args.asInt(0));
@@ -50,6 +50,7 @@ public abstract class OffsetProvider extends ModifierProvider {
 
     public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class, "list") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offsets...", true)};
+
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Integer> values = new ArrayList<>();
@@ -77,6 +78,7 @@ public abstract class OffsetProvider extends ModifierProvider {
 
     public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "range") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset_min", true), Argument.unlocalizedInput("offset_max", true)};
+
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             var lower = args.asInt(0);

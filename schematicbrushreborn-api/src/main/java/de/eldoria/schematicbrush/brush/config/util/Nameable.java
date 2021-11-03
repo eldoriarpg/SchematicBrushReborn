@@ -12,6 +12,7 @@ public class Nameable {
 
     /**
      * Creates a new nameable with the name
+     *
      * @param name name of nameable
      * @return new nameable instance
      */
@@ -22,6 +23,7 @@ public class Nameable {
 
     /**
      * name of the nameable
+     *
      * @return name
      */
     public String name() {

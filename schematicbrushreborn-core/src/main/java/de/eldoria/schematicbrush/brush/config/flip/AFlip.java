@@ -12,18 +12,6 @@ import java.util.Map;
 public abstract class AFlip implements Mutator<Flip> {
     protected Flip flip;
 
-    public static AFlip fixed(Flip flip) {
-        return new FlipFixed(flip);
-    }
-
-    public static AFlip list(List<Flip> flips) {
-        return new FlipList(flips);
-    }
-
-    public static AFlip random() {
-        return new FlipRandom();
-    }
-
     public AFlip() {
     }
 
@@ -34,6 +22,18 @@ public abstract class AFlip implements Mutator<Flip> {
 
     public AFlip(Flip flip) {
         this.flip = flip;
+    }
+
+    public static AFlip fixed(Flip flip) {
+        return new FlipFixed(flip);
+    }
+
+    public static AFlip list(List<Flip> flips) {
+        return new FlipList(flips);
+    }
+
+    public static AFlip random() {
+        return new FlipRandom();
     }
 
     @NotNull

@@ -66,6 +66,7 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
 
     /**
      * Return the required and optional arguments to parse this setting.
+     *
      * @return the arguments of the setting
      */
     public Argument[] arguments() {

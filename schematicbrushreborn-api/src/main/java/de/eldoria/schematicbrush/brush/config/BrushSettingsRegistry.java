@@ -1,37 +1,22 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
-import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.container.Pair;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
-import de.eldoria.schematicbrush.brush.config.provider.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
-import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-/**
- * Registry to register brush settings
- */
-public class BrushSettingsRegistry {
-    private final List<SelectorProvider> selector = new ArrayList<>();
-    private final Map<SchematicModifier, List<ModifierProvider>> schematicModifier = new LinkedHashMap<>();
-    private final Map<PlacementModifier, List<ModifierProvider>> placementModifier = new LinkedHashMap<>();
-
+public interface BrushSettingsRegistry {
     /**
      * Registers a new selector.
      * <p>
@@ -40,13 +25,7 @@ public class BrushSettingsRegistry {
      * @param provider provider of the selector
      * @throws AlreadyRegisteredException when a selector with this name is already registered
      */
-    public void registerSelector(SelectorProvider provider) {
-        ConfigurationSerialization.registerClass(provider.serializationClass());
-        if (selector.contains(provider)) {
-            throw new AlreadyRegisteredException(provider);
-        }
-        selector.add(provider);
-    }
+    void registerSelector(SelectorProvider provider);
 
     /**
      * Register a new schematic modifier.
@@ -57,13 +36,7 @@ public class BrushSettingsRegistry {
      * @param provider provider to add
      * @throws AlreadyRegisteredException when a modifier with this type and name is already registered
      */
-    public void registerSchematicModifier(SchematicModifier type, ModifierProvider provider) {
-        ConfigurationSerialization.registerClass(provider.serializationClass());
-        if (schematicModifier.containsKey(type) && schematicModifier.get(type).contains(provider)) {
-            throw new AlreadyRegisteredException(type, provider);
-        }
-        schematicModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
-    }
+    void registerSchematicModifier(SchematicModifier type, ModifierProvider provider);
 
     /**
      * Register a new schematic modifier.
@@ -74,51 +47,28 @@ public class BrushSettingsRegistry {
      * @param provider provider to add
      * @throws AlreadyRegisteredException when a modifier with this type and name is already registered
      */
-    public void registerPlacementModifier(PlacementModifier type, ModifierProvider provider) {
-        ConfigurationSerialization.registerClass(provider.serializationClass());
-        if (placementModifier.containsKey(type) && placementModifier.get(type).contains(provider)) {
-            throw new AlreadyRegisteredException(type, provider);
-        }
-        placementModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
-    }
+    void registerPlacementModifier(PlacementModifier type, ModifierProvider provider);
 
     /**
      * Get the default selector. This selector will be the first registered selector.
      *
      * @return selector instance
      */
-    public Selector defaultSelector() {
-        return selector.get(0).defaultSetting();
-    }
+    Selector defaultSelector();
 
     /**
      * Get the default schematic modifier
      *
      * @return map containing all registered modifier types with one instance.
      */
-    public Map<SchematicModifier, Mutator<?>> defaultSchematicModifier() {
-        return getDefaultMap(schematicModifier);
-    }
+    Map<SchematicModifier, Mutator<?>> defaultSchematicModifier();
 
     /**
      * Get the default placement modifier
      *
      * @return map containing all registered modifier types with one instance.
      */
-    public Map<PlacementModifier, Mutator<?>> defaultPlacementModifier() {
-        return getDefaultMap(placementModifier);
-    }
-
-    private <T> Map<T, Mutator<?>> getDefaultMap(Map<T, List<ModifierProvider>> map) {
-        return map
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        (e) -> e.getValue().get(0).defaultSetting()));
-    }
-
-    // Parsing
+    Map<PlacementModifier, Mutator<?>> defaultPlacementModifier();
 
     /**
      * Parse a selector from arguments
@@ -127,11 +77,7 @@ public class BrushSettingsRegistry {
      * @return the parsed selector
      * @throws CommandException if the arguments could not be parsed
      */
-    public Selector parseSelector(Arguments args) throws CommandException {
-        var provider = getSettingProvider(args, selector);
-        CommandAssertions.invalidArguments(args.subArguments(), provider.arguments());
-        return provider.parse(args.subArguments());
-    }
+    Selector parseSelector(Arguments args) throws CommandException;
 
     /**
      * Parse a schematic modifier from arguments
@@ -140,12 +86,7 @@ public class BrushSettingsRegistry {
      * @return a pair containing the type and the parsed modifier
      * @throws CommandException if the arguments could not be parsed
      */
-    public Pair<SchematicModifier, Mutator<?>> parseSchematicModifier(Arguments args) throws CommandException {
-        var provider = getProvider(args, schematicModifier);
-        var subArguments = args.subArguments().subArguments();
-        CommandAssertions.invalidArguments(subArguments, provider.second.arguments());
-        return Pair.of(provider.first, provider.second.parse(subArguments));
-    }
+    Pair<SchematicModifier, Mutator<?>> parseSchematicModifier(Arguments args) throws CommandException;
 
     /**
      * Parse a placement modifier from arguments
@@ -154,41 +95,28 @@ public class BrushSettingsRegistry {
      * @return a pair containing the type and the parsed modifier
      * @throws CommandException if the arguments could not be parsed
      */
-    public Pair<PlacementModifier, Mutator<?>> parsePlacementModifier(Arguments args) throws CommandException {
-        var provider = getProvider(args, placementModifier);
-        var subArguments = args.subArguments().subArguments();
-        CommandAssertions.invalidArguments(subArguments, provider.second.arguments());
-        return Pair.of(provider.first, provider.second.parse(subArguments));
-    }
+    Pair<PlacementModifier, Mutator<?>> parsePlacementModifier(Arguments args) throws CommandException;
 
     /**
      * Get registered selectors.
      *
      * @return unmodifiable list of selectors
      */
-    public List<SelectorProvider> selector() {
-        return Collections.unmodifiableList(selector);
-    }
+    List<SelectorProvider> selector();
 
     /**
      * Get registered schematic modifier
      *
      * @return unmodifiable map of all registered schematic modifier
      */
-    public Map<SchematicModifier, List<ModifierProvider>> schematicModifier() {
-        return Collections.unmodifiableMap(schematicModifier);
-    }
+    Map<SchematicModifier, List<ModifierProvider>> schematicModifier();
 
     /**
      * Get registered placement modifier
      *
      * @return unmodifiable map of all registered placement modifier
      */
-    public Map<PlacementModifier, List<ModifierProvider>> placementModifier() {
-        return Collections.unmodifiableMap(placementModifier);
-    }
-
-    // Tab completion
+    Map<PlacementModifier, List<ModifierProvider>> placementModifier();
 
     /**
      * Complete selectors
@@ -198,12 +126,7 @@ public class BrushSettingsRegistry {
      * @return list of possible values
      * @throws CommandException if the arguments are invalid
      */
-    public List<String> completeSelector(Arguments args, Player player) throws CommandException {
-        if (args.size() == 1) {
-            return TabCompleteUtil.complete(args.asString(0), selector.stream().map(SettingProvider::name));
-        }
-        return getSettingProvider(args, selector).complete(args.subArguments(), player);
-    }
+    List<String> completeSelector(Arguments args, Player player) throws CommandException;
 
     /**
      * Complete placement modifier
@@ -212,9 +135,7 @@ public class BrushSettingsRegistry {
      * @return list of possible values
      * @throws CommandException if the arguments are invalid
      */
-    public List<String> completePlacementModifier(Arguments args) throws CommandException {
-        return completeModifier(args, placementModifier);
-    }
+    List<String> completePlacementModifier(Arguments args) throws CommandException;
 
     /**
      * Complete schematic modifier
@@ -223,45 +144,5 @@ public class BrushSettingsRegistry {
      * @return list of possible values
      * @throws CommandException if the arguments are invalid
      */
-    public List<String> completeSchematicModifier(Arguments args) throws CommandException {
-        return completeModifier(args, schematicModifier);
-    }
-
-    private <T extends Nameable> List<String> completeModifier(Arguments args, Map<T, List<ModifierProvider>> map) throws CommandException {
-        if (args.size() == 1) {
-            return TabCompleteUtil.complete(args.asString(0), map.keySet().stream().map(Nameable::name));
-        }
-        if (args.size() == 2) {
-            return completeProvider(args, getProviders(args, map).second);
-        }
-        return getProvider(args, map).second.complete(args.subArguments().subArguments(), null);
-    }
-
-    // util
-
-    private <T extends Nameable> Pair<T, ModifierProvider> getProvider(Arguments args, Map<T, List<ModifierProvider>> map) throws CommandException {
-        var provider = getProviders(args, map);
-        var settingProvider = getSettingProvider(args.subArguments(), provider.second);
-        return Pair.of(provider.first, settingProvider);
-    }
-
-    private <T extends Nameable> Pair<T, List<ModifierProvider>> getProviders(Arguments args, Map<T, List<ModifierProvider>> map) throws CommandException {
-        return map.entrySet()
-                .stream()
-                .filter(e -> e.getKey().name().equals(args.asString(0)))
-                .map(e -> Pair.of(e.getKey(), e.getValue()))
-                .findFirst()
-                .orElseThrow(() -> CommandException.message("Unkown modifier type"));
-    }
-
-    private <T extends SettingProvider<?>> T getSettingProvider(Arguments args, List<T> provider) throws CommandException {
-        return provider.stream()
-                .filter(p -> p.isMatch(args))
-                .findFirst()
-                .orElseThrow(() -> CommandException.message("Unkown modifier"));
-    }
-
-    private <T extends SettingProvider<?>> List<String> completeProvider(Arguments args, List<T> provider) {
-        return TabCompleteUtil.complete(args.asString(0), provider.stream().map(p -> p.name()));
-    }
+    List<String> completeSchematicModifier(Arguments args) throws CommandException;
 }

@@ -1,7 +1,6 @@
 package de.eldoria.schematicbrush.brush.provider;
 
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
-import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.placement.APlacement;
 import de.eldoria.schematicbrush.brush.config.placement.Bottom;
 import de.eldoria.schematicbrush.brush.config.placement.Drop;
@@ -10,6 +9,7 @@ import de.eldoria.schematicbrush.brush.config.placement.Original;
 import de.eldoria.schematicbrush.brush.config.placement.Raise;
 import de.eldoria.schematicbrush.brush.config.placement.Top;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 

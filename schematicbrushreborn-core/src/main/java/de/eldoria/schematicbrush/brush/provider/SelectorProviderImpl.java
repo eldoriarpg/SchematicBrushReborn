@@ -49,6 +49,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
             new SelectorProviderImpl(NameSelector.class, "name", registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("name", true)};
+
                 @Override
                 public Selector parse(Arguments args) {
                     return new NameSelector(args.asString(0));
@@ -71,6 +72,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
             new SelectorProviderImpl(RegexSelector.class, "regex", registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("regex", true)};
+
                 @Override
                 public Selector parse(Arguments args) {
                     return new NameSelector(args.asString(0));
