@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class ConfigImpl extends EldoConfig implements Config {
+    private final static String PRESET_FILE = "presets";
     private SchematicConfig schematicConfig;
     private GeneralConfig general;
     private PresetRegistry presets;
@@ -32,15 +33,15 @@ public class ConfigImpl extends EldoConfig implements Config {
     @Override
     public void saveConfigs() {
         getConfig().set("schematicConfig", schematicConfig);
-        getConfig().set("presets", presets);
+        loadConfig(PRESET_FILE, null, false).set("presets", presets);
         getConfig().set("general", general);
     }
 
     @Override
     public void reloadConfigs() {
+        presets = loadConfig(PRESET_FILE, null, false).getObject("presets", PresetRegistry.class, new PresetRegistryImpl());
         schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfigImpl());
         general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfigImpl());
-        presets = getConfig().getObject("presets", PresetRegistry.class, new PresetRegistryImpl());
     }
 
     @Override

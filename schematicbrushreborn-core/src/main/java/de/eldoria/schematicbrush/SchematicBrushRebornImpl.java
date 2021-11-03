@@ -67,7 +67,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         settingsRegistry = new BrushSettingsRegistryImpl();
         registerDefaults();
 
-        saveDefaultConfig();
         config = new ConfigImpl(this);
 
         cache = new SchematicBrushCache(this, config);
