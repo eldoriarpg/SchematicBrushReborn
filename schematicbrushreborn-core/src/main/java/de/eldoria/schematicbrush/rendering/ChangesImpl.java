@@ -20,11 +20,13 @@ public class ChangesImpl implements Changes {
         return new Builder();
     }
 
-    @Override public void show(Player player) {
+    @Override
+    public void show(Player player) {
         sendChanges(player, changed);
     }
 
-    @Override public void hide(Player player) {
+    @Override
+    public void hide(Player player) {
         sendChanges(player, original);
     }
 

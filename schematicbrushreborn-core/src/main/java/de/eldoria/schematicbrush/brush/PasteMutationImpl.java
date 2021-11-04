@@ -25,7 +25,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @return clipboard
      */
-    @Override public Clipboard clipboard() {
+    @Override
+    public Clipboard clipboard() {
         return clipboard;
     }
 
@@ -34,7 +35,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @return transform
      */
-    @Override public AffineTransform transform() {
+    @Override
+    public AffineTransform transform() {
         return transform;
     }
 
@@ -43,7 +45,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @return session
      */
-    @Override public EditSession session() {
+    @Override
+    public EditSession session() {
         return session;
     }
 
@@ -52,7 +55,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @return offset
      */
-    @Override public BlockVector3 pasteOffset() {
+    @Override
+    public BlockVector3 pasteOffset() {
         return pasteOffset;
     }
 
@@ -61,7 +65,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @return true if air should be included
      */
-    @Override public boolean isIncludeAir() {
+    @Override
+    public boolean isIncludeAir() {
         return includeAir;
     }
 
@@ -70,7 +75,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @param clipboard clipboard
      */
-    @Override public void clipboard(Clipboard clipboard) {
+    @Override
+    public void clipboard(Clipboard clipboard) {
         this.clipboard = clipboard;
     }
 
@@ -79,7 +85,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @param transform transform
      */
-    @Override public void transform(AffineTransform transform) {
+    @Override
+    public void transform(AffineTransform transform) {
         this.transform = transform;
     }
 
@@ -88,7 +95,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @param pasteOffset paste offset
      */
-    @Override public void pasteOffset(BlockVector3 pasteOffset) {
+    @Override
+    public void pasteOffset(BlockVector3 pasteOffset) {
         this.pasteOffset = pasteOffset;
     }
 
@@ -97,7 +105,8 @@ public class PasteMutationImpl implements PasteMutation {
      *
      * @param includeAir includeair
      */
-    @Override public void includeAir(boolean includeAir) {
+    @Override
+    public void includeAir(boolean includeAir) {
         this.includeAir = includeAir;
     }
 }

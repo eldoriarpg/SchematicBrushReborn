@@ -5,6 +5,9 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 
+/**
+ * Represents a paste mutation, which will be applied when the brush is pasted.
+ */
 public interface PasteMutation {
     /**
      * Clipboard of next paste.

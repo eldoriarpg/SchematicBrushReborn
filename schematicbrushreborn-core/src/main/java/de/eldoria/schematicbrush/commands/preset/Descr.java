@@ -7,7 +7,7 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
-import de.eldoria.schematicbrush.config.ConfigImpl;
+import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -18,9 +18,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
-    private final ConfigImpl config;
+    private final ConfigurationImpl config;
 
-    public Descr(Plugin plugin, ConfigImpl config) {
+    public Descr(Plugin plugin, ConfigurationImpl config) {
         super(plugin, CommandMeta.builder("descr")
                 .addUnlocalizedArgument("name", true)
                 .addUnlocalizedArgument("descr", true)

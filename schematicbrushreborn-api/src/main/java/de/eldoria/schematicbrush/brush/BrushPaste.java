@@ -8,6 +8,9 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.math.BlockVector3;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
+/**
+ * Represents the next pending brush operation.
+ */
 public interface BrushPaste {
     /**
      * Refresh all mutator values

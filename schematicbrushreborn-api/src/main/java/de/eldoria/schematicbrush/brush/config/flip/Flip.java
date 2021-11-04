@@ -3,12 +3,15 @@ package de.eldoria.schematicbrush.brush.config.flip;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.schematicbrush.brush.config.util.IShiftable;
+import de.eldoria.schematicbrush.brush.config.util.Shiftable;
 
 /**
  * Represents a flip of a schematic.
  */
-public interface Flip extends IShiftable<Flip> {
+public interface Flip extends Shiftable<Flip> {
+    /**
+     * No flip.
+     */
     Flip NONE = new Flip() {
         @Override
         public String name() {
@@ -34,6 +37,10 @@ public interface Flip extends IShiftable<Flip> {
             return "NONE";
         }
     };
+
+    /**
+     * A Flip from east to west.
+     */
     Flip EAST_WEST = new Flip() {
         @Override
         public String name() {
@@ -55,6 +62,10 @@ public interface Flip extends IShiftable<Flip> {
             return "EAST WEST";
         }
     };
+
+    /**
+     * A flip from north to south.
+     */
     Flip NORTH_SOUTH = new Flip() {
         @Override
         public String name() {
@@ -76,6 +87,10 @@ public interface Flip extends IShiftable<Flip> {
             return "NORTH SOUTH";
         }
     };
+
+    /**
+     * A flip from up to down.
+     */
     Flip UP_DOWN = new Flip() {
         @Override
         public String name() {
@@ -108,6 +123,7 @@ public interface Flip extends IShiftable<Flip> {
      * @param input string to parse
      * @return flip enum value
      * @throws IllegalArgumentException when the value can't be parsed.
+     * @throws CommandException         when the flip type is invalid
      */
     static Flip asFlip(String input) throws CommandException {
         for (var value : values()) {
@@ -127,10 +143,25 @@ public interface Flip extends IShiftable<Flip> {
         return NONE;
     }
 
+    /**
+     * Simple name of the flip. Can not contain spaces
+     *
+     * @return name
+     */
     String name();
 
+    /**
+     * Alias which is used for parsing only
+     *
+     * @return array of aliases
+     */
     String[] alias();
 
+    /**
+     * The direction as vector
+     *
+     * @return direction
+     */
     Vector3 direction();
 
     @Override

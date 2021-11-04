@@ -23,8 +23,8 @@ import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.Settings;
-import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.ConfigImpl;
+import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
@@ -48,7 +48,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistry settingsRegistry;
     private SchematicRegistry schematics;
-    private ConfigImpl config;
+    private ConfigurationImpl config;
     private SchematicBrushCache cache;
 
     @Override
@@ -67,7 +67,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         settingsRegistry = new BrushSettingsRegistryImpl();
         registerDefaults();
 
-        config = new ConfigImpl(this);
+        config = new ConfigurationImpl(this);
 
         cache = new SchematicBrushCache(this, config);
         schematics.register(SchematicCache.DEFAULT_CACHE, cache);
@@ -175,7 +175,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     @Override
-    public Config config() {
+    public Configuration config() {
         return config;
     }
 

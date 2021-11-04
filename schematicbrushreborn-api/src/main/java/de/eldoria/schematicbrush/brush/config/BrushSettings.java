@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+/**
+ * Setting of a {@link de.eldoria.schematicbrush.brush.SchematicBrush}
+ */
 public interface BrushSettings extends Randomable {
     /**
      * Get a random brush from the {@link #schematicSets} list based on their {@link SchematicSet#weight()}.

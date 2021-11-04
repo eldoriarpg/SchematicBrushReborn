@@ -16,7 +16,8 @@ public class SchematicRegistryImpl implements SchematicRegistry {
      * @param key key of cache
      * @return the cache. If the cache was not registered this will be null
      */
-    @Override public SchematicCache getCache(Nameable key) {
+    @Override
+    public SchematicCache getCache(Nameable key) {
         return caches.get(key);
     }
 
@@ -27,7 +28,8 @@ public class SchematicRegistryImpl implements SchematicRegistry {
      * @param cache cache
      * @throws AlreadyRegisteredException when a cache with this key is already registered
      */
-    @Override public void register(Nameable key, SchematicCache cache) {
+    @Override
+    public void register(Nameable key, SchematicCache cache) {
         if (caches.containsKey(key)) {
             throw new AlreadyRegisteredException("Cache with key " + key.name() + " is already registered");
         }
@@ -40,7 +42,8 @@ public class SchematicRegistryImpl implements SchematicRegistry {
      *
      * @param key key
      */
-    @Override public void unregister(Nameable key) {
+    @Override
+    public void unregister(Nameable key) {
         if (key.equals(SchematicCache.DEFAULT_CACHE)) {
             throw new AlreadyRegisteredException("Default cache can't be unregistered.");
         }
@@ -50,7 +53,8 @@ public class SchematicRegistryImpl implements SchematicRegistry {
     /**
      * Reloads all registered caches.
      */
-    @Override public void reload() {
+    @Override
+    public void reload() {
         caches.values().forEach(SchematicCache::reload);
     }
 
@@ -59,7 +63,8 @@ public class SchematicRegistryImpl implements SchematicRegistry {
      *
      * @return schematic count.
      */
-    @Override public int schematicCount() {
+    @Override
+    public int schematicCount() {
         return caches.values().stream().mapToInt(SchematicCache::schematicCount).sum();
     }
 
@@ -68,7 +73,8 @@ public class SchematicRegistryImpl implements SchematicRegistry {
      *
      * @return directory count
      */
-    @Override public int directoryCount() {
+    @Override
+    public int directoryCount() {
         return caches.values().stream().mapToInt(SchematicCache::directoryCount).sum();
     }
 }

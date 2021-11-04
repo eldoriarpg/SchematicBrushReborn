@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Builder to build schematic sets.
+ */
 public interface SchematicSetBuilder extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();

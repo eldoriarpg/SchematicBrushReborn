@@ -38,14 +38,16 @@ public class BrushPasteImpl implements BrushPaste {
     /**
      * Refresh all mutator values
      */
-    @Override public void refresh() {
+    @Override
+    public void refresh() {
         schematicSet.refreshMutator();
     }
 
     /**
      * Shift to next flip value
      */
-    @Override public void shiftFlip() {
+    @Override
+    public void shiftFlip() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.FLIP).shift();
     }
@@ -53,7 +55,8 @@ public class BrushPasteImpl implements BrushPaste {
     /**
      * Shift to next rotation value
      */
-    @Override public void shiftRotation() {
+    @Override
+    public void shiftRotation() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.ROTATION).shift();
     }
@@ -66,7 +69,8 @@ public class BrushPasteImpl implements BrushPaste {
      * @param position    position to paste
      * @return operation
      */
-    @Override public Operation buildpaste(EditSession editSession, BukkitPlayer owner, BlockVector3 position) {
+    @Override
+    public Operation buildpaste(EditSession editSession, BukkitPlayer owner, BlockVector3 position) {
         return buildpaste(editSession, editSession, owner, position);
     }
 
@@ -79,7 +83,8 @@ public class BrushPasteImpl implements BrushPaste {
      * @param position        position to paste
      * @return operation
      */
-    @Override public Operation buildpaste(EditSession editSession, Extent capturingExtent, BukkitPlayer owner, BlockVector3 position) {
+    @Override
+    public Operation buildpaste(EditSession editSession, Extent capturingExtent, BukkitPlayer owner, BlockVector3 position) {
         var pasteMutation = new PasteMutationImpl(clipboard, editSession);
         settings.mutate(pasteMutation);
         schematicSet.mutate(pasteMutation);
@@ -107,7 +112,8 @@ public class BrushPasteImpl implements BrushPaste {
     /**
      * Shift to the next schematic
      */
-    @Override public void shiftSchematic() {
+    @Override
+    public void shiftSchematic() {
         schematic = schematicSet.getRandomSchematic();
         reloadSchematic();
     }
@@ -115,7 +121,8 @@ public class BrushPasteImpl implements BrushPaste {
     /**
      * Load a new clipboard from schematic file
      */
-    @Override public final void reloadSchematic() {
+    @Override
+    public final void reloadSchematic() {
         try {
             clipboard = schematic.loadSchematic();
         } catch (IOException e) {
@@ -129,7 +136,8 @@ public class BrushPasteImpl implements BrushPaste {
      *
      * @return schematic
      */
-    @Override public Schematic schematic() {
+    @Override
+    public Schematic schematic() {
         return schematic;
     }
 
@@ -138,7 +146,8 @@ public class BrushPasteImpl implements BrushPaste {
      *
      * @return clipboard
      */
-    @Override public Clipboard clipboard() {
+    @Override
+    public Clipboard clipboard() {
         return clipboard;
     }
 
@@ -147,7 +156,8 @@ public class BrushPasteImpl implements BrushPaste {
      *
      * @return true
      */
-    @Override public long clipboardSize() {
+    @Override
+    public long clipboardSize() {
         var minimumPoint = clipboard.getMinimumPoint();
         var maximumPoint = clipboard.getMaximumPoint();
         var x = (long) EMath.diff(minimumPoint.getBlockX(), maximumPoint.getBlockX());

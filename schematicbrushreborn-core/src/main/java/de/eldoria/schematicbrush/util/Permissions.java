@@ -16,6 +16,7 @@ public final class Permissions {
         private static final String BRUSH = perm(BASE, "brush");
         public static final String USE = perm(BRUSH, "use");
         public static final String PREVIEW = perm(BRUSH, "preview");
+
         private Brush() {
             throw new UnsupportedOperationException("This is a utility class.");
         }
@@ -25,6 +26,7 @@ public final class Permissions {
         private static final String PRESET = perm(BASE, "preset");
         public static final String USE = perm(PRESET, "use");
         public static final String GLOBAL = perm(PRESET, "global");
+
         private Preset() {
             throw new UnsupportedOperationException("This is a utility class.");
         }
@@ -35,6 +37,7 @@ public final class Permissions {
         public static final String RELOAD = perm(ADMIN, "reload");
         public static final String RELOAD_CACHE = perm(ADMIN, "reloadcache");
         public static final String DEBUG = perm(ADMIN, "debug");
+
         private Admin() {
             throw new UnsupportedOperationException("This is a utility class.");
         }

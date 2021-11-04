@@ -3,7 +3,7 @@ name: Verify state
 on:
   push:
   pull_request:
-    types: [opened, ready_for_review, synchronize]
+    types: [ opened, ready_for_review, synchronize ]
 
 jobs:
   build:

@@ -5,7 +5,7 @@ import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -16,15 +16,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.stream.Collectors;
 
 public class List extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Config config;
+    private final Configuration configuration;
     private final IMessageBlockerService messageBlocker;
     private final MiniMessage miniMessage;
     private final BukkitAudiences audiences;
 
-    public List(Plugin plugin, Config config, IMessageBlockerService messageBlocker) {
+    public List(Plugin plugin, Configuration configuration, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("list")
                 .build());
-        this.config = config;
+        this.configuration = configuration;
         this.messageBlocker = messageBlocker;
         miniMessage = MiniMessage.get();
         audiences = BukkitAudiences.create(plugin);
@@ -33,11 +33,11 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         messageBlocker.blockPlayer(player);
-        var global = config.presets().getPresets()
+        var global = configuration.presets().getPresets()
                 .stream()
                 .map(preset -> preset.infoComponent(true))
                 .collect(Collectors.joining("\n"));
-        var local = config.presets().getPresets(player)
+        var local = configuration.presets().getPresets(player)
                 .stream()
                 .map(preset -> preset.infoComponent(false))
                 .collect(Collectors.joining("\n"));

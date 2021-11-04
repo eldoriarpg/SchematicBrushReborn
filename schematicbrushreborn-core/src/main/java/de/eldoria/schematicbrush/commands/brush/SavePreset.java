@@ -6,7 +6,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.schematicbrush.config.ConfigImpl;
+import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -19,10 +19,10 @@ import java.util.List;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
-    private final ConfigImpl config;
+    private final ConfigurationImpl config;
     private final Sessions sessions;
 
-    public SavePreset(Plugin plugin, Sessions sessions, ConfigImpl config) {
+    public SavePreset(Plugin plugin, Sessions sessions, ConfigurationImpl config) {
         super(plugin, CommandMeta.builder("savePreset")
                 .addUnlocalizedArgument("name", true)
                 .withPermission(Permissions.Preset.USE)

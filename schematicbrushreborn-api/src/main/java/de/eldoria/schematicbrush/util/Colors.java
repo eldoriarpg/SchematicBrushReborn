@@ -2,6 +2,9 @@ package de.eldoria.schematicbrush.util;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 
+/**
+ * Class holding some colors sorted by category
+ */
 public final class Colors {
     public static final String HEADING = NamedTextColor.GOLD.toString();
     public static final String NAME = NamedTextColor.DARK_AQUA.toString();

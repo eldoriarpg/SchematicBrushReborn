@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * A schematic registry to manage {@link PresetContainer}
+ */
 public interface PresetRegistry extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();

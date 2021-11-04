@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class ConfigImpl extends EldoConfig implements Config {
+public class ConfigurationImpl extends EldoConfig implements Configuration {
     private final static String PRESET_FILE = "presets";
     private SchematicConfig schematicConfig;
     private GeneralConfig general;
     private PresetRegistry presets;
 
-    public ConfigImpl(Plugin plugin) {
+    public ConfigurationImpl(Plugin plugin) {
         super(plugin);
     }
 

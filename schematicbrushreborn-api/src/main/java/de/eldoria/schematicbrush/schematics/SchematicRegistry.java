@@ -3,6 +3,9 @@ package de.eldoria.schematicbrush.schematics;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 
+/**
+ * A registry to register, manage and retrieve a {@link SchematicCache}.
+ */
 public interface SchematicRegistry {
     /**
      * Gets a cache by key

@@ -7,6 +7,9 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.weather.WeatherType;
 
+/**
+ * A Fake world which wrapps and delegates to a world.
+ */
 public interface FakeWorld extends World, BlockChangeCollector {
     @Override
     <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight);
@@ -20,5 +23,10 @@ public interface FakeWorld extends World, BlockChangeCollector {
     @Override
     boolean setBiome(BlockVector2 position, BiomeType biome);
 
+    /**
+     * Changes applied to the world.
+     *
+     * @return changes
+     */
     Changes changes();
 }

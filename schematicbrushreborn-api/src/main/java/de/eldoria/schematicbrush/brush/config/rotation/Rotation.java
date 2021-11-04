@@ -1,12 +1,12 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.schematicbrush.brush.config.util.IShiftable;
+import de.eldoria.schematicbrush.brush.config.util.Shiftable;
 
 /**
  * Represents a rotation.
  */
-public interface Rotation extends IShiftable<Rotation> {
+public interface Rotation extends Shiftable<Rotation> {
     /**
      * Represents a rotation of 0.
      */
@@ -21,6 +21,7 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 0";
         }
     };
+
     /**
      * Represents a rotation of 90 degrees counterclockwise. Alterantive a rotation of -90 or 270 degrees.
      */
@@ -35,6 +36,7 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 270";
         }
     };
+
     /**
      * Represents a rotation of 180 degrees.
      */
@@ -49,6 +51,7 @@ public interface Rotation extends IShiftable<Rotation> {
             return "Rot 180";
         }
     };
+
     /**
      * Represents a rotation of 90 degrees clockwise. Alterantive a rotation of 90 degrees.
      */
@@ -75,20 +78,16 @@ public interface Rotation extends IShiftable<Rotation> {
      * @param value value to parse
      * @return rotation enum
      * @throws IllegalArgumentException when value can't be parsed
+     * @throws CommandException         when the value can't be parsed
      */
     static Rotation parse(String value) throws CommandException {
-        switch (value) {
-            case "0":
-                return ROT_ZERO;
-            case "270":
-                return ROT_LEFT;
-            case "90":
-                return ROT_RIGHT;
-            case "180":
-                return ROT_HALF;
-            default:
-                throw CommandException.message(value + " is not a value of Rotation");
-        }
+        return switch (value) {
+            case "0" -> ROT_ZERO;
+            case "270" -> ROT_LEFT;
+            case "90" -> ROT_RIGHT;
+            case "180" -> ROT_HALF;
+            default -> throw CommandException.message(value + " is not a value of Rotation");
+        };
     }
 
     /**
@@ -99,17 +98,13 @@ public interface Rotation extends IShiftable<Rotation> {
      * @throws IllegalArgumentException when value can't be parsed
      */
     static Rotation valueOf(int value) {
-        switch (value) {
-            case 0:
-                return ROT_ZERO;
-            case 270:
-                return ROT_LEFT;
-            case 90:
-                return ROT_RIGHT;
-            case 180:
-                return ROT_HALF;
-        }
-        return ROT_ZERO;
+        return switch (value) {
+            case 0 -> ROT_ZERO;
+            case 270 -> ROT_LEFT;
+            case 90 -> ROT_RIGHT;
+            case 180 -> ROT_HALF;
+            default -> ROT_ZERO;
+        };
     }
 
     /**

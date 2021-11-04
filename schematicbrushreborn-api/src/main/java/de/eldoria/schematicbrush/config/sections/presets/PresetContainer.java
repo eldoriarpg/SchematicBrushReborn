@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Container which holds multiple presets.
+ */
 public interface PresetContainer extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();

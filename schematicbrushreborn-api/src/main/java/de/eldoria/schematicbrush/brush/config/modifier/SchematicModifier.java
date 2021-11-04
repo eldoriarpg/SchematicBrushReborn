@@ -22,7 +22,7 @@ public class SchematicModifier extends Nameable {
      */
     public static final SchematicModifier FLIP = of("flip");
 
-    public SchematicModifier(String name) {
+    private SchematicModifier(String name) {
         super(name);
     }
 

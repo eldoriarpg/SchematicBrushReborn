@@ -16,6 +16,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class to register, save and parse brush settings.
+ */
 public interface BrushSettingsRegistry {
     /**
      * Registers a new selector.

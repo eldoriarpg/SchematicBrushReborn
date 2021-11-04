@@ -10,6 +10,9 @@ import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 
+/**
+ * A brush used to paste schematics.
+ */
 public interface SchematicBrush extends Brush {
     @Override
     void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size);

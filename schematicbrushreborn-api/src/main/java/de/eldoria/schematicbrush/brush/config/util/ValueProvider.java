@@ -1,6 +1,11 @@
 package de.eldoria.schematicbrush.brush.config.util;
 
-public interface IValue<T> {
+/**
+ * Represents a value provider.
+ *
+ * @param <T> type of value
+ */
+public interface ValueProvider<T> {
     /**
      * Change the current value.
      *
@@ -23,7 +28,7 @@ public interface IValue<T> {
     T valueProvider();
 
     /**
-     * Refresh the current value by calling the {@link IValue#valueProvider()}
+     * Refresh the current value by calling the {@link ValueProvider#valueProvider()}
      */
     default void refresh() {
         value(valueProvider());

@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Builder to build brushes.
+ */
 public interface BrushBuilder {
     /**
      * Get the schematic set builder for the set with the id

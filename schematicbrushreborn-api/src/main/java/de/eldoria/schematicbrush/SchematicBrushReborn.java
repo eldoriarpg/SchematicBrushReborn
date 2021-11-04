@@ -2,9 +2,12 @@ package de.eldoria.schematicbrush;
 
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 
+/**
+ * The base of the schematic brush plugin.
+ */
 @SuppressWarnings("unused")
 public abstract class SchematicBrushReborn extends EldoPlugin {
 
@@ -27,5 +30,5 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
      *
      * @return plugin config
      */
-    public abstract Config config();
+    public abstract Configuration config();
 }

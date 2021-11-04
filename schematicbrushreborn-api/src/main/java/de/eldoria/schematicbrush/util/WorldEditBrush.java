@@ -23,6 +23,9 @@ import java.lang.invoke.MethodType;
 import java.util.Optional;
 import java.util.logging.Level;
 
+/**
+ * Utility class to manage world edit brushes.
+ */
 public final class WorldEditBrush {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
     private static final boolean FAWE;
@@ -60,7 +63,8 @@ public final class WorldEditBrush {
     /**
      * Get the schematic brush of a player registered on the item in its main hand.
      *
-     * @param player player for lookup
+     * @param player   player for lookup
+     * @param material material to get the registered brush
      * @return schematic brush instance if the item is a schematic brush
      */
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
@@ -70,7 +74,9 @@ public final class WorldEditBrush {
     /**
      * Get the schematic brush of a player registered on the item in its main hand.
      *
-     * @param player player for lookup
+     * @param player   player for lookup
+     * @param material material to get the brush
+     * @param clazz    required class of the brush
      * @return schematic brush instance if the item is a schematic brush
      */
     @SuppressWarnings({"ProhibitedExceptionCaught", "unchecked"})

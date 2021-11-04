@@ -1,7 +1,7 @@
 package de.eldoria.schematicbrush.listener;
 
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PasteEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,11 +16,11 @@ import java.util.UUID;
 public class NotifyListener implements Listener {
     private final Set<UUID> players = new HashSet<>();
     private final MessageSender messageSender;
-    private final Config config;
+    private final Configuration configuration;
 
-    public NotifyListener(Plugin plugin, Config config) {
+    public NotifyListener(Plugin plugin, Configuration configuration) {
         messageSender = MessageSender.getPluginMessageSender(plugin);
-        this.config = config;
+        this.configuration = configuration;
     }
 
     public void setState(Player player, boolean state) {
@@ -34,7 +34,7 @@ public class NotifyListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().hasPermission("schematicbrush.brush.use")) {
-            if (config.general().isShowNameDefault()) {
+            if (configuration.general().isShowNameDefault()) {
                 setState(event.getPlayer(), true);
             }
         }

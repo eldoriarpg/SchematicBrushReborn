@@ -9,7 +9,7 @@ import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.weather.WeatherType;
 import org.bukkit.World;
 
-public class FakeWorldImpl extends BukkitWorld implements  FakeWorld {
+public class FakeWorldImpl extends BukkitWorld implements FakeWorld {
     private final ChangesImpl.Builder changes = ChangesImpl.builder();
 
     /**
@@ -45,7 +45,8 @@ public class FakeWorldImpl extends BukkitWorld implements  FakeWorld {
         return true;
     }
 
-    @Override public Changes changes() {
+    @Override
+    public Changes changes() {
         return changes.build();
     }
 

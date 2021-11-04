@@ -1,12 +1,12 @@
 package de.eldoria.schematicbrush.brush.config.util;
 
 /**
- * Represents a key.
+ * Represents a named key.
  */
 public class Nameable {
     private final String name;
 
-    public Nameable(String name) {
+    protected Nameable(String name) {
         this.name = name;
     }
 

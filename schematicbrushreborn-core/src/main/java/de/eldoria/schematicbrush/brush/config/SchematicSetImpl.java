@@ -7,8 +7,8 @@ import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
-import de.eldoria.schematicbrush.brush.config.util.IValue;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
+import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
 import java.io.IOException;
@@ -141,6 +141,6 @@ public class SchematicSetImpl implements SchematicSet {
      */
     @Override
     public void refreshMutator() {
-        schematicModifier.values().forEach(IValue::refresh);
+        schematicModifier.values().forEach(ValueProvider::refresh);
     }
 }

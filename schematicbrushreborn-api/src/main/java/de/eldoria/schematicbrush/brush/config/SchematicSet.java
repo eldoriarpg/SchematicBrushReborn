@@ -9,6 +9,9 @@ import de.eldoria.schematicbrush.schematics.Schematic;
 
 import java.util.List;
 
+/**
+ * A class holding a set of schematics with weight and {@link Mutator}
+ */
 public interface SchematicSet extends Randomable {
     /**
      * Get the mutator

@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.rendering;
 
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
@@ -22,12 +22,12 @@ public class RenderService implements Runnable, Listener {
     private final Map<UUID, Changes> changes = new HashMap<>();
     private final PaketWorker worker;
     private final Queue<Player> players = new ArrayDeque<>();
-    private final Config config;
+    private final Configuration configuration;
     private double count = 1;
     private boolean active = false;
 
-    public RenderService(Plugin plugin, Config config) {
-        this.config = config;
+    public RenderService(Plugin plugin, Configuration configuration) {
+        this.configuration = configuration;
         active = !plugin.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
         worker = new PaketWorker();
         if (active) {
@@ -39,7 +39,7 @@ public class RenderService implements Runnable, Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (!active) return;
         if (event.getPlayer().hasPermission("schematicbrush.brush.preview")) {
-            if (config.general().isPreviewDefault()) {
+            if (configuration.general().isPreviewDefault()) {
                 setState(event.getPlayer(), true);
             }
         }
@@ -64,9 +64,9 @@ public class RenderService implements Runnable, Listener {
     @Override
     public void run() {
         if (!active) return;
-        count += players.size() / (double) config.general().previewRefreshInterval();
+        count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
-        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < config.general().maxRenderMs()) {
+        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
             var player = players.poll();
             render(player);
@@ -80,7 +80,7 @@ public class RenderService implements Runnable, Listener {
             resolveChanges(player);
             return;
         }
-        if (schematicBrush.get().nextPaste().clipboardSize() > config.general().maxRenderSize()) {
+        if (schematicBrush.get().nextPaste().clipboardSize() > configuration.general().maxRenderSize()) {
             resolveChanges(player);
             return;
         }
