@@ -1,5 +1,9 @@
 package de.eldoria.schematicbrush.listener;
 
+import de.eldoria.eldoutilities.messages.MessageChannel;
+import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.messages.MessageType;
+import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,6 +13,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class BrushModifier implements Listener {
+    private final MessageSender messageSender = MessageSender.getPluginMessageSender(SchematicBrushRebornImpl.class);
+
     @EventHandler
     public void onLeftClick(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
@@ -19,8 +25,10 @@ public class BrushModifier implements Listener {
         var brush = schematicBrush.get();
         if (event.getPlayer().isSneaking()) {
             brush.nextPaste().shiftFlip();
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed flip.");
         } else {
             brush.nextPaste().shiftRotation();
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed rotation.");
         }
         event.setCancelled(true);
     }
@@ -30,6 +38,7 @@ public class BrushModifier implements Listener {
         var material = event.getItemDrop().getItemStack().getType();
         var schematicBrush = WorldEditBrush.getSchematicBrush(event.getPlayer(), material);
         if (schematicBrush.isEmpty()) return;
+        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Skipped Schematic.");
 
         schematicBrush.get().nextPaste().shiftSchematic();
         event.setCancelled(true);

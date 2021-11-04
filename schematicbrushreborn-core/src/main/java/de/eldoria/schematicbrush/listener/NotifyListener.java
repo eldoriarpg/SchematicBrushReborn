@@ -1,6 +1,8 @@
 package de.eldoria.schematicbrush.listener;
 
+import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.messages.MessageType;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PasteEvent;
 import org.bukkit.entity.Player;
@@ -43,6 +45,6 @@ public class NotifyListener implements Listener {
     @EventHandler
     public void onPaste(PasteEvent event) {
         if (!players.contains(event.player().getUniqueId())) return;
-        messageSender.sendMessage(event.player(), "§2Pasted §a" + event.schematic().name());
+        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.player(),"§2Pasted §a" + event.schematic().name());
     }
 }
