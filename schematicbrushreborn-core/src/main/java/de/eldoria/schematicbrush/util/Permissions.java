@@ -7,9 +7,8 @@ public final class Permissions {
         throw new UnsupportedOperationException("This is a utility class.");
     }
 
-    private static String perm(String perm, String... perms) {
-        if (perms.length == 0) return perm;
-        return String.format("%s.%s", perm, String.join(".", perms));
+    private static String perm(String... perms) {
+        return String.join(".", perms);
     }
 
     public static final class Brush {
