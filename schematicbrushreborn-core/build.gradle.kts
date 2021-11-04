@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":schematicbrushreborn-api"))
 
     implementation("net.kyori", "adventure-platform-bukkit", "4.0.0")
-    implementation("net.kyori", "adventure-text-minimessage", "4.1.0-SNAPSHOT")
+    implementation("net.kyori", "adventure-text-minimessage", "4.2.0-SNAPSHOT")
     implementation("de.eldoria", "messageblocker", "1.0.3c-DEV")
     testImplementation("org.jetbrains", "annotations", "21.0.1")
     testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")

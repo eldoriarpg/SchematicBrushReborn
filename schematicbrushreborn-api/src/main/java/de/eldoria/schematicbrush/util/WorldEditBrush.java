@@ -16,6 +16,7 @@ import de.eldoria.schematicbrush.brush.SchematicBrush;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -68,7 +69,10 @@ public final class WorldEditBrush {
      * @return schematic brush instance if the item is a schematic brush
      */
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
-        return getBrush(player, material, SchematicBrush.class);
+        if(getBrush(player, material) instanceof SchematicBrush brush){
+            return Optional.of(brush);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -76,33 +80,22 @@ public final class WorldEditBrush {
      *
      * @param player   player for lookup
      * @param material material to get the brush
-     * @param clazz    required class of the brush
      * @return schematic brush instance if the item is a schematic brush
      */
     @SuppressWarnings({"ProhibitedExceptionCaught", "unchecked"})
-    public static <T extends Brush> Optional<T> getBrush(Player player, Material material, Class<T> clazz) {
+    @Nullable
+    public static Brush getBrush(Player player, Material material) {
         var itemType = BukkitAdapter.asItemType(material);
         if (itemType == null || itemType.hasBlockType()) {
-            return Optional.empty();
+            return null;
         }
         try {
-            Tool tool;
-            if (FAWE) {
-                tool = getLocalSession(player).getTool(new BaseItem(itemType), BukkitAdapter.adapt(player));
-            } else {
-                tool = getWorldEditTool(player, itemType);
-            }
-            if (!(tool instanceof BrushTool brushTool)) {
-                return Optional.empty();
-            }
-            if (brushTool.getBrush() != null && clazz.isAssignableFrom(brushTool.getBrush().getClass())) {
-                return Optional.of((T) brushTool.getBrush());
+            if (getLocalSession(player).getTool(itemType) instanceof BrushTool brushTool) {
+                return brushTool.getBrush();
             }
         } catch (NullPointerException e) {
-            return Optional.empty();
         } // for some reason world edit throws a NPE when this function is called on world edit tools
-
-        return Optional.empty();
+        return null;
     }
 
     /**

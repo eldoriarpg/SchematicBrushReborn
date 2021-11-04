@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModifier;
 
 public class Sessions {
-    private final MiniMessage miniMessage = MiniMessage.get();
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;

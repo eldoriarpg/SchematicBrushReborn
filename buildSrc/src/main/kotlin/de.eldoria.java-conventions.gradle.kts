@@ -15,9 +15,9 @@ dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     implementation("org.jetbrains", "annotations", "20.1.0")
     implementation("de.eldoria", "eldo-util", "1.10.15-DEV")
-    //compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.3.0-SNAPSHOT")
-    compileOnly("com.fastasyncworldedit", "FastAsyncWorldEdit-Bukkit", "1.17-387") { isTransitive = false }
-    compileOnly("com.fastasyncworldedit", "FastAsyncWorldEdit-Core", "1.17-387")
+    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.3.0-SNAPSHOT")
+    //compileOnly("com.fastasyncworldedit", "FastAsyncWorldEdit-Bukkit", "1.17-387") { isTransitive = false }
+    //compileOnly("com.fastasyncworldedit", "FastAsyncWorldEdit-Core", "1.17-387")
 
     testImplementation(platform("org.junit:junit-bom:5.7.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")

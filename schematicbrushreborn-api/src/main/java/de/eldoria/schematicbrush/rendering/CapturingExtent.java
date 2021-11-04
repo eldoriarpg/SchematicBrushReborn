@@ -50,7 +50,6 @@ public interface CapturingExtent extends Extent, BlockChangeCollector {
     @Override
     <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block);
 
-    @Override
     boolean setTile(int x, int y, int z, CompoundTag tile) throws WorldEditException;
 
     @Override

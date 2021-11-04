@@ -12,12 +12,10 @@ public class RotationList extends ARotation {
     private final List<Rotation> values;
 
     public RotationList(List<Rotation> values) {
-        super();
         this.values = values;
     }
 
     public RotationList(Map<String, Object> objectMap) {
-        super();
         var map = SerializationUtil.mapOf(objectMap);
         List<Integer> values = map.getValue("values");
         this.values = values.stream().map(Rotation::valueOf).collect(Collectors.toList());

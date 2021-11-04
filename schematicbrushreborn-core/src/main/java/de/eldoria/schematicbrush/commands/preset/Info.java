@@ -22,7 +22,7 @@ import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     private final Configuration configuration;
-    private final MiniMessage miniMessage = MiniMessage.get();
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
     private final IMessageBlockerService messageBlocker;
 

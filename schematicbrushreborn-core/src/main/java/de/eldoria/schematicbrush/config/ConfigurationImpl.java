@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class ConfigurationImpl extends EldoConfig implements Configuration {
-    private final static String PRESET_FILE = "presets";
+    private static final String PRESET_FILE = "presets";
     private SchematicConfig schematicConfig;
     private GeneralConfig general;
     private PresetRegistry presets;

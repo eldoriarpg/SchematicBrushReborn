@@ -26,7 +26,7 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
                 .build());
         this.configuration = configuration;
         this.messageBlocker = messageBlocker;
-        miniMessage = MiniMessage.get();
+        miniMessage = MiniMessage.miniMessage();
         audiences = BukkitAudiences.create(plugin);
     }
 
