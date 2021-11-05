@@ -1,6 +1,6 @@
 package de.eldoria.schematicbrush.rendering;
 
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
@@ -22,12 +22,12 @@ public class RenderService implements Runnable, Listener {
     private final Map<UUID, Changes> changes = new HashMap<>();
     private final PaketWorker worker;
     private final Queue<Player> players = new ArrayDeque<>();
-    private final Config config;
+    private final Configuration configuration;
     private double count = 1;
     private boolean active = false;
 
-    public RenderService(Plugin plugin, Config config) {
-        this.config = config;
+    public RenderService(Plugin plugin, Configuration configuration) {
+        this.configuration = configuration;
         active = !plugin.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
         worker = new PaketWorker();
         if (active) {
@@ -39,7 +39,7 @@ public class RenderService implements Runnable, Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (!active) return;
         if (event.getPlayer().hasPermission("schematicbrush.brush.preview")) {
-            if (config.general().isPreviewDefault()) {
+            if (configuration.general().isPreviewDefault()) {
                 setState(event.getPlayer(), true);
             }
         }
@@ -64,9 +64,9 @@ public class RenderService implements Runnable, Listener {
     @Override
     public void run() {
         if (!active) return;
-        count += players.size() / (double) config.general().previewRefreshInterval();
+        count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
-        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < config.general().maxRenderMs()) {
+        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
             var player = players.poll();
             render(player);
@@ -80,7 +80,7 @@ public class RenderService implements Runnable, Listener {
             resolveChanges(player);
             return;
         }
-        if (schematicBrush.get().nextPaste().clipboardSize() > config.general().maxRenderSize()) {
+        if (schematicBrush.get().nextPaste().clipboardSize() > configuration.general().maxRenderSize()) {
             resolveChanges(player);
             return;
         }
@@ -89,7 +89,7 @@ public class RenderService implements Runnable, Listener {
     }
 
     private void resolveChanges(Player player) {
-        getChanges(player).ifPresent(c -> worker.queue(player, c, null));
+        getChanges(player).ifPresent(change -> worker.queue(player, change, null));
     }
 
     private void renderChanges(Player player, Changes newChanges) {
@@ -102,7 +102,7 @@ public class RenderService implements Runnable, Listener {
     }
 
     private Optional<Changes> getChanges(Player player) {
-        return Optional.ofNullable(this.changes.get(player.getUniqueId()));
+        return Optional.ofNullable(changes.get(player.getUniqueId()));
     }
 
     public void setState(Player player, boolean state) {
@@ -129,7 +129,7 @@ public class RenderService implements Runnable, Listener {
         public void run() {
             while (!queue.isEmpty()) {
                 var poll = queue.poll();
-                poll.send();
+                poll.sendChanges();
             }
         }
 
@@ -141,18 +141,10 @@ public class RenderService implements Runnable, Listener {
             queue.removeIf(e -> e.player.equals(player));
         }
 
-        private static class ChangeEntry {
-            private final Player player;
-            private final Changes oldChanges;
-            private final Changes newChanges;
+        private record ChangeEntry(Player player, Changes oldChanges,
+                                   Changes newChanges) {
 
-            private ChangeEntry(Player player, Changes oldChanges, Changes newChanges) {
-                this.player = player;
-                this.oldChanges = oldChanges;
-                this.newChanges = newChanges;
-            }
-
-            private void send() {
+            private void sendChanges() {
                 if (oldChanges != null) oldChanges.hide(player);
                 if (newChanges != null) newChanges.show(player);
             }

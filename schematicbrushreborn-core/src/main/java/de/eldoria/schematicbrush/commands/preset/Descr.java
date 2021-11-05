@@ -7,7 +7,7 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -18,9 +18,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Config config;
+    private final ConfigurationImpl config;
 
-    public Descr(Plugin plugin, Config config) {
+    public Descr(Plugin plugin, ConfigurationImpl config) {
         super(plugin, CommandMeta.builder("descr")
                 .addUnlocalizedArgument("name", true)
                 .addUnlocalizedArgument("descr", true)
@@ -32,7 +32,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
 
-        if(name.startsWith("g:")){
+        if (name.startsWith("g:")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
         }
 
@@ -46,7 +46,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
             return config.presets().complete(player, args.asString(0));
         }

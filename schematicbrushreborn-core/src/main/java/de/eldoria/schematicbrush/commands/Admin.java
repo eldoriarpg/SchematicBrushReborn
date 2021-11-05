@@ -6,7 +6,7 @@ import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.commands.admin.Debug;
 import de.eldoria.schematicbrush.commands.admin.Info;
 import de.eldoria.schematicbrush.commands.admin.Reload;
-import de.eldoria.schematicbrush.commands.admin.ReloadSchematics;
+import de.eldoria.schematicbrush.commands.admin.ReloadCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 
 public class Admin extends AdvancedCommand {
@@ -20,7 +20,7 @@ public class Admin extends AdvancedCommand {
                     cmds.add(info);
                     cmds.add(new Debug(instance));
                     cmds.add(new Reload(instance));
-                    cmds.add(new ReloadSchematics(instance, cache));
+                    cmds.add(new ReloadCache(instance, cache));
                 })
                 .build());
     }

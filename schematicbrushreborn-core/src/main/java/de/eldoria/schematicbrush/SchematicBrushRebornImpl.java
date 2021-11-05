@@ -7,9 +7,9 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
+import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.provider.FlipProvider;
@@ -23,44 +23,33 @@ import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
 import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.Settings;
-import de.eldoria.schematicbrush.config.Config;
-import de.eldoria.schematicbrush.config.PresetContainer;
-import de.eldoria.schematicbrush.config.sections.GeneralConfig;
-import de.eldoria.schematicbrush.config.sections.SchematicConfig;
-import de.eldoria.schematicbrush.config.sections.SchematicSource;
-import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
+import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.config.ConfigurationImpl;
+import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
+import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
+import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
+import de.eldoria.schematicbrush.config.sections.presets.PresetContainerImpl;
+import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
+import de.eldoria.schematicbrush.config.sections.presets.PresetRegistryImpl;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
 import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistry settingsRegistry;
     private SchematicRegistry schematics;
-    private Config config;
-
-    @Override
-    public void onPluginDisable() {
-
-    }
-
-    public void reload() {
-        schematics.reload();
-        config.reload();
-
-        if (config.general().isCheckUpdates()) {
-            Updater.butler(
-                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
-                            false, 12, ButlerUpdateData.HOST)).start();
-        }
-    }
+    private ConfigurationImpl config;
+    private SchematicBrushCache cache;
 
     @Override
     public void onPluginEnable() {
@@ -73,15 +62,14 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var iLocalizer = ILocalizer.create(this, "en_US");
         iLocalizer.setLocale("en_US");
 
-        schematics = new SchematicRegistry();
+        schematics = new SchematicRegistryImpl();
 
-        settingsRegistry = new BrushSettingsRegistry();
+        settingsRegistry = new BrushSettingsRegistryImpl();
         registerDefaults();
 
-        saveDefaultConfig();
-        config = new Config(this);
+        config = new ConfigurationImpl(this);
 
-        var cache = new SchematicBrushCache(this, config);
+        cache = new SchematicBrushCache(this, config);
         schematics.register(SchematicCache.DEFAULT_CACHE, cache);
 
         reload();
@@ -107,55 +95,60 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand("sbrs", settingsCommand);
     }
 
+    public void reload() {
+        schematics.reload();
+        config.reload();
+
+        if (config.general().isCheckUpdates()) {
+            Updater.butler(
+                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
+                            false, 12, ButlerUpdateData.HOST)).start();
+        }
+    }
+
+    @Override
+    public void onPluginDisable() {
+        cache.shutdown();
+    }
+
     private void enableMetrics() {
         var metrics = new EldoMetrics(this, 7683);
         if (metrics.isEnabled()) {
             logger().info("§2Metrics enabled. Thank you <3");
         }
+
+        // TODO refactor
         metrics.addCustomChart(new SimplePie("schematic_count",
-                () -> {
-                    var sCount = schematics.schematicCount();
-                    if (sCount < 50) return "<50";
-                    if (sCount < 100) return "<100";
-                    if (sCount < 250) return "<250";
-                    if (sCount < 500) return "<500";
-                    if (sCount < 1000) return "<1000";
-                    var count = (int) Math.floor(sCount / 1000d);
-                    return ">" + count * 1000;
-                }));
+                () -> reduceMetricValue(schematics.schematicCount(), 1000, 50, 100, 250, 500, 1000)));
         metrics.addCustomChart(new SimplePie("directory_count",
-                () -> {
-                    var sCount = schematics.directoryCount();
-                    if (sCount < 10) return "<10";
-                    if (sCount < 50) return "<50";
-                    if (sCount < 100) return "<100";
-                    var count = (int) Math.floor(sCount / 100d);
-                    return ">" + count * 100;
-                }));
+                () -> reduceMetricValue(schematics.directoryCount(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("preset_count",
-                () -> {
-                    var sCount = getConfig().getStringList("presets").size();
-                    if (sCount < 10) return "<10";
-                    if (sCount < 50) return "<50";
-                    if (sCount < 100) return "<100";
-                    var count = (int) Math.floor(sCount / 100d);
-                    return ">" + count * 100;
-                }));
+                () -> reduceMetricValue(config.presets().count(), 100, 10, 50, 100)));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
                 () -> {
-                    if (this.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
+                    if (getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
                         return "FAWE";
                     }
                     return "WorldEdit";
                 }));
     }
 
+    private String reduceMetricValue(int count, int baseValue, int... steps) {
+        for (var step : steps) {
+            if (count < step) {
+                return "<" + count;
+            }
+        }
+        var reduced = (int) Math.floor(count / (double) baseValue);
+        return ">" + reduced * baseValue;
+    }
+
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfig.class, de.eldoria.schematicbrush.config.sections.presets.Preset.class,
-                SchematicConfig.class, SchematicSource.class, PresetContainer.class, PresetRegistry.class,
-                SchematicSetBuilder.class);
+        return Arrays.asList(GeneralConfigImpl.class, PresetImpl.class,
+                SchematicConfigImpl.class, SchematicSourceImpl.class, PresetContainerImpl.class, PresetRegistryImpl.class,
+                SchematicSetBuilderImpl.class);
     }
 
     @Override
@@ -169,7 +162,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     @Override
-    public Config config() {
+    public Configuration config() {
         return config;
     }
 

@@ -1,7 +1,5 @@
 package de.eldoria.schematicbrush.brush.config.flip;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 
 public class FlipFixed extends AFlip {
@@ -11,17 +9,6 @@ public class FlipFixed extends AFlip {
 
     public FlipFixed(Map<String, Object> objectMap) {
         super(objectMap);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return super.serialize();
-    }
-
-    @Override
-    public Flip shift() {
-        return flip;
     }
 
     @Override

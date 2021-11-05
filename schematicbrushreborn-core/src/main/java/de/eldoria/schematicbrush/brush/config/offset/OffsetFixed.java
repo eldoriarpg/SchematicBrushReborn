@@ -7,12 +7,11 @@ import java.util.Map;
 
 public class OffsetFixed extends AOffset {
     public OffsetFixed(int offset) {
-        this.offset = offset;
+        super(offset);
     }
 
     public OffsetFixed(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        offset = map.getValue("value");
+        super(objectMap);
     }
 
     @Override

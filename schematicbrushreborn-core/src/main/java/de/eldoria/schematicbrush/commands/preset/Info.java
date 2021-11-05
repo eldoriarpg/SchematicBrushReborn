@@ -6,9 +6,10 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -21,16 +22,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Config config;
-    private final MiniMessage miniMessage = MiniMessage.get();
+    private final Configuration configuration;
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
     private final IMessageBlockerService messageBlocker;
 
-    public Info(Plugin plugin, Config config, IMessageBlockerService messageBlocker) {
+    public Info(Plugin plugin, Configuration configuration, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("info")
                 .addUnlocalizedArgument("name", true)
                 .build());
-        this.config = config;
+        this.configuration = configuration;
         audiences = BukkitAudiences.create(plugin);
         this.messageBlocker = messageBlocker;
     }
@@ -39,20 +40,25 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
 
-        var optPreset = config.presets().getPreset(player, name);
+        var optPreset = configuration.presets().getPreset(player, name);
 
         CommandAssertions.isTrue(optPreset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
         var preset = optPreset.get();
-        var message = messageBlocker.ifEnabled(preset.detailComponent(), m -> m + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        var composer = MessageComposer.create()
+                .text(preset.detailComponent(name.startsWith("g:")))
+                .newLine()
+                .text("<click:run_command:'/sbrp'><%s>[Back]</click>", Colors.REMOVE);
+
+        messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
-        audiences.player(player).sendMessage(miniMessage.parse(message));
+        audiences.player(player).sendMessage(miniMessage.parse(composer.build()));
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return config.presets().complete(player, args.asString(0));
+            return configuration.presets().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }

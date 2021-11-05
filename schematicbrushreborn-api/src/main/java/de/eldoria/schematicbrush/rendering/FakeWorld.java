@@ -1,54 +1,32 @@
 package de.eldoria.schematicbrush.rendering;
 
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.weather.WeatherType;
-import org.bukkit.World;
 
-public class FakeWorld extends BukkitWorld implements BlockChangeCollecter {
-    final Changes.Builder changes = Changes.builder();
+/**
+ * A Fake world which wrapps and delegates to a world.
+ */
+public interface FakeWorld extends World, BlockChangeCollector {
+    @Override
+    <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight);
+
+    @Override
+    void setWeather(WeatherType weatherType);
+
+    @Override
+    void setWeather(WeatherType weatherType, long duration);
+
+    @Override
+    boolean setBiome(BlockVector2 position, BiomeType biome);
 
     /**
-     * Construct the object.
+     * Changes applied to the world.
      *
-     * @param world the world
+     * @return changes
      */
-    public FakeWorld(World world) {
-        super(world);
-    }
-
-    @Override
-    public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight) throws WorldEditException {
-        var data = BukkitAdapter.adapt(block.toBaseBlock());
-        var location = BukkitAdapter.adapt(getWorld(), position);
-        changes.add(location, location.getBlock().getBlockData(), data);
-        return true;
-    }
-
-
-    @Override
-    public void setWeather(WeatherType weatherType) {
-
-    }
-
-    @Override
-    public void setWeather(WeatherType weatherType, long duration) {
-
-    }
-
-    @Override
-    public boolean setBiome(BlockVector2 position, BiomeType biome) {
-        return true;
-    }
-
-    public Changes changes() {
-        return changes.build();
-    }
-
-
+    Changes changes();
 }

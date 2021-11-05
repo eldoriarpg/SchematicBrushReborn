@@ -36,9 +36,9 @@ public class FlipList extends AFlip {
     }
 
     @Override
-    public Flip shift() {
+    public void shift() {
         if (value() == null) {
-            return values.get(ThreadLocalRandom.current().nextInt(values.size()));
+            value(values.get(ThreadLocalRandom.current().nextInt(values.size())));
         }
         var index = values.indexOf(value());
         Flip newValue;
@@ -48,7 +48,6 @@ public class FlipList extends AFlip {
             newValue = values.get(index + 1);
         }
         value(newValue);
-        return value();
     }
 
     @Override

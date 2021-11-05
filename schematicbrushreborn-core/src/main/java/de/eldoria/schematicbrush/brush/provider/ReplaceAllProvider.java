@@ -1,10 +1,11 @@
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
-import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.replaceall.ReplaceAll;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -14,10 +15,17 @@ import java.util.List;
 
 public abstract class ReplaceAllProvider extends ModifierProvider {
 
-    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class, "fixed") {
+    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class, "Fixed") {
+        private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
+
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return new ReplaceAll(args.asBoolean(0));
+        }
+
+        @Override
+        public Argument[] arguments() {
+            return arguments;
         }
 
         @Override

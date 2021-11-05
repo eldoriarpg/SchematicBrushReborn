@@ -1,61 +1,20 @@
 package de.eldoria.schematicbrush.config.sections.presets;
 
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
-import de.eldoria.schematicbrush.config.PresetContainer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
-public class PresetRegistry implements ConfigurationSerializable {
-
-    private Map<UUID, PresetContainer> playerPresets = new HashMap<>();
-    private PresetContainer globalPresets = new PresetContainer();
-
-    public PresetRegistry(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        playerPresets = map.getMap("playerPresets", (k, v) -> UUID.fromString(k));
-        globalPresets = map.getValueOrDefault("globalPresets", new PresetContainer());
-    }
-
-    public PresetRegistry() {
-    }
-
+/**
+ * A schematic registry to manage {@link PresetContainer}
+ */
+public interface PresetRegistry extends ConfigurationSerializable {
     @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .addMap("playerPresets", playerPresets, (k, v) -> k.toString())
-                .add("globalPresets", globalPresets)
-                .build();
-    }
-
-    public boolean presetExists(Player player, String name) {
-        return getPreset(player, name).isPresent();
-    }
-
-    /**
-     * Get a preset container of a player
-     *
-     * @param player player
-     * @return preset container if exists
-     */
-    private Optional<PresetContainer> getPlayerPresets(Player player) {
-        return Optional.ofNullable(playerPresets.get(player.getUniqueId()));
-    }
-
-    private PresetContainer getOrCreatePlayerPresets(Player player) {
-        return playerPresets.computeIfAbsent(player.getUniqueId(), k -> new PresetContainer());
-    }
+    @NotNull Map<String, Object> serialize();
 
     /**
      * Get presets of a player by name
@@ -64,12 +23,7 @@ public class PresetRegistry implements ConfigurationSerializable {
      * @param name   name
      * @return preset with this name if exists
      */
-    public Optional<Preset> getPreset(Player player, String name) {
-        if (name.startsWith("g:")) {
-            return globalPresets.getPreset(name.substring(2));
-        }
-        return getPlayerPresets(player).flatMap(p -> p.getPreset(name));
-    }
+    Optional<Preset> getPreset(Player player, String name);
 
     /**
      * Add a player preset
@@ -77,18 +31,14 @@ public class PresetRegistry implements ConfigurationSerializable {
      * @param player player
      * @param preset preset
      */
-    public void addPreset(Player player, Preset preset) {
-        getOrCreatePlayerPresets(player).addPreset(preset);
-    }
+    void addPreset(Player player, Preset preset);
 
     /**
      * Add a global preset
      *
      * @param preset preset
      */
-    public void addPreset(Preset preset) {
-        globalPresets.addPreset(preset);
-    }
+    void addPreset(Preset preset);
 
     /**
      * Remove a player preset
@@ -97,9 +47,7 @@ public class PresetRegistry implements ConfigurationSerializable {
      * @param name   name
      * @return true if preset was removed
      */
-    public boolean removePreset(Player player, String name) {
-        return getPlayerPresets(player).map(p -> p.remove(name)).orElse(false);
-    }
+    boolean removePreset(Player player, String name);
 
     /**
      * Remove a global preset
@@ -107,9 +55,7 @@ public class PresetRegistry implements ConfigurationSerializable {
      * @param name name
      * @return true if preset was removed
      */
-    public boolean removePreset(String name) {
-        return globalPresets.remove(name);
-    }
+    boolean removePreset(String name);
 
     /**
      * Get presets of a player
@@ -117,18 +63,14 @@ public class PresetRegistry implements ConfigurationSerializable {
      * @param player player
      * @return all presets of the player
      */
-    public Collection<Preset> getPresets(Player player) {
-        return getPlayerPresets(player).map(PresetContainer::getPresets).orElse(Collections.emptyList());
-    }
+    Collection<Preset> getPresets(Player player);
 
     /**
      * Get global presets
      *
      * @return all global presets
      */
-    public Collection<Preset> getPresets() {
-        return globalPresets.getPresets();
-    }
+    Collection<Preset> getPresets();
 
     /**
      * Complete presets
@@ -137,11 +79,12 @@ public class PresetRegistry implements ConfigurationSerializable {
      * @param arg    arguments to complete
      * @return list of possible values
      */
-    public List<String> complete(Player player, String arg) {
-        if (arg.startsWith("g:")) {
-            return TabCompleteUtil.complete(arg.substring(2), globalPresets.names()).stream().map(m -> "g:" + m).collect(Collectors.toList());
-        }
-        var names = getPlayerPresets(player).map(PresetContainer::names).orElse(Collections.emptySet());
-        return TabCompleteUtil.complete(arg, names);
-    }
+    List<String> complete(Player player, String arg);
+
+    /**
+     * Get the count of all existing presets
+     *
+     * @return preset count
+     */
+    int count();
 }

@@ -36,8 +36,7 @@ public class ReplaceAll implements Mutator<Boolean> {
         if (!value) {
             // Check if the user has a block mask defined and append if present.
             //Mask mask = WorldEditBrushAdapter.getMask(brushOwner);
-            if (preBrushMask instanceof BlockTypeMask) {
-                var blockMask = (BlockTypeMask) preBrushMask;
+            if (preBrushMask instanceof BlockTypeMask blockMask) {
                 blockMask.add(BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR);
             } else {
                 mutation.session().setMask(

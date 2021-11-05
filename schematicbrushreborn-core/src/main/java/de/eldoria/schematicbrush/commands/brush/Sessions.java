@@ -4,9 +4,11 @@ import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.Colors;
+import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModifier;
 
 public class Sessions {
-    private final MiniMessage miniMessage = MiniMessage.get();
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
@@ -37,10 +39,6 @@ public class Sessions {
         this.messageBlocker = messageBlocker;
     }
 
-    public void setSession(Player player, BrushBuilder builder) {
-        session.put(player.getUniqueId(), builder);
-    }
-
     public BrushBuilder getOrCreateSession(Player player) {
         return session.computeIfAbsent(player.getUniqueId(), key -> getOrCreateBuilder(player));
     }
@@ -52,18 +50,21 @@ public class Sessions {
     private BrushBuilder getOrCreateBuilder(Player player) {
         return WorldEditBrush.getSchematicBrush(player)
                 .map(brush -> brush.toBuilder(registry, schematicRegistry))
-                .orElse(new BrushBuilder(player, registry, schematicRegistry));
+                .orElse(new BrushBuilderImpl(player, registry, schematicRegistry));
     }
 
     public void showBrush(Player player) {
         messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
+        var composer = MessageComposer.create()
+                .text("<%s>Schematic Sets: <click:run_command:'/sbr addSet'><%s>[Add]</click>", Colors.HEADING, Colors.ADD);
+        if (player.hasPermission(Permissions.Preset.USE)) {
+            composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>", Colors.ADD);
+        }
+        composer.space().text("<click:run_command:'/sbr refreshSchematics session'><%s>[Refresh Schematics]</click>", Colors.ADD);
         var count = new AtomicInteger(0);
-        var sets = String.format("<%s>Schematic Sets: <click:run_command:'/sbr addSet'><%s>[Add]</click>", Colors.HEADING, Colors.ADD);
-        sets += String.format("  <click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>%n", Colors.ADD);
-
-        sets += builder.schematicSets().stream()
-                .map(set -> String.format("<%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
+        var sets = builder.schematicSets().stream()
+                .map(set -> String.format("  <%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
                         Colors.NAME, set.infoComponent(), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
                 .collect(Collectors.joining("\n"));
         var mutatorMap = builder.placementModifier();
@@ -71,13 +72,22 @@ public class Sessions {
         for (var entry : registry.placementModifier().entrySet()) {
             modifierStrings.add(buildModifier("/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
-        var modifier = String.join("\n", modifierStrings);
-        var panel = String.format("%s\n%s", sets, modifier);
-        var buttons = String.format("<click:run_command:'/sbr bind'><%s>[Bind]</click> " +
-                                    "<click:run_command:'/sbr clear'><%s>[Clear]</click> " +
-                                    "<click:suggest_command:'/sbr savepreset '><%s>[Save]</click>", Colors.ADD, Colors.REMOVE, Colors.CHANGE);
-        var composer = MessageComposer.create().text(panel).newLine().text(buttons).prependLines(20);
-        messageBlocker.ifEnabled(composer, c -> c.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+
+        composer.newLine()
+                .text(sets)
+                .newLine()
+                .text(modifierStrings)
+                .newLine()
+                .text("<click:run_command:'/sbr bind'><%s>[Bind]</click>", Colors.ADD)
+                .space()
+                .text("<click:run_command:'/sbr clear'><%s>[Clear]</click>", Colors.REMOVE);
+
+        if (player.hasPermission(Permissions.Preset.USE)) {
+            composer.space().text("<click:suggest_command:'/sbr savepreset '><%s>[Save]</click>", Colors.CHANGE);
+        }
+
+        composer.prependLines(20);
+        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.player(player).sendMessage(miniMessage.parse(composer.build()));
     }
@@ -87,17 +97,17 @@ public class Sessions {
         var builder = getOrCreateSession(player);
         var optSet = builder.getSchematicSet(id);
         if (optSet.isEmpty()) {
-            audiences.player(player).sendMessage(miniMessage.parse("[SBR] Invalid set."));
+            audiences.player(player).sendMessage(miniMessage.parse("[SB] Invalid set."));
             return;
         }
 
         var set = optSet.get();
-        var s = set.interactComponent(registry, id);
+        var interactComponent = set.interactComponent(registry, id);
 
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
-        var message = String.join("\n", s, buttons);
+        var message = String.join("\n", interactComponent, buttons);
 
-        message = messageBlocker.ifEnabled(message, m -> m + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(message).prependLines(20).build()));
     }

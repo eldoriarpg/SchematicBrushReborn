@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.0.0a"
+version = "2.0.0"
 
 repositories {
     maven("https://eldonexus.de/repository/maven-public")
@@ -13,9 +13,8 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
-    implementation("org.jetbrains", "annotations", "20.1.0")
-    implementation("de.eldoria", "eldo-util", "1.10.13-DEV")
-    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.1.0")
+    compileOnly("org.jetbrains", "annotations", "20.1.0")
+    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.3.0-SNAPSHOT")
 
     testImplementation(platform("org.junit:junit-bom:5.7.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -25,7 +24,7 @@ dependencies {
 
 allprojects {
     java {
-        sourceCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_16
         withSourcesJar()
         withJavadocJar()
     }
@@ -40,7 +39,7 @@ tasks {
         options.encoding = "UTF-8"
     }
 
-    compileTestJava{
+    compileTestJava {
         options.encoding = "UTF-8"
     }
 

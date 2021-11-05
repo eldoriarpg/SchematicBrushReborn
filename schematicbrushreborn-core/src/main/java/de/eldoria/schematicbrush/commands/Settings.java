@@ -3,7 +3,6 @@ package de.eldoria.schematicbrush.commands;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
-import de.eldoria.messageblocker.blocker.MessageBlockerService;
 import de.eldoria.schematicbrush.commands.settings.ChatBlock;
 import de.eldoria.schematicbrush.commands.settings.Preview;
 import de.eldoria.schematicbrush.commands.settings.ShowNames;
