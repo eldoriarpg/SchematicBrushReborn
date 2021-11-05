@@ -10,18 +10,21 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
+import org.bukkit.entity.Player;
 
 /**
  * Class representing mutations to a paste operation of a {@link SchematicBrush}
  */
 public class PasteMutationImpl implements PasteMutation {
     private final EditSession session;
+    private final Player player;
     private Clipboard clipboard;
     private AffineTransform transform = new AffineTransform();
     private BlockVector3 pasteOffset = BlockVector3.ZERO;
     private boolean includeAir;
 
-    public PasteMutationImpl(Clipboard clipboard, EditSession session) {
+    public PasteMutationImpl(Player player, Clipboard clipboard, EditSession session) {
+        this.player = player;
         this.clipboard = clipboard;
         this.session = session;
     }
@@ -114,5 +117,10 @@ public class PasteMutationImpl implements PasteMutation {
     @Override
     public void includeAir(boolean includeAir) {
         this.includeAir = includeAir;
+    }
+
+    @Override
+    public Player player() {
+        return player;
     }
 }

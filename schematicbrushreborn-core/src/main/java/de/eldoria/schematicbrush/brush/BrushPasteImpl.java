@@ -92,7 +92,7 @@ public class BrushPasteImpl implements BrushPaste {
      */
     @Override
     public Operation buildpaste(EditSession editSession, Extent capturingExtent, BukkitPlayer owner, BlockVector3 position) {
-        var pasteMutation = new PasteMutationImpl(clipboard, editSession);
+        var pasteMutation = new PasteMutationImpl(owner.getPlayer(), clipboard, editSession);
         settings.mutate(pasteMutation);
         schematicSet.mutate(pasteMutation);
         var clipboardHolder = buildClipboard(pasteMutation);
