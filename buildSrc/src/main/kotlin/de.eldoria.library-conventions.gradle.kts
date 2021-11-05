@@ -9,9 +9,7 @@ publishing {
     publications {
 
         create<MavenPublication>("maven") {
-            artifact(tasks["jar"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
+            from(components["java"])
             groupId = project.group as String?
             artifactId = project.name.toLowerCase()
             version = publishData.getVersion()
