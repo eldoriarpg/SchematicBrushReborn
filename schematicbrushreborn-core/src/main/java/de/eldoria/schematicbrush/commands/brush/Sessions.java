@@ -61,13 +61,14 @@ public class Sessions {
         if (player.hasPermission(Permissions.Preset.USE)) {
             composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>%n", Colors.ADD);
         }
-        composer.newLine();
-
         var count = new AtomicInteger(0);
         var sets = builder.schematicSets().stream()
-                .map(set -> String.format("<%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
+                .map(set -> String.format("  <%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
                         Colors.NAME, set.infoComponent(), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
                 .collect(Collectors.joining("\n"));
+        if (builder.schematicSets().isEmpty()) {
+            composer.newLine();
+        }
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : registry.placementModifier().entrySet()) {
