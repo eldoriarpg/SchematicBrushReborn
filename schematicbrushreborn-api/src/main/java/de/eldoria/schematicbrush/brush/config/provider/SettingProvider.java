@@ -98,7 +98,7 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      * @param player player which requests completion
      * @return list of strings for the current argument
      */
-    public abstract List<String> complete(Arguments args, Player player);
+    public abstract List<String> complete(Arguments args, Player player) throws CommandException;
 
     /**
      * Name of this provider

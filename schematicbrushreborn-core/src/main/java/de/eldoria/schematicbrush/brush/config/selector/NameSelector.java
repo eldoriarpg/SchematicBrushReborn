@@ -10,7 +10,6 @@ import java.util.Set;
 
 public class NameSelector extends BaseSelector {
 
-
     public NameSelector(String term) {
         super(term);
     }
