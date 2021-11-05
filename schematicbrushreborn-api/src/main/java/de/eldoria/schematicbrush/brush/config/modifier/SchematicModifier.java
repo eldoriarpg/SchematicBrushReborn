@@ -16,11 +16,12 @@ public class SchematicModifier extends Nameable {
     /**
      * Rotation modifier key
      */
-    public static final SchematicModifier ROTATION = of("rotation");
+    public static final SchematicModifier ROTATION = of("Rotation");
+
     /**
      * Flip modifier key
      */
-    public static final SchematicModifier FLIP = of("flip");
+    public static final SchematicModifier FLIP = of("Flip");
 
     private SchematicModifier(String name) {
         super(name);

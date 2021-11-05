@@ -18,17 +18,17 @@ import java.util.List;
 
 public abstract class PlacementProvider extends ModifierProvider {
     private static final APlacement bottom = new Bottom();
-    public static final PlacementProvider BOTTOM = of("bottom", bottom);
+    public static final PlacementProvider BOTTOM = of("Bottom", bottom);
     private static final APlacement drop = new Drop();
-    public static final PlacementProvider DROP = of("drop", drop);
+    public static final PlacementProvider DROP = of("Drop", drop);
     private static final APlacement middle = new Middle();
-    public static final PlacementProvider MIDDLE = of("middle", middle);
+    public static final PlacementProvider MIDDLE = of("Middle", middle);
     private static final APlacement original = new Original();
-    public static final PlacementProvider ORIGINAL = of("original", original);
+    public static final PlacementProvider ORIGINAL = of("Original", original);
     private static final APlacement raise = new Raise();
-    public static final PlacementProvider RAISE = of("raise", raise);
+    public static final PlacementProvider RAISE = of("Raise", raise);
     private static final APlacement top = new Top();
-    public static final PlacementProvider TOP = of("top", top);
+    public static final PlacementProvider TOP = of("Top", top);
 
     public PlacementProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
         super(clazz, name);

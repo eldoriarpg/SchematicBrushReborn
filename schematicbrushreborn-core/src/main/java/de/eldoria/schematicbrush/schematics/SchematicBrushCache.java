@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,7 +76,10 @@ public class SchematicBrushCache implements SchematicCache {
 
     private void loadSchematics(Path schematicFolder) {
         // fail silently if this folder does not exist.
-        if (!schematicFolder.toFile().exists()) return;
+        if (!schematicFolder.toFile().exists()){
+            logger.config(schematicFolder.toString() + " does not exist. Skipping.");
+            return;
+        }
 
         var baseDirectoryData = getDirectoryData(schematicFolder);
 
@@ -231,7 +235,7 @@ public class SchematicBrushCache implements SchematicCache {
             return null;
         }
 
-        return schematics.stream().filter(schem -> schem.isSchematic(pattern)).collect(Collectors.toSet());
+        return schematics.stream().filter(schem -> schem.isSchematic(pattern)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -244,7 +248,7 @@ public class SchematicBrushCache implements SchematicCache {
         // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
         if (name.endsWith("*")) {
             var pureName = name.replace("*", "").toLowerCase();
-            Set<Schematic> allSchematics = new HashSet<>();
+            Set<Schematic> allSchematics = new LinkedHashSet<>();
             // Check if a directory with this name exists if a directory match should be checked.
             for (var entry : schematicsCache.entrySet()) {
                 if (entry.getKey().toLowerCase().startsWith(pureName)) {

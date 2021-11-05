@@ -3,6 +3,7 @@ package de.eldoria.schematicbrush.commands.brush;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
+import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.messages.MessageChannel;
@@ -48,6 +49,7 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
             set.get().selector(selector);
             set.get().refreshSchematics(player, schematics);
         } else if ("weight".equalsIgnoreCase(args.asString(1))) {
+            CommandAssertions.range(args.asInt(2), -1, 100);
             set.get().withWeight(args.asInt(2));
         } else {
             var mutator = registry.parseSchematicModifier(args.subArguments());

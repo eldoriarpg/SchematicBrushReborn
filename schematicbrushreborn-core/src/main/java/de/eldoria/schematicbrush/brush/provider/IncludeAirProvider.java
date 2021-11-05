@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class IncludeAirProvider extends ModifierProvider {
-    public static final IncludeAirProvider FIXED = new IncludeAirProvider(IncludeAir.class, "fixed") {
+    public static final IncludeAirProvider FIXED = new IncludeAirProvider(IncludeAir.class, "Fixed") {
         private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
 
         @Override

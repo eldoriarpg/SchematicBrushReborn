@@ -21,7 +21,7 @@ import java.util.List;
 
 public abstract class FlipProvider extends ModifierProvider {
 
-    public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class, "fixed") {
+    public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class, "Fixed") {
         private final Argument[] arguments = {Argument.unlocalizedInput("flip", true)};
 
         @Override
@@ -48,7 +48,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider LIST = new FlipProvider(FlipList.class, "list") {
+    public static final FlipProvider LIST = new FlipProvider(FlipList.class, "List") {
         private final Argument[] arguments = {Argument.unlocalizedInput("flip...", true)};
 
         @Override
@@ -76,7 +76,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class, "random") {
+    public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class, "Random") {
         @Override
         public Mutator<?> parse(Arguments args) {
             return AFlip.random();

@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class RotationProvider extends ModifierProvider {
-    public static final RotationProvider RANDOM = new RotationProvider(RotationRandom.class, "random") {
+    public static final RotationProvider RANDOM = new RotationProvider(RotationRandom.class, "Random") {
         @Override
         public Mutator<?> parse(Arguments args) {
             return ARotation.random();
@@ -36,7 +36,7 @@ public abstract class RotationProvider extends ModifierProvider {
         }
     };
     private static final String[] ROTATIONS = {"0", "90", "180", "270"};
-    public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class, "fixed") {
+    public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class, "Fixed") {
         private final Argument[] arguments = {Argument.unlocalizedInput("rotation", true)};
 
         @Override
@@ -58,7 +58,7 @@ public abstract class RotationProvider extends ModifierProvider {
         }
     };
 
-    public static final RotationProvider LIST = new RotationProvider(RotationList.class, "list") {
+    public static final RotationProvider LIST = new RotationProvider(RotationList.class, "List") {
         private final Argument[] arguments = {Argument.unlocalizedInput("rotations...", true)};
 
         @Override

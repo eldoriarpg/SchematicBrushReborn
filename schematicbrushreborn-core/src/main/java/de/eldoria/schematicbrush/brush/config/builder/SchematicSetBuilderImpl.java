@@ -189,7 +189,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         }
         var modifier = String.join("\n", modifierStrings);
         var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
-                Colors.NAME, Colors.VALUE, weight(), id, Colors.CHANGE);
+                Colors.HEADING, Colors.VALUE, weight(), id, Colors.CHANGE);
         return String.join("\n", selector, modifier, weight);
     }
 
@@ -208,7 +208,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
             modifierStrings.add(String.format("<%s>%s%n  %s", Colors.HEADING, entry.getKey().name(), BuildUtil.renderProvider(entry.getValue())));
         }
         var modifier = String.join("\n", modifierStrings);
-        var weight = String.format("<%s>Weight: <%s>%s ", Colors.NAME, Colors.VALUE, weight());
+        var weight = String.format("<%s>Weight: <%s>%s ", Colors.HEADING, Colors.VALUE, weight());
         return String.join("\n", selector, modifier, weight);
     }
 

@@ -56,6 +56,6 @@ public class RotationList extends ARotation {
 
     @Override
     public String name() {
-        return "list";
+        return "List";
     }
 }

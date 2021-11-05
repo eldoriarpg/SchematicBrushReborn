@@ -19,7 +19,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
             new SelectorProviderImpl(DirectorySelector.class, "directory", registry) {
-                private final Argument[] arguments = {Argument.unlocalizedInput("directory", true),
+                private final Argument[] arguments = {Argument.unlocalizedInput("Directory", true),
                         Argument.unlocalizedInput("name_filter", false)};
 
                 @Override
@@ -48,7 +48,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
             new SelectorProviderImpl(NameSelector.class, "name", registry) {
-                private final Argument[] arguments = {Argument.unlocalizedInput("name", true)};
+                private final Argument[] arguments = {Argument.unlocalizedInput("Name", true)};
 
                 @Override
                 public Selector parse(Arguments args) {
@@ -71,7 +71,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
             new SelectorProviderImpl(RegexSelector.class, "regex", registry) {
-                private final Argument[] arguments = {Argument.unlocalizedInput("regex", true)};
+                private final Argument[] arguments = {Argument.unlocalizedInput("Regex", true)};
 
                 @Override
                 public Selector parse(Arguments args) {

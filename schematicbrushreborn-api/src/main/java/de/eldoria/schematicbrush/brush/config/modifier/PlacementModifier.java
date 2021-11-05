@@ -16,20 +16,22 @@ public class PlacementModifier extends Nameable {
     /**
      * Placement modifier key
      */
-    public static final PlacementModifier PLACEMENT = of("placement");
+    public static final PlacementModifier PLACEMENT = of("Placement");
+
     /**
      * IncludeAir modifier key
      */
-    public static final PlacementModifier INCLUDE_AIR = of("includeair");
+    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir");
+
     /**
      * ReplaceAll modifier key
      */
-    public static final PlacementModifier REPLACE_ALL = of("replaceall");
+    public static final PlacementModifier REPLACE_ALL = of("ReplaceAll");
+
     /**
      * Offset modifier key
      */
-    public static final PlacementModifier OFFSET = of("offset");
-
+    public static final PlacementModifier OFFSET = of("Offset");
 
     private PlacementModifier(String name) {
         super(name);

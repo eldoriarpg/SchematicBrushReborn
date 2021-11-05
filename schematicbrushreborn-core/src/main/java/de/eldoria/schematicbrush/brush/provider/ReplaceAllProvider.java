@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class ReplaceAllProvider extends ModifierProvider {
 
-    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class, "fixed") {
+    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class, "Fixed") {
         private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
 
         @Override

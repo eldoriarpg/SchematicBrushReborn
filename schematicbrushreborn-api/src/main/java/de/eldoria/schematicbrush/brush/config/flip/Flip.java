@@ -127,6 +127,7 @@ public interface Flip extends Shiftable<Flip> {
      */
     static Flip asFlip(String input) throws CommandException {
         for (var value : values()) {
+            if(value.name().equals(input)) return value;
             for (var alias : value.alias()) {
                 if (alias.equalsIgnoreCase(input)) return value;
             }

@@ -2,6 +2,7 @@ package de.eldoria.schematicbrush.brush.provider;
 
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
+import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
@@ -21,11 +22,12 @@ import java.util.List;
 
 public abstract class OffsetProvider extends ModifierProvider {
 
-    public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class, "fixed") {
+    public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class, "Fixed") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset", true)};
 
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
+            CommandAssertions.range(args.asInt(0), -100, 100);
             return AOffset.fixed(args.asInt(0));
         }
 
@@ -48,13 +50,14 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class, "list") {
+    public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class, "List") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offsets...", true)};
 
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Integer> values = new ArrayList<>();
             for (var i = 0; i < args.size(); i++) {
+                CommandAssertions.range(args.asInt(i), -100, 100);
                 values.add(args.asInt(i));
             }
             return AOffset.list(values);
@@ -76,7 +79,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "range") {
+    public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "Range") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset_min", true), Argument.unlocalizedInput("offset_max", true)};
 
         @Override
