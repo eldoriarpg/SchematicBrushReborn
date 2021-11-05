@@ -100,7 +100,6 @@ public class PresetImpl implements Preset {
 
     @Override
     public List<SchematicSetBuilder> schematicSets() {
-        return schematicSets;
+        return schematicSets.stream().map(SchematicSetBuilder::clone).collect(Collectors.toList());
     }
-
 }

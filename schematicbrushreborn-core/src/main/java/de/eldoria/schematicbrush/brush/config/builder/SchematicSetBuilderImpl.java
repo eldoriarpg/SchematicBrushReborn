@@ -42,6 +42,13 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         this.selector = selector;
     }
 
+    private SchematicSetBuilderImpl(Selector selector, Map<Nameable, Mutator<?>> schematicModifier, Set<Schematic> schematics, int weight) {
+        this.selector = selector;
+        this.schematicModifier = schematicModifier;
+        this.schematics = schematics;
+        this.weight = weight;
+    }
+
     @Override
     @NotNull
     public Map<String, Object> serialize() {
@@ -224,5 +231,13 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
             result += String.format("%n<%s>... and %s more.", Colors.NEUTRAL, schematics.size() - 10);
         }
         return result;
+    }
+
+    @Override
+    public SchematicSetBuilderImpl clone() {
+        Map<Nameable, Mutator<?>> mutatorCopy = schematicModifier.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new SchematicSetBuilderImpl(selector, mutatorCopy, new LinkedHashSet<>(schematics), weight);
     }
 }

@@ -116,4 +116,6 @@ public interface SchematicSetBuilder extends ConfigurationSerializable {
      * @return component
      */
     String infoComponent();
+
+    SchematicSetBuilder clone();
 }
