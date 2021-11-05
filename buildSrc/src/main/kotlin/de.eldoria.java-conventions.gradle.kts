@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.0.0c"
+version = "2.0.0d"
 
 repositories {
     maven("https://eldonexus.de/repository/maven-public")
@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    api("de.eldoria", "eldo-util", "1.10.15-DEV")
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     implementation("org.jetbrains", "annotations", "20.1.0")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.3.0-SNAPSHOT")
