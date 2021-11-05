@@ -4,17 +4,11 @@ plugins {
     id("de.eldoria.java-conventions")
 }
 
-group = "de.eldoria"
 val shadebase = "de.eldoria.schematicbrush.libs."
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation(project(":schematicbrushreborn-api"))
 
-    //implementation("de.eldoria", "eldo-util", "1.10.15-DEV")
     implementation("de.eldoria", "messageblocker", "1.0.3c-DEV")
     implementation("net.kyori", "adventure-platform-bukkit", "4.0.0")
     implementation("net.kyori", "adventure-text-minimessage", "4.2.0-SNAPSHOT")
