@@ -109,16 +109,7 @@ Use `/sbrp` to manage your presets.
 | schematicbrush.admin.reloadcache | To reload the schematic cache. |
 | schematicbrush.admin.debug | To create debug pastes for bugreports. |
 
-![## Features](http://chojo.u.catgirlsare.sexy/64F0fGlX.png)
-
-+ Use schematics from your server as a world edit brush.
-+ Modify your current brush every time without creating a new one.
-+ Customize your brush with different flags
-+ Use weighted schematic sets to keep control of your schematics.
-+ Use random schematic sets to get more diversity.
-+ Save your favorite schematics sets as a set to use them everytime.
-
-## Requirements]
+## Requirements
 
 Spigot or Paper 1.13 and above.  
 Java 16 and above.  
