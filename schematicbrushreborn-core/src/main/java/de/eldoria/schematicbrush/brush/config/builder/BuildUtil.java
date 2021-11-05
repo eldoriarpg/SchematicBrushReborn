@@ -9,7 +9,11 @@ import de.eldoria.schematicbrush.util.Colors;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BuildUtil {
+public final class BuildUtil {
+    private BuildUtil() {
+        throw new UnsupportedOperationException("This is a utility class.");
+    }
+
     public static String buildModifier(String baseCommand, Nameable type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
         String types;
         if (provider.size() > 1) {

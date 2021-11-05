@@ -1,11 +1,8 @@
-# Remove config
-/config/
-
 .gradle
 **/build/
 !src/**/build/
 
-# Ignore Gradle GUI config
+# Ignore Gradle GUI configuration
 gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)

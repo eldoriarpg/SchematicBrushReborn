@@ -37,7 +37,7 @@ public class Preview extends AdvancedCommand implements IPlayerTabExecutor {
         if (state) {
             messageSender().sendMessage(player, "Preview active.");
         } else {
-            messageSender().sendMessage(player, "Previed disabled.");
+            messageSender().sendMessage(player, "Preview disabled.");
         }
     }
 

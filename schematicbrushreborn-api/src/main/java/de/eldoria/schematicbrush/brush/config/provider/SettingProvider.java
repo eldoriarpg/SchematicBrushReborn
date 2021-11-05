@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.brush.config.provider;
 
+import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -29,7 +30,9 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      */
     public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
         this.clazz = clazz;
-        assert !name.isBlank();
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Name of provider can not be blank");
+        }
         this.name = name;
     }
 
@@ -53,7 +56,7 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     }
 
     /**
-     * Parse the argumenmts to the provided class if possible
+     * Parse the arguments to the provided class if possible
      *
      * @param args args to parse
      * @return instance of the provided class
@@ -62,12 +65,21 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     public abstract T parse(Arguments args) throws CommandException;
 
     /**
+     * Return the required and optional arguments to parse this setting.
+     *
+     * @return the arguments of the setting
+     */
+    public Argument[] arguments() {
+        return new Argument[0];
+    }
+
+    /**
      * Defines whether the provider requires arguments or not.
      *
      * @return true if arguments are required
      */
     public boolean hasArguments() {
-        return true;
+        return arguments().length != 0;
     }
 
     /**
@@ -86,7 +98,7 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      * @param player player which requests completion
      * @return list of strings for the current argument
      */
-    public abstract List<String> complete(Arguments args, Player player);
+    public abstract List<String> complete(Arguments args, Player player) throws CommandException;
 
     /**
      * Name of this provider
@@ -107,11 +119,9 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SettingProvider)) return false;
+        if (!(o instanceof SettingProvider<?> provider)) return false;
 
-        var that = (SettingProvider<?>) o;
-
-        return name.equals(that.name);
+        return name.equals(provider.name);
     }
 
     @Override

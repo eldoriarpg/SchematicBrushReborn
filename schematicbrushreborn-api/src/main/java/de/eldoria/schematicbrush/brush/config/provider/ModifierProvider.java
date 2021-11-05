@@ -8,8 +8,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 public abstract class ModifierProvider extends SettingProvider<Mutator<?>> {
     /**
      * Default constructor
+     *
      * @param clazz class which is provided
-     * @param name name of provider
+     * @param name  name of provider
      */
     public ModifierProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
         super(clazz, name);

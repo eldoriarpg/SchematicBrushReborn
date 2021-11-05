@@ -1,7 +1,7 @@
 package de.eldoria.schematicbrush.schematics;
 
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
@@ -23,28 +23,28 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 
 public class SchematicWatchService implements Runnable {
-    private final Logger logger = SchematicBrushRebornImpl.logger();
+    private static final Logger logger = SchematicBrushRebornImpl.logger();
     private final Plugin plugin;
-    private final Config config;
+    private final Configuration configuration;
     private final SchematicBrushCache cache;
     private final ThreadGroup fileWorker = new ThreadGroup("File worker");
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(r -> {
         var thread = new Thread(fileWorker, r);
         thread.setUncaughtExceptionHandler((t, throwable) ->
-                SchematicBrushRebornImpl.logger().log(Level.SEVERE, "And error occured on thread " + t.getName() + ".", throwable));
+                SchematicBrushRebornImpl.logger().log(Level.SEVERE, "And error occurred on thread " + t.getName() + ".", throwable));
         return thread;
     });
     private WatchService watchService;
     private Thread watchThread;
 
-    private SchematicWatchService(Plugin plugin, Config config, SchematicBrushCache cache) {
+    private SchematicWatchService(Plugin plugin, Configuration configuration, SchematicBrushCache cache) {
         this.plugin = plugin;
-        this.config = config;
+        this.configuration = configuration;
         this.cache = cache;
     }
 
-    public static SchematicWatchService of(Plugin plugin, Config config, SchematicBrushCache cache) {
-        var watchService = new SchematicWatchService(plugin, config, cache);
+    public static SchematicWatchService of(Plugin plugin, Configuration configuration, SchematicBrushCache cache) {
+        var watchService = new SchematicWatchService(plugin, configuration, cache);
         watchService.start();
         return watchService;
     }
@@ -65,21 +65,21 @@ public class SchematicWatchService implements Runnable {
         var key = watchService.take();
         plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
         for (var event : key.pollEvents()) {
-            var file = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
+            var file = ((Path) key.watchable()).resolve(event.context().toString());
             switch (event.kind().name()) {
                 case "ENTRY_CREATE":
-                    if (file.isFile()) {
+                    if (file.toFile().isFile()) {
                         plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
                         executorService.schedule(() -> cache.addSchematic(file), 5, TimeUnit.SECONDS);
                     } else {
                         plugin.getLogger().log(Level.CONFIG, "A new directory was detected. Register watcher.");
-                        watchDirectory(watchService, file.toPath());
+                        watchDirectory(watchService, file);
                     }
                     break;
                 case "ENTRY_DELETE":
-                    if (file.isFile()) {
+                    if (file.toFile().isFile()) {
                         plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
-                        cache.removeSchematic(file);
+                        cache.removeSchematic(file.toFile());
                     } else {
                         plugin.getLogger().log(Level.CONFIG, "A directory was deleted.");
                     }
@@ -123,7 +123,7 @@ public class SchematicWatchService implements Runnable {
     private void init() {
         var root = plugin.getDataFolder().toPath().getParent().toString();
 
-        var sources = config.schematicConfig().getSources();
+        var sources = configuration.schematicConfig().getSources();
         try {
             watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {

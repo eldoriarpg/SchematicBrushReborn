@@ -2,16 +2,21 @@ package de.eldoria.schematicbrush.schematics;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * A loaded schematic which allows to load a schematic into a clipboard
+ */
 public class Schematic {
     /**
-     * Regex wich matches the end of a filename.
+     * Regex which matches the end of a filename.
      */
     private static final String EXTENSION = "\\..+$";
     /**
@@ -24,14 +29,46 @@ public class Schematic {
     private final File file;
     private final String name;
 
-    public Schematic(ClipboardFormat format, File file) {
+    /**
+     * Creates a new schematic from a file.
+     *
+     * @param format schematic format
+     * @param file   file
+     * @throws InvalidClipboardFormatException when the format could not be determined
+     */
+    private Schematic(ClipboardFormat format, File file) throws InvalidClipboardFormatException {
+        if (format == null) {
+            throw new InvalidClipboardFormatException("Could not determine schematic type of " + file.toPath());
+        }
         this.format = format;
         this.file = file;
-        this.name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
+        name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
     }
 
     /**
-     * Matches a pattern agains the file name.
+     * Create a schematic by file
+     *
+     * @param file file
+     * @return schematic
+     * @throws InvalidClipboardFormatException when the format could not be determined
+     */
+    public static Schematic of(File file) throws InvalidClipboardFormatException {
+        return new Schematic(ClipboardFormats.findByFile(file), file);
+    }
+
+    /**
+     * Create a schematic by path
+     *
+     * @param path path
+     * @return schematic
+     * @throws InvalidClipboardFormatException when the format could not be determined
+     */
+    public static Schematic of(Path path) throws InvalidClipboardFormatException {
+        return new Schematic(ClipboardFormats.findByFile(path.toFile()), path.toFile());
+    }
+
+    /**
+     * Matches a pattern against the file name.
      *
      * @param pattern pattern to match
      * @return true if the pattern matches the file name with or without extension
@@ -65,9 +102,10 @@ public class Schematic {
      * Load the schematic from file.
      *
      * @return the schematic wrapped in a clipboard object
-     * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deletet or
+     * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deleted or
      *                     moved.
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public Clipboard loadSchematic() throws IOException {
         try (var reader = format.getReader(new FileInputStream(file))) {
             return reader.read();
@@ -84,6 +122,11 @@ public class Schematic {
                name.equals(schematic.name);
     }
 
+    /**
+     * Schematic file
+     *
+     * @return file
+     */
     public File getFile() {
         return file;
     }

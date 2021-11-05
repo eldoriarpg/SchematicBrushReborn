@@ -7,6 +7,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A paste event.
+ * The event may be asynchronous.
+ */
+@SuppressWarnings({"unused", "SameReturnValue"})
 public class PasteEvent extends Event {
     public static final HandlerList HANDLERS = new HandlerList();
     private final Player who;
@@ -22,10 +27,20 @@ public class PasteEvent extends Event {
         return HANDLERS;
     }
 
+    /**
+     * Player who pasted
+     *
+     * @return player
+     */
     public Player player() {
         return who;
     }
 
+    /**
+     * The pasted schematic
+     *
+     * @return schematic
+     */
     public Schematic schematic() {
         return schematic;
     }

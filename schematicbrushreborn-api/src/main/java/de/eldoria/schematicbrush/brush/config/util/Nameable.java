@@ -1,17 +1,18 @@
 package de.eldoria.schematicbrush.brush.config.util;
 
 /**
- * Represents a key.
+ * Represents a named key.
  */
-public abstract class Nameable {
+public class Nameable {
     private final String name;
 
-    public Nameable(String name) {
+    protected Nameable(String name) {
         this.name = name;
     }
 
     /**
      * Creates a new nameable with the name
+     *
      * @param name name of nameable
      * @return new nameable instance
      */
@@ -21,7 +22,8 @@ public abstract class Nameable {
     }
 
     /**
-     * name of the namable
+     * name of the nameable
+     *
      * @return name
      */
     public String name() {
@@ -31,9 +33,7 @@ public abstract class Nameable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Nameable)) return false;
-
-        var nameable = (Nameable) o;
+        if (!(o instanceof Nameable nameable)) return false;
 
         return name.equals(nameable.name);
     }

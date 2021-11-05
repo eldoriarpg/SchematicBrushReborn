@@ -1,9 +1,8 @@
 package de.eldoria.schematicbrush.schematics;
 
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
-import de.eldoria.schematicbrush.config.Config;
+import de.eldoria.schematicbrush.config.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,22 +31,22 @@ import java.util.stream.Collectors;
 
 public class SchematicBrushCache implements SchematicCache {
     private static final Pattern UUID_PATTERN = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
-    private final Logger logger = SchematicBrushRebornImpl.logger();
+    private static final Logger logger = SchematicBrushRebornImpl.logger();
     private final JavaPlugin plugin;
-    private final Config config;
+    private final Configuration configuration;
     private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
     private final Map<UUID, Map<String, Set<Schematic>>> userCache = new HashMap<>();
     private SchematicWatchService watchService;
 
-    public SchematicBrushCache(JavaPlugin plugin, Config config) {
+    public SchematicBrushCache(JavaPlugin plugin, Configuration configuration) {
         this.plugin = plugin;
-        this.config = config;
+        this.configuration = configuration;
     }
 
     @Override
     public void init() {
         reload();
-        watchService = SchematicWatchService.of(plugin, config, this);
+        watchService = SchematicWatchService.of(plugin, configuration, this);
     }
 
     /**
@@ -60,7 +60,7 @@ public class SchematicBrushCache implements SchematicCache {
 
         schematicsCache.clear();
 
-        for (var key : config.schematicConfig().getSources()) {
+        for (var key : configuration.schematicConfig().getSources()) {
             var path = key.getPath();
             if (path == null || path.isEmpty()) {
                 plugin.getLogger().log(Level.CONFIG, "Path " + key + " has no path. Skipping!");
@@ -75,7 +75,10 @@ public class SchematicBrushCache implements SchematicCache {
 
     private void loadSchematics(Path schematicFolder) {
         // fail silently if this folder does not exist.
-        if (!schematicFolder.toFile().exists()) return;
+        if (!schematicFolder.toFile().exists()) {
+            logger.config(schematicFolder.toString() + " does not exist. Skipping.");
+            return;
+        }
 
         var baseDirectoryData = getDirectoryData(schematicFolder);
 
@@ -104,7 +107,7 @@ public class SchematicBrushCache implements SchematicCache {
 
             // Build schematic references
             for (var file : directoryData.get().files()) {
-                addSchematic(file);
+                addSchematic(file.toPath());
             }
             logger.log(Level.CONFIG, "Loaded schematics from " + path.toString());
         }
@@ -117,15 +120,15 @@ public class SchematicBrushCache implements SchematicCache {
         }
 
         for (var value : schematicsCache.values()) {
-            value.removeIf(schematic -> schematic.getFile() == file);
+            value.removeIf(schematic -> schematic.getFile().equals(file));
         }
     }
 
-    public void addSchematic(File file) {
-        var directory = file.toPath().getParent();
+    public void addSchematic(Path file) {
+        var directory = file.getParent();
         directory = directory.subpath(1, directory.getNameCount());
 
-        var sourceForPath = config.schematicConfig().getSourceForPath(directory);
+        var sourceForPath = configuration.schematicConfig().getSourceForPath(directory);
 
         if (sourceForPath.isEmpty()) {
             logger.log(Level.CONFIG, "File " + directory + "is not part of a source");
@@ -135,18 +138,18 @@ public class SchematicBrushCache implements SchematicCache {
         var source = sourceForPath.get();
 
         if (source.isExcluded(directory)) {
-            logger.log(Level.CONFIG, "Directory " + directory + "is exluded.");
+            logger.log(Level.CONFIG, "Directory " + directory + "is excluded.");
             return;
         }
 
         // remove path to get relative path in schematic folder.
         var rawKey = directory.toString().replace(source.getPath(), "");
 
-        String key;
+        String cleanKey;
         if (!rawKey.isEmpty()) {
-            key = rawKey.replace(" ", "_").substring(1).replace("\\", config.schematicConfig().getPathSeparator());
+            cleanKey = rawKey.replace(" ", "_").substring(1).replace("\\", configuration.schematicConfig().getPathSeparator());
         } else {
-            key = rawKey;
+            cleanKey = rawKey;
         }
 
         UUID playerUid = null;
@@ -156,25 +159,27 @@ public class SchematicBrushCache implements SchematicCache {
             var uuidString = matcher.group();
             logger.log(Level.CONFIG, "Found UUID " + uuidString);
             playerUid = UUID.fromString(uuidString);
-            key = key.replaceFirst(uuidString + "/?", "");
+            cleanKey = cleanKey.replaceFirst(uuidString + "/?", "");
         }
 
-        if (config.schematicConfig().isPathSourceAsPrefix()) {
-            key = source.getPrefix() + config.schematicConfig().getPathSeparator() + key;
+        if (configuration.schematicConfig().isPathSourceAsPrefix()) {
+            cleanKey = source.getPrefix() + configuration.schematicConfig().getPathSeparator() + cleanKey;
         }
 
-        var format = ClipboardFormats.findByFile(file);
-
-        if (format == null) {
-            logger.log(Level.CONFIG, "Could not determine schematic type of " + file.toPath());
+        Schematic schematic;
+        try {
+            schematic = Schematic.of(file);
+        } catch (InvalidClipboardFormatException e) {
+            logger.log(Level.WARNING, "Format of " + file + " is invalid.");
             return;
         }
 
-        logger.log(Level.CONFIG, "Added " + file.toPath() + " to schematic cache.");
         if (playerUid != null) {
-            userCache.computeIfAbsent(playerUid, k -> new HashMap<>()).computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
+            userCache.computeIfAbsent(playerUid, key -> new HashMap<>())
+                    .computeIfAbsent(cleanKey, key -> new HashSet<>())
+                    .add(schematic);
         } else {
-            schematicsCache.computeIfAbsent(key, k -> new HashSet<>()).add(new Schematic(format, file));
+            schematicsCache.computeIfAbsent(cleanKey, key -> new HashSet<>()).add(schematic);
         }
     }
 
@@ -184,7 +189,7 @@ public class SchematicBrushCache implements SchematicCache {
 
         // Get a list of all files and directories in a directory
         try (var paths = Files.list(directory)) {
-            // Check for each file if its a directory or a file.
+            // Check for each file if it's a directory or a file.
             for (var path : paths.collect(Collectors.toList())) {
                 if (path.equals(directory)) continue;
                 var file = path.toFile();
@@ -222,7 +227,7 @@ public class SchematicBrushCache implements SchematicCache {
             return null;
         }
 
-        return schematics.stream().filter(c -> c.isSchematic(pattern)).collect(Collectors.toSet());
+        return schematics.stream().filter(schem -> schem.isSchematic(pattern)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -234,18 +239,18 @@ public class SchematicBrushCache implements SchematicCache {
     public Set<Schematic> getSchematicsByDirectory(Player player, String name, String filter) {
         // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
         if (name.endsWith("*")) {
-            var purename = name.replace("*", "").toLowerCase();
-            Set<Schematic> allSchematics = new HashSet<>();
+            var pureName = name.replace("*", "").toLowerCase();
+            Set<Schematic> allSchematics = new LinkedHashSet<>();
             // Check if a directory with this name exists if a directory match should be checked.
             for (var entry : schematicsCache.entrySet()) {
-                if (entry.getKey().toLowerCase().startsWith(purename)) {
+                if (entry.getKey().toLowerCase().startsWith(pureName)) {
                     // only the schematics in directory will be returned if a directory is found.
                     allSchematics.addAll(entry.getValue());
                 }
             }
             if (userCache.containsKey(player.getUniqueId())) {
                 for (var entry : userCache.get(player.getUniqueId()).entrySet()) {
-                    if (entry.getKey().toLowerCase().startsWith(purename)) {
+                    if (entry.getKey().toLowerCase().startsWith(pureName)) {
                         // only the schematics in directory will be returned if a directory is found.
                         allSchematics.addAll(entry.getValue());
                     }
@@ -318,18 +323,18 @@ public class SchematicBrushCache implements SchematicCache {
     @Override
     public List<String> getMatchingDirectories(Player player, String dir, int count) {
         Set<String> matches = new HashSet<>();
-        var seperator = config.schematicConfig().getPathSeparator().charAt(0);
-        var deep = TextUtil.countChars(dir, seperator);
-        for (var k : schematicsCache.keySet()) {
-            if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
-                matches.add(trimPath(k, seperator, deep));
+        var separator = configuration.schematicConfig().getPathSeparator().charAt(0);
+        var deep = TextUtil.countChars(dir, separator);
+        for (var key : schematicsCache.keySet()) {
+            if (key.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
+                matches.add(trimPath(key, separator, deep));
                 if (matches.size() > count) break;
             }
         }
         if (userCache.containsKey(player.getUniqueId())) {
-            for (var k : userCache.get(player.getUniqueId()).keySet()) {
-                if (k.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
-                    matches.add(trimPath(k, seperator, deep));
+            for (var key : userCache.get(player.getUniqueId()).keySet()) {
+                if (key.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
+                    matches.add(trimPath(key, separator, deep));
                     if (matches.size() > count) break;
                 }
             }
@@ -337,10 +342,10 @@ public class SchematicBrushCache implements SchematicCache {
         return new ArrayList<>(matches);
     }
 
-    private String trimPath(String input, char seperator, int deep) {
+    private String trimPath(String input, char separator, int deep) {
         var count = deep;
         for (var i = 0; i < input.length(); i++) {
-            if (input.charAt(i) != seperator) continue;
+            if (input.charAt(i) != separator) continue;
             count--;
             if (count != -1) continue;
             return input.substring(0, i + 1);
@@ -395,29 +400,7 @@ public class SchematicBrushCache implements SchematicCache {
         watchService.shutdown();
     }
 
-    private static class DirectoryData {
-        private List<Path> directories;
-        private List<File> files;
+    private record DirectoryData(List<Path> directories, List<File> files) {
 
-        public DirectoryData(List<Path> directories, List<File> files) {
-            this.directories = directories;
-            this.files = files;
-        }
-
-        public List<Path> directories() {
-            return directories;
-        }
-
-        public void directories(List<Path> directories) {
-            this.directories = directories;
-        }
-
-        public List<File> files() {
-            return files;
-        }
-
-        public void files(List<File> files) {
-            this.files = files;
-        }
     }
 }

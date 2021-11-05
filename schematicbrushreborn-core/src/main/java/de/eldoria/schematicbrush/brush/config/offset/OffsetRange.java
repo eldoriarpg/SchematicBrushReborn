@@ -14,14 +14,12 @@ public class OffsetRange extends AOffset {
     public OffsetRange(int min, int max) {
         this.min = min;
         this.max = max;
-        shift();
     }
 
     public OffsetRange(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         min = map.getValue("min");
         max = map.getValue("max");
-        shift();
     }
 
     @Override

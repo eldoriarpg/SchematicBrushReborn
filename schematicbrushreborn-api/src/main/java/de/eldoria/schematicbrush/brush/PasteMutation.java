@@ -6,98 +6,69 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 
 /**
- * Class representing mutations to a paste operation of a {@link SchematicBrush}
+ * Represents a paste mutation, which will be applied when the brush is pasted.
  */
-public class PasteMutation {
-    private Clipboard clipboard;
-    private AffineTransform transform = new AffineTransform();
-    private EditSession session;
-    private BlockVector3 pasteOffset = BlockVector3.ZERO;
-    private boolean includeAir;
-
-    public PasteMutation(Clipboard clipboard, EditSession session) {
-        this.clipboard = clipboard;
-        this.session = session;
-    }
-
+public interface PasteMutation {
     /**
      * Clipboard of next paste.
      *
      * @return clipboard
      */
-    public Clipboard clipboard() {
-        return clipboard;
-    }
+    Clipboard clipboard();
 
     /**
      * Transform of next paste
      *
      * @return transform
      */
-    public AffineTransform transform() {
-        return transform;
-    }
+    AffineTransform transform();
 
     /**
      * session of next paste
      *
      * @return session
      */
-    public EditSession session() {
-        return session;
-    }
+    EditSession session();
 
     /**
      * paste offset of next paste
      *
      * @return offset
      */
-    public BlockVector3 pasteOffset() {
-        return pasteOffset;
-    }
+    BlockVector3 pasteOffset();
 
     /**
      * Include air
      *
      * @return true if air should be included
      */
-    public boolean isIncludeAir() {
-        return includeAir;
-    }
+    boolean isIncludeAir();
 
     /**
      * Set the clipboard of the paste
      *
      * @param clipboard clipboard
      */
-    public void clipboard(Clipboard clipboard) {
-        this.clipboard = clipboard;
-    }
+    void clipboard(Clipboard clipboard);
 
     /**
      * Set the transform of the paste
      *
      * @param transform transform
      */
-    public void transform(AffineTransform transform) {
-        this.transform = transform;
-    }
+    void transform(AffineTransform transform);
 
     /**
      * Set the paste offset
      *
      * @param pasteOffset paste offset
      */
-    public void pasteOffset(BlockVector3 pasteOffset) {
-        this.pasteOffset = pasteOffset;
-    }
+    void pasteOffset(BlockVector3 pasteOffset);
 
     /**
      * Set the include air
      *
      * @param includeAir includeair
      */
-    public void includeAir(boolean includeAir) {
-        this.includeAir = includeAir;
-    }
+    void includeAir(boolean includeAir);
 }

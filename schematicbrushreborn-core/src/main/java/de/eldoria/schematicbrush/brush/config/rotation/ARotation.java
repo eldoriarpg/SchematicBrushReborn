@@ -1,12 +1,27 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class ARotation implements Mutator<Rotation> {
-    protected Rotation rotation;
+    protected Rotation rotation = null;
+
+    public ARotation(Rotation rotation) {
+        this.rotation = rotation;
+    }
+
+    public ARotation(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        rotation = Rotation.valueOf(map.getValue("value"));
+    }
+
+    public ARotation() {
+    }
 
     public static ARotation fixed(Rotation rotation) {
         return new RotationFixed(rotation);
@@ -18,6 +33,13 @@ public abstract class ARotation implements Mutator<Rotation> {
 
     public static ARotation random() {
         return new RotationRandom();
+    }
+
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("value", rotation.degree())
+                .build();
     }
 
     @Override

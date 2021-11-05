@@ -5,7 +5,7 @@ import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 
 /**
- * Provider used to provide instancec of classes implementing a {@link Selector}
+ * Provider used to provide instance of classes implementing a {@link Selector}
  */
 public abstract class SelectorProvider extends SettingProvider<Selector> {
 

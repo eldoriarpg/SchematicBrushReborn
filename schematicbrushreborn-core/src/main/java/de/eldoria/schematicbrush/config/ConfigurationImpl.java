@@ -2,9 +2,13 @@ package de.eldoria.schematicbrush.config;
 
 import de.eldoria.eldoutilities.configuration.EldoConfig;
 import de.eldoria.schematicbrush.config.sections.GeneralConfig;
+import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
+import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
+import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
 import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
+import de.eldoria.schematicbrush.config.sections.presets.PresetRegistryImpl;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
@@ -15,27 +19,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class Config extends EldoConfig {
+public class ConfigurationImpl extends EldoConfig implements Configuration {
+    private static final String PRESET_FILE = "presets";
     private SchematicConfig schematicConfig;
     private GeneralConfig general;
     private PresetRegistry presets;
 
-    public Config(Plugin plugin) {
+    public ConfigurationImpl(Plugin plugin) {
         super(plugin);
     }
 
     @Override
-    protected void saveConfigs() {
+    public void saveConfigs() {
         getConfig().set("schematicConfig", schematicConfig);
-        getConfig().set("presets", presets);
+        loadConfig(PRESET_FILE, null, false).set("presets", presets);
         getConfig().set("general", general);
     }
 
     @Override
-    protected void reloadConfigs() {
-        schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfig());
-        general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfig());
-        presets = getConfig().getObject("presets", PresetRegistry.class, new PresetRegistry());
+    public void reloadConfigs() {
+        presets = loadConfig(PRESET_FILE, null, false).getObject("presets", PresetRegistry.class, new PresetRegistryImpl());
+        schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfigImpl());
+        general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfigImpl());
     }
 
     @Override
@@ -48,7 +53,7 @@ public class Config extends EldoConfig {
 
         if (version < 2) {
             // v1 config does not really contain important data anyway...
-            getConfig().getKeys(false).forEach(k -> getConfig().set(k, null));
+            getConfig().getKeys(false).forEach(key -> getConfig().set(key, null));
         }
 
         if (version == 2) {
@@ -76,7 +81,8 @@ public class Config extends EldoConfig {
             if (!path.toFile().exists()) {
                 Files.createFile(path);
             }
-            Files.write(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"), getConfig().saveToString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"),
+                    getConfig().saveToString(), StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not create backup. Converting aborted", e);
         }
@@ -100,7 +106,7 @@ public class Config extends EldoConfig {
                             excluded.add(currpath.replace(prefix + "/", ""));
                         }
                     }
-                    sources.add(new SchematicSource(path, prefix, excluded));
+                    sources.add(new SchematicSourceImpl(path, prefix, excluded));
                     plugin.getLogger().info("Source " + path + " successfully converted.");
                 }
             }
@@ -119,21 +125,24 @@ public class Config extends EldoConfig {
         plugin.getLogger().info("Converted selector setting and deleted.");
         getConfig().set("selectorSettings", null);
 
-        getConfig().set("schematicConfig", new SchematicConfig(sources, pathSeperator, pathSourceAsPrefix));
+        getConfig().set("schematicConfig", new SchematicConfigImpl(sources, pathSeperator, pathSourceAsPrefix));
 
         getConfig().set("presets", null);
 
         setVersion(3, false);
     }
 
+    @Override
     public SchematicConfig schematicConfig() {
         return schematicConfig;
     }
 
+    @Override
     public GeneralConfig general() {
         return general;
     }
 
+    @Override
     public PresetRegistry presets() {
         return presets;
     }

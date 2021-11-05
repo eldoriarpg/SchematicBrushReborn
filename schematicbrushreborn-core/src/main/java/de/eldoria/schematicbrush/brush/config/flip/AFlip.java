@@ -10,19 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AFlip implements Mutator<Flip> {
-    protected Flip flip;
-
-    public static AFlip fixed(Flip flip) {
-        return new FlipFixed(flip);
-    }
-
-    public static AFlip list(List<Flip> flips) {
-        return new FlipList(flips);
-    }
-
-    public static AFlip random() {
-        return new FlipRandom();
-    }
+    protected Flip flip = null;
 
     public AFlip() {
     }
@@ -34,6 +22,18 @@ public abstract class AFlip implements Mutator<Flip> {
 
     public AFlip(Flip flip) {
         this.flip = flip;
+    }
+
+    public static AFlip fixed(Flip flip) {
+        return new FlipFixed(flip);
+    }
+
+    public static AFlip list(List<Flip> flips) {
+        return new FlipList(flips);
+    }
+
+    public static AFlip random() {
+        return new FlipRandom();
     }
 
     @NotNull
@@ -57,7 +57,7 @@ public abstract class AFlip implements Mutator<Flip> {
     @Override
     public void invoke(PasteMutation mutation) {
         if (value().direction() != Vector3.ZERO) {
-            mutation.transform(mutation.transform().scale(value().direction().abs().multiply(-2).add(1, 1, 1)));
+            mutation.transform(mutation.transform().scale(value().direction().abs().multiply(-2.0).add(1.0, 1.0, 1.0)));
         }
     }
 }

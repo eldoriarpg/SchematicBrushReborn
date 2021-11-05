@@ -1,7 +1,6 @@
 package de.eldoria.schematicbrush.brush.config.selector;
 
 import de.eldoria.schematicbrush.schematics.Schematic;
-import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;

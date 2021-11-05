@@ -3,6 +3,7 @@ package de.eldoria.schematicbrush.util;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -11,10 +12,14 @@ import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class WorldEditBrush {
+/**
+ * Utility class to manage world edit brushes.
+ */
+public final class WorldEditBrush {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
 
     private WorldEditBrush() {
@@ -35,12 +40,15 @@ public class WorldEditBrush {
     /**
      * Get the schematic brush of a player registered on the item in its main hand.
      *
-     * @param player player for lookup
+     * @param player   player for lookup
+     * @param material material to get the registered brush
      * @return schematic brush instance if the item is a schematic brush
      */
-    @SuppressWarnings("ProhibitedExceptionCaught")
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
-        return getBrush(player, material, SchematicBrush.class);
+        if (getBrush(player, material) instanceof SchematicBrush brush) {
+            return Optional.of(brush);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -49,24 +57,33 @@ public class WorldEditBrush {
      * @param player player for lookup
      * @return schematic brush instance if the item is a schematic brush
      */
-    @SuppressWarnings({"ProhibitedExceptionCaught", "unchecked"})
-    public static <T extends Brush> Optional<T> getBrush(Player player, Material material, Class<T> clazz) {
+    @Nullable
+    public static Brush getBrush(Player player) {
+        return getBrush(player, player.getInventory().getItemInMainHand().getType());
+    }
+
+    /**
+     * Get the schematic brush of a player registered on the item in its main hand.
+     *
+     * @param player   player for lookup
+     * @param material material to get the brush
+     * @return schematic brush instance if the item is a schematic brush
+     */
+    @SuppressWarnings({"ProhibitedExceptionCaught"})
+    @Nullable
+    public static Brush getBrush(Player player, Material material) {
         var itemType = BukkitAdapter.asItemType(material);
         if (itemType == null || itemType.hasBlockType()) {
-            return Optional.empty();
+            return null;
         }
         try {
-            var brushTool = getLocalSession(player).getBrushTool(itemType);
-            if (brushTool.getBrush() != null && clazz.isAssignableFrom(brushTool.getBrush().getClass())) {
-                return Optional.of((T) brushTool.getBrush());
+            if (getLocalSession(player).getTool(itemType) instanceof BrushTool brushTool) {
+                return brushTool.getBrush();
             }
-        } catch (InvalidToolBindException e) {
-            return Optional.empty();
         } catch (NullPointerException e) {
             // for some reason world edit throws a NPE when this function is called on world edit tools
-            return Optional.empty();
         }
-        return Optional.empty();
+        return null;
     }
 
     /**
@@ -79,7 +96,9 @@ public class WorldEditBrush {
     public static boolean setBrush(Player player, Brush brush) {
         var itemInMainHand = player.getInventory().getItemInMainHand();
         try {
-            getLocalSession(player).getBrushTool(BukkitAdapter.asItemType(itemInMainHand.getType())).setBrush(brush, "schematicbrush.brush.use");
+            var brushTool = new BrushTool("schematicbrush.brush.use");
+            brushTool.setBrush(brush, "schematicbrush.brush.use");
+            getLocalSession(player).setTool(BukkitAdapter.asItemType(itemInMainHand.getType()), brushTool);
         } catch (InvalidToolBindException e) {
             MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
             return false;

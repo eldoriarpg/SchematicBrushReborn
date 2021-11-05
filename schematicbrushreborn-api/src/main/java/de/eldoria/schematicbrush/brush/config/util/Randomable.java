@@ -7,10 +7,21 @@ import java.util.concurrent.ThreadLocalRandom;
  * Provides a standard random instance.
  */
 public interface Randomable {
+    /**
+     * Get a random integer based on {@link ThreadLocalRandom}
+     *
+     * @param bound upper exclusive bound
+     * @return number in bounds
+     */
     default int randomInt(int bound) {
         return ThreadLocalRandom.current().nextInt(bound);
     }
 
+    /**
+     * Get the random instance of the calling thread
+     *
+     * @return random instance of the calling thread
+     */
     default Random random() {
         return ThreadLocalRandom.current();
     }

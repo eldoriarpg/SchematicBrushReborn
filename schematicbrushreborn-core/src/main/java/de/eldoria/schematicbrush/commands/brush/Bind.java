@@ -25,12 +25,16 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var session = sessions.getOrCreateSession(player);
-        // TODO: check if brush is valid
 
         CommandAssertions.isFalse(session.getSchematicCount() == 0, "Brush is empty.");
         var brush = session.build(plugin(), player);
 
-        WorldEditBrush.setBrush(player, brush);
-        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, "Brush bound."));
+        if (!WorldEditBrush.setBrush(player, brush)) {
+            return;
+        }
+
+        var schematicCount = brush.getSettings().getSchematicCount();
+        var setcount = brush.getSettings().schematicSets().size();
+        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, String.format("Brush bound. Using §3%s§r Schematics in §3%s§r Sets", schematicCount, setcount)));
     }
 }
