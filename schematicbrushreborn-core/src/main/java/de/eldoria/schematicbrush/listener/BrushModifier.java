@@ -16,7 +16,7 @@ import org.bukkit.inventory.EquipmentSlot;
 public class BrushModifier implements Listener {
     private final MessageSender messageSender = MessageSender.getPluginMessageSender(SchematicBrushRebornImpl.class);
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public void onLeftClick(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
         if (event.getAction() != Action.LEFT_CLICK_AIR) return;

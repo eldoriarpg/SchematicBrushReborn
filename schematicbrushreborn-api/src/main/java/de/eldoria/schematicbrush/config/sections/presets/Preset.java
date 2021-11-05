@@ -25,9 +25,10 @@ public interface Preset extends ConfigurationSerializable {
      * The preset as a info compnent used for medium details
      *
      * @param global if the preset is a global preset
+     * @param canDelete when true a delete command should be included
      * @return component
      */
-    String infoComponent(boolean global);
+    String infoComponent(boolean global, boolean canDelete);
 
     /**
      * The detailed component with interactable buttons

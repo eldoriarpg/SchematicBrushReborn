@@ -7,6 +7,7 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Colors;
+import de.eldoria.schematicbrush.util.Permissions;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
@@ -35,11 +36,11 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
         messageBlocker.blockPlayer(player);
         var global = configuration.presets().getPresets()
                 .stream()
-                .map(preset -> "  "+preset.infoComponent(true))
+                .map(preset -> "  " + preset.infoComponent(true, player.hasPermission(Permissions.Preset.GLOBAL)))
                 .collect(Collectors.joining("\n"));
         var local = configuration.presets().getPresets(player)
                 .stream()
-                .map(preset -> "  "+preset.infoComponent(false))
+                .map(preset -> "  " + preset.infoComponent(false, true))
                 .collect(Collectors.joining("\n"));
 
         var message = String.format("<%s>Presets:%n%s%n<%s>Global:%n%s", Colors.HEADING, local, Colors.HEADING, global);

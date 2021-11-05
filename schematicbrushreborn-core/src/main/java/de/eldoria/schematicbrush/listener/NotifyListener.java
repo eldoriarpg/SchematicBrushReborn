@@ -45,6 +45,6 @@ public class NotifyListener implements Listener {
     @EventHandler
     public void onPaste(PasteEvent event) {
         if (!players.contains(event.player().getUniqueId())) return;
-        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.player(),"§2Pasted §a" + event.schematic().name());
+        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.player(), "§2Pasted §a" + event.schematic().name());
     }
 }

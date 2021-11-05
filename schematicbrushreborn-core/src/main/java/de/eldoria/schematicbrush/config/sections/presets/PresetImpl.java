@@ -55,15 +55,24 @@ public class PresetImpl implements Preset {
     }
 
     @Override
-    public String infoComponent(boolean global) {
-        return String.format("<%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbrp info %s'>[Info]</click>", Colors.NAME, simpleComponent(), name, Colors.ADD, (global ? "g:" : "") + name);
+    public String infoComponent(boolean global, boolean canDelete) {
+        var text = MessageComposer.create()
+                .text("<%s><hover:show_text:'%s'>%s</hover>", Colors.NAME, simpleComponent(), name)
+                .space()
+                .text("<%s><click:run_command:'/sbrp info %s'>[Info]</click>", Colors.ADD, (global ? "g:" : "") + name);
+        if (canDelete) {
+            text.space()
+                    .text("<%s><click:run_command:'/sbrp remove %s %s'>[Remove]</click>", Colors.REMOVE, name, (global ? "-g" : ""));
+        }
+
+        return text.build();
     }
 
     @Override
     public String detailComponent(boolean global) {
         var sets = schematicSets.stream()
                 .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         return MessageComposer.create()
                 .text("<%s>Information about preset <%s>%s", Colors.HEADING, Colors.NAME, name)

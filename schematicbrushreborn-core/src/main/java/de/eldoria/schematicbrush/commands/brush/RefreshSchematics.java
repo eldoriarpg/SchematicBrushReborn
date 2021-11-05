@@ -47,7 +47,7 @@ public class RefreshSchematics extends AdvancedCommand implements IPlayerTabExec
         brushBuilder.refresh();
         if (WorldEditBrush.setBrush(player, brushBuilder.build(plugin(), player))) {
             messageSender().sendMessage(player, "Brush schematics refreshed.");
-        }else {
+        } else {
             messageSender().sendError(player, "Could not refresh schematics.");
         }
     }

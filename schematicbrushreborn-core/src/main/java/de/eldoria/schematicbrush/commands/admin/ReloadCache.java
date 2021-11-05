@@ -10,11 +10,11 @@ import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class ReloadSchematics extends AdvancedCommand implements ITabExecutor {
+public class ReloadCache extends AdvancedCommand implements ITabExecutor {
     private final SchematicRegistry cache;
 
-    public ReloadSchematics(SchematicBrushRebornImpl plugin, SchematicRegistry cache) {
-        super(plugin, CommandMeta.builder("reloadSchematics")
+    public ReloadCache(SchematicBrushRebornImpl plugin, SchematicRegistry cache) {
+        super(plugin, CommandMeta.builder("reloadCache")
                 .withPermission(Permissions.Admin.RELOAD_CACHE)
                 .build());
         this.cache = cache;
