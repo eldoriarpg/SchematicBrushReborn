@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ARotation implements Mutator<Rotation> {
-    protected Rotation rotation;
+    protected Rotation rotation = null;
 
     public ARotation(Rotation rotation) {
         this.rotation = rotation;

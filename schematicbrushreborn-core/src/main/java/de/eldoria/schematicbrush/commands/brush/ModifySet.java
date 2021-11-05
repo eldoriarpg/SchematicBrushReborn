@@ -46,6 +46,7 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
 
         if ("selector".equalsIgnoreCase(args.asString(1))) {
             var selector = registry.parseSelector(args.subArguments().subArguments());
+            CommandAssertions.isFalse(selector.select(player, schematics).isEmpty(), "No schematics matching this selector.");
             set.get().selector(selector);
             set.get().refreshSchematics(player, schematics);
         } else if ("weight".equalsIgnoreCase(args.asString(1))) {

@@ -2,49 +2,25 @@ package de.eldoria.schematicbrush.util;
 
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.blocks.BaseItem;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
-import com.sk89q.worldedit.command.tool.Tool;
 import com.sk89q.worldedit.command.tool.brush.Brush;
 import com.sk89q.worldedit.extension.platform.Actor;
-import com.sk89q.worldedit.world.item.ItemType;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.Optional;
-import java.util.logging.Level;
 
 /**
  * Utility class to manage world edit brushes.
  */
 public final class WorldEditBrush {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
-    private static final boolean FAWE;
-    private static final MethodHandle GET_BRUSH;
-
-    static {
-        MethodHandle handle = null;
-        FAWE = Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
-        if (!FAWE) {
-            var lookup = MethodHandles.lookup();
-            try {
-                handle = lookup.findVirtual(LocalSession.class, "getTool", MethodType.methodType(Tool.class, ItemType.class));
-            } catch (NoSuchMethodException | IllegalAccessException e) {
-                SchematicBrushReborn.logger().log(Level.WARNING, "Could not build reflections for world edit.", e);
-            }
-        }
-        GET_BRUSH = handle;
-    }
 
     private WorldEditBrush() {
         throw new UnsupportedOperationException("This is a utility class.");
@@ -69,7 +45,7 @@ public final class WorldEditBrush {
      * @return schematic brush instance if the item is a schematic brush
      */
     public static Optional<SchematicBrush> getSchematicBrush(Player player, Material material) {
-        if(getBrush(player, material) instanceof SchematicBrush brush){
+        if (getBrush(player, material) instanceof SchematicBrush brush) {
             return Optional.of(brush);
         }
         return Optional.empty();
@@ -78,10 +54,9 @@ public final class WorldEditBrush {
     /**
      * Get the schematic brush of a player registered on the item in its main hand.
      *
-     * @param player   player for lookup
+     * @param player player for lookup
      * @return schematic brush instance if the item is a schematic brush
      */
-    @SuppressWarnings({"ProhibitedExceptionCaught", "unchecked"})
     @Nullable
     public static Brush getBrush(Player player) {
         return getBrush(player, player.getInventory().getItemInMainHand().getType());
@@ -94,7 +69,7 @@ public final class WorldEditBrush {
      * @param material material to get the brush
      * @return schematic brush instance if the item is a schematic brush
      */
-    @SuppressWarnings({"ProhibitedExceptionCaught", "unchecked"})
+    @SuppressWarnings({"ProhibitedExceptionCaught"})
     @Nullable
     public static Brush getBrush(Player player, Material material) {
         var itemType = BukkitAdapter.asItemType(material);
@@ -106,7 +81,8 @@ public final class WorldEditBrush {
                 return brushTool.getBrush();
             }
         } catch (NullPointerException e) {
-        } // for some reason world edit throws a NPE when this function is called on world edit tools
+            // for some reason world edit throws a NPE when this function is called on world edit tools
+        }
         return null;
     }
 
@@ -140,14 +116,5 @@ public final class WorldEditBrush {
         Actor actor = BukkitAdapter.adapt(player);
 
         return WORLD_EDIT.getSessionManager().get(actor);
-    }
-
-    private static Tool getWorldEditTool(Player player, ItemType itemType) {
-        try {
-            return (Tool) GET_BRUSH.invoke(getLocalSession(player), itemType);
-        } catch (Throwable e) {
-            SchematicBrushReborn.logger().log(Level.WARNING, "Could not extract Tool.", e);
-        }
-        return null;
     }
 }

@@ -1,8 +1,6 @@
 package de.eldoria.schematicbrush.rendering;
 
-import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
@@ -90,11 +88,6 @@ public class CapturingExtentImpl implements CapturingExtent {
             }
         }
         return true;
-    }
-
-    @Override
-    public boolean setTile(int x, int y, int z, CompoundTag tile) throws WorldEditException {
-        return false;
     }
 
     @Override

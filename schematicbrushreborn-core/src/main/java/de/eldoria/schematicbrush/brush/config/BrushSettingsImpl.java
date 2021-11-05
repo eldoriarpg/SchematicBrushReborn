@@ -9,7 +9,6 @@ import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -83,19 +82,6 @@ public final class BrushSettingsImpl implements BrushSettings {
     @Override
     public int getSchematicCount() {
         return schematicSets.stream().map(set -> set.schematics().size()).mapToInt(Integer::intValue).sum();
-    }
-
-    /**
-     * Get the brush configuration with a new brush combined. The options from the current brush are used.
-     *
-     * @param brush Brush to combine. Only the {@link SchematicSetImpl} list is updated.
-     * @return new brush configuration.
-     */
-    @Override
-    public BrushSettings combine(BrushSettings brush) {
-        List<SchematicSet> brushes = new ArrayList<>(schematicSets);
-        brushes.addAll(brush.schematicSets());
-        return new BrushSettingsImpl(brushes, placementModifier);
     }
 
     /**

@@ -12,7 +12,6 @@ import de.eldoria.schematicbrush.config.sections.presets.PresetRegistryImpl;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -82,8 +81,8 @@ public class ConfigurationImpl extends EldoConfig implements Configuration {
             if (!path.toFile().exists()) {
                 Files.createFile(path);
             }
-            Files.write(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"),
-                    getConfig().saveToString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(Paths.get(plugin.getDataFolder().toPath().toString(), "config_old.yml"),
+                    getConfig().saveToString(), StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not create backup. Converting aborted", e);
         }

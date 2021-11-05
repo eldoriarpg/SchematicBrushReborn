@@ -80,7 +80,7 @@ public class SchematicBrushImpl implements SchematicBrush {
     public BlockChangeCollector pasteFake() {
         var world = new FakeWorldImpl(brushOwner.getWorld());
         CapturingExtent capturingExtent;
-        try (var editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, 100000)) {
+        try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(100000).build()) {
             var bukkitPlayer = BukkitAdapter.adapt(brushOwner);
             var localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
             BrushTool brushTool;

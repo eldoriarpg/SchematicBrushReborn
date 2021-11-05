@@ -149,4 +149,9 @@ public class PresetRegistryImpl implements PresetRegistry {
         var names = getPlayerPresets(player).map(PresetContainer::names).orElse(Collections.emptySet());
         return TabCompleteUtil.complete(arg, names);
     }
+
+    @Override
+    public int count() {
+        return globalPresets.getPresets().size() + playerPresets.values().stream().mapToInt(container -> container.getPresets().size()).sum();
+    }
 }

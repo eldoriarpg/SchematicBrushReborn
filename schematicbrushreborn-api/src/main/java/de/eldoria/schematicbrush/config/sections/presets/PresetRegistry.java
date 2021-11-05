@@ -80,4 +80,11 @@ public interface PresetRegistry extends ConfigurationSerializable {
      * @return list of possible values
      */
     List<String> complete(Player player, String arg);
+
+    /**
+     * Get the count of all existing presets
+     *
+     * @return preset count
+     */
+    int count();
 }

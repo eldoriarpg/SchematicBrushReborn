@@ -6,6 +6,7 @@ import de.eldoria.schematicbrush.brush.config.util.Shiftable;
 /**
  * Represents a rotation.
  */
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface Rotation extends Shiftable<Rotation> {
     /**
      * Represents a rotation of 0.
@@ -99,7 +100,6 @@ public interface Rotation extends Shiftable<Rotation> {
      */
     static Rotation valueOf(int value) {
         return switch (value) {
-            case 0 -> ROT_ZERO;
             case 270 -> ROT_LEFT;
             case 90 -> ROT_RIGHT;
             case 180 -> ROT_HALF;

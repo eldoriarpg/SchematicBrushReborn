@@ -141,16 +141,8 @@ public class RenderService implements Runnable, Listener {
             queue.removeIf(e -> e.player.equals(player));
         }
 
-        private static class ChangeEntry {
-            private final Player player;
-            private final Changes oldChanges;
-            private final Changes newChanges;
-
-            private ChangeEntry(Player player, Changes oldChanges, Changes newChanges) {
-                this.player = player;
-                this.oldChanges = oldChanges;
-                this.newChanges = newChanges;
-            }
+        private record ChangeEntry(Player player, Changes oldChanges,
+                                   Changes newChanges) {
 
             private void sendChanges() {
                 if (oldChanges != null) oldChanges.hide(player);

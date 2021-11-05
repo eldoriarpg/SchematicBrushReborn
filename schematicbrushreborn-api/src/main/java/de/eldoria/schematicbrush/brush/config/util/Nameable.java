@@ -33,9 +33,7 @@ public class Nameable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Nameable)) return false;
-
-        var nameable = (Nameable) o;
+        if (!(o instanceof Nameable nameable)) return false;
 
         return name.equals(nameable.name);
     }

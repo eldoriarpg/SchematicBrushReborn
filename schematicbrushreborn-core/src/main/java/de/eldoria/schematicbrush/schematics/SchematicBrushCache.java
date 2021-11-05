@@ -1,6 +1,5 @@
 package de.eldoria.schematicbrush.schematics;
 
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.config.Configuration;
@@ -76,7 +75,7 @@ public class SchematicBrushCache implements SchematicCache {
 
     private void loadSchematics(Path schematicFolder) {
         // fail silently if this folder does not exist.
-        if (!schematicFolder.toFile().exists()){
+        if (!schematicFolder.toFile().exists()) {
             logger.config(schematicFolder.toString() + " does not exist. Skipping.");
             return;
         }
@@ -108,7 +107,7 @@ public class SchematicBrushCache implements SchematicCache {
 
             // Build schematic references
             for (var file : directoryData.get().files()) {
-                addSchematic(file);
+                addSchematic(file.toPath());
             }
             logger.log(Level.CONFIG, "Loaded schematics from " + path.toString());
         }
@@ -121,12 +120,12 @@ public class SchematicBrushCache implements SchematicCache {
         }
 
         for (var value : schematicsCache.values()) {
-            value.removeIf(schematic -> schematic.getFile() == file);
+            value.removeIf(schematic -> schematic.getFile().equals(file));
         }
     }
 
-    public void addSchematic(File file) {
-        var directory = file.toPath().getParent();
+    public void addSchematic(Path file) {
+        var directory = file.getParent();
         directory = directory.subpath(1, directory.getNameCount());
 
         var sourceForPath = configuration.schematicConfig().getSourceForPath(directory);
@@ -167,18 +166,11 @@ public class SchematicBrushCache implements SchematicCache {
             cleanKey = source.getPrefix() + configuration.schematicConfig().getPathSeparator() + cleanKey;
         }
 
-        var format = ClipboardFormats.findByFile(file);
-
-        if (format == null) {
-            logger.log(Level.CONFIG, "Could not determine schematic type of " + file.toPath());
-            return;
-        }
-
         Schematic schematic;
         try {
             schematic = Schematic.of(file);
         } catch (InvalidClipboardFormatException e) {
-            logger.log(Level.CONFIG, "Added " + file.toPath() + " to schematic cache.");
+            logger.log(Level.WARNING, "Format of " + file + " is invalid.");
             return;
         }
 
@@ -408,22 +400,7 @@ public class SchematicBrushCache implements SchematicCache {
         watchService.shutdown();
     }
 
-    private static class DirectoryData {
-        private final List<Path> directories;
-        private final List<File> files;
-
-        private DirectoryData(List<Path> directories, List<File> files) {
-            this.directories = directories;
-            this.files = files;
-        }
-
-        public List<Path> directories() {
-            return directories;
-        }
-
-        public List<File> files() {
-            return files;
-        }
+    private record DirectoryData(List<Path> directories, List<File> files) {
 
     }
 }

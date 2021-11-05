@@ -119,11 +119,9 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SettingProvider)) return false;
+        if (!(o instanceof SettingProvider<?> provider)) return false;
 
-        var that = (SettingProvider<?>) o;
-
-        return name.equals(that.name);
+        return name.equals(provider.name);
     }
 
     @Override

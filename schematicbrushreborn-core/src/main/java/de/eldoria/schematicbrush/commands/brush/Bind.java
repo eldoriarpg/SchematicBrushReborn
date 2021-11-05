@@ -32,6 +32,9 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         if (!WorldEditBrush.setBrush(player, brush)) {
             return;
         }
-        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, "Brush bound."));
+
+        var schematicCount = brush.getSettings().getSchematicCount();
+        var setcount = brush.getSettings().schematicSets().size();
+        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, String.format("Brush bound. Using §3%s§r Schematics in §3%s§r Sets", schematicCount, setcount)));
     }
 }

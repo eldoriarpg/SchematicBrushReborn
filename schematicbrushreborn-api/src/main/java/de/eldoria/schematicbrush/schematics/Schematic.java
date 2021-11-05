@@ -105,6 +105,7 @@ public class Schematic {
      * @throws IOException if the file could not be loaded. This should only happen, if the schematic was deleted or
      *                     moved.
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public Clipboard loadSchematic() throws IOException {
         try (var reader = format.getReader(new FileInputStream(file))) {
             return reader.read();

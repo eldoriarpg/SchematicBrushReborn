@@ -7,6 +7,7 @@ import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
 /**
  * Plugin configuration
  */
+@SuppressWarnings("unused")
 public interface Configuration {
     void saveConfigs();
 

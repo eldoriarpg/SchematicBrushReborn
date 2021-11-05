@@ -29,14 +29,6 @@ public interface BrushSettings extends Randomable {
     int getSchematicCount();
 
     /**
-     * Get the brush configuration with a new brush combined. The options from the current brush are used.
-     *
-     * @param brush Brush to combine. Only the {@link SchematicSet} list is updated.
-     * @return new brush configuration.
-     */
-    BrushSettings combine(BrushSettings brush);
-
-    /**
      * Get the schematic sets of this brush
      *
      * @return list of {@link SchematicSet}

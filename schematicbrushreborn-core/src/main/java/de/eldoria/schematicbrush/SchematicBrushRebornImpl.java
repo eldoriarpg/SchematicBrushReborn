@@ -119,34 +119,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         // TODO refactor
         metrics.addCustomChart(new SimplePie("schematic_count",
-                () -> {
-                    var sCount = schematics.schematicCount();
-                    if (sCount < 50) return "<50";
-                    if (sCount < 100) return "<100";
-                    if (sCount < 250) return "<250";
-                    if (sCount < 500) return "<500";
-                    if (sCount < 1000) return "<1000";
-                    var count = (int) Math.floor(sCount / 1000d);
-                    return ">" + count * 1000;
-                }));
+                () -> reduceMetricValue(schematics.schematicCount(), 1000, 50, 100, 250, 500, 1000)));
         metrics.addCustomChart(new SimplePie("directory_count",
-                () -> {
-                    var sCount = schematics.directoryCount();
-                    if (sCount < 10) return "<10";
-                    if (sCount < 50) return "<50";
-                    if (sCount < 100) return "<100";
-                    var count = (int) Math.floor(sCount / 100d);
-                    return ">" + count * 100;
-                }));
+                () -> reduceMetricValue(schematics.directoryCount(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("preset_count",
-                () -> {
-                    var sCount = getConfig().getStringList("presets").size();
-                    if (sCount < 10) return "<10";
-                    if (sCount < 50) return "<50";
-                    if (sCount < 100) return "<100";
-                    var count = (int) Math.floor(sCount / 100d);
-                    return ">" + count * 100;
-                }));
+                () -> reduceMetricValue(config.presets().count(), 100, 10, 50, 100)));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
                 () -> {
@@ -155,6 +132,16 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
                     }
                     return "WorldEdit";
                 }));
+    }
+
+    private String reduceMetricValue(int count, int baseValue, int... steps) {
+        for (var step : steps) {
+            if (count < step) {
+                return "<" + count;
+            }
+        }
+        var reduced = (int) Math.floor(count / (double) baseValue);
+        return ">" + reduced * baseValue;
     }
 
     @Override

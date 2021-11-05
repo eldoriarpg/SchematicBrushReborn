@@ -65,21 +65,21 @@ public class SchematicWatchService implements Runnable {
         var key = watchService.take();
         plugin.getLogger().log(Level.CONFIG, "Detected change in file system.");
         for (var event : key.pollEvents()) {
-            var file = ((Path) key.watchable()).resolve(event.context().toString()).toFile();
+            var file = ((Path) key.watchable()).resolve(event.context().toString());
             switch (event.kind().name()) {
                 case "ENTRY_CREATE":
-                    if (file.isFile()) {
+                    if (file.toFile().isFile()) {
                         plugin.getLogger().log(Level.CONFIG, "A new schematic was detected. Trying to add.");
                         executorService.schedule(() -> cache.addSchematic(file), 5, TimeUnit.SECONDS);
                     } else {
                         plugin.getLogger().log(Level.CONFIG, "A new directory was detected. Register watcher.");
-                        watchDirectory(watchService, file.toPath());
+                        watchDirectory(watchService, file);
                     }
                     break;
                 case "ENTRY_DELETE":
-                    if (file.isFile()) {
+                    if (file.toFile().isFile()) {
                         plugin.getLogger().log(Level.CONFIG, "A schematic was deleted. Trying to remove.");
-                        cache.removeSchematic(file);
+                        cache.removeSchematic(file.toFile());
                     } else {
                         plugin.getLogger().log(Level.CONFIG, "A directory was deleted.");
                     }
