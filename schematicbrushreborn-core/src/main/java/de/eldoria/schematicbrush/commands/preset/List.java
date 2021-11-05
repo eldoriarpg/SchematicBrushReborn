@@ -35,14 +35,14 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
         messageBlocker.blockPlayer(player);
         var global = configuration.presets().getPresets()
                 .stream()
-                .map(preset -> preset.infoComponent(true))
+                .map(preset -> "  "+preset.infoComponent(true))
                 .collect(Collectors.joining("\n"));
         var local = configuration.presets().getPresets(player)
                 .stream()
-                .map(preset -> preset.infoComponent(false))
+                .map(preset -> "  "+preset.infoComponent(false))
                 .collect(Collectors.joining("\n"));
 
-        var message = String.format("<%s>Presets:%n%s%n<%s>Global:%s", Colors.HEADING, local, Colors.HEADING, global);
+        var message = String.format("<%s>Presets:%n%s%n<%s>Global:%n%s", Colors.HEADING, local, Colors.HEADING, global);
         message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.sender(player).sendMessage(miniMessage.parse(message));

@@ -6,10 +6,12 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Colors;
+import de.eldoria.schematicbrush.util.Permissions;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
@@ -44,9 +46,14 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
         CommandAssertions.isTrue(optPreset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
         var preset = optPreset.get();
-        var message = messageBlocker.ifEnabled(preset.detailComponent(), mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        var composer = MessageComposer.create()
+                .text(preset.detailComponent(name.startsWith("g:")))
+                .newLine()
+                .text("<click:run_command:'/sbrp'><%s>[Back]</click>", Colors.REMOVE);
+
+        messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
-        audiences.player(player).sendMessage(miniMessage.parse(message));
+        audiences.player(player).sendMessage(miniMessage.parse(composer.build()));
     }
 
     @Override

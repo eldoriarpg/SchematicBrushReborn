@@ -21,9 +21,11 @@ public class Preset extends AdvancedCommand {
         meta(CommandMeta.builder("sbp")
                 .withPermission(Permissions.Preset.USE)
                 .buildSubCommands((cmds, builder) -> {
+                    var list = new List(plugin, config, messageBlocker);
+                    builder.withDefaultCommand(list);
                     cmds.add(new Descr(plugin, config));
                     cmds.add(new Info(plugin, config, messageBlocker));
-                    cmds.add(new List(plugin, config, messageBlocker));
+                    cmds.add(list);
                     cmds.add(new Remove(plugin, config));
                 }).build());
     }

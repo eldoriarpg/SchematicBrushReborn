@@ -1,5 +1,6 @@
 package de.eldoria.schematicbrush.config.sections.presets;
 
+import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
@@ -55,19 +56,25 @@ public class PresetImpl implements Preset {
 
     @Override
     public String infoComponent(boolean global) {
-        return String.format("<%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:/sbrp info %s>[Info]</click>", Colors.NAME, simpleComponent(), name, Colors.ADD, (global ? "g:" : "") + name);
+        return String.format("<%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbrp info %s'>[Info]</click>", Colors.NAME, simpleComponent(), name, Colors.ADD, (global ? "g:" : "") + name);
     }
 
     @Override
-    public String detailComponent() {
+    public String detailComponent(boolean global) {
         var sets = schematicSets.stream()
                 .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
-                .collect(Collectors.joining("\n"));
+                        .collect(Collectors.toList());
 
-        var message = String.format("<%s>Information about preset <%s>%s%n", Colors.HEADING, Colors.NAME, name);
-        message += String.format("<%s>Description: <%s>%s%n", Colors.NAME, Colors.VALUE, description());
-        message += String.format("<%s>Schematic Sets:%n%s", Colors.NAME, sets);
-        return message;
+        return MessageComposer.create()
+                .text("<%s>Information about preset <%s>%s", Colors.HEADING, Colors.NAME, name)
+                .newLine()
+                .text("<%s>Description: <%s>%s <click:suggest_command:'/sbrp descr %s '><%s>[Change]</click>",
+                        Colors.NAME, Colors.VALUE, description(), (global ? "g:" : "") + name, Colors.CHANGE)
+                .newLine()
+                .text("<%s>Schematic Sets:", Colors.NAME)
+                .newLine()
+                .text(sets)
+                .build();
     }
 
     @Override

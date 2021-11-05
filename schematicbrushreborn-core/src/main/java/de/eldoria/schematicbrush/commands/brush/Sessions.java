@@ -59,23 +59,22 @@ public class Sessions {
         var composer = MessageComposer.create()
                 .text("<%s>Schematic Sets: <click:run_command:'/sbr addSet'><%s>[Add]</click>", Colors.HEADING, Colors.ADD);
         if (player.hasPermission(Permissions.Preset.USE)) {
-            composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>%n", Colors.ADD);
+            composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>", Colors.ADD);
         }
+        composer.space().text("<click:run_command:'/sbr refreshSchematics session'><%s>[Refresh Schematics]</click>", Colors.ADD);
         var count = new AtomicInteger(0);
         var sets = builder.schematicSets().stream()
                 .map(set -> String.format("  <%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
                         Colors.NAME, set.infoComponent(), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
                 .collect(Collectors.joining("\n"));
-        if (builder.schematicSets().isEmpty()) {
-            composer.newLine();
-        }
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : registry.placementModifier().entrySet()) {
             modifierStrings.add(buildModifier("/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
 
-        composer.text(sets)
+        composer.newLine()
+                .text(sets)
                 .newLine()
                 .text(modifierStrings)
                 .newLine()

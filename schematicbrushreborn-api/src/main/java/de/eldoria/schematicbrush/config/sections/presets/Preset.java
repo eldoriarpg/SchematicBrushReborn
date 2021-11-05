@@ -32,9 +32,10 @@ public interface Preset extends ConfigurationSerializable {
     /**
      * The detailed component with interactable buttons
      *
+     * @param global indicates if the preset is a global preset
      * @return component
      */
-    String detailComponent();
+    String detailComponent(boolean global);
 
     /**
      * The simple compnent used for tooltips
