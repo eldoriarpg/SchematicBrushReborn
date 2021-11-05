@@ -11,6 +11,7 @@ import de.eldoria.schematicbrush.commands.brush.Clear;
 import de.eldoria.schematicbrush.commands.brush.Create;
 import de.eldoria.schematicbrush.commands.brush.Modify;
 import de.eldoria.schematicbrush.commands.brush.ModifySet;
+import de.eldoria.schematicbrush.commands.brush.RefreshSchematics;
 import de.eldoria.schematicbrush.commands.brush.RemoveSet;
 import de.eldoria.schematicbrush.commands.brush.SavePreset;
 import de.eldoria.schematicbrush.commands.brush.Sessions;
@@ -25,24 +26,25 @@ import org.bukkit.plugin.Plugin;
  * Command which is used to create a new brush. Rewrite of old schbr command.
  */
 public class Brush extends AdvancedCommand {
-    public Brush(Plugin plugin, SchematicRegistry schematics, ConfigurationImpl config, BrushSettingsRegistry registry, IMessageBlockerService messageBlocker) {
+    public Brush(Plugin plugin, SchematicRegistry schematics, ConfigurationImpl config, BrushSettingsRegistry setting, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("sbr")
                 .withPermission(Permissions.Brush.USE)
                 .buildSubCommands((cmds, self) -> {
-                    var sessions = new Sessions(plugin, registry, schematics, messageBlocker);
+                    var sessions = new Sessions(plugin, setting, schematics, messageBlocker);
                     var create = new Create(plugin, sessions);
                     self.withDefaultCommand(create);
                     cmds.add(new AddSet(plugin, sessions));
                     cmds.add(new Bind(plugin, sessions, messageBlocker));
                     cmds.add(new Clear(plugin, sessions));
                     cmds.add(create);
-                    cmds.add(new Modify(plugin, sessions, registry));
-                    cmds.add(new ModifySet(plugin, sessions, registry, schematics));
+                    cmds.add(new Modify(plugin, sessions, setting));
+                    cmds.add(new ModifySet(plugin, sessions, setting, schematics));
                     cmds.add(new RemoveSet(plugin, sessions));
                     cmds.add(new Show(plugin, sessions));
                     cmds.add(new ShowSet(plugin, sessions));
                     cmds.add(new AddPreset(plugin, sessions, config));
                     cmds.add(new SavePreset(plugin, sessions, config));
+                    cmds.add(new RefreshSchematics(plugin, sessions, setting, schematics));
                 })
                 .build());
     }

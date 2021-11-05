@@ -79,6 +79,18 @@ public final class WorldEditBrush {
      * Get the schematic brush of a player registered on the item in its main hand.
      *
      * @param player   player for lookup
+     * @return schematic brush instance if the item is a schematic brush
+     */
+    @SuppressWarnings({"ProhibitedExceptionCaught", "unchecked"})
+    @Nullable
+    public static Brush getBrush(Player player) {
+        return getBrush(player, player.getInventory().getItemInMainHand().getType());
+    }
+
+    /**
+     * Get the schematic brush of a player registered on the item in its main hand.
+     *
+     * @param player   player for lookup
      * @param material material to get the brush
      * @return schematic brush instance if the item is a schematic brush
      */
