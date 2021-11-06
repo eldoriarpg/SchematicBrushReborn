@@ -28,6 +28,11 @@ public abstract class IncludeAirProvider extends ModifierProvider {
         }
 
         @Override
+        public String description() {
+            return "A fixed value which defines if air should be pasted.";
+        }
+
+        @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
                 return TabCompleteUtil.completeBoolean(args.asString(0));

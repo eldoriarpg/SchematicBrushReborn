@@ -12,29 +12,29 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
  * <p>
  * A Placement modifier is a key represented by a string
  */
-public class PlacementModifier extends Nameable {
+public class PlacementModifier extends BaseModifier {
     /**
      * Placement modifier key
      */
-    public static final PlacementModifier PLACEMENT = of("Placement");
+    public static final PlacementModifier PLACEMENT = of("Placement", "Define how the schematic should be placed on the position.");
 
     /**
      * IncludeAir modifier key
      */
-    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir");
+    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir", "Include air when placing");
 
     /**
      * ReplaceAll modifier key
      */
-    public static final PlacementModifier REPLACE_ALL = of("ReplaceAll");
+    public static final PlacementModifier REPLACE_ALL = of("ReplaceAll", "Replace non air blocks");
 
     /**
      * Offset modifier key
      */
-    public static final PlacementModifier OFFSET = of("Offset");
+    public static final PlacementModifier OFFSET = of("Offset", "The schematic offset when placed.");
 
-    private PlacementModifier(String name) {
-        super(name);
+    private PlacementModifier(String name, String description) {
+        super(name, description);
     }
 
     /**
@@ -43,8 +43,8 @@ public class PlacementModifier extends Nameable {
      * @param name name of the modifier
      * @return new PlacementModifier
      */
-    public static PlacementModifier of(String name) {
-        return new PlacementModifier(name) {
+    public static PlacementModifier of(String name, String description) {
+        return new PlacementModifier(name, description) {
         };
     }
 }

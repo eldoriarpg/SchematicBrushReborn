@@ -18,27 +18,32 @@ import java.util.List;
 
 public abstract class PlacementProvider extends ModifierProvider {
     private static final APlacement bottom = new Bottom();
-    public static final PlacementProvider BOTTOM = of("Bottom", bottom);
+    public static final PlacementProvider BOTTOM = of("Bottom", bottom, "Lower bound");
     private static final APlacement drop = new Drop();
-    public static final PlacementProvider DROP = of("Drop", drop);
+    public static final PlacementProvider DROP = of("Drop", drop, "Lowest non air block");
     private static final APlacement middle = new Middle();
-    public static final PlacementProvider MIDDLE = of("Middle", middle);
+    public static final PlacementProvider MIDDLE = of("Middle", middle, "Center of the schematic");
     private static final APlacement original = new Original();
-    public static final PlacementProvider ORIGINAL = of("Original", original);
+    public static final PlacementProvider ORIGINAL = of("Original", original, "Original position when copied");
     private static final APlacement raise = new Raise();
-    public static final PlacementProvider RAISE = of("Raise", raise);
+    public static final PlacementProvider RAISE = of("Raise", raise, "Highest non air block");
     private static final APlacement top = new Top();
-    public static final PlacementProvider TOP = of("Top", top);
+    public static final PlacementProvider TOP = of("Top", top, "Upper bound");
 
     public PlacementProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
         super(clazz, name);
     }
 
-    private static PlacementProvider of(String name, APlacement placement) {
+    private static PlacementProvider of(String name, APlacement placement, String description) {
         return new PlacementProvider(placement.getClass(), name) {
             @Override
             public Mutator<?> parse(Arguments args) {
                 return placement;
+            }
+
+            @Override
+            public String description() {
+                return description;
             }
         };
     }

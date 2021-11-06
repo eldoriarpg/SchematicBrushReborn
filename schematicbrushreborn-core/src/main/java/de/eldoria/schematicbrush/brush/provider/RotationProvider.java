@@ -31,6 +31,11 @@ public abstract class RotationProvider extends ModifierProvider {
         }
 
         @Override
+        public String description() {
+            return "A random rotation containing all allowed 90° rotations.";
+        }
+
+        @Override
         public boolean hasArguments() {
             return false;
         }
@@ -42,6 +47,11 @@ public abstract class RotationProvider extends ModifierProvider {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return ARotation.fixed(Rotation.parse(args.asString(0)));
+        }
+
+        @Override
+        public String description() {
+            return "A fixed rotation.";
         }
 
         @Override
@@ -73,6 +83,11 @@ public abstract class RotationProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return arguments;
+        }
+
+        @Override
+        public String description() {
+            return "A list of rotations which will be choosen by random";
         }
 
         @Override
