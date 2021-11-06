@@ -5,6 +5,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 import java.util.List;
 
@@ -115,6 +116,44 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      * @return instance of default setting
      */
     public abstract T defaultSetting();
+
+    /**
+     * Returns the permission for this setting.
+     * <p>
+     * Leave blank when no permission is required.
+     *
+     * @return the permission
+     */
+    public String permission() {
+        return "";
+    }
+
+    /**
+     * Checks if the provider requires a permission
+     *
+     * @return true if a permission is required.
+     */
+    public boolean hasPermission() {
+        return !permission().isBlank();
+    }
+
+    /**
+     * Checks if the {@link Permissible} can use this setting.
+     *
+     * @param permissible the permissible to check
+     * @return true if it has the permission.
+     */
+    public boolean hasPermission(Permissible permissible) {
+        if (!hasPermission()) return true;
+        return permissible.hasPermission(permission());
+    }
+
+    /**
+     * Provides a short description of the setting.
+     *
+     * @return the setting description
+     */
+    public abstract String description();
 
     @Override
     public boolean equals(Object o) {

@@ -12,19 +12,19 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
  * <p>
  * A Placement modifier is a key represented by a string
  */
-public class SchematicModifier extends Nameable {
+public class SchematicModifier extends BaseModifier {
     /**
      * Rotation modifier key
      */
-    public static final SchematicModifier ROTATION = of("Rotation");
+    public static final SchematicModifier ROTATION = of("Rotation", "Rotate a schematic");
 
     /**
      * Flip modifier key
      */
-    public static final SchematicModifier FLIP = of("Flip");
+    public static final SchematicModifier FLIP = of("Flip", "Flip a schematic");
 
-    private SchematicModifier(String name) {
-        super(name);
+    public SchematicModifier(String name, String description) {
+        super(name, description);
     }
 
     /**
@@ -33,8 +33,8 @@ public class SchematicModifier extends Nameable {
      * @param name name of the modifier
      * @return new PlacementModifier
      */
-    public static SchematicModifier of(String name) {
-        return new SchematicModifier(name) {
+    public static SchematicModifier of(String name, String description) {
+        return new SchematicModifier(name, description) {
         };
     }
 }

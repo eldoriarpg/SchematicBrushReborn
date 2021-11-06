@@ -18,7 +18,7 @@ import java.util.function.Function;
 public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
-            new SelectorProviderImpl(DirectorySelector.class, "directory", registry) {
+            new SelectorProviderImpl(DirectorySelector.class, "Directory", registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("Directory", true),
                         Argument.unlocalizedInput("name_filter", false)};
 
@@ -30,6 +30,11 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 @Override
                 public Argument[] arguments() {
                     return arguments;
+                }
+
+                @Override
+                public String description() {
+                    return "Select schematics in a directory.\nUse dirname/* to select subdirectories as well.\nUse the second argument name filter to filter schematics in these directories";
                 }
 
                 @Override
@@ -47,7 +52,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
             };
 
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
-            new SelectorProviderImpl(NameSelector.class, "name", registry) {
+            new SelectorProviderImpl(NameSelector.class, "Name", registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("Name", true)};
 
                 @Override
@@ -61,6 +66,11 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 }
 
                 @Override
+                public String description() {
+                    return "Select schematics by name.\nUse a * as a wildcard.";
+                }
+
+                @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
                         return registry().getCache(SchematicCache.DEFAULT_CACHE).getMatchingSchematics(player, args.asString(0), 50);
@@ -70,7 +80,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
             };
 
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
-            new SelectorProviderImpl(RegexSelector.class, "regex", registry) {
+            new SelectorProviderImpl(RegexSelector.class, "Regex", registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("Regex", true)};
 
                 @Override
@@ -81,6 +91,11 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 @Override
                 public Argument[] arguments() {
                     return arguments;
+                }
+
+                @Override
+                public String description() {
+                    return "Select schematics with a regex.\nWanna try it out first? Use regex101.com";
                 }
 
                 @Override

@@ -78,4 +78,9 @@ public interface BrushPaste {
      * @return true
      */
     long clipboardSize();
+
+    /**
+     * Shift to the next offset value.
+     */
+    void shiftOffset();
 }

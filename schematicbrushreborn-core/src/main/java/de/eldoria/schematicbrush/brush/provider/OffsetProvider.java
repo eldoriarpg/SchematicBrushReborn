@@ -37,6 +37,11 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
+        public String description() {
+            return "A fixed offset value";
+        }
+
+        @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
                 return TabCompleteUtil.completeInt(args.asString(0), -100, 100, ILocalizer.getPluginLocalizer(SchematicBrushRebornImpl.class));
@@ -64,6 +69,11 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
+        public String description() {
+            return "A list of possible offset values which will be choosen by random.";
+        }
+
+        @Override
         public Argument[] arguments() {
             return arguments;
         }
@@ -87,6 +97,11 @@ public abstract class OffsetProvider extends ModifierProvider {
             var lower = args.asInt(0);
             var upper = args.asInt(1);
             return AOffset.range(lower, upper);
+        }
+
+        @Override
+        public String description() {
+            return "A offset range where the values will be between the min and max value (both inclusive)";
         }
 
         @Override

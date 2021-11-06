@@ -12,6 +12,7 @@ import de.eldoria.eldoutilities.utils.EMath;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
@@ -59,6 +60,12 @@ public class BrushPasteImpl implements BrushPaste {
     public void shiftRotation() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.ROTATION).shift();
+    }
+
+    @Override
+    public void shiftOffset() {
+        reloadSchematic();
+        settings.getMutator(PlacementModifier.OFFSET).shift();
     }
 
     /**

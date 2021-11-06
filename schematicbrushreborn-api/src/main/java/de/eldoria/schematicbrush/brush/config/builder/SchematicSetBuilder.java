@@ -104,11 +104,13 @@ public interface SchematicSetBuilder extends ConfigurationSerializable {
     /**
      * Schematic set as interactable component
      *
+     *
+     * @param player
      * @param registry registry
      * @param id       id
      * @return component
      */
-    String interactComponent(BrushSettingsRegistry registry, int id);
+    String interactComponent(Player player, BrushSettingsRegistry registry, int id);
 
     /**
      * Schematic set as component
