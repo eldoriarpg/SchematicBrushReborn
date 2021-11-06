@@ -190,7 +190,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         var selector = String.format("<%s>Selector: <%s>", Colors.HEADING, Colors.CHANGE);
         selector += registry.selector().stream()
                 .map(sel -> String.format("<click:%s:'/sbr modifyset %s selector %s '><hover:show_text:'<%s>%s'>[%s]</click>", sel.commandType(), id, sel.name(), Colors.NEUTRAL, sel.description(), sel.name()))
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(" "));
         selector += String.format("%n  <hover:show_text:'%s'>%s</hover>", schematicInfo(), BuildUtil.renderProvider(selector()));
 
         var mutatorMap = schematicModifier();
@@ -199,7 +199,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
             modifierStrings.add(buildModifier(player,"/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
         var modifier = String.join("\n", modifierStrings);
-        var weight = String.format("<%s><hover:show_text:'<%s>%s'>Weight: <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
+        var weight = String.format("<%s><hover:show_text:'<%s>%s'>Weight:</hover> <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
                 Colors.HEADING, Colors.NEUTRAL, WEIGHT_DESCRIPTION, Colors.VALUE, weight(), id, Colors.CHANGE);
         return String.join("\n", selector, modifier, weight);
     }
