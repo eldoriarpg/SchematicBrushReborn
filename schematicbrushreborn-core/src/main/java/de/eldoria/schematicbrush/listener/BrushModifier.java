@@ -40,9 +40,13 @@ public class BrushModifier implements Listener {
         if (material == null) return;
         var schematicBrush = WorldEditBrush.getSchematicBrush(event.getPlayer(), material.getType());
         if (schematicBrush.isEmpty()) return;
+        if (event.getPlayer().isSneaking()) {
+        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed Offset.");
+            schematicBrush.get().nextPaste().shiftOffset();
+        } else {
         messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Skipped Schematic.");
-
-        schematicBrush.get().nextPaste().shiftSchematic();
+            schematicBrush.get().nextPaste().shiftSchematic();
+        }
         event.setCancelled(true);
     }
 }

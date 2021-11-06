@@ -70,7 +70,7 @@ public class Sessions {
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : registry.placementModifier().entrySet()) {
-            modifierStrings.add(buildModifier("/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
+            modifierStrings.add(buildModifier(player,"/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
 
         composer.newLine()
@@ -102,7 +102,7 @@ public class Sessions {
         }
 
         var set = optSet.get();
-        var interactComponent = set.interactComponent(registry, id);
+        var interactComponent = set.interactComponent(player, registry, id);
 
         var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
         var message = String.join("\n", interactComponent, buttons);

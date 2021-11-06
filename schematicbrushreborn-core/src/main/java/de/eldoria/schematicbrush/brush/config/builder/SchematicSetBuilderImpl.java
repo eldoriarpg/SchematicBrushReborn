@@ -27,6 +27,7 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
  * This class is a builder to build a {@link SchematicSetImpl}.
  */
 public class SchematicSetBuilderImpl implements SchematicSetBuilder {
+    private static final String WEIGHT_DESCRIPTION = "The weight of the schematic set when multiple sets are used.\nHigher numbers will result in more schematics from this set.";
     private Selector selector;
     private Map<Nameable, Mutator<?>> schematicModifier = new HashMap<>();
     private Set<Schematic> schematics = Collections.emptySet();
@@ -178,26 +179,28 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     /**
      * Schematic set as interactable component
      *
+     *
+     * @param player the player
      * @param registry registry
      * @param id       id
      * @return component
      */
     @Override
-    public String interactComponent(BrushSettingsRegistry registry, int id) {
+    public String interactComponent(Player player, BrushSettingsRegistry registry, int id) {
         var selector = String.format("<%s>Selector: <%s>", Colors.HEADING, Colors.CHANGE);
         selector += registry.selector().stream()
-                .map(sel -> String.format("<click:%s:'/sbr modifyset %s selector %s '>[%s]</click>", sel.commandType(), id, sel.name(), sel.name()))
+                .map(sel -> String.format("<click:%s:'/sbr modifyset %s selector %s '><hover:show_text:'<%s>%s'>[%s]</click>", sel.commandType(), id, sel.name(), Colors.NEUTRAL, sel.description(), sel.name()))
                 .collect(Collectors.joining(", "));
         selector += String.format("%n  <hover:show_text:'%s'>%s</hover>", schematicInfo(), BuildUtil.renderProvider(selector()));
 
         var mutatorMap = schematicModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : registry.schematicModifier().entrySet()) {
-            modifierStrings.add(buildModifier("/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
+            modifierStrings.add(buildModifier(player,"/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
         var modifier = String.join("\n", modifierStrings);
-        var weight = String.format("<%s>Weight: <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
-                Colors.HEADING, Colors.VALUE, weight(), id, Colors.CHANGE);
+        var weight = String.format("<%s><hover:show_text:'<%s>%s'>Weight: <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
+                Colors.HEADING, Colors.NEUTRAL, WEIGHT_DESCRIPTION, Colors.VALUE, weight(), id, Colors.CHANGE);
         return String.join("\n", selector, modifier, weight);
     }
 

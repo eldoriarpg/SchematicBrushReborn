@@ -35,6 +35,11 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
+        public String description() {
+            return "A fixed flip value";
+        }
+
+        @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
                 return TabCompleteUtil.complete(args.asString(0), Arrays.stream(Flip.values()).map(Flip::name));
@@ -58,6 +63,11 @@ public abstract class FlipProvider extends ModifierProvider {
                 flips.add(Flip.asFlip(arg));
             }
             return AFlip.list(flips);
+        }
+
+        @Override
+        public String description() {
+            return "A list of possible flip values which will be choosen by random";
         }
 
         @Override
@@ -85,6 +95,11 @@ public abstract class FlipProvider extends ModifierProvider {
         @Override
         public List<String> complete(Arguments args, Player player) {
             return Collections.emptyList();
+        }
+
+        @Override
+        public String description() {
+            return "A random flip falue of all flip values except \"up\"";
         }
 
         @Override

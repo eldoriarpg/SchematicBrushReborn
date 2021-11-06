@@ -1,10 +1,11 @@
 package de.eldoria.schematicbrush.brush.config.builder;
 
+import de.eldoria.schematicbrush.brush.config.modifier.BaseModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.provider.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.util.ComponentProvider;
-import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.util.Colors;
+import org.bukkit.permissions.Permissible;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,16 +15,21 @@ public final class BuildUtil {
         throw new UnsupportedOperationException("This is a utility class.");
     }
 
-    public static String buildModifier(String baseCommand, Nameable type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
+    public static String buildModifier(Permissible permissible, String baseCommand, BaseModifier type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
         String types;
-        if (provider.size() > 1) {
-            types = provider.stream()
-                    .map(p -> String.format("<click:%s:'%s %s %s '>[%s]</click>", p.commandType(), baseCommand, type.name(), p.name(), p.name()))
-                    .collect(Collectors.joining(", "));
+        var filteredProvider = provider.stream().filter(set -> set.hasPermission(permissible)).collect(Collectors.toList());
+        if (filteredProvider.size() > 1) {
+            types = filteredProvider.stream()
+                    .map(p -> String.format("<click:%s:'%s %s %s '><hover:show_text:'<%s>%s'>[%s]</hover></click>",
+                            p.commandType(), baseCommand, type.name(), p.name(), Colors.NEUTRAL, p.description(), p.name()))
+                    .collect(Collectors.joining(" "));
         } else {
-            types = String.format("<click:%s:'%s %s %s '>[Change]</click>", provider.get(0).commandType(), baseCommand, type.name(), provider.get(0).name());
+            types = String.format("<click:%s:'%s %s %s '>[Change]</click>",
+                    filteredProvider.get(0).commandType(), baseCommand, type.name(), filteredProvider.get(0).name());
         }
-        return String.format("<%s>%s: <%s>%s\n  %s", Colors.HEADING, type.name(), Colors.CHANGE, types, provider.size() > 1 ? renderProvider(current) : renderSingleProvider(current));
+        return String.format("<hover:show_text:'<%s>%s'><%s>%s:</hover> <%s>%s\n  %s",
+                Colors.NEUTRAL, type.description(), Colors.HEADING, type.name(), Colors.CHANGE, types,
+                filteredProvider.size() > 1 ? renderProvider(current) : renderSingleProvider(current));
     }
 
     public static String renderProvider(ComponentProvider provider) {

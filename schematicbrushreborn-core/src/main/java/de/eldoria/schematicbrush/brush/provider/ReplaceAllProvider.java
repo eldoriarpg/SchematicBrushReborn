@@ -29,6 +29,11 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         }
 
         @Override
+        public String description() {
+            return "A fixed value to allow replacing existing non air blocks.";
+        }
+
+        @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
                 return TabCompleteUtil.completeBoolean(args.asString(0));
