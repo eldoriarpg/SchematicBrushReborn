@@ -1,6 +1,5 @@
 plugins {
     `java-library`
-    `maven-publish`
 }
 
 group = "de.eldoria"
@@ -31,22 +30,11 @@ allprojects {
 }
 
 tasks {
-    publish {
-        dependsOn(build)
-    }
-
     compileJava {
         options.encoding = "UTF-8"
     }
 
     compileTestJava {
         options.encoding = "UTF-8"
-    }
-
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
     }
 }

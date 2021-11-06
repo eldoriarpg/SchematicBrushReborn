@@ -1,3 +1,9 @@
+/*
+ *     SPDX-License-Identifier: AGPL-3.0-only
+ *
+ *     Copyright (C) 2021 EldoriaRPG Team und Contributor
+ */
+
 package de.eldoria.schematicbrush.commands.preset;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
