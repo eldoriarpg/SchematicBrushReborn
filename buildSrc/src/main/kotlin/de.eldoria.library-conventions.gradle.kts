@@ -30,7 +30,6 @@ publishing {
                 }
             }
         }
-
     }
 
     repositories {
