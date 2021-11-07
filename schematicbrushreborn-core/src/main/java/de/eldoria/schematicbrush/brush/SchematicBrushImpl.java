@@ -22,6 +22,8 @@ import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.event.PasteEvent;
+import de.eldoria.schematicbrush.event.PostPasteEvent;
+import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
 import de.eldoria.schematicbrush.rendering.CapturingExtentImpl;
@@ -65,9 +67,10 @@ public class SchematicBrushImpl implements SchematicBrush {
     private void paste(EditSession editSession, BlockVector3 position) {
         var paste = nextPaste.buildpaste(editSession, BukkitAdapter.adapt(brushOwner), position);
 
-        Operations.completeBlindly(paste);
         if (editSession.getWorld() instanceof FakeWorldImpl) return;
-        plugin.getServer().getPluginManager().callEvent(new PasteEvent(brushOwner, nextPaste.schematic()));
+        plugin.getServer().getPluginManager().callEvent(new PrePasteEvent(brushOwner, nextPaste.schematic()));
+        Operations.completeBlindly(paste);
+        plugin.getServer().getPluginManager().callEvent(new PostPasteEvent(brushOwner, nextPaste.schematic()));
         buildNextPaste();
     }
 
