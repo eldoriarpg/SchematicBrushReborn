@@ -42,6 +42,9 @@ public class RenderService implements Runnable, Listener {
      * The players which should receive render preview packets
      */
     private final Queue<Player> players = new ArrayDeque<>();
+    /**
+     * Players which should be excluded from receiving render packets.
+     */
     private final Set<UUID> skip = new HashSet<>();
     private final Plugin plugin;
     private final Configuration configuration;
@@ -86,6 +89,7 @@ public class RenderService implements Runnable, Listener {
 
     @Override
     public void run() {
+        if(players.isEmpty()) return;
         count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
         while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
