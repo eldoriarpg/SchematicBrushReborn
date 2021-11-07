@@ -8,6 +8,8 @@ package de.eldoria.schematicbrush.rendering;
 
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PasteEvent;
+import de.eldoria.schematicbrush.event.PostPasteEvent;
+import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,34 +18,47 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 
 public class RenderService implements Runnable, Listener {
+    /**
+     * The changes which were send to the player lately
+     */
     private final Map<UUID, Changes> changes = new HashMap<>();
+    /**
+     * The paket worker which will process packet sending to players
+     */
     private final PaketWorker worker;
+    /**
+     * The players which should receive render preview packets
+     */
     private final Queue<Player> players = new ArrayDeque<>();
+    /**
+     * Players which should be excluded from receiving render packets.
+     */
+    private final Set<UUID> skip = new HashSet<>();
+    private final Plugin plugin;
     private final Configuration configuration;
     private double count = 1;
-    private boolean active = false;
 
     public RenderService(Plugin plugin, Configuration configuration) {
+        this.plugin = plugin;
         this.configuration = configuration;
-        active = !plugin.getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
         worker = new PaketWorker();
-        if (active) {
             worker.runTaskTimerAsynchronously(plugin, 0, 1);
-        }
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (!active) return;
         if (event.getPlayer().hasPermission("schematicbrush.brush.preview")) {
             if (configuration.general().isPreviewDefault()) {
                 setState(event.getPlayer(), true);
@@ -57,25 +72,32 @@ public class RenderService implements Runnable, Listener {
     }
 
     @EventHandler
-    public void onPaste(PasteEvent event) {
-        if (!active) return;
+    public void onPaste(PrePasteEvent event) {
+        skip.add(event.player().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPostPaste(PostPasteEvent event) {
         worker.remove(event.player());
         changes.remove(event.player().getUniqueId());
         var schematicBrush = WorldEditBrush.getSchematicBrush(event.player());
         if (schematicBrush.isEmpty()) return;
         var collector = schematicBrush.get().pasteFake();
         worker.queue(event.player(), null, collector.changes());
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> skip.remove(event.player().getUniqueId()), 20);
     }
 
     @Override
     public void run() {
-        if (!active) return;
+        if(players.isEmpty()) return;
         count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
         while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
-            var player = players.poll();
-            render(player);
+            var player = players.remove();
+            if (!skip.contains(player.getUniqueId())) {
+                render(player);
+            }
             players.add(player);
         }
     }
@@ -112,7 +134,6 @@ public class RenderService implements Runnable, Listener {
     }
 
     public void setState(Player player, boolean state) {
-        if (!active) return;
         if (state) {
             if (players.contains(player)) {
                 return;
@@ -122,10 +143,6 @@ public class RenderService implements Runnable, Listener {
             players.remove(player);
             resolveChanges(player);
         }
-    }
-
-    public boolean isActive() {
-        return active;
     }
 
     private static class PaketWorker extends BukkitRunnable {
