@@ -91,7 +91,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
                 @Override
                 public Selector parse(Arguments args) {
-                    return new NameSelector(args.asString(0));
+                    return new RegexSelector(args.asString(0));
                 }
 
                 @Override
