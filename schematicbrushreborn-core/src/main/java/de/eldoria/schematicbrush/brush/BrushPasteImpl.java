@@ -7,7 +7,6 @@
 package de.eldoria.schematicbrush.brush;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -101,23 +100,20 @@ public class BrushPasteImpl implements BrushPaste {
         var pasteMutation = new PasteMutationImpl(clipboard, editSession);
         settings.mutate(pasteMutation);
         schematicSet.mutate(pasteMutation);
-        var clipboardHolder = buildClipboard(owner, pasteMutation);
+        var clipboardHolder = buildClipboard(pasteMutation);
         return paste(clipboardHolder, capturingExtent, position, pasteMutation);
     }
 
     private Operation paste(ClipboardHolder clipboardHolder, Extent targetExtent, BlockVector3 position, PasteMutation mutation) {
         // Create paste operation
-        var paste = clipboardHolder.createPaste(targetExtent);
-        return paste
+        return clipboardHolder.createPaste(targetExtent)
                 .to(position.add(mutation.pasteOffset()))
                 .ignoreAirBlocks(!mutation.isIncludeAir())
                 .build();
     }
 
-    private ClipboardHolder buildClipboard(BukkitPlayer owner, PasteMutation mutation) {
-        var localSession = WorldEdit.getInstance().getSessionManager().get(owner);
+    private ClipboardHolder buildClipboard(PasteMutation mutation) {
         var clipboardHolder = new ClipboardHolder(clipboard);
-        localSession.setClipboard(clipboardHolder);
         clipboardHolder.setTransform(clipboardHolder.getTransform().combine(mutation.transform()));
         return clipboardHolder;
     }

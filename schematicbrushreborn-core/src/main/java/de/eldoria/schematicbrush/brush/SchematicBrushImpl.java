@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.brush;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.InvalidToolBindException;
 import com.sk89q.worldedit.command.tool.brush.Brush;
@@ -21,7 +22,6 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
-import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
@@ -33,6 +33,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 /**
  * Represents the schematic brush as a {@link Brush} instance. A brush is immutable after creation and is always
  * assigned to only one player.
@@ -40,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 public class SchematicBrushImpl implements SchematicBrush {
     private final Plugin plugin;
     private final BrushSettings settings;
-    private final Player brushOwner;
+    private final UUID brushOwner;
     private BrushPaste nextPaste;
     @Nullable
     private BrushBuilder builder;
@@ -55,8 +57,16 @@ public class SchematicBrushImpl implements SchematicBrush {
     public SchematicBrushImpl(Plugin plugin, Player player, BrushSettings settings) {
         this.plugin = plugin;
         this.settings = settings;
-        brushOwner = player;
+        brushOwner = player.getUniqueId();
         buildNextPaste();
+    }
+
+    public Player brushOwner() {
+        return plugin.getServer().getPlayer(brushOwner);
+    }
+
+    public BukkitPlayer actor() {
+        return BukkitAdapter.adapt(brushOwner());
     }
 
     @Override
@@ -65,17 +75,15 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     private void paste(EditSession editSession, BlockVector3 position) {
-        var paste = nextPaste.buildpaste(editSession, BukkitAdapter.adapt(brushOwner), position);
-
-        if (editSession.getWorld() instanceof FakeWorldImpl) return;
-        plugin.getServer().getPluginManager().callEvent(new PrePasteEvent(brushOwner, nextPaste.schematic()));
+        var paste = nextPaste.buildpaste(editSession, actor(), position);
+        plugin.getServer().getPluginManager().callEvent(new PrePasteEvent(brushOwner(), nextPaste.schematic()));
         Operations.completeBlindly(paste);
-        plugin.getServer().getPluginManager().callEvent(new PostPasteEvent(brushOwner, nextPaste.schematic()));
+        plugin.getServer().getPluginManager().callEvent(new PostPasteEvent(brushOwner(), nextPaste.schematic()));
         buildNextPaste();
     }
 
     private void performPasteFake(EditSession editSession, Extent targetExtent, BlockVector3 position) {
-        var paste = nextPaste.buildpaste(editSession, targetExtent, BukkitAdapter.adapt(brushOwner), position);
+        var paste = nextPaste.buildpaste(editSession, targetExtent, actor(), position);
 
         Operations.completeBlindly(paste);
     }
@@ -87,10 +95,11 @@ public class SchematicBrushImpl implements SchematicBrush {
      */
     @Override
     public BlockChangeCollector pasteFake() {
-        var world = new FakeWorldImpl(brushOwner.getWorld());
+        var world = new FakeWorldImpl(brushOwner().getWorld());
         CapturingExtent capturingExtent;
         try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(100000).build()) {
-            var bukkitPlayer = BukkitAdapter.adapt(brushOwner);
+            var bukkitPlayer = actor();
+            if (bukkitPlayer == null) return new CapturingExtentImpl(editSession, world, settings);
             var localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
             BrushTool brushTool;
             try {
@@ -110,7 +119,7 @@ public class SchematicBrushImpl implements SchematicBrush {
         var randomSchematicSet = settings.getRandomBrushConfig();
         var clipboard = randomSchematicSet.getRandomSchematic();
         if (clipboard == null) {
-            MessageSender.getPluginMessageSender(plugin).sendError(brushOwner,
+            MessageSender.getPluginMessageSender(plugin).sendError(brushOwner(),
                     "No valid schematic was found for brush: ");
             return;
         }
@@ -147,7 +156,7 @@ public class SchematicBrushImpl implements SchematicBrush {
     @Override
     public BrushBuilder toBuilder(BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         if (builder == null) {
-            builder = settings.toBuilder(brushOwner, settingsRegistry, schematicRegistry);
+            builder = settings.toBuilder(brushOwner(), settingsRegistry, schematicRegistry);
         }
         return builder;
     }

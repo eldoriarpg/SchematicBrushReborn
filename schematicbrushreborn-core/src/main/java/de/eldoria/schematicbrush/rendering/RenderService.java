@@ -69,21 +69,22 @@ public class RenderService implements Runnable, Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         players.remove(event.getPlayer());
+        changes.remove(event.getPlayer().getUniqueId());
+        skip.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
-    public void onPaste(PrePasteEvent event) {
+    public void onPrePaste(PrePasteEvent event) {
+        if(!players.contains(event.player())) return;
         skip.add(event.player().getUniqueId());
+        worker.remove(event.player());
+        changes.remove(event.player().getUniqueId());
     }
 
     @EventHandler
     public void onPostPaste(PostPasteEvent event) {
-        worker.remove(event.player());
-        changes.remove(event.player().getUniqueId());
-        var schematicBrush = WorldEditBrush.getSchematicBrush(event.player());
-        if (schematicBrush.isEmpty()) return;
-        var collector = schematicBrush.get().pasteFake();
-        worker.queue(event.player(), null, collector.changes());
+        if(!players.contains(event.player())) return;
+
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> skip.remove(event.player().getUniqueId()), 20);
     }
 
