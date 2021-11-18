@@ -81,7 +81,7 @@ public abstract class RotationProvider extends ModifierProvider {
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Rotation> values = new ArrayList<>();
             for (var arg : args) {
-                values.add(Rotation.parse(arg));
+                values.add(Rotation.parse(arg.asString()));
             }
             return ARotation.list(values);
         }

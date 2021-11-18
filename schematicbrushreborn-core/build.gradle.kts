@@ -19,14 +19,23 @@ dependencies {
     testImplementation("org.mockito", "mockito-core", "3.5.13")
 }
 
+publishData {
+    hashLength = 7
+    useEldoNexusRepos()
+    publishTask("jar")
+    publishTask("shadowJar")
+    publishTask("sourcesJar")
+    publishTask("javadocJar")
+}
+
+
 tasks {
-    val data = PublishData(project)
     processResources {
         from(sourceSets.main.get().resources.srcDirs) {
             filesMatching("plugin.yml") {
                 expand(
                     "name" to project.rootProject.name,
-                    "version" to data.getVersion(true)
+                    "version" to publishData.getVersion(true)
                 )
             }
             duplicatesStrategy = DuplicatesStrategy.INCLUDE

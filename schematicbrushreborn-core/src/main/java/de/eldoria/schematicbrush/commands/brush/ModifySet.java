@@ -82,7 +82,7 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
             return registry.completeSelector(args.subArguments().subArguments(), player);
         }
         if ("weight".equalsIgnoreCase(args.asString(1))) {
-            return TabCompleteUtil.completeInt(args.asString(2), -1, 100, localizer());
+            return TabCompleteUtil.completeInt(args.asString(2), -1, 100);
         }
         return registry.completeSchematicModifier(args.subArguments());
     }

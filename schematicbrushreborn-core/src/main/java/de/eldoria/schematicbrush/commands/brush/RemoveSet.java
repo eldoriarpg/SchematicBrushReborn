@@ -42,10 +42,10 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
+    public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         if (args.size() == 1) {
             var size = sessions.getOrCreateSession(player).schematicSets().size();
-            return TabCompleteUtil.completeInt(args.asString(0), 0, size - 1, localizer());
+            return TabCompleteUtil.completeInt(args.asString(0), 0, size - 1);
         }
         return Collections.emptyList();
     }

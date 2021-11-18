@@ -8,10 +8,12 @@ package de.eldoria.schematicbrush;
 
 import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
+import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
+import de.eldoria.eldoutilities.updater.spigotupdater.SpigotUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
@@ -44,7 +46,9 @@ import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
+import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -99,22 +103,26 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand("sbrp", presetCommand);
         registerCommand("sbra", adminCommand);
         registerCommand("sbrs", settingsCommand);
+
+        if (config.general().isCheckUpdates() && UserData.get().isPremium()) {
+            Updater.spigot(new SpigotUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
+                    UserData.get().resourceId())).start();
+        }
     }
 
     public void reload() {
         schematics.reload();
         config.reload();
-
-        if (config.general().isCheckUpdates()) {
-            Updater.butler(
-                    new ButlerUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
-                            false, 12, ButlerUpdateData.HOST)).start();
-        }
     }
 
     @Override
     public void onPluginDisable() {
         cache.shutdown();
+    }
+
+    @Override
+    public @NotNull EntryData[] getDebugInformations() {
+        return new EntryData[]{new EntryData("Customer Data", UserData.get().asString())};
     }
 
     private void enableMetrics() {
@@ -130,6 +138,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
                 () -> reduceMetricValue(schematics.directoryCount(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("preset_count",
                 () -> reduceMetricValue(config.presets().count(), 100, 10, 50, 100)));
+        metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(UserData.get().isPremium())));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
                 () -> {

@@ -44,7 +44,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         var schematicSets = session.schematicSets();
         CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
         var preset = new PresetImpl(args.asString(0), schematicSets);
-        if (args.hasFlag("g")) {
+        if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
             config.presets().addPreset(preset);
         } else {

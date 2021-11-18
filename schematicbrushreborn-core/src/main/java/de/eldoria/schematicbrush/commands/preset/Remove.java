@@ -36,7 +36,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
-        if (args.hasFlag("g")) {
+        if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
             CommandAssertions.isTrue(configuration.presets().removePreset(name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
         } else {

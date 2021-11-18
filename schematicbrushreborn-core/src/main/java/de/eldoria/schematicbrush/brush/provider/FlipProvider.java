@@ -66,7 +66,7 @@ public abstract class FlipProvider extends ModifierProvider {
         public Mutator<?> parse(Arguments args) throws CommandException {
             List<Flip> flips = new ArrayList<>();
             for (var arg : args.args()) {
-                flips.add(Flip.asFlip(arg));
+                flips.add(Flip.asFlip(arg.asString()));
             }
             return AFlip.list(flips);
         }

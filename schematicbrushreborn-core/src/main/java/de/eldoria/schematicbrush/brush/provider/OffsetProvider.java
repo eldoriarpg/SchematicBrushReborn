@@ -48,9 +48,9 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public List<String> complete(Arguments args, Player player) {
+        public List<String> complete(Arguments args, Player player) throws CommandException {
             if (args.size() == 1) {
-                return TabCompleteUtil.completeInt(args.asString(0), -100, 100, ILocalizer.getPluginLocalizer(SchematicBrushRebornImpl.class));
+                return TabCompleteUtil.completeInt(args.asString(0), -100, 100);
             }
             return Collections.emptyList();
         }
@@ -85,8 +85,8 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public List<String> complete(Arguments args, Player player) {
-            return TabCompleteUtil.completeInt(args.asString(-1), -100, 100, ILocalizer.getPluginLocalizer(SchematicBrushRebornImpl.class));
+        public List<String> complete(Arguments args, Player player) throws CommandException {
+            return TabCompleteUtil.completeInt(args.asString(-1), -100, 100);
         }
 
         @Override
@@ -116,9 +116,9 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public List<String> complete(Arguments args, Player player) {
+        public List<String> complete(Arguments args, Player player) throws CommandException {
             if (!args.isEmpty() && args.size() < 3) {
-                return TabCompleteUtil.completeInt(args.asString(-1), -100, 100, ILocalizer.getPluginLocalizer(SchematicBrushRebornImpl.class));
+                return TabCompleteUtil.completeInt(args.asString(-1), -100, 100);
             }
             return Collections.emptyList();
         }
