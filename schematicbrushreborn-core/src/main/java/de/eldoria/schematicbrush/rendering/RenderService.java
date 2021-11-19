@@ -7,7 +7,6 @@
 package de.eldoria.schematicbrush.rendering;
 
 import de.eldoria.schematicbrush.config.Configuration;
-import de.eldoria.schematicbrush.event.PasteEvent;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
@@ -18,7 +17,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -54,7 +52,7 @@ public class RenderService implements Runnable, Listener {
         this.plugin = plugin;
         this.configuration = configuration;
         worker = new PaketWorker();
-            worker.runTaskTimerAsynchronously(plugin, 0, 1);
+        worker.runTaskTimerAsynchronously(plugin, 0, 1);
     }
 
     @EventHandler
@@ -70,27 +68,38 @@ public class RenderService implements Runnable, Listener {
     public void onLeave(PlayerQuitEvent event) {
         players.remove(event.getPlayer());
         changes.remove(event.getPlayer().getUniqueId());
+        worker.remove(event.getPlayer());
         skip.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
     public void onPrePaste(PrePasteEvent event) {
-        if(!players.contains(event.player())) return;
+        if (!players.contains(event.player())) return;
         skip.add(event.player().getUniqueId());
-        worker.remove(event.player());
-        changes.remove(event.player().getUniqueId());
+        if (event.isAsynchronous()) {
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                resolveChanges(event.player());
+            });
+        } else {
+            resolveChanges(event.player());
+        }
+    }
+
+    private void resolveBlocked(Player player) {
+        resolveChanges(player);
+        changes.remove(player.getUniqueId());
     }
 
     @EventHandler
     public void onPostPaste(PostPasteEvent event) {
-        if(!players.contains(event.player())) return;
+        if (!players.contains(event.player())) return;
 
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> skip.remove(event.player().getUniqueId()), 20);
     }
 
     @Override
     public void run() {
-        if(players.isEmpty()) return;
+        if (players.isEmpty()) return;
         count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
         while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
@@ -98,6 +107,8 @@ public class RenderService implements Runnable, Listener {
             var player = players.remove();
             if (!skip.contains(player.getUniqueId())) {
                 render(player);
+            } else if (changes.containsKey(player.getUniqueId())) {
+                resolveBlocked(player);
             }
             players.add(player);
         }
