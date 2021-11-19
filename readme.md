@@ -5,8 +5,7 @@
 ![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/de.eldoria/schematicbrushreborn-api?color=orange&label=Snapshot&server=https%3A%2F%2Feldonexus.de&style=for-the-badge) \
 [![wakatime](https://wakatime.com/badge/github/eldoriarpg/SchematicBrushReborn.svg)](https://wakatime.com/badge/github/eldoriarpg/SchematicBrushReborn)
 
-# Schematic Brush Reborn
-
+![](https://imgur.com/4t8efNZ.png "Schematic Brush Reborn")
 Schematic Brush Reborn is a revive of the old [Schematic Brush](https://github.com/mikeprimm/SchematicBrush).
 
 However it is not really the old schematic brush and has a way better usability. It features several new features which
@@ -39,7 +38,9 @@ See what you will paste before you paste. You can even adjust the rotation or th
 
 ### Strong api
 
-You miss something? Use the api to add your own schematic modifier or selectors. See the wiki for a example.
+You miss something? Use the api to add your own schematic modifier or selectors. See the
+[wiki](https://github.com/eldoriarpg/SchematicBrushReborn/wiki/API) for a example.
+
 
 ## Dependency
 
@@ -69,48 +70,3 @@ dependencies {
     <version>version</version>
 </dependency>
 ```
-
-## Commands
-
-Schematic Brush reborn has over 30 Commands, but you will only need 3.
-
-### Create a brush
-
-Use `/sbr` to create a new brush builder.
-
-This will also load the brush in your hand if you hold a Schematic Brush. Remember to bind the edited brush again to
-change the settings.
-
-### Refresh the schematics of your brush
-
-Use `/sbr reloadSchematics` to reload the schematics selected by your schematic sets.
-
-### Manage your presets
-
-Use `/sbrp` to manage your presets.
-
-### Some more notable commands
-
-`/sbrs preview <state>` to enable or disable schematic preview.
-`/sbrs showNames <state>` to enable or disable printing the name of the pasted schematic
-`/sbra reload` to reload plugin configuration.
-`/sbra reloadcache` to reload the schematic cache
-`/sbra debug` to create debug pastes for the plugin.
-
-## Permissions
-
-| Permission | Usage|
-| ----- | ---- |
-| schematicbrush.brush.use | To use the schematic brush. |
-| schematicbrush.brush.preview | To use the schematic preview. |
-| schematicbrush.preset.use | To use presets in general. |
-| schematicbrush.preset.global | To save and delete global presets. |
-| schematicbrush.admin.reload | Reload the plugin configuration `/sbra reload`. |
-| schematicbrush.admin.reloadcache | To reload the schematic cache. |
-| schematicbrush.admin.debug | To create debug pastes for bugreports. |
-
-## Requirements
-
-Spigot or Paper 1.13 and above.  
-Java 16 and above.  
-WorldEdit 7.0 or FAWE #388 or newer.  
