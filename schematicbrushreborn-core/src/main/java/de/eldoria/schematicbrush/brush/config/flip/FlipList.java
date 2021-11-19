@@ -42,6 +42,11 @@ public class FlipList extends AFlip {
     }
 
     @Override
+    public boolean shiftable() {
+        return true;
+    }
+
+    @Override
     public void shift() {
         if (value() == null) {
             value(values.get(ThreadLocalRandom.current().nextInt(values.size())));

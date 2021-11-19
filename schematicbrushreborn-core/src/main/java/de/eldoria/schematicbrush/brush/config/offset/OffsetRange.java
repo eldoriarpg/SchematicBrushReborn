@@ -29,10 +29,24 @@ public class OffsetRange extends AOffset {
     }
 
     @Override
+    public boolean shiftable() {
+        return true;
+    }
+
+    @Override
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
                 .build();
+    }
+
+    @Override
+    public void shift() {
+        if (value() + 1 > max) {
+            value(min);
+        } else {
+            value(value() + 1);
+        }
     }
 
 

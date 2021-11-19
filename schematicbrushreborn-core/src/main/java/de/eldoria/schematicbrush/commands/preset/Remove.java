@@ -29,6 +29,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     public Remove(Plugin plugin, Configuration configuration) {
         super(plugin, CommandMeta.builder("remove")
                 .addUnlocalizedArgument("name", true)
+                .hidden()
                 .build());
         this.configuration = configuration;
     }

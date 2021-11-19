@@ -27,6 +27,7 @@ public class Modify extends AdvancedCommand implements IPlayerTabExecutor {
         super(plugin, CommandMeta.builder("modify")
                 .addUnlocalizedArgument("type", true)
                 .addUnlocalizedArgument("value", false)
+                .hidden()
                 .build());
         this.sessions = sessions;
         this.registry = registry;

@@ -41,36 +41,31 @@ public class BrushPasteImpl implements BrushPaste {
         refresh();
     }
 
-    /**
-     * Refresh all mutator values
-     */
+
     @Override
     public void refresh() {
         schematicSet.refreshMutator();
     }
 
-    /**
-     * Shift to next flip value
-     */
     @Override
-    public void shiftFlip() {
+    public boolean shiftFlip() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.FLIP).shift();
+        return schematicSet.getMutator(SchematicModifier.FLIP).shiftable();
     }
 
-    /**
-     * Shift to next rotation value
-     */
     @Override
-    public void shiftRotation() {
+    public boolean shiftRotation() {
         reloadSchematic();
         schematicSet.getMutator(SchematicModifier.ROTATION).shift();
+        return schematicSet.getMutator(SchematicModifier.ROTATION).shiftable();
     }
 
     @Override
-    public void shiftOffset() {
+    public boolean shiftOffset() {
         reloadSchematic();
         settings.getMutator(PlacementModifier.OFFSET).shift();
+        return schematicSet.getMutator(SchematicModifier.FLIP).shiftable();
     }
 
     /**

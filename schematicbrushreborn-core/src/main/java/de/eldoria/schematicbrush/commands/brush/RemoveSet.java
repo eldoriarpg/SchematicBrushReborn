@@ -28,6 +28,7 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
     public RemoveSet(Plugin plugin, Sessions sessions) {
         super(plugin, CommandMeta.builder("removeset")
                 .addUnlocalizedArgument("id", true)
+                .hidden()
                 .build());
         this.sessions = sessions;
     }

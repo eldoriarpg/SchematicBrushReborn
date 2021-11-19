@@ -25,4 +25,5 @@ public interface Changes {
      * @param player player
      */
     void hide(Player player);
+
 }

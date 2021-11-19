@@ -28,6 +28,7 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
     public AddPreset(Plugin plugin, Sessions sessions, Configuration configuration) {
         super(plugin, CommandMeta.builder("addpreset")
                 .addUnlocalizedArgument("name", true)
+                .hidden()
                 .build());
         this.sessions = sessions;
         this.configuration = configuration;

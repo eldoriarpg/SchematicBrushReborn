@@ -30,6 +30,11 @@ public class FlipRandom extends FlipList {
     }
 
     @Override
+    public boolean shiftable() {
+        return true;
+    }
+
+    @Override
     public String descriptor() {
         return "";
     }

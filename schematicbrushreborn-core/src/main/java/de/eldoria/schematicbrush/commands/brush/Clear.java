@@ -19,6 +19,7 @@ public class Clear extends AdvancedCommand implements IPlayerTabExecutor {
 
     public Clear(Plugin plugin, Sessions sessions) {
         super(plugin, CommandMeta.builder("clear")
+                .hidden()
                 .build());
         this.sessions = sessions;
     }

@@ -40,6 +40,10 @@ public class OffsetList extends AOffset {
                 .build();
     }
 
+    @Override
+    public boolean shiftable() {
+        return true;
+    }
 
     @Override
     public void shift() {

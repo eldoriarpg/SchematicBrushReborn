@@ -26,6 +26,7 @@ public class RefreshSchematics extends AdvancedCommand implements IPlayerTabExec
 
     public RefreshSchematics(Plugin plugin, Sessions sessions, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         super(plugin, CommandMeta.builder("refreshSchematics")
+                .hidden()
                 .build());
         this.sessions = sessions;
         this.settingsRegistry = settingsRegistry;

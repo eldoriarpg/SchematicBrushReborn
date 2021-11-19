@@ -35,6 +35,7 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
                 .addUnlocalizedArgument("id", true)
                 .addUnlocalizedArgument("type", true)
                 .addUnlocalizedArgument("value", false)
+                .hidden()
                 .build());
         this.sessions = sessions;
         this.registry = registry;

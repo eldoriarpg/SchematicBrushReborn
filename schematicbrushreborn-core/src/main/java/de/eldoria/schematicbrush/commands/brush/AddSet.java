@@ -19,6 +19,7 @@ public class AddSet extends AdvancedCommand implements IPlayerTabExecutor {
 
     public AddSet(Plugin plugin, Sessions sessions) {
         super(plugin, CommandMeta.builder("addset")
+                .hidden()
                 .build());
         this.sessions = sessions;
     }

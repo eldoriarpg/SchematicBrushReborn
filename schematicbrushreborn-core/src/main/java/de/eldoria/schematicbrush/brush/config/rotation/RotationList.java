@@ -48,6 +48,11 @@ public class RotationList extends ARotation {
     }
 
     @Override
+    public boolean shiftable() {
+        return true;
+    }
+
+    @Override
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()

@@ -46,6 +46,7 @@ import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
+import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +106,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand("sbrs", settingsCommand);
 
         if (config.general().isCheckUpdates() && UserData.get().isPremium()) {
-            Updater.spigot(new SpigotUpdateData(this, "schematicbrush.admin.reload", config.general().isCheckUpdates(),
+            Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, config.general().isCheckUpdates(),
                     UserData.get().resourceId())).start();
         }
     }

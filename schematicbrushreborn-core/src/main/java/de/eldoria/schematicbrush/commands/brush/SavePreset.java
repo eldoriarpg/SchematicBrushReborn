@@ -32,6 +32,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         super(plugin, CommandMeta.builder("savePreset")
                 .addUnlocalizedArgument("name", true)
                 .withPermission(Permissions.Preset.USE)
+                .hidden()
                 .build());
         this.config = config;
         this.sessions = sessions;

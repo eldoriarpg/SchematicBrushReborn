@@ -36,6 +36,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     public Info(Plugin plugin, Configuration configuration, IMessageBlockerService messageBlocker) {
         super(plugin, CommandMeta.builder("info")
                 .addUnlocalizedArgument("name", true)
+                .hidden()
                 .build());
         this.configuration = configuration;
         audiences = BukkitAudiences.create(plugin);

@@ -25,13 +25,15 @@ public interface BrushPaste {
 
     /**
      * Shift to next flip value
+     * @return true if flip was shiftable
      */
-    void shiftFlip();
+    boolean shiftFlip();
 
     /**
      * Shift to next rotation value
+     * @return true if rotation was shiftable
      */
-    void shiftRotation();
+    boolean shiftRotation();
 
     /**
      * Build a paste operation
@@ -87,6 +89,7 @@ public interface BrushPaste {
 
     /**
      * Shift to the next offset value.
+     * @return true if the offset was shiftable
      */
-    void shiftOffset();
+    boolean shiftOffset();
 }

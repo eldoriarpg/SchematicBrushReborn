@@ -13,7 +13,10 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.messageblocker.blocker.IMessageBlockerService;
+import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,11 +24,16 @@ import org.jetbrains.annotations.NotNull;
 public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
     private final IMessageBlockerService messageBlocker;
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private final BukkitAudiences audiences;
 
     public Bind(Plugin plugin, Sessions sessions, IMessageBlockerService messageBlocker) {
-        super(plugin, CommandMeta.builder("bind").build());
+        super(plugin, CommandMeta.builder("bind")
+                .hidden()
+                .build());
         this.sessions = sessions;
         this.messageBlocker = messageBlocker;
+        audiences = BukkitAudiences.builder(plugin).build();
     }
 
     @Override
@@ -41,6 +49,8 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
 
         var schematicCount = brush.getSettings().getSchematicCount();
         var setcount = brush.getSettings().schematicSets().size();
-        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, String.format("Brush bound. Using §3%s§r Schematics in §3%s§r Sets", schematicCount, setcount)));
+        var message = String.format("<%s>Brush bound. Using <%s>%s<%s> Schematics in <%s>%s<%s> Sets. <%s><click:run_commandL'/sbr'>[Edit]</click>",
+                Colors.NEUTRAL, Colors.VALUE, schematicCount, Colors.NEUTRAL, Colors.VALUE, setcount, Colors.NEUTRAL, Colors.CHANGE);
+        messageBlocker.unblockPlayer(player).thenRun(() -> audiences.sender(player).sendMessage(miniMessage.parse(message)));
     }
 }

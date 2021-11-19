@@ -31,11 +31,17 @@ public class BrushModifier implements Listener {
 
         var brush = schematicBrush.get();
         if (event.getPlayer().isSneaking()) {
-            brush.nextPaste().shiftFlip();
-            messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed flip.");
+            if (brush.nextPaste().shiftFlip()) {
+                messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed flip.");
+            } else {
+                messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "Flip is not shiftable.");
+            }
         } else {
-            brush.nextPaste().shiftRotation();
-            messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed rotation.");
+            if (brush.nextPaste().shiftRotation()) {
+                messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed rotation.");
+            } else {
+                messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "Rotation is not shiftable.");
+            }
         }
         event.setCancelled(true);
     }
@@ -47,10 +53,13 @@ public class BrushModifier implements Listener {
         var schematicBrush = WorldEditBrush.getSchematicBrush(event.getPlayer(), material.getType());
         if (schematicBrush.isEmpty()) return;
         if (event.getPlayer().isSneaking()) {
-        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed Offset.");
-            schematicBrush.get().nextPaste().shiftOffset();
+            if (schematicBrush.get().nextPaste().shiftOffset()) {
+                messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed Offset.");
+            } else {
+                messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "Offset is not shiftable.");
+            }
         } else {
-        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Skipped Schematic.");
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Skipped Schematic.");
             schematicBrush.get().nextPaste().shiftSchematic();
         }
         event.setCancelled(true);

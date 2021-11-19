@@ -27,7 +27,7 @@ public class PlacementModifier extends BaseModifier {
     /**
      * IncludeAir modifier key
      */
-    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir", "Include air when placing");
+    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir", "Include air when placing. Will only have an effect when ReplaceAll is active.");
 
     /**
      * ReplaceAll modifier key

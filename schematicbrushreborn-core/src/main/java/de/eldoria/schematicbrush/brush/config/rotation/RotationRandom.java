@@ -22,6 +22,11 @@ public class RotationRandom extends RotationList {
     }
 
     @Override
+    public boolean shiftable() {
+        return true;
+    }
+
+    @Override
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder().build();

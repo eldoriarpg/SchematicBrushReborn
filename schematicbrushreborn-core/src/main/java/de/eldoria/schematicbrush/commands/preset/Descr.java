@@ -30,6 +30,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
         super(plugin, CommandMeta.builder("descr")
                 .addUnlocalizedArgument("name", true)
                 .addUnlocalizedArgument("descr", true)
+                .hidden()
                 .build());
         this.config = config;
     }
