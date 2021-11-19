@@ -76,17 +76,12 @@ public class RenderService implements Runnable, Listener {
     public void onPrePaste(PrePasteEvent event) {
         if (!players.contains(event.player())) return;
         skip.add(event.player().getUniqueId());
-        if (event.isAsynchronous()) {
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                resolveChanges(event.player());
-            });
-        } else {
-            resolveChanges(event.player());
-        }
+        resolveBlocked(event.player());
     }
 
     private void resolveBlocked(Player player) {
-        resolveChanges(player);
+        worker.process(player);
+        getChanges(player).ifPresent(change -> new PaketWorker.ChangeEntry(player, change, null).sendChanges());
         changes.remove(player.getUniqueId());
     }
 
@@ -174,6 +169,16 @@ public class RenderService implements Runnable, Listener {
 
         public void remove(Player player) {
             queue.removeIf(e -> e.player.equals(player));
+        }
+
+        public void process(Player player) {
+            queue.removeIf(e -> {
+                if (e.player.equals(player)) {
+                    e.sendChanges();
+                    return true;
+                }
+                return false;
+            });
         }
 
         private record ChangeEntry(Player player, Changes oldChanges,

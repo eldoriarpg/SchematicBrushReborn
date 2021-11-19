@@ -157,8 +157,6 @@ public final class BrushBuilderImpl implements BrushBuilder {
         return schematicSets.stream().mapToInt(SchematicSetBuilder::schematicCount).sum();
     }
 
-    // TODO add method and command to reload all current selectors
-
     /**
      * Reload all schematics in the brush
      */
