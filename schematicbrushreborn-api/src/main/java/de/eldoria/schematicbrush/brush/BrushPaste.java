@@ -58,8 +58,9 @@ public interface BrushPaste {
 
     /**
      * Shift to the next schematic
+     * @return true if the schematic changed
      */
-    void shiftSchematic();
+    boolean shiftSchematic();
 
     /**
      * Load a new clipboard from schematic file
