@@ -125,6 +125,7 @@ public class RenderService implements Runnable, Listener {
 
     private void resolveChanges(Player player) {
         getChanges(player).ifPresent(change -> worker.queue(player, change, null));
+        changes.remove(player.getUniqueId());
     }
 
     private void renderChanges(Player player, Changes newChanges) {
