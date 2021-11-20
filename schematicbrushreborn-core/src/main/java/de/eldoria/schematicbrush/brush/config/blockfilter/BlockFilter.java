@@ -1,8 +1,16 @@
+/*
+ *     SPDX-License-Identifier: AGPL-3.0-only
+ *
+ *     Copyright (C) 2021 EldoriaRPG Team and Contributor
+ */
+
 package de.eldoria.schematicbrush.brush.config.blockfilter;
 
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.function.mask.Masks;
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -13,52 +21,56 @@ import java.util.logging.Level;
 
 public class BlockFilter implements Mutator<String> {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
-    String maskString;
-    Mask mask;
+    private final String maskString;
+
+    public BlockFilter(String maskString) {
+        this.maskString = maskString;
+    }
 
     @Override
     public void invoke(PasteMutation mutation) {
-        var mask = mask(mutation);
-        // TODO: Iterate over clipboard and change blocks if required.
+        mutation.maskSource(mask(mutation));
     }
 
     @Override
     public String name() {
-        return null;
+        return "BlockFilter";
     }
 
     @Override
     public String descriptor() {
-        return null;
+        return maskString.isBlank() ? "None" : maskString;
     }
 
     @Override
     public void value(String value) {
-
     }
 
     @Override
     public String value() {
-        return null;
+        return maskString;
     }
 
     @Override
     public String valueProvider() {
-        return null;
+        return maskString;
     }
 
     @NotNull
     @Override
     public Map<String, Object> serialize() {
-        return null;
+        return SerializationUtil.newBuilder()
+                .add("mask", maskString)
+                .build();
     }
 
     private Mask mask(PasteMutation mutation) {
+        if (maskString.isBlank()) return Masks.alwaysTrue();
         try {
-            mask = WORLD_EDIT.getMaskFactory().parseFromInput(maskString, mutation.parserContext());
+            return WORLD_EDIT.getMaskFactory().parseFromInput(maskString, mutation.parserContext());
         } catch (InputParseException e) {
             SchematicBrushReborn.logger().log(Level.WARNING, "Could not parse saved mask " + maskString + ".", e);
         }
-            return vector -> false;
+        return Masks.alwaysTrue();
     }
 }

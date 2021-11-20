@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ public class PasteMutationImpl implements PasteMutation {
     private Clipboard clipboard;
     private AffineTransform transform = new AffineTransform();
     private BlockVector3 pasteOffset = BlockVector3.ZERO;
+    private Mask maskSource;
     private boolean includeAir;
 
     public PasteMutationImpl(Player player, Clipboard clipboard, EditSession session) {
@@ -77,6 +79,16 @@ public class PasteMutationImpl implements PasteMutation {
     @Override
     public boolean isIncludeAir() {
         return includeAir;
+    }
+
+    @Override
+    public Mask maskSource() {
+        return maskSource;
+    }
+
+    @Override
+    public void maskSource(Mask maskSource) {
+        this.maskSource = maskSource;
     }
 
     /**

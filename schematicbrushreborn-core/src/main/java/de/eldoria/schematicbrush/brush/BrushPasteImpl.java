@@ -104,6 +104,7 @@ public class BrushPasteImpl implements BrushPaste {
         return clipboardHolder.createPaste(targetExtent)
                 .to(position.add(mutation.pasteOffset()))
                 .ignoreAirBlocks(!mutation.isIncludeAir())
+                .maskSource(mutation.maskSource())
                 .build();
     }
 

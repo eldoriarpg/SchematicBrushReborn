@@ -10,9 +10,12 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
+import com.sk89q.worldedit.world.World;
 import org.bukkit.entity.Player;
 
 /**
@@ -53,6 +56,17 @@ public interface PasteMutation {
      * @return true if air should be included
      */
     boolean isIncludeAir();
+
+    /**
+     * A mask which will be applied on the clipboard.
+     * @return a mask
+     */
+    Mask maskSource();
+
+    /**
+     * Set the mask which will be applied on the clipboard.
+     */
+    void maskSource(Mask mask);
 
     /**
      * Set the clipboard of the paste
@@ -103,13 +117,17 @@ public interface PasteMutation {
      * @return a new parser action
      */
     default ParserContext parserContext() {
+        return createContext(actor(), clipboard(), session().getWorld());
+    }
+
+    static ParserContext createContext(Actor actor, Extent clipboard, World world){
         var parserContext = new ParserContext();
-        parserContext.setActor(actor());
-        parserContext.setExtent(clipboard());
+        parserContext.setActor(actor);
+        parserContext.setExtent(clipboard);
         parserContext.setRestricted(true);
         parserContext.setPreferringWildcard(false);
         parserContext.setTryLegacy(true);
-        parserContext.setWorld(session().getWorld());
+        parserContext.setWorld(world);
         return parserContext;
     }
 }
