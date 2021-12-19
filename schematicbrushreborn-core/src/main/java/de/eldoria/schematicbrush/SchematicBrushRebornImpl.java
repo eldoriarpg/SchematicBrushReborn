@@ -12,7 +12,6 @@ import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
-import de.eldoria.eldoutilities.updater.butlerupdater.ButlerUpdateData;
 import de.eldoria.eldoutilities.updater.spigotupdater.SpigotUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -20,6 +19,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
+import de.eldoria.schematicbrush.brush.provider.FilterProvider;
 import de.eldoria.schematicbrush.brush.provider.FlipProvider;
 import de.eldoria.schematicbrush.brush.provider.IncludeAirProvider;
 import de.eldoria.schematicbrush.brush.provider.OffsetProvider;
@@ -212,5 +212,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         settingsRegistry.registerPlacementModifier(PlacementModifier.INCLUDE_AIR, IncludeAirProvider.FIXED);
 
         settingsRegistry.registerPlacementModifier(PlacementModifier.REPLACE_ALL, ReplaceAllProvider.FIXED);
+
+        settingsRegistry.registerPlacementModifier(PlacementModifier.FILTER, FilterProvider.BLOCK_FILTER);
     }
 }

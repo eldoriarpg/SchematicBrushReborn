@@ -39,6 +39,11 @@ public class PlacementModifier extends BaseModifier {
      */
     public static final PlacementModifier OFFSET = of("Offset", "The schematic offset when placed.");
 
+    /**
+     * Filter modifier key
+     */
+    public static final PlacementModifier FILTER = of("Filter", "Remove blocks from the schematic.");
+
     private PlacementModifier(String name, String description) {
         super(name, description);
     }
