@@ -26,6 +26,8 @@ jobs:
         run: ./gradlew --build-cache build
       - name: Test with Gradle
         run: ./gradlew test
+      - name: Check licence
+        run: ./gradlew licenseCheck
       - name: Publish to eldonexus
         run: ./gradlew publishMavenPublicationToEldoNexusRepository
         env:
