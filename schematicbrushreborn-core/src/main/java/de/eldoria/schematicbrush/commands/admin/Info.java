@@ -30,7 +30,7 @@ public class Info extends AdvancedCommand implements ITabExecutor {
         var info = "§bSchematic Brush Reborn§r by §b" + String.join(", ", descr.getAuthors()) + "§r\n"
                    + "§bPremium:§r " + UserData.get().isPremium() + "\n"
                    + "§bVersion:§r " + descr.getVersion() + "\n"
-                   + "§bSpigot:§r https://www.spigotmc.org/resources/" + UserData.get().resource + "\n"
+                   + "§bSpigot:§r https://www.spigotmc.org/resources/98499\n"
                    + "§bSupport:§r https://discord.gg/zRW9Vpu";
         messageSender().sendMessage(sender, info);
     }
