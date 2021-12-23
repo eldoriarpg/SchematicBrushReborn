@@ -12,6 +12,7 @@ import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 
@@ -145,5 +146,10 @@ public final class BrushSettingsImpl implements BrushSettings {
         placementModifier.forEach(brushBuilder::setPlacementModifier);
         schematicSets.stream().map(SchematicSet::toBuilder).forEach(brushBuilder::addSchematicSet);
         return brushBuilder;
+    }
+
+    @Override
+    public void refreshMutator() {
+        placementModifier.values().forEach(ValueProvider::refresh);
     }
 }
