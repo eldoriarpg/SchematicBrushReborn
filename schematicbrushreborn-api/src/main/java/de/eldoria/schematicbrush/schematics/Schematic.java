@@ -80,10 +80,9 @@ public class Schematic {
      * @return true if the pattern matches the file name with or without extension
      */
     public boolean isSchematic(Pattern pattern) {
-        var matcher = pattern.matcher(file.toPath().getFileName().toString());
         var matcherExtension = pattern.matcher(name);
 
-        return matcherExtension.find() || matcher.find();
+        return matcherExtension.matches();
     }
 
     /**

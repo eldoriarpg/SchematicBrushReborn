@@ -314,7 +314,7 @@ public class SchematicBrushCache implements SchematicCache {
                 .replace(".", "\\.")
                 .replace("\\", "")
                 .replace("+", "\\+")
-                .replace("*", ".+?");
+                .replace("*", ".*?");
 
         return Pattern.compile(regex);
     }
