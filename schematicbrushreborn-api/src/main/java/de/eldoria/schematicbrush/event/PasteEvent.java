@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.event;
 
+import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,11 +23,13 @@ public class PasteEvent extends Event {
     public static final HandlerList HANDLERS = new HandlerList();
     private final Player who;
     private final Schematic schematic;
+    private final SchematicSet schematicSet;
 
-    public PasteEvent(@NotNull Player who, Schematic schematic) {
+    public PasteEvent(@NotNull Player who, Schematic schematic, SchematicSet schematicSet) {
         super(!Bukkit.isPrimaryThread());
         this.who = who;
         this.schematic = schematic;
+        this.schematicSet = schematicSet;
     }
 
     public static HandlerList getHandlerList() {
@@ -49,6 +52,16 @@ public class PasteEvent extends Event {
      */
     public Schematic schematic() {
         return schematic;
+    }
+
+    /**
+     * The schematic set which contains the schematic
+     *
+     * @return schematic set
+     * @since 2.0.2
+     */
+    public SchematicSet schematicSet() {
+        return schematicSet;
     }
 
     @NotNull

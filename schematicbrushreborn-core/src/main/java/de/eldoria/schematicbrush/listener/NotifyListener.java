@@ -10,7 +10,7 @@ import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.messages.MessageType;
 import de.eldoria.schematicbrush.config.Configuration;
-import de.eldoria.schematicbrush.event.PasteEvent;
+import de.eldoria.schematicbrush.event.PostPasteEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,8 +49,9 @@ public class NotifyListener implements Listener {
     }
 
     @EventHandler
-    public void onPaste(PasteEvent event) {
+    public void onPaste(PostPasteEvent event) {
         if (!players.contains(event.player().getUniqueId())) return;
-        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.player(), "§2Pasted §a" + event.schematic().name());
+        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.player(),
+                "§2Pasted §a" + event.schematic().name() + " §2from set §a" + event.schematicSet().selector().descriptor());
     }
 }

@@ -100,10 +100,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         getServer().getScheduler().runTaskTimer(this, renderService, 0, 1);
         registerListener(new BrushModifier(), renderService, notifyListener);
 
-        registerCommand("sbr", brushCommand);
-        registerCommand("sbrp", presetCommand);
-        registerCommand("sbra", adminCommand);
-        registerCommand("sbrs", settingsCommand);
+        registerCommand(brushCommand);
+        registerCommand(presetCommand);
+        registerCommand(adminCommand);
+        registerCommand(settingsCommand);
 
         if (config.general().isCheckUpdates() && UserData.get().isPremium()) {
             Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, config.general().isCheckUpdates(),
