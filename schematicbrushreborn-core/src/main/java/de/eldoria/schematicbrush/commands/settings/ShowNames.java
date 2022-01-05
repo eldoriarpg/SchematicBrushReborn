@@ -26,7 +26,7 @@ public class ShowNames extends AdvancedCommand implements IPlayerTabExecutor {
 
     public ShowNames(Plugin plugin, NotifyListener listener) {
         super(plugin, CommandMeta.builder("showNames")
-                .addArgument("state", true)
+                .addUnlocalizedArgument("state", true)
                 .withPermission(Permissions.Brush.USE)
                 .build());
         this.listener = listener;
