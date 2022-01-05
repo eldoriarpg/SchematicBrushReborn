@@ -18,8 +18,8 @@ public class OffsetRange extends AOffset {
     private final int max;
 
     public OffsetRange(int min, int max) {
-        this.min = min;
-        this.max = max;
+        this.min = Math.min(min, max);
+        this.max = Math.max(min, max);
     }
 
     public OffsetRange(Map<String, Object> objectMap) {
