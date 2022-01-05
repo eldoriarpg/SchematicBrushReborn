@@ -19,7 +19,7 @@ public class Admin extends AdvancedCommand {
     public Admin(SchematicBrushRebornImpl instance,
                  SchematicRegistry cache) {
         super(instance);
-        meta(CommandMeta.builder("sba")
+        meta(CommandMeta.builder("sbra")
                 .buildSubCommands((cmds, builder) -> {
                     var info = new Info(instance);
                     builder.withDefaultCommand(info);

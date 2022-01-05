@@ -131,6 +131,16 @@ public class SchematicSetImpl implements SchematicSet {
     }
 
     /**
+     * Get the selector of the set.
+     *
+     * @return selector
+     */
+    @Override
+    public Selector selector() {
+        return selector;
+    }
+
+    /**
      * Convert the set into a builder
      *
      * @return new builder instance
