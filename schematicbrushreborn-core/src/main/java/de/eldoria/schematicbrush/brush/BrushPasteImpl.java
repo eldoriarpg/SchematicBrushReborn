@@ -117,11 +117,20 @@ public class BrushPasteImpl implements BrushPaste {
 
     /**
      * Shift to the next schematic
+     *
+     * @return true if the schematic was changed
      */
     @Override
-    public void shiftSchematic() {
-        schematic = schematicSet.getRandomSchematic();
+    public boolean shiftSchematic() {
+        if (schematicSet.schematics().size() <= 1) return false;
+        var newSchematic = schematicSet.getRandomSchematic();
+        while (newSchematic == schematic) {
+            newSchematic = schematicSet.getRandomSchematic();
+        }
+
+        schematic = newSchematic;
         reloadSchematic();
+        return true;
     }
 
     /**
