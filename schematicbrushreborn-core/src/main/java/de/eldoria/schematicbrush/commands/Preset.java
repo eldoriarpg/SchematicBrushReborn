@@ -24,7 +24,7 @@ import org.bukkit.plugin.Plugin;
 public class Preset extends AdvancedCommand {
     public Preset(Plugin plugin, ConfigurationImpl config, IMessageBlockerService messageBlocker) {
         super(plugin);
-        meta(CommandMeta.builder("sbp")
+        meta(CommandMeta.builder("sbrp")
                 .withPermission(Permissions.Preset.USE)
                 .buildSubCommands((cmds, builder) -> {
                     var list = new List(plugin, config, messageBlocker);

@@ -20,7 +20,7 @@ import org.bukkit.plugin.Plugin;
 public class Settings extends AdvancedCommand {
     public Settings(Plugin plugin, RenderService renderService, NotifyListener notifyListener, IMessageBlockerService messageBlocker) {
         super(plugin);
-        meta(CommandMeta.builder("sbs")
+        meta(CommandMeta.builder("sbrs")
                 .withPermission(Permissions.Brush.USE)
                 .withSubCommand(new Preview(plugin, renderService))
                 .withSubCommand(new ShowNames(plugin, notifyListener))
