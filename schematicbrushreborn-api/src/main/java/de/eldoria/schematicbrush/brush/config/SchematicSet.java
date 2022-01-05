@@ -10,6 +10,7 @@ import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Randomable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
@@ -63,6 +64,14 @@ public interface SchematicSet extends Randomable {
      * @param mutation mutation
      */
     void mutate(PasteMutation mutation);
+
+    /**
+     * Get the selector of the set.
+     *
+     * @return selector
+     * @since 2.0.2
+     */
+    Selector selector();
 
     /**
      * Convert the set into a builder

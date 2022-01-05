@@ -148,6 +148,16 @@ public class BrushPasteImpl implements BrushPaste {
     }
 
     /**
+     * Current schematic set
+     *
+     * @return schematic set
+     */
+    @Override
+    public SchematicSet schematicSet() {
+        return schematicSet;
+    }
+
+    /**
      * Current clipboard
      *
      * @return clipboard

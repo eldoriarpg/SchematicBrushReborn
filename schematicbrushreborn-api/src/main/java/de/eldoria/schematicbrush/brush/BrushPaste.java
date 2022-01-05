@@ -12,6 +12,7 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.math.BlockVector3;
+import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
 /**
@@ -72,6 +73,14 @@ public interface BrushPaste {
      * @return schematic
      */
     Schematic schematic();
+
+    /**
+     * Current schematic set
+     *
+     * @return schematic set
+     * @since 2.0.2
+     */
+    SchematicSet schematicSet();
 
     /**
      * Current clipboard
