@@ -29,6 +29,7 @@ import de.eldoria.schematicbrush.rendering.CapturingExtent;
 import de.eldoria.schematicbrush.rendering.CapturingExtentImpl;
 import de.eldoria.schematicbrush.rendering.FakeWorldImpl;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +104,11 @@ public class SchematicBrushImpl implements SchematicBrush {
             var localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
             BrushTool brushTool;
             try {
-                brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType());
+                if (FAWE.isFawe()) {
+                    brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType().getDefaultState(), bukkitPlayer, false);
+                } else {
+                    brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType());
+                }
             } catch (InvalidToolBindException e) {
                 return null;
             }
