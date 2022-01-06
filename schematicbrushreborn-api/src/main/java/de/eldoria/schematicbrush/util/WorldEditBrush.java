@@ -104,7 +104,11 @@ public final class WorldEditBrush {
         try {
             var brushTool = new BrushTool("schematicbrush.brush.use");
             brushTool.setBrush(brush, "schematicbrush.brush.use");
-            getLocalSession(player).setTool(BukkitAdapter.asItemType(itemInMainHand.getType()), brushTool);
+            if (FAWE.isFawe()) {
+                getLocalSession(player).setTool(BukkitAdapter.asItemType(itemInMainHand.getType()).getDefaultState(), brushTool, BukkitAdapter.adapt(player));
+            } else {
+                getLocalSession(player).setTool(BukkitAdapter.asItemType(itemInMainHand.getType()), brushTool);
+            }
         } catch (InvalidToolBindException e) {
             MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
             return false;

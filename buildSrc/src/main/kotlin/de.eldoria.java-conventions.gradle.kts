@@ -3,17 +3,20 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.0.2"
+version = "2.0.3"
 
 repositories {
     maven("https://eldonexus.de/repository/maven-public")
     maven("https://eldonexus.de/repository/maven-proxies")
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains", "annotations", "20.1.0")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.8")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.0.0-SNAPSHOT")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.0.0-SNAPSHOT") { isTransitive = false }
 
     testImplementation(platform("org.junit:junit-bom:5.7.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -23,7 +26,7 @@ dependencies {
 
 allprojects {
     java {
-        sourceCompatibility = JavaVersion.VERSION_16
+        sourceCompatibility = JavaVersion.VERSION_17
         withSourcesJar()
         withJavadocJar()
     }
