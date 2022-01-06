@@ -16,18 +16,7 @@ import com.sk89q.worldedit.world.weather.WeatherType;
 /**
  * A Fake world which wrapps and delegates to a world.
  */
-public interface FakeWorld extends World, BlockChangeCollector {
-    @Override
-    <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight);
-
-    @Override
-    void setWeather(WeatherType weatherType);
-
-    @Override
-    void setWeather(WeatherType weatherType, long duration);
-
-    @Override
-    boolean setBiome(BlockVector2 position, BiomeType biome);
+public interface FakeWorld extends BlockChangeCollector {
 
     /**
      * Changes applied to the world.
