@@ -121,7 +121,7 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     private void buildNextPaste() {
-        var randomSchematicSet = settings.getRandomBrushConfig();
+        var randomSchematicSet = settings.getRandomSchematicSet();
         var clipboard = randomSchematicSet.getRandomSchematic();
         if (clipboard == null) {
             MessageSender.getPluginMessageSender(plugin).sendError(brushOwner(),
