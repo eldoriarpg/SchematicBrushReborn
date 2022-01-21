@@ -132,7 +132,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
             logger().info("§2Metrics enabled. Thank you <3");
         }
 
-        // TODO refactor
         metrics.addCustomChart(new SimplePie("schematic_count",
                 () -> reduceMetricValue(schematics.schematicCount(), 1000, 50, 100, 250, 500, 1000)));
         metrics.addCustomChart(new SimplePie("directory_count",
@@ -153,7 +152,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private String reduceMetricValue(int count, int baseValue, int... steps) {
         for (var step : steps) {
             if (count < step) {
-                return "<" + count;
+                return "<" + step;
             }
         }
         var reduced = (int) Math.floor(count / (double) baseValue);
