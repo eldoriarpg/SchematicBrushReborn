@@ -29,7 +29,7 @@ import java.util.logging.Level;
  */
 public class BrushPasteImpl implements BrushPaste {
     private final BrushSettings settings;
-    private final SchematicSet schematicSet;
+    private SchematicSet schematicSet;
     private Schematic schematic;
     private Clipboard clipboard;
 
@@ -122,10 +122,12 @@ public class BrushPasteImpl implements BrushPaste {
      */
     @Override
     public boolean shiftSchematic() {
-        if (schematicSet.schematics().size() <= 1) return false;
+        schematicSet = settings.getRandomSchematicSet();
+        if (schematicSet.schematics().size() < 1) return false;
         var newSchematic = schematicSet.getRandomSchematic();
         while (newSchematic == schematic) {
             newSchematic = schematicSet.getRandomSchematic();
+            if (schematicSet.schematics().size() <= 1) break;
         }
 
         schematic = newSchematic;

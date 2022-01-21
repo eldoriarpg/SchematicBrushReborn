@@ -62,6 +62,6 @@ public abstract class AOffset implements Mutator<Integer> {
 
     @Override
     public void invoke(PasteMutation mutation) {
-        mutation.pasteOffset(BlockVector3.at(0, value(), 0));
+        mutation.pasteOffset(mutation.pasteOffset().add(0, value(), 0));
     }
 }

@@ -28,6 +28,9 @@ public abstract class FilterProvider extends ModifierProvider {
     public static FilterProvider BLOCK_FILTER = new FilterProvider(BlockFilter.class, "BlockFilter") {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
+            if("none".equalsIgnoreCase(args.asString(0))){
+                return defaultSetting();
+            }
             try {
                 var actor = BukkitAdapter.adapt((Player) args.sender());
                 WORLD_EDIT.getMaskFactory().parseFromInput(args.join(), PasteMutation.createContext(actor, actor.getWorld(), actor.getWorld()));
