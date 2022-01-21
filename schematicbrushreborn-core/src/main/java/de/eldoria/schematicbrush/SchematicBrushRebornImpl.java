@@ -93,7 +93,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var brushCommand = new Brush(this, schematics, config, settingsRegistry, messageBlocker);
         var presetCommand = new Preset(this, config, messageBlocker);
         var adminCommand = new Admin(this, schematics);
-        var settingsCommand = new Settings(this, renderService, notifyListener, messageBlocker);
+        var settingsCommand = new Settings(this, config, renderService, notifyListener, messageBlocker);
 
         enableMetrics();
 
@@ -132,7 +132,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
             logger().info("§2Metrics enabled. Thank you <3");
         }
 
-        // TODO refactor
         metrics.addCustomChart(new SimplePie("schematic_count",
                 () -> reduceMetricValue(schematics.schematicCount(), 1000, 50, 100, 250, 500, 1000)));
         metrics.addCustomChart(new SimplePie("directory_count",
@@ -153,7 +152,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private String reduceMetricValue(int count, int baseValue, int... steps) {
         for (var step : steps) {
             if (count < step) {
-                return "<" + count;
+                return "<" + step;
             }
         }
         var reduced = (int) Math.floor(count / (double) baseValue);
@@ -196,6 +195,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.FIXED);
         settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.LIST);
         settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.RANDOM);
+
+        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.FIXED);
+        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.LIST);
+        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.RANGE);
 
         // PLACEMENT MODIFIER
         settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.FIXED);

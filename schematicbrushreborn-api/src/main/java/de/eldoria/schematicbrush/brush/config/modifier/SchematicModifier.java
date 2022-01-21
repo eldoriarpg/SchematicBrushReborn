@@ -29,6 +29,11 @@ public class SchematicModifier extends BaseModifier {
      */
     public static final SchematicModifier FLIP = of("Flip", "Flip a schematic");
 
+    /**
+     * Offset modifier key
+     */
+    public static final SchematicModifier OFFSET = of("Offset", "The schematic offset when placed.");
+
     public SchematicModifier(String name, String description) {
         super(name, description);
     }

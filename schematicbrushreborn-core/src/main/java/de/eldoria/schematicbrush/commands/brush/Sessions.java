@@ -95,7 +95,7 @@ public class Sessions {
         composer.prependLines(20);
         messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
-        audiences.player(player).sendMessage(miniMessage.parse(composer.build()));
+        audiences.player(player).sendMessage(miniMessage.deserialize(composer.build()));
     }
 
     public void showSet(Player player, int id) {
@@ -103,7 +103,7 @@ public class Sessions {
         var builder = getOrCreateSession(player);
         var optSet = builder.getSchematicSet(id);
         if (optSet.isEmpty()) {
-            audiences.player(player).sendMessage(miniMessage.parse("[SB] Invalid set."));
+            audiences.player(player).sendMessage(miniMessage.deserialize("[SB] Invalid set."));
             return;
         }
 
@@ -115,6 +115,6 @@ public class Sessions {
 
         message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
-        audiences.player(player).sendMessage(miniMessage.parse(MessageComposer.create().text(message).prependLines(20).build()));
+        audiences.player(player).sendMessage(miniMessage.deserialize(MessageComposer.create().text(message).prependLines(20).build()));
     }
 }

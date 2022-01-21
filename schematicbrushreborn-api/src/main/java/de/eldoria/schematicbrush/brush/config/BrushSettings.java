@@ -21,11 +21,11 @@ import java.util.List;
  */
 public interface BrushSettings extends Randomable {
     /**
-     * Get a random brush from the {@link #schematicSets} list based on their {@link SchematicSet#weight()}.
+     * Get a random schematic set from the {@link #schematicSets} list based on their {@link SchematicSet#weight()}.
      *
      * @return a random brush
      */
-    SchematicSet getRandomBrushConfig();
+    SchematicSet getRandomSchematicSet();
 
     /**
      * Counts all schematics in all brushes. No deduplication.

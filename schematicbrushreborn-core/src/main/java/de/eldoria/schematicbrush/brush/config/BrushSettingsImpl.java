@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * A brush configuration represents the settings of a single brush. A brush consists of one or more brushes represented
  * by a {@link SchematicSetImpl} object. If more than one {@link SchematicSetImpl} is present, a random {@link SchematicSetImpl}
- * will be returned via the {@link #getRandomBrushConfig()} based on the {@link SchematicSetImpl#weight()} of the
+ * will be returned via the {@link #getRandomSchematicSet()} based on the {@link SchematicSetImpl#weight()} of the
  * brushes. The brush settings contains some general brush settings, which apply to the whole brush and not only to
  * specific sub brushes.
  */
@@ -68,7 +68,7 @@ public final class BrushSettingsImpl implements BrushSettings {
      * @return a random brush
      */
     @Override
-    public SchematicSet getRandomBrushConfig() {
+    public SchematicSet getRandomSchematicSet() {
         var random = randomInt(totalWeight);
 
         var count = 0;
