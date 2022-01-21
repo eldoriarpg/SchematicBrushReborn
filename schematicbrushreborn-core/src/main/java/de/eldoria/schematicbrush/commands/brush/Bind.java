@@ -51,6 +51,6 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         var setcount = brush.getSettings().schematicSets().size();
         var message = String.format("<%s>Brush bound. Using <%s>%s<%s> Schematics in <%s>%s<%s> Sets. <%s><click:run_command:'/sbr'>[Edit]</click>",
                 Colors.NEUTRAL, Colors.VALUE, schematicCount, Colors.NEUTRAL, Colors.VALUE, setcount, Colors.NEUTRAL, Colors.CHANGE);
-        messageBlocker.unblockPlayer(player).thenRun(() -> audiences.sender(player).sendMessage(miniMessage.parse(message)));
+        messageBlocker.unblockPlayer(player).thenRun(() -> audiences.sender(player).sendMessage(miniMessage.deserialize(message)));
     }
 }

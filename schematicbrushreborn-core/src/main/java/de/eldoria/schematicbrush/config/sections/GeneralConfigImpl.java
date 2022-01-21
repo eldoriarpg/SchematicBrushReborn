@@ -6,7 +6,9 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
+import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +20,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private boolean checkUpdates = true;
     private boolean previewDefault = true;
     private boolean showNameDefault = false;
+    private MessageChannel<?> defaultNameChannel = MessageChannel.ACTION_BAR;
     private int previewRefreshInterval = 1;
     private int maxRenderMs = 25;
     private int maxRenderSize = 2500;
@@ -26,12 +29,27 @@ public class GeneralConfigImpl implements GeneralConfig {
     }
 
     public GeneralConfigImpl(Map<String, Object> objectMap) {
-        SerializationUtil.mapOnObject(objectMap, this);
+        var map = SerializationUtil.mapOf(objectMap);
+        checkUpdates = map.getValueOrDefault("checkUpdates", true);
+        previewDefault = map.getValueOrDefault("previewDefault", true);
+        showNameDefault = map.getValueOrDefault("showNameDefault", false);
+        defaultNameChannel = map.getValueOrDefault("defaultNameChannel", MessageChannel.CHAT, MessageChannel::getChannelByNameOrDefault);
+        previewRefreshInterval = map.getValueOrDefault("previewRefreshInterval", 1);
+        maxRenderMs = map.getValueOrDefault("maxRenderMs", 25);
+        maxRenderSize = map.getValueOrDefault("maxRenderSize", 2500);
     }
 
     @Override
     public @NotNull Map<String, Object> serialize() {
-        return SerializationUtil.objectToMap(this);
+        return SerializationUtil.newBuilder()
+                .add("checkUpdates",checkUpdates )
+                .add("previewDefault",previewDefault )
+                .add("showNameDefault", showNameDefault)
+                .add("defaultNameChannel", defaultNameChannel.name())
+                .add("previewRefreshInterval",previewRefreshInterval )
+                .add("maxRenderMs",maxRenderMs )
+                .add("maxRenderSize",maxRenderSize )
+                .build();
     }
 
     @Override
@@ -47,6 +65,11 @@ public class GeneralConfigImpl implements GeneralConfig {
     @Override
     public boolean isShowNameDefault() {
         return showNameDefault;
+    }
+
+    @Override
+    public MessageChannel<?> defaultNameChannel() {
+        return defaultNameChannel;
     }
 
     @Override

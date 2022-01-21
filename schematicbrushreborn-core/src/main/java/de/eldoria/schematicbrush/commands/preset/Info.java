@@ -59,7 +59,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
 
         messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
-        audiences.player(player).sendMessage(miniMessage.parse(composer.build()));
+        audiences.player(player).sendMessage(miniMessage.deserialize(composer.build()));
     }
 
     @Override

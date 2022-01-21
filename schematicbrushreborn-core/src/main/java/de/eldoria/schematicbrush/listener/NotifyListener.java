@@ -17,12 +17,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class NotifyListener implements Listener {
-    private final Set<UUID> players = new HashSet<>();
+    private final Map<UUID, MessageChannel<?>> players = new HashMap<>();
     private final MessageSender messageSender;
     private final Configuration configuration;
 
@@ -31,9 +31,9 @@ public class NotifyListener implements Listener {
         this.configuration = configuration;
     }
 
-    public void setState(Player player, boolean state) {
+    public void setState(Player player, boolean state, MessageChannel<?> channel) {
         if (state) {
-            players.add(player.getUniqueId());
+            players.put(player.getUniqueId(), channel);
         } else {
             players.remove(player.getUniqueId());
         }
@@ -43,15 +43,15 @@ public class NotifyListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().hasPermission("schematicbrush.brush.use")) {
             if (configuration.general().isShowNameDefault()) {
-                setState(event.getPlayer(), true);
+                setState(event.getPlayer(), true, MessageChannel.ACTION_BAR);
             }
         }
     }
 
     @EventHandler
     public void onPaste(PostPasteEvent event) {
-        if (!players.contains(event.player().getUniqueId())) return;
-        messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.player(),
+        if (!players.containsKey(event.player().getUniqueId())) return;
+        messageSender.send(players.get(event.player().getUniqueId()), MessageType.NORMAL, event.player(),
                 "§2Pasted §a" + event.schematic().name() + " §2from set §a" + event.schematicSet().selector().descriptor());
     }
 }

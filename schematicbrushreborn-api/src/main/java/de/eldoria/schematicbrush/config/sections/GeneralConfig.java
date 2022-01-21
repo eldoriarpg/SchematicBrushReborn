@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
+import de.eldoria.eldoutilities.messages.MessageChannel;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,8 @@ public interface GeneralConfig extends ConfigurationSerializable {
     boolean isPreviewDefault();
 
     boolean isShowNameDefault();
+
+    MessageChannel<?> defaultNameChannel();
 
     int previewRefreshInterval();
 
