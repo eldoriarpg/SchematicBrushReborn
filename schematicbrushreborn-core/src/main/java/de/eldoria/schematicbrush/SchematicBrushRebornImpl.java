@@ -197,6 +197,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.LIST);
         settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.RANDOM);
 
+        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.FIXED);
+        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.LIST);
+        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.RANGE);
+
         // PLACEMENT MODIFIER
         settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.FIXED);
         settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.LIST);
