@@ -47,8 +47,14 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         var preset = new PresetImpl(args.asString(0), schematicSets);
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
+            if (config.presets().getGlobalPreset(preset.name()).isPresent()) {
+                CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+            }
             config.presets().addPreset(preset);
         } else {
+            if (config.presets().getPreset(player, preset.name()).isPresent()) {
+                CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+            }
             config.presets().addPreset(player, preset);
         }
         config.save();
