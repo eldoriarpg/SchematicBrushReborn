@@ -24,8 +24,8 @@ public class OffsetRange extends AOffset {
 
     public OffsetRange(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
-        min = map.getValue("min");
-        max = map.getValue("max");
+        min = map.getValueOrDefault("min", -1);
+        max = map.getValueOrDefault("max", 1);
     }
 
     @Override
@@ -37,6 +37,8 @@ public class OffsetRange extends AOffset {
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
+                .add("min", min)
+                .add("max", max)
                 .build();
     }
 
@@ -57,7 +59,7 @@ public class OffsetRange extends AOffset {
 
     @Override
     public String descriptor() {
-        return String.format("%s-%s", min, max);
+        return String.format("%s » %s", min, max);
     }
 
     @Override
