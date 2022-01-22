@@ -73,6 +73,17 @@ public class PresetRegistryImpl implements PresetRegistry {
     }
 
     /**
+     * Get a global preset by name
+     *
+     * @param name   name
+     * @return preset with this name if exists
+     */
+    @Override
+    public Optional<Preset> getGlobalPreset(String name) {
+            return globalPresets.getPreset(name);
+    }
+
+    /**
      * Add a player preset
      *
      * @param player player
