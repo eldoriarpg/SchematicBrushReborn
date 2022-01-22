@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api("de.eldoria", "eldo-util", "1.13.0-DEV")
+    api("de.eldoria", "eldo-util", "1.13.1-DEV")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.0")
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine")
