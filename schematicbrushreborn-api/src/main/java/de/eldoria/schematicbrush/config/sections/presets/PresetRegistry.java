@@ -32,6 +32,14 @@ public interface PresetRegistry extends ConfigurationSerializable {
     Optional<Preset> getPreset(Player player, String name);
 
     /**
+     * Get a global preset by name
+     *
+     * @param name   name
+     * @return preset with this name if exists
+     */
+    Optional<Preset> getGlobalPreset(String name);
+
+    /**
      * Add a player preset
      *
      * @param player player
