@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.1.0"
+version = "2.1.1"
 
 repositories {
     maven("https://eldonexus.de/repository/maven-public")
