@@ -8,7 +8,6 @@ package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +23,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private int previewRefreshInterval = 1;
     private int maxRenderMs = 25;
     private int maxRenderSize = 2500;
+    private int renderDistance = 100;
 
     public GeneralConfigImpl() {
     }
@@ -37,18 +37,20 @@ public class GeneralConfigImpl implements GeneralConfig {
         previewRefreshInterval = map.getValueOrDefault("previewRefreshInterval", 1);
         maxRenderMs = map.getValueOrDefault("maxRenderMs", 25);
         maxRenderSize = map.getValueOrDefault("maxRenderSize", 2500);
+        renderDistance = map.getValueOrDefault("renderDistance", 100);
     }
 
     @Override
     public @NotNull Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
-                .add("checkUpdates",checkUpdates )
-                .add("previewDefault",previewDefault )
+                .add("checkUpdates", checkUpdates)
+                .add("previewDefault", previewDefault)
                 .add("showNameDefault", showNameDefault)
                 .add("defaultNameChannel", defaultNameChannel.name())
-                .add("previewRefreshInterval",previewRefreshInterval )
-                .add("maxRenderMs",maxRenderMs )
-                .add("maxRenderSize",maxRenderSize )
+                .add("previewRefreshInterval", previewRefreshInterval)
+                .add("maxRenderMs", maxRenderMs)
+                .add("maxRenderSize", maxRenderSize)
+                .add("renderDistance", renderDistance)
                 .build();
     }
 
@@ -85,5 +87,10 @@ public class GeneralConfigImpl implements GeneralConfig {
     @Override
     public int maxRenderSize() {
         return maxRenderSize;
+    }
+
+    @Override
+    public int renderDistance() {
+        return renderDistance;
     }
 }

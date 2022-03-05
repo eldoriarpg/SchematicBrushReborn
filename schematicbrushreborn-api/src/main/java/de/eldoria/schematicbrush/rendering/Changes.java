@@ -26,4 +26,9 @@ public interface Changes {
      */
     void hide(Player player);
 
+    /**
+     * The amount of changes
+     * @return changes
+     */
+    int size();
 }

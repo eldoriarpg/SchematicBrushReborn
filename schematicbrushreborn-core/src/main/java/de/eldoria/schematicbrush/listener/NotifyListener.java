@@ -52,6 +52,7 @@ public class NotifyListener implements Listener {
     public void onPaste(PostPasteEvent event) {
         if (!players.containsKey(event.player().getUniqueId())) return;
         messageSender.send(players.get(event.player().getUniqueId()), MessageType.NORMAL, event.player(),
-                "§2Pasted §a" + event.schematic().name() + " §2from set §a" + event.schematicSet().selector().descriptor());
+                String.format("§2Pasted §a%s §2from set §a%s (Flip: %s, Rotation: %s, Brush Offset: %s, Set Offset: %s)", event.schematic().name(), event.schematicSet().selector().descriptor(),
+                        event.paste().flip().value(), event.paste().rotation().value(), event.paste().offsetBrush().value(), event.paste().offsetSet().value()));
     }
 }

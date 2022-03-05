@@ -7,19 +7,37 @@
 package de.eldoria.schematicbrush.brush;
 
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.command.tool.brush.Brush;
+import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.util.Location;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import org.bukkit.entity.Player;
+
+import java.util.Optional;
 
 /**
  * A brush used to paste schematics.
  */
 public interface SchematicBrush extends Brush {
+    /**
+     * Get the player associated with this brush
+     * @return player
+     */
+    Player brushOwner();
+
+    /**
+     * Get the bukkit player associated with this brush
+     * @return bukkit palyer
+     */
+    BukkitPlayer actor();
+
     @Override
     void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size);
 
@@ -29,6 +47,12 @@ public interface SchematicBrush extends Brush {
      * @return changes which will be made to the world
      */
     BlockChangeCollector pasteFake();
+
+    /**
+     * Get the location of the current brush
+     * @return location based on the conditions of {@link com.sk89q.worldedit.bukkit.BukkitPlayer#getBlockTraceFace(int, boolean, Mask)}
+     */
+    Optional<Location> getBrushLocation();
 
     /**
      * Get the settings of the brush

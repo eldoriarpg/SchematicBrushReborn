@@ -18,6 +18,7 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.HandSide;
+import com.sk89q.worldedit.util.Location;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -34,6 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -62,10 +64,12 @@ public class SchematicBrushImpl implements SchematicBrush {
         buildNextPaste();
     }
 
+    @Override
     public Player brushOwner() {
         return plugin.getServer().getPlayer(brushOwner);
     }
 
+    @Override
     public BukkitPlayer actor() {
         return BukkitAdapter.adapt(brushOwner());
     }
@@ -77,9 +81,9 @@ public class SchematicBrushImpl implements SchematicBrush {
 
     private void paste(EditSession editSession, BlockVector3 position) {
         var paste = nextPaste.buildpaste(editSession, actor(), position);
-        plugin.getServer().getPluginManager().callEvent(new PrePasteEvent(brushOwner(), nextPaste.schematic(), nextPaste.schematicSet()));
+        plugin.getServer().getPluginManager().callEvent(new PrePasteEvent(brushOwner(), nextPaste));
         Operations.completeBlindly(paste);
-        plugin.getServer().getPluginManager().callEvent(new PostPasteEvent(brushOwner(), nextPaste.schematic(), nextPaste.schematicSet()));
+        plugin.getServer().getPluginManager().callEvent(new PostPasteEvent(brushOwner(), nextPaste));
         buildNextPaste();
     }
 
@@ -101,23 +105,36 @@ public class SchematicBrushImpl implements SchematicBrush {
         try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(100000).build()) {
             var bukkitPlayer = actor();
             if (bukkitPlayer == null) return new CapturingExtentImpl(editSession, world, settings);
-            var localSession = WorldEdit.getInstance().getSessionManager().get(bukkitPlayer);
-            BrushTool brushTool;
-            try {
-                if (FAWE.isFawe()) {
-                    brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType().getDefaultState(), bukkitPlayer, false);
-                } else {
-                    brushTool = localSession.getBrushTool(bukkitPlayer.getItemInHand(HandSide.MAIN_HAND).getType());
-                }
-            } catch (InvalidToolBindException e) {
-                return null;
-            }
-            if (!(brushTool.getBrush() instanceof SchematicBrushImpl)) return null;
+            var brushTool = getBrushTool();
+            if(brushTool.isEmpty()) return null;
             capturingExtent = new CapturingExtentImpl(editSession, world, settings);
-            var target = bukkitPlayer.getBlockTrace(brushTool.getRange(), true, brushTool.getTraceMask());
+            var target = bukkitPlayer.getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask());
             performPasteFake(editSession, capturingExtent, target.toVector().toBlockPoint());
         }
         return capturingExtent;
+    }
+
+    private Optional<BrushTool> getBrushTool(){
+        var localSession = WorldEdit.getInstance().getSessionManager().get(actor());
+        BrushTool brushTool;
+        try {
+            if (FAWE.isFawe()) {
+                brushTool = localSession.getBrushTool(actor().getItemInHand(HandSide.MAIN_HAND).getType().getDefaultState(), actor(), false);
+            } else {
+                brushTool = localSession.getBrushTool(actor().getItemInHand(HandSide.MAIN_HAND).getType());
+            }
+        } catch (InvalidToolBindException e) {
+            return Optional.empty();
+        }
+        if (!(brushTool.getBrush() instanceof SchematicBrushImpl)) return Optional.empty();
+        return Optional.of(brushTool);
+    }
+
+    @Override
+    public Optional<Location> getBrushLocation(){
+        var brushTool = getBrushTool();
+        if(brushTool.isEmpty()) return Optional.empty();
+        return Optional.ofNullable(actor().getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask()));
     }
 
     private void buildNextPaste() {
