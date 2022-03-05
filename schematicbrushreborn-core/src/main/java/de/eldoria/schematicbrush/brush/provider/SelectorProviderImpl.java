@@ -30,7 +30,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
 
                 @Override
                 public Selector parse(Arguments args) {
-                    return new DirectorySelector(args.asString(0), args.asString(1));
+                    return new DirectorySelector(args.asString(0), args.asString(1, "*"));
                 }
 
                 @Override
