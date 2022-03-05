@@ -12,7 +12,9 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.math.BlockVector3;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
 /**
@@ -35,6 +37,36 @@ public interface BrushPaste {
      * @return true if rotation was shiftable
      */
     boolean shiftRotation();
+
+    /**
+     * The flip mutator
+     * @return flip mutator
+     */
+    Mutator<?> flip();
+
+    /**
+     * The rotation mutator
+     * @return rotation mutator
+     */
+    Mutator<?> rotation();
+
+    /**
+     * The offset mutator of the set
+     * @return offset mutator
+     */
+    Mutator<?> offsetSet();
+
+    /**
+     * The offset mutator of the brush
+     * @return offset mutator
+     */
+    Mutator<?> offsetBrush();
+
+    /**
+     * The brush settings
+     * @return settings of the brush
+     */
+    BrushSettings settings();
 
     /**
      * Build a paste operation

@@ -65,7 +65,7 @@ public interface Flip extends Shiftable<Flip> {
 
         @Override
         public String toString() {
-            return "EAST WEST";
+            return "EAST";
         }
     };
 
@@ -90,7 +90,7 @@ public interface Flip extends Shiftable<Flip> {
 
         @Override
         public String toString() {
-            return "NORTH SOUTH";
+            return "NORTH";
         }
     };
 
@@ -115,7 +115,7 @@ public interface Flip extends Shiftable<Flip> {
 
         @Override
         public String toString() {
-            return "UP DOWN";
+            return "UP";
         }
     };
 

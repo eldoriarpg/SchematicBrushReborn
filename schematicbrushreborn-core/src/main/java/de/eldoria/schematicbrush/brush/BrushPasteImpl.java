@@ -19,6 +19,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
 import java.io.IOException;
@@ -67,6 +68,33 @@ public class BrushPasteImpl implements BrushPaste {
         reloadSchematic();
         settings.getMutator(PlacementModifier.OFFSET).shift();
         return settings.getMutator(PlacementModifier.OFFSET).shiftable();
+    }
+
+    @Override
+    public Mutator<?> flip() {
+        return schematicSet.getMutator(SchematicModifier.FLIP);
+    }
+
+    @Override
+    public Mutator<?> rotation() {
+        return schematicSet.getMutator(SchematicModifier.ROTATION);
+    }
+
+    @Override
+    public Mutator<?> offsetSet() {
+        reloadSchematic();
+        return schematicSet.getMutator(SchematicModifier.OFFSET);
+    }
+
+    @Override
+    public Mutator<?> offsetBrush() {
+        reloadSchematic();
+        return settings.getMutator(PlacementModifier.OFFSET);
+    }
+
+    @Override
+    public BrushSettings settings(){
+        return settings;
     }
 
     /**

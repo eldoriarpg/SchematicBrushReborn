@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.event;
 
+import de.eldoria.schematicbrush.brush.BrushPaste;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import org.bukkit.Bukkit;
@@ -22,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 public class PostPasteEvent extends PasteEvent {
     public static final HandlerList HANDLERS = new HandlerList();
 
-    public PostPasteEvent(@NotNull Player who, Schematic schematic, SchematicSet schematicSet) {
-        super(who, schematic, schematicSet);
+    public PostPasteEvent(@NotNull Player who, BrushPaste paste) {
+        super(who, paste);
     }
 
     public static HandlerList getHandlerList() {
