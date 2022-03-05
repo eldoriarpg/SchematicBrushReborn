@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.rendering;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
+import de.eldoria.schematicbrush.util.RollingQueue;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,6 +47,7 @@ public class RenderService implements Runnable, Listener {
     private final Set<UUID> skip = new HashSet<>();
     private final Plugin plugin;
     private final Configuration configuration;
+    private final RollingQueue<Long> timings = new RollingQueue<>(100);
     private double count = 1;
 
     public RenderService(Plugin plugin, Configuration configuration) {
@@ -107,6 +109,7 @@ public class RenderService implements Runnable, Listener {
             }
             players.add(player);
         }
+        timings.add(System.currentTimeMillis() - start);
     }
 
     private void render(Player player) {
@@ -121,7 +124,7 @@ public class RenderService implements Runnable, Listener {
             return;
         }
         var outOfRange = brush.getBrushLocation()
-                .map(loc -> loc.distanceSq(brush.actor().getLocation()) > Math.pow(configuration.general().renderDistance(), 2))
+                .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation().toVector()) > Math.pow(configuration.general().renderDistance(), 2))
                 .orElse(true);
         if (outOfRange) {
             resolveChanges(player);
@@ -162,7 +165,19 @@ public class RenderService implements Runnable, Listener {
         }
     }
 
-    private static class PaketWorker extends BukkitRunnable {
+    public int paketQueueSize() {
+        return worker.queue.size();
+    }
+
+    public int paketQueuePaketCount() {
+        return worker.queue.stream().mapToInt(PaketWorker.ChangeEntry::size).sum();
+    }
+
+    public double renderTimeAverage(){
+        return Math.ceil(timings.values().stream().mapToLong(value -> value).average().orElse(0));
+    }
+
+    public static class PaketWorker extends BukkitRunnable {
         private final Queue<ChangeEntry> queue = new ArrayDeque<>();
 
         @Override
@@ -197,6 +212,10 @@ public class RenderService implements Runnable, Listener {
             private void sendChanges() {
                 if (oldChanges != null) oldChanges.hide(player);
                 if (newChanges != null) newChanges.show(player);
+            }
+
+            public int size() {
+                return oldChanges.size() + newChanges.size();
             }
         }
     }

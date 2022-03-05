@@ -61,6 +61,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private SchematicRegistry schematics;
     private ConfigurationImpl config;
     private SchematicBrushCache cache;
+    private RenderService renderService;
 
     @Override
     public void onPluginEnable() {
@@ -86,7 +87,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         reload();
 
         var notifyListener = new NotifyListener(this, config);
-        var renderService = new RenderService(this, config);
+        renderService = new RenderService(this, config);
 
         var messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
 
@@ -123,7 +124,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public @NotNull EntryData[] getDebugInformations() {
-        return new EntryData[]{new EntryData("Customer Data", UserData.get().asString())};
+        return new EntryData[]{new EntryData("Customer Data", UserData.get().asString()),
+                new EntryData("Performance", String.format("Render Time: %d ms%nRender Operation Queue: %s%nOperation Paket Count: %d",
+                        renderService.renderTimeAverage(), renderService.paketQueueSize(), renderService.paketQueuePaketCount()))};
     }
 
     private void enableMetrics() {
