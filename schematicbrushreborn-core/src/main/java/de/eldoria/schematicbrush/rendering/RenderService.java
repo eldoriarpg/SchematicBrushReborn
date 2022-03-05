@@ -110,16 +110,25 @@ public class RenderService implements Runnable, Listener {
     }
 
     private void render(Player player) {
-        var schematicBrush = WorldEditBrush.getSchematicBrush(player);
-        if (schematicBrush.isEmpty()) {
+        var optBrush = WorldEditBrush.getSchematicBrush(player);
+        if (optBrush.isEmpty()) {
             resolveChanges(player);
             return;
         }
-        if (schematicBrush.get().nextPaste().clipboardSize() > configuration.general().maxRenderSize()) {
+        var brush = optBrush.get();
+        if (brush.nextPaste().clipboardSize() > configuration.general().maxRenderSize()) {
             resolveChanges(player);
             return;
         }
-        var collector = schematicBrush.get().pasteFake();
+        var outOfRange = brush.getBrushLocation()
+                .map(loc -> loc.distanceSq(brush.actor().getLocation()) > Math.pow(configuration.general().renderDistance(), 2))
+                .orElse(true);
+        if (outOfRange) {
+            resolveChanges(player);
+            return;
+        }
+
+        var collector = brush.pasteFake();
         renderChanges(player, collector.changes());
     }
 
