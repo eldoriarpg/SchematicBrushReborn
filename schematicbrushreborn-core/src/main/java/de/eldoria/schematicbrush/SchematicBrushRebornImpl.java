@@ -125,7 +125,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public @NotNull EntryData[] getDebugInformations() {
         return new EntryData[]{new EntryData("Customer Data", UserData.get().asString()),
-                new EntryData("Performance", String.format("Render Time: %d ms%nRender Operation Queue: %s%nOperation Paket Count: %d",
+                new EntryData("Performance", String.format("Render Time: %s ms%nRender Operation Queue: %s%nOperation Paket Count: %s",
                         renderService.renderTimeAverage(), renderService.paketQueueSize(), renderService.paketQueuePaketCount()))};
     }
 
