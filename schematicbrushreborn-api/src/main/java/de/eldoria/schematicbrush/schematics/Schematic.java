@@ -6,21 +6,32 @@
 
 package de.eldoria.schematicbrush.schematics;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import de.eldoria.eldoutilities.utils.EMath;
+import de.eldoria.schematicbrush.util.Clipboards;
+import de.eldoria.schematicbrush.util.FAWE;
+import org.bukkit.Material;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 /**
  * A loaded schematic which allows to load a schematic into a clipboard
  */
 public class Schematic {
+    private static final Set<BaseBlock> SIZE_EXCLUSION = Set.of(BukkitAdapter.adapt(Material.AIR.createBlockData()).toBaseBlock());
+
     /**
      * Regex which matches the end of a filename.
      */
@@ -34,6 +45,8 @@ public class Schematic {
      */
     private final File file;
     private final String name;
+    private int effectiveSize = -1;
+    private int size = -1;
 
     /**
      * Creates a new schematic from a file.
@@ -42,13 +55,18 @@ public class Schematic {
      * @param file   file
      * @throws InvalidClipboardFormatException when the format could not be determined
      */
-    private Schematic(ClipboardFormat format, File file) throws InvalidClipboardFormatException {
+    private Schematic(ClipboardFormat format, File file, String name) throws InvalidClipboardFormatException {
+        this.format = format;
+        this.file = file;
+        this.name = name;
+    }
+
+    private static Schematic create(ClipboardFormat format, File file) {
         if (format == null) {
             throw new InvalidClipboardFormatException("Could not determine schematic type of " + file.toPath());
         }
-        this.format = format;
-        this.file = file;
-        name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
+        var name = file.toPath().getFileName().toString().replaceAll(EXTENSION, "");
+        return new Schematic(format, file, name);
     }
 
     /**
@@ -59,7 +77,7 @@ public class Schematic {
      * @throws InvalidClipboardFormatException when the format could not be determined
      */
     public static Schematic of(File file) throws InvalidClipboardFormatException {
-        return new Schematic(ClipboardFormats.findByFile(file), file);
+        return create(ClipboardFormats.findByFile(file), file);
     }
 
     /**
@@ -70,7 +88,7 @@ public class Schematic {
      * @throws InvalidClipboardFormatException when the format could not be determined
      */
     public static Schematic of(Path path) throws InvalidClipboardFormatException {
-        return new Schematic(ClipboardFormats.findByFile(path.toFile()), path.toFile());
+        return create(ClipboardFormats.findByFile(path.toFile()), path.toFile());
     }
 
     /**
@@ -139,5 +157,74 @@ public class Schematic {
     @Override
     public int hashCode() {
         return Objects.hash(format.getName(), file.getPath(), name);
+    }
+
+    /**
+     * The effective size of the schematic without air.
+     *
+     * @return effective schematic size
+     */
+    public int effectiveSize() {
+        if (effectiveSize != -1) {
+            return effectiveSize;
+        }
+        effectiveSize = calcEffectiveSize();
+        return effectiveSize;
+    }
+
+    private int calcEffectiveSize() {
+        if (FAWE.isFawe()) {
+            try (var clipboard = loadSchematic()) {
+                var max = clipboard.getMaximumPoint();
+                var min = clipboard.getMinimumPoint();
+                var region = new CuboidRegion(min, max);
+                var air = clipboard.countBlocks(region, SIZE_EXCLUSION);
+                return region.size() - air;
+            } catch (IOException e) {
+                return -1;
+            }
+        }
+        try {
+            var clipboard = loadSchematic();
+            var count = new AtomicInteger();
+            Clipboards.iterate(clipboard).forEachRemaining(pos -> {
+                if (SIZE_EXCLUSION.contains(clipboard.getBlock(pos).toBaseBlock())) {
+                    count.incrementAndGet();
+                }
+            });
+            return size() - count.get();
+        } catch (IOException e) {
+            return -1;
+        }
+    }
+
+    public int size() {
+        if (size != -1) {
+            return size;
+        }
+        size = calcSize();
+        return size;
+    }
+
+    private int calcSize() {
+        if (FAWE.isFawe()) {
+            try (var clipboard = loadSchematic()) {
+                var max = clipboard.getMaximumPoint();
+                var min = clipboard.getMinimumPoint();
+                return new CuboidRegion(min, max).size();
+            } catch (IOException e) {
+                return -1;
+            }
+        }
+        try {
+            var clipboard = loadSchematic();
+            var min = clipboard.getMinimumPoint();
+            var max = clipboard.getMaximumPoint();
+            return EMath.diff(min.getBlockX(), max.getBlockX() + 1)
+                   * EMath.diff(min.getBlockY(), max.getBlockY() + 1)
+                   * EMath.diff(min.getBlockZ(), max.getBlockZ() + 1);
+        } catch (IOException e) {
+            return -1;
+        }
     }
 }

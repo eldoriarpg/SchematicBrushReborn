@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
@@ -119,14 +120,28 @@ public class RenderService implements Runnable, Listener {
             return;
         }
         var brush = optBrush.get();
-        if (brush.nextPaste().clipboardSize() > configuration.general().maxRenderSize()) {
-            resolveChanges(player);
-            return;
-        }
         var outOfRange = brush.getBrushLocation()
                 .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation().toVector()) > Math.pow(configuration.general().renderDistance(), 2))
                 .orElse(true);
         if (outOfRange) {
+            resolveChanges(player);
+            return;
+        }
+
+        var includeAir = (boolean) brush.getSettings().getMutator(PlacementModifier.INCLUDE_AIR).value();
+        var replaceAll = (boolean) brush.getSettings().getMutator(PlacementModifier.REPLACE_ALL).value();
+
+        if (includeAir && replaceAll && brush.nextPaste().schematic().size() > configuration.general().maxRenderSize()) {
+            resolveChanges(player);
+            return;
+        }
+
+        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > configuration.general().maxRenderSize()) {
+            resolveChanges(player);
+            return;
+        }
+
+        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > configuration.general().maxeffectiveRenderSize()) {
             resolveChanges(player);
             return;
         }
@@ -173,7 +188,7 @@ public class RenderService implements Runnable, Listener {
         return worker.queue.stream().mapToInt(PaketWorker.ChangeEntry::size).sum();
     }
 
-    public double renderTimeAverage(){
+    public double renderTimeAverage() {
         return Math.ceil(timings.values().stream().mapToLong(value -> value).average().orElse(0));
     }
 
