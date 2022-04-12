@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,7 +47,6 @@ public class Schematic {
     private final String name;
     private int effectiveSize = -1;
     private int size = -1;
-    private final Map<BaseBlock, Integer> counts = new HashMap<>();
 
     /**
      * Creates a new schematic from a file.
@@ -191,7 +188,6 @@ public class Schematic {
             var clipboard = loadSchematic();
             var count = new AtomicInteger();
             Clipboards.iterate(clipboard).forEachRemaining(pos -> {
-                counts.compute(clipboard.getBlock(pos).toBaseBlock(), (k, v) -> v == null ? 1 : v + 1);
                 if (SIZE_EXCLUSION.contains(clipboard.getBlock(pos).toBaseBlock())) {
                     count.incrementAndGet();
                 }
@@ -215,8 +211,7 @@ public class Schematic {
             try (var clipboard = loadSchematic()) {
                 var max = clipboard.getMaximumPoint();
                 var min = clipboard.getMinimumPoint();
-                var region = new CuboidRegion(min, max);
-                return region.size();
+                return new CuboidRegion(min, max).size();
             } catch (IOException e) {
                 return -1;
             }
