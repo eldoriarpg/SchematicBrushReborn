@@ -31,4 +31,6 @@ public interface GeneralConfig extends ConfigurationSerializable {
     int maxRenderSize();
 
     int renderDistance();
+
+    int maxeffectiveRenderSize();
 }

@@ -23,6 +23,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private int previewRefreshInterval = 1;
     private int maxRenderMs = 25;
     private int maxRenderSize = 2500;
+    private int maxeffectiveRenderSize = maxRenderSize;
     private int renderDistance = 100;
 
     public GeneralConfigImpl() {
@@ -37,6 +38,7 @@ public class GeneralConfigImpl implements GeneralConfig {
         previewRefreshInterval = map.getValueOrDefault("previewRefreshInterval", 1);
         maxRenderMs = map.getValueOrDefault("maxRenderMs", 25);
         maxRenderSize = map.getValueOrDefault("maxRenderSize", 2500);
+        maxeffectiveRenderSize = map.getValueOrDefault("maxeffectiveRenderSize", maxRenderSize);
         renderDistance = map.getValueOrDefault("renderDistance", 100);
     }
 
@@ -92,5 +94,10 @@ public class GeneralConfigImpl implements GeneralConfig {
     @Override
     public int renderDistance() {
         return renderDistance;
+    }
+
+    @Override
+    public int maxeffectiveRenderSize() {
+        return maxeffectiveRenderSize;
     }
 }
