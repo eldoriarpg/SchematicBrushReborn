@@ -35,7 +35,7 @@ public class DirectorySelector extends BaseSelector {
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder(super.serialize())
-                .add("directory")
+                .add("directory", directory)
                 .build();
     }
 
