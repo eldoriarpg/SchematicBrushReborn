@@ -9,7 +9,7 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 dependencies {
     implementation(project(":schematicbrushreborn-api"))
 
-    implementation("de.eldoria", "messageblocker", "1.0.3c-DEV")
+    implementation("de.eldoria", "messageblocker", "1.1.1")
     implementation("net.kyori", "adventure-platform-bukkit", "4.1.0")
     implementation("net.kyori", "adventure-text-minimessage", "4.10.1")
     testImplementation("org.jetbrains", "annotations", "23.0.0")
