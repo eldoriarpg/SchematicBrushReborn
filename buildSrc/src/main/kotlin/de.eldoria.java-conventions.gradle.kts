@@ -15,7 +15,7 @@ dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains", "annotations", "20.1.0")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.1.1-SNAPSHOT")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.1.1")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.1.1") { isTransitive = false }
 
     testImplementation(platform("org.junit:junit-bom:5.7.2"))
