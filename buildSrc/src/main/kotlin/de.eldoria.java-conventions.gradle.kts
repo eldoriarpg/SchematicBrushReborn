@@ -18,7 +18,7 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.1.1")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.1.1") { isTransitive = false }
 
-    testImplementation(platform("org.junit:junit-bom:5.7.2"))
+    testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     testImplementation("com.github.seeseemelk", "MockBukkit-v1.16", "1.5.2")
