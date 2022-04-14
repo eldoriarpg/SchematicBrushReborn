@@ -194,13 +194,17 @@ public class RenderService implements Runnable, Listener {
 
     public static class PaketWorker extends BukkitRunnable {
         private final Queue<ChangeEntry> queue = new ArrayDeque<>();
+        private boolean active;
 
         @Override
         public void run() {
+            if(active) return;
+            active = true;
             while (!queue.isEmpty()) {
                 var poll = queue.poll();
                 poll.sendChanges();
             }
+            active = false;
         }
 
         public void queue(Player player, Changes oldChanges, Changes newChanges) {
