@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.replaceall;
 
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
+import com.sk89q.worldedit.function.mask.Masks;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
@@ -48,12 +49,13 @@ public class ReplaceAll implements Mutator<Boolean> {
                 mutation.session().setMask(
                         new BlockTypeMask(mutation.session(), BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR));
             }
+        } else {
+            mutation.session().setMask(Masks.alwaysTrue());
         }
     }
 
     @Override
     public void value(Boolean value) {
-
     }
 
     @Override
