@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("de.eldoria.java-conventions")
 }
 
@@ -9,25 +9,12 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 dependencies {
     implementation(project(":schematicbrushreborn-api"))
 
-    implementation("de.eldoria", "messageblocker", "1.0.3c-DEV")
-    implementation("net.kyori", "adventure-platform-bukkit", "4.0.1")
-    implementation("net.kyori", "adventure-text-minimessage", "4.10.0-SNAPSHOT")
-    testImplementation("org.jetbrains", "annotations", "21.0.1")
+    testImplementation("org.jetbrains", "annotations", "23.0.0")
     testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.7.1")
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.7.1")
-    testImplementation("org.mockito", "mockito-core", "3.5.13")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
+    testImplementation("org.mockito", "mockito-core", "4.4.0")
 }
-
-publishData {
-    hashLength = 7
-    useEldoNexusRepos()
-    publishTask("jar")
-    publishTask("shadowJar")
-    publishTask("sourcesJar")
-    publishTask("javadocJar")
-}
-
 
 tasks {
     processResources {

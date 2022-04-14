@@ -16,20 +16,24 @@ import de.eldoria.eldoutilities.utils.EMath;
 import de.eldoria.schematicbrush.util.Clipboards;
 import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * A loaded schematic which allows to load a schematic into a clipboard
  */
-public class Schematic {
+public class Schematic implements Comparable<Schematic> {
+    private static final Pattern numEnd = Pattern.compile("(?<name>.+?)(?<num>\\d+?)$");
     private static final Set<BaseBlock> SIZE_EXCLUSION = Set.of(BukkitAdapter.adapt(Material.AIR.createBlockData()).toBaseBlock());
 
     /**
@@ -45,6 +49,8 @@ public class Schematic {
      */
     private final File file;
     private final String name;
+    private final String effectiveName;
+    private final int number;
     private int effectiveSize = -1;
     private int size = -1;
 
@@ -59,6 +65,14 @@ public class Schematic {
         this.format = format;
         this.file = file;
         this.name = name;
+        var matcher = numEnd.matcher(name);
+        if (matcher.matches()) {
+            effectiveName = matcher.group("name");
+            number = Integer.parseInt(matcher.group("num"));
+        } else {
+            effectiveName = name;
+            number = 0;
+        }
     }
 
     private static Schematic create(ClipboardFormat format, File file) {
@@ -226,5 +240,14 @@ public class Schematic {
         } catch (IOException e) {
             return -1;
         }
+    }
+
+    @Override
+    public int compareTo(@NotNull Schematic other) {
+        var name = effectiveName.compareTo(other.effectiveName);
+        if (name == 0) {
+            return Integer.compare(number, other.number);
+        }
+        return name;
     }
 }

@@ -11,7 +11,7 @@ import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
+import de.eldoria.messageblocker.blocker.MessageBlocker;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class ChatBlock extends AdvancedCommand implements IPlayerTabExecutor {
-    private final IMessageBlockerService messageBlocker;
+    private final MessageBlocker messageBlocker;
 
-    public ChatBlock(Plugin plugin, IMessageBlockerService messageBlocker) {
+    public ChatBlock(Plugin plugin, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("chatblock")
                 .hidden()
                 .addUnlocalizedArgument("state", true)

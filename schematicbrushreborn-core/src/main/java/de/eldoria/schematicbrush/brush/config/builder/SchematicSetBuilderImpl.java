@@ -21,8 +21,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -185,8 +187,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     /**
      * Schematic set as interactable component
      *
-     *
-     * @param player the player
+     * @param player   the player
      * @param registry registry
      * @param id       id
      * @return component
@@ -202,7 +203,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         var mutatorMap = schematicModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : registry.schematicModifier().entrySet()) {
-            modifierStrings.add(buildModifier(player,"/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
+            modifierStrings.add(buildModifier(player, "/sbr modifyset " + id, entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
         var modifier = String.join("\n", modifierStrings);
         var weight = String.format("<%s><hover:show_text:'<%s>%s'>Weight:</hover> <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
@@ -232,9 +233,20 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     private String schematicInfo() {
         var result = String.format("<%s>%s<%s> Schematics%n", Colors.NAME, schematics.size(), Colors.HEADING);
 
-        result += schematics.stream()
-                .limit(10)
-                .map(schem -> String.format("<%s>%s", Colors.VALUE, schem.name()))
+        var showSchematics = schematics.stream()
+                .sorted()
+                .map(Schematic::name)
+                .toList();
+
+        if (schematics.size() > 10) {
+            List<String> schematics = new ArrayList<>();
+            schematics.addAll(showSchematics.subList(0, 5));
+            schematics.add("...");
+            schematics.addAll(showSchematics.subList(showSchematics.size() - 5, showSchematics.size()));
+            showSchematics = schematics;
+        }
+        result += showSchematics.stream()
+                .map(schem -> String.format("<%s>%s", Colors.VALUE, schem))
                 .collect(Collectors.joining("\n"));
 
         if (schematicCount() > 10) {
