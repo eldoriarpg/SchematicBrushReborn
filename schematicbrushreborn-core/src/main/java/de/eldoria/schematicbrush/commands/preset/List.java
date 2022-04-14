@@ -10,7 +10,7 @@ import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
+import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 
 public class List extends AdvancedCommand implements IPlayerTabExecutor {
     private final Configuration configuration;
-    private final IMessageBlockerService messageBlocker;
+    private final MessageBlocker messageBlocker;
     private final MiniMessage miniMessage;
     private final BukkitAudiences audiences;
 
-    public List(Plugin plugin, Configuration configuration, IMessageBlockerService messageBlocker) {
+    public List(Plugin plugin, Configuration configuration, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("list")
                 .build());
         this.configuration = configuration;

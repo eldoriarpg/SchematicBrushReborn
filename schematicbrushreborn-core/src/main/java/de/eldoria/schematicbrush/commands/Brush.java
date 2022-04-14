@@ -8,7 +8,7 @@ package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
+import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.commands.brush.AddPreset;
 import de.eldoria.schematicbrush.commands.brush.AddSet;
@@ -32,7 +32,7 @@ import org.bukkit.plugin.Plugin;
  * Command which is used to create a new brush. Rewrite of old schbr command.
  */
 public class Brush extends AdvancedCommand {
-    public Brush(Plugin plugin, SchematicRegistry schematics, ConfigurationImpl config, BrushSettingsRegistry setting, IMessageBlockerService messageBlocker) {
+    public Brush(Plugin plugin, SchematicRegistry schematics, ConfigurationImpl config, BrushSettingsRegistry setting, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("sbr")
                 .withPermission(Permissions.Brush.USE)
                 .buildSubCommands((cmds, self) -> {
