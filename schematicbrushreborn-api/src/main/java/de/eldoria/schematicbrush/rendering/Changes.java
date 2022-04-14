@@ -6,7 +6,11 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import org.bukkit.Location;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
 
 /**
  * A class to manage changes and send them to a player.
@@ -31,4 +35,12 @@ public interface Changes {
      * @return changes
      */
     int size();
+
+    void hide(Player player, Changes newChanges);
+
+    Map<Location, BlockData> changed();
+
+    Map<Location, BlockData> original();
+
+    void show(Player player, Changes oldChanges);
 }
