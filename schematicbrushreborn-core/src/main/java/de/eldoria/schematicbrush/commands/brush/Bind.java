@@ -12,7 +12,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
+import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -23,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
-    private final IMessageBlockerService messageBlocker;
+    private final MessageBlocker messageBlocker;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
 
-    public Bind(Plugin plugin, Sessions sessions, IMessageBlockerService messageBlocker) {
+    public Bind(Plugin plugin, Sessions sessions, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("bind")
                 .hidden()
                 .build());

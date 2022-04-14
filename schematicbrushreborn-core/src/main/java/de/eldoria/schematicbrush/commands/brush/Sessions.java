@@ -7,7 +7,7 @@
 package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
+import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
@@ -35,10 +35,10 @@ public class Sessions {
     private final BukkitAudiences audiences;
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
-    private final IMessageBlockerService messageBlocker;
+    private final MessageBlocker messageBlocker;
     private final Map<UUID, BrushBuilder> session = new HashMap<>();
 
-    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry, IMessageBlockerService messageBlocker) {
+    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry, MessageBlocker messageBlocker) {
         this.registry = registry;
         audiences = BukkitAudiences.create(plugin);
         this.schematicRegistry = schematicRegistry;
@@ -76,7 +76,7 @@ public class Sessions {
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
         for (var entry : registry.placementModifier().entrySet()) {
-            modifierStrings.add(buildModifier(player,"/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
+            modifierStrings.add(buildModifier(player, "/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
         }
 
         composer.newLine()

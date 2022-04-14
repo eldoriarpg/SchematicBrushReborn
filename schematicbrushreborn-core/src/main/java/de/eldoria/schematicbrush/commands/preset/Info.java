@@ -14,7 +14,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.localization.Replacement;
-import de.eldoria.messageblocker.blocker.IMessageBlockerService;
+import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -31,9 +31,9 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     private final Configuration configuration;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
-    private final IMessageBlockerService messageBlocker;
+    private final MessageBlocker messageBlocker;
 
-    public Info(Plugin plugin, Configuration configuration, IMessageBlockerService messageBlocker) {
+    public Info(Plugin plugin, Configuration configuration, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("info")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
