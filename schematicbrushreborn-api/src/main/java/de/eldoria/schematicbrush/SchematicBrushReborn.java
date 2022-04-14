@@ -52,4 +52,13 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
      * @return plugin config
      */
     public abstract Configuration config();
+
+    /**
+     * Get the instance of the plugin.
+     *
+     * @return the current plugin instance.
+     */
+    public static SchematicBrushReborn instance() {
+        return (SchematicBrushReborn) getInstance();
+    }
 }
