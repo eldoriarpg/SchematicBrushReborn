@@ -50,14 +50,18 @@ public class ChangesImpl implements Changes {
     @Override
     public void show(Player player, Changes oldChanges) {
         var filter  = new HashMap<>(changed);
-        filter.entrySet().removeIf(curr -> oldChanges.changed().get(curr.getKey()) == curr.getValue());
+        for (var entry : oldChanges.changed().entrySet()) {
+            filter.remove(entry.getKey(), entry.getValue());
+        }
         sendChanges(player, filter);
     }
 
     @Override
     public void hide(Player player, Changes newChanges) {
         var filter  = new HashMap<>(original);
-        filter.entrySet().removeIf(curr -> newChanges.changed().containsKey(curr.getKey()));
+        for (var location : newChanges.changed().keySet()) {
+            filter.remove(location);
+        }
         sendChanges(player, filter);
     }
 
