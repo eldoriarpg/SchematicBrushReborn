@@ -11,11 +11,8 @@ dependencies {
 }
 
 publishData {
-    hashLength = 7
     useEldoNexusRepos()
-    publishTask("jar")
-    publishTask("sourcesJar")
-    publishTask("javadocJar")
+    publishComponent("java")
 }
 
 publishing {
