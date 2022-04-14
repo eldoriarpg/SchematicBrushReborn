@@ -53,7 +53,7 @@ tasks {
         destinationDir = File(path.toString())
     }
 
-    build{
+    build {
         dependsOn(shadowJar)
     }
 }

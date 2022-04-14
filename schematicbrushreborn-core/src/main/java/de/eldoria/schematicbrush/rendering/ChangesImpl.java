@@ -6,7 +6,6 @@
 
 package de.eldoria.schematicbrush.rendering;
 
-import org.antlr.v4.runtime.atn.PredicateTransition;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -46,6 +45,34 @@ public class ChangesImpl implements Changes {
         for (var entry : data.entrySet()) {
             player.sendBlockChange(entry.getKey(), entry.getValue());
         }
+    }
+
+    @Override
+    public void show(Player player, Changes oldChanges) {
+        var filter  = new HashMap<>(changed);
+        for (var entry : oldChanges.changed().entrySet()) {
+            filter.remove(entry.getKey(), entry.getValue());
+        }
+        sendChanges(player, filter);
+    }
+
+    @Override
+    public void hide(Player player, Changes newChanges) {
+        var filter  = new HashMap<>(original);
+        for (var location : newChanges.changed().keySet()) {
+            filter.remove(location);
+        }
+        sendChanges(player, filter);
+    }
+
+    @Override
+    public Map<Location, BlockData> changed() {
+        return changed;
+    }
+
+    @Override
+    public Map<Location, BlockData> original() {
+        return original;
     }
 
     public static class Builder {

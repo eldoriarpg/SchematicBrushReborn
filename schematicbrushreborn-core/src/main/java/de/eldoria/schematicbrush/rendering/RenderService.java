@@ -141,7 +141,7 @@ public class RenderService implements Runnable, Listener {
             return;
         }
 
-        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > configuration.general().maxeffectiveRenderSize()) {
+        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > configuration.general().maxEffectiveRenderSize()) {
             resolveChanges(player);
             return;
         }
@@ -194,13 +194,17 @@ public class RenderService implements Runnable, Listener {
 
     public static class PaketWorker extends BukkitRunnable {
         private final Queue<ChangeEntry> queue = new ArrayDeque<>();
+        private boolean active;
 
         @Override
         public void run() {
+            if(active) return;
+            active = true;
             while (!queue.isEmpty()) {
                 var poll = queue.poll();
                 poll.sendChanges();
             }
+            active = false;
         }
 
         public void queue(Player player, Changes oldChanges, Changes newChanges) {
@@ -225,8 +229,17 @@ public class RenderService implements Runnable, Listener {
                                    Changes newChanges) {
 
             private void sendChanges() {
+                if (oldChanges != null && newChanges != null) {
+                    update();
+                    return;
+                }
                 if (oldChanges != null) oldChanges.hide(player);
                 if (newChanges != null) newChanges.show(player);
+            }
+
+            private void update() {
+                oldChanges.hide(player, newChanges);
+                newChanges.show(player, oldChanges);
             }
 
             public int size() {
