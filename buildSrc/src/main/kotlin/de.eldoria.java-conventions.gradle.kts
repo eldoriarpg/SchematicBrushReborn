@@ -16,7 +16,7 @@ dependencies {
     compileOnly("org.jetbrains", "annotations", "23.0.0")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.1.2")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.1.1") { isTransitive = false }
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.1.2") { isTransitive = false }
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
