@@ -16,6 +16,10 @@ dependencies {
     testImplementation("org.mockito", "mockito-core", "4.4.0")
 }
 
+publishData {
+    useEldoNexusRepos()
+}
+
 tasks {
     processResources {
         from(sourceSets.main.get().resources.srcDirs) {
