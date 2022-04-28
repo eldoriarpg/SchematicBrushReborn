@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.offset;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -65,5 +66,10 @@ public class OffsetRange extends AOffset {
     @Override
     public String name() {
         return "Range";
+    }
+
+    @Override
+    public Mutator<Integer> copy() {
+        return new OffsetRange(min, max);
     }
 }

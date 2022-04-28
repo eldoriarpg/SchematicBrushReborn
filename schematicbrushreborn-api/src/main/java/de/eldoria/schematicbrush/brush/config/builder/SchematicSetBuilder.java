@@ -10,6 +10,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
+import de.eldoria.schematicbrush.brush.config.util.Copyable;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
@@ -23,7 +24,7 @@ import java.util.Set;
 /**
  * Builder to build schematic sets.
  */
-public interface SchematicSetBuilder extends ConfigurationSerializable {
+public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable {
     @Override
     @NotNull Map<String, Object> serialize();
 
@@ -125,5 +126,5 @@ public interface SchematicSetBuilder extends ConfigurationSerializable {
      */
     String infoComponent();
 
-    SchematicSetBuilder clone();
+    SchematicSetBuilder copy();
 }

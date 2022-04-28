@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.flip;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -69,5 +70,10 @@ public class FlipList extends AFlip {
     @Override
     public String name() {
         return "List";
+    }
+
+    @Override
+    public Mutator<Flip> copy() {
+        return new FlipList(values);
     }
 }
