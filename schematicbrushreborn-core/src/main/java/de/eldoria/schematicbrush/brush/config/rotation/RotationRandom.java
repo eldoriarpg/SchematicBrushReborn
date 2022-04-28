@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -40,5 +41,10 @@ public class RotationRandom extends RotationList {
     @Override
     public String name() {
         return "Random";
+    }
+
+    @Override
+    public Mutator<Rotation> copy() {
+        return new RotationRandom();
     }
 }

@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -68,5 +69,10 @@ public class RotationList extends ARotation {
     @Override
     public String name() {
         return "List";
+    }
+
+    @Override
+    public Mutator<Rotation> copy() {
+        return new RotationList(values);
     }
 }

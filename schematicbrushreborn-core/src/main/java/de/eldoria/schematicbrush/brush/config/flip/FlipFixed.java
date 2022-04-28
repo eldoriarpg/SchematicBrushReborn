@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.flip;
 
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+
 import java.util.Map;
 
 public class FlipFixed extends AFlip {
@@ -30,5 +32,10 @@ public class FlipFixed extends AFlip {
     @Override
     public String name() {
         return "Fixed";
+    }
+
+    @Override
+    public Mutator<Flip> copy() {
+        return new FlipFixed(flip);
     }
 }

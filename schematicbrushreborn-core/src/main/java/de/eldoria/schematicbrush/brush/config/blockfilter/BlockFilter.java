@@ -33,6 +33,11 @@ public class BlockFilter implements Mutator<String> {
     }
 
     @Override
+    public Mutator<String> copy() {
+        return new BlockFilter(maskString);
+    }
+
+    @Override
     public String name() {
         return "BlockFilter";
     }

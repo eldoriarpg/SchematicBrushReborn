@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.offset;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -65,5 +66,10 @@ public class OffsetList extends AOffset {
     @Override
     public String name() {
         return "List";
+    }
+
+    @Override
+    public Mutator<Integer> copy() {
+        return new OffsetList(values);
     }
 }

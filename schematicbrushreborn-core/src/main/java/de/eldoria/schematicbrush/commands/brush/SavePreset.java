@@ -12,6 +12,7 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -42,7 +43,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var session = sessions.getOrCreateSession(player);
 
-        var schematicSets = session.schematicSets();
+        var schematicSets = session.schematicSets().stream().map(SchematicSetBuilder::copy).toList();
         CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
         var preset = new PresetImpl(args.asString(0), schematicSets);
         if (args.flags().has("g")) {
