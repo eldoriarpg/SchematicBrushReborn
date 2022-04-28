@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush.config.placement;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import de.eldoria.schematicbrush.brush.PasteMutation;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 
 import java.util.Map;
 
@@ -27,6 +28,11 @@ public class Original extends APlacement {
     @Override
     public void invoke(PasteMutation mutation) {
         // do nothing
+    }
+
+    @Override
+    public Mutator<APlacement> copy() {
+        return new Original();
     }
 
     @Override

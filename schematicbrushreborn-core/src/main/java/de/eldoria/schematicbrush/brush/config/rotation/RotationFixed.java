@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+
 import java.util.Map;
 
 public class RotationFixed extends ARotation {
@@ -30,5 +32,10 @@ public class RotationFixed extends ARotation {
     @Override
     public String name() {
         return "Fixed";
+    }
+
+    @Override
+    public Mutator<Rotation> copy() {
+        return new RotationFixed(rotation);
     }
 }

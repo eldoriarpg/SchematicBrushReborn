@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.placement;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 
 import java.util.Map;
 
@@ -26,5 +27,10 @@ public class Bottom extends APlacement {
     @Override
     public String name() {
         return "Bottom";
+    }
+
+    @Override
+    public Mutator<APlacement> copy() {
+        return new Bottom();
     }
 }

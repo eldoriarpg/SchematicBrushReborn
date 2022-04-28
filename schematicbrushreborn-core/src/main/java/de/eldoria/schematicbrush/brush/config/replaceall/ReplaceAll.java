@@ -55,6 +55,11 @@ public class ReplaceAll implements Mutator<Boolean> {
     }
 
     @Override
+    public Mutator<Boolean> copy() {
+        return new ReplaceAll(value);
+    }
+
+    @Override
     public void value(Boolean value) {
     }
 

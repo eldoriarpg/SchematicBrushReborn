@@ -256,10 +256,10 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     }
 
     @Override
-    public SchematicSetBuilderImpl clone() {
+    public SchematicSetBuilderImpl copy() {
         Map<Nameable, Mutator<?>> mutatorCopy = schematicModifier.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy()));
         return new SchematicSetBuilderImpl(selector, mutatorCopy, new LinkedHashSet<>(schematics), weight);
     }
 }

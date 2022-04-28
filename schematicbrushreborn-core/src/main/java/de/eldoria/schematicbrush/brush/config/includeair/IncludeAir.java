@@ -40,6 +40,11 @@ public class IncludeAir implements Mutator<Boolean> {
     }
 
     @Override
+    public Mutator<Boolean> copy() {
+        return new IncludeAir(value);
+    }
+
+    @Override
     public void value(Boolean value) {
         this.value = value;
     }

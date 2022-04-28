@@ -42,7 +42,7 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
         CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
 
         for (var builder : preset.get().schematicSets()) {
-            session.addSchematicSet(builder);
+            session.addSchematicSet(builder.copy());
         }
         sessions.showBrush(player);
     }
