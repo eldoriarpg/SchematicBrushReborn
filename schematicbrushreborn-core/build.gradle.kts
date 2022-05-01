@@ -11,6 +11,8 @@ dependencies {
 
     testImplementation("org.jetbrains", "annotations", "23.0.0")
     testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
+    implementation("mysql:mysql-connector-java:8.0.23")
+    implementation("org.mariadb.jdbc:mariadb-java-client:2.7.2")
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
     testImplementation("org.mockito", "mockito-core", "4.5.1")

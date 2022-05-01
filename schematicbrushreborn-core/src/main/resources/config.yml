@@ -1,0 +1,7 @@
+mysql:
+  type: mariadb # mariadb or mysql
+  host: "localhost"
+  user: "user"
+  password: "password"
+  database: "database"
+  port: 3306

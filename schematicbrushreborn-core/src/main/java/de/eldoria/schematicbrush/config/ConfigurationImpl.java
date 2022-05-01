@@ -13,16 +13,22 @@ import de.eldoria.schematicbrush.config.sections.SchematicConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
+import de.eldoria.schematicbrush.config.sections.presets.DatabasePresetRegistry;
 import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
 import de.eldoria.schematicbrush.config.sections.presets.PresetRegistryImpl;
+import de.eldoria.schematicbrush.util.DataSourceProvider;
+import de.eldoria.schematicbrush.util.Database;
 import org.bukkit.plugin.Plugin;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class ConfigurationImpl extends EldoConfig implements Configuration {
@@ -44,7 +50,22 @@ public class ConfigurationImpl extends EldoConfig implements Configuration {
 
     @Override
     public void reloadConfigs() {
-        presets = loadConfig(PRESET_FILE, null, false).getObject("presets", PresetRegistry.class, new PresetRegistryImpl());
+        Database database = new Database(Map.of("host",
+                Objects.requireNonNull(this.getConfig().getString("mysql.host"))
+                , "port", this.getConfig().getInt("mysql.port"), "database",
+                Objects.requireNonNull(this.getConfig().getString("mysql.database")), "user",
+                Objects.requireNonNull(this.getConfig().getString("mysql.user")), "password",
+                Objects.requireNonNull(this.getConfig().getString("mysql.password"))));
+        DataSource dataSource = null;
+
+        if(Objects.requireNonNull(this.getConfig().getString("mysql.type")).equalsIgnoreCase("mariadb")) {
+            dataSource = DataSourceProvider.initMariaDBDataSource(this.plugin, database);
+        } else if(Objects.requireNonNull(this.getConfig().getString("mysql.type")).equalsIgnoreCase("mariadb")) {
+            dataSource = DataSourceProvider.initMySQLDataSource(this.plugin, database);
+        }
+
+
+        presets = loadConfig(PRESET_FILE, null, false).getObject("presets", PresetRegistry.class, new DatabasePresetRegistry(dataSource, this.plugin));
         schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfigImpl());
         general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfigImpl());
     }
