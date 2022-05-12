@@ -22,11 +22,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -35,6 +36,8 @@ import java.util.regex.Pattern;
 public class Schematic implements Comparable<Schematic> {
     private static final Pattern numEnd = Pattern.compile("(?<name>.+?)(?<num>\\d+?)$");
     private static final Set<BaseBlock> SIZE_EXCLUSION = Set.of(BukkitAdapter.adapt(Material.AIR.createBlockData()).toBaseBlock());
+
+    private final Map<Material, Integer> materialMap = new HashMap<>();
 
     /**
      * Regex which matches the end of a filename.
@@ -240,6 +243,35 @@ public class Schematic implements Comparable<Schematic> {
         } catch (IOException e) {
             return -1;
         }
+    }
+
+    public Map<Material, Integer> blockCount() {
+        if (!materialMap.isEmpty()) {
+            return Collections.unmodifiableMap(materialMap);
+        }
+
+        if (FAWE.isFawe()) {
+            try (var clipboard = loadSchematic()) {
+                for (var type : clipboard.getBlockDistribution(clipboard.getRegion())) {
+                    materialMap.put(BukkitAdapter.adapt(type.getID()), type.getAmount());
+                }
+            } catch (IOException e) {
+                return Collections.emptyMap();
+            }
+        } else {
+            try {
+                var clipboard = loadSchematic();
+                clipboard.getRegion().iterator()
+                        .forEachRemaining(pos ->{
+                            var mat = BukkitAdapter.adapt(clipboard.getBlock(pos)).getMaterial();
+                            materialMap.compute(mat, (k, v) -> v == null ? 1 : v + 1);
+                                });
+            } catch (IOException e) {
+                return Collections.emptyMap();
+            }
+        }
+
+        return Collections.unmodifiableMap(materialMap);
     }
 
     @Override
