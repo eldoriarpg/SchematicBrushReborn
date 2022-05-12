@@ -14,6 +14,7 @@ import de.eldoria.schematicbrush.util.RollingQueue;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -75,7 +76,7 @@ public class RenderService implements Runnable, Listener {
         skip.remove(event.getPlayer().getUniqueId());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrePaste(PrePasteEvent event) {
         if (!players.contains(event.player())) return;
         skip.add(event.player().getUniqueId());

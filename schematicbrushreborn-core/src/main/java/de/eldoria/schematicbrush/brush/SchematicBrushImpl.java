@@ -81,11 +81,11 @@ public class SchematicBrushImpl implements SchematicBrush {
 
     private void paste(EditSession editSession, BlockVector3 position) {
         var prePasteEvent = new PrePasteEvent(brushOwner(), nextPaste);
+        plugin.getServer().getPluginManager().callEvent(prePasteEvent);
         if (prePasteEvent.isCancelled()) {
             return;
         }
         var paste = nextPaste.buildpaste(editSession, actor(), position);
-        plugin.getServer().getPluginManager().callEvent(prePasteEvent);
         Operations.completeBlindly(paste);
         plugin.getServer().getPluginManager().callEvent(new PostPasteEvent(brushOwner(), nextPaste));
         buildNextPaste();
