@@ -80,8 +80,12 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     private void paste(EditSession editSession, BlockVector3 position) {
+        var prePasteEvent = new PrePasteEvent(brushOwner(), nextPaste);
+        if (prePasteEvent.isCancelled()) {
+            return;
+        }
         var paste = nextPaste.buildpaste(editSession, actor(), position);
-        plugin.getServer().getPluginManager().callEvent(new PrePasteEvent(brushOwner(), nextPaste));
+        plugin.getServer().getPluginManager().callEvent(prePasteEvent);
         Operations.completeBlindly(paste);
         plugin.getServer().getPluginManager().callEvent(new PostPasteEvent(brushOwner(), nextPaste));
         buildNextPaste();
@@ -106,7 +110,7 @@ public class SchematicBrushImpl implements SchematicBrush {
             var bukkitPlayer = actor();
             if (bukkitPlayer == null) return new CapturingExtentImpl(editSession, world, settings);
             var brushTool = getBrushTool();
-            if(brushTool.isEmpty()) return null;
+            if (brushTool.isEmpty()) return null;
             capturingExtent = new CapturingExtentImpl(editSession, world, settings);
             var target = bukkitPlayer.getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask());
             performPasteFake(editSession, capturingExtent, target.toVector().toBlockPoint());
@@ -114,7 +118,7 @@ public class SchematicBrushImpl implements SchematicBrush {
         return capturingExtent;
     }
 
-    private Optional<BrushTool> getBrushTool(){
+    private Optional<BrushTool> getBrushTool() {
         var localSession = WorldEdit.getInstance().getSessionManager().get(actor());
         BrushTool brushTool;
         try {
@@ -131,9 +135,9 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     @Override
-    public Optional<Location> getBrushLocation(){
+    public Optional<Location> getBrushLocation() {
         var brushTool = getBrushTool();
-        if(brushTool.isEmpty()) return Optional.empty();
+        if (brushTool.isEmpty()) return Optional.empty();
         return Optional.ofNullable(actor().getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask()));
     }
 
