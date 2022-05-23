@@ -66,8 +66,9 @@ public class BrushPasteImpl implements BrushPaste {
     @Override
     public boolean shiftOffset() {
         reloadSchematic();
+        schematicSet.getMutator(SchematicModifier.OFFSET).shift();
         settings.getMutator(PlacementModifier.OFFSET).shift();
-        return settings.getMutator(PlacementModifier.OFFSET).shiftable();
+        return settings.getMutator(PlacementModifier.OFFSET).shiftable() || schematicSet.getMutator(SchematicModifier.OFFSET).shiftable();
     }
 
     @Override
