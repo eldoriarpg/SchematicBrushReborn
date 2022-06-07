@@ -34,6 +34,11 @@ public class SchematicModifier extends BaseModifier {
      */
     public static final SchematicModifier OFFSET = of("Offset", "The schematic offset when placed.");
 
+    /**
+     * Creates a new schematic modifier
+     * @param name name. Defines the type of the modifier
+     * @param description description of the modifier
+     */
     public SchematicModifier(String name, String description) {
         super(name, description);
     }
@@ -42,6 +47,7 @@ public class SchematicModifier extends BaseModifier {
      * Creates a new PlacementModifier.
      *
      * @param name name of the modifier
+     * @param description description of the modifier
      * @return new PlacementModifier
      */
     public static SchematicModifier of(String name, String description) {

@@ -25,7 +25,7 @@ public class RegexSelector extends BaseSelector {
 
     @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
-        return registry.getCache(SchematicCache.DEFAULT_CACHE).getSchematicsByName(player, term());
+        return registry.getCache(SchematicCache.STORAGE).getSchematicsByName(player, term());
     }
 
     @Override

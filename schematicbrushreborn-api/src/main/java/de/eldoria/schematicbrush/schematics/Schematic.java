@@ -116,7 +116,6 @@ public class Schematic implements Comparable<Schematic> {
      */
     public boolean isSchematic(Pattern pattern) {
         var matcherExtension = pattern.matcher(name);
-
         return matcherExtension.matches();
     }
 
@@ -215,6 +214,10 @@ public class Schematic implements Comparable<Schematic> {
         }
     }
 
+    /**
+     * The total block size of the schematic. Including air blocks.
+     * @return block count of schematics
+     */
     public int size() {
         if (size != -1) {
             return size;
@@ -245,6 +248,10 @@ public class Schematic implements Comparable<Schematic> {
         }
     }
 
+    /**
+     * Calculates and returns a map which contains the block count of every material in this schematic.
+     * @return map with block counts
+     */
     public Map<Material, Integer> blockCount() {
         if (!materialMap.isEmpty()) {
             return Collections.unmodifiableMap(materialMap);

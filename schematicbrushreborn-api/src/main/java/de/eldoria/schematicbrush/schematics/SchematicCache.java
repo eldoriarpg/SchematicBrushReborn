@@ -19,7 +19,7 @@ public interface SchematicCache {
     /**
      * The nameable key for the default cache
      */
-    Nameable DEFAULT_CACHE = Nameable.of("default");
+    Nameable STORAGE = Nameable.of("storage");
 
     /**
      * Init method which will be executed when registered via {@link SchematicRegistry#register(Nameable, SchematicCache)}

@@ -40,17 +40,17 @@ public class SchematicSourceImpl implements SchematicSource {
     }
 
     @Override
-    public String getPath() {
+    public String path() {
         return path;
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return prefix;
     }
 
     @Override
-    public List<String> getExcludedPath() {
+    public List<String> excludedPath() {
         return excludedPath;
     }
 

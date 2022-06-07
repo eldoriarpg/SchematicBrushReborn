@@ -11,7 +11,6 @@ import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.config.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,8 +66,8 @@ public class SchematicBrushCache implements SchematicCache {
 
         schematicsCache.clear();
 
-        for (var key : configuration.schematicConfig().getSources()) {
-            var path = key.getPath();
+        for (var key : configuration.schematicConfig().sources()) {
+            var path = key.path();
             if (path == null || path.isEmpty()) {
                 plugin.getLogger().log(Level.CONFIG, "Path " + key + " has no path. Skipping!");
                 continue;
@@ -150,11 +149,11 @@ public class SchematicBrushCache implements SchematicCache {
         }
 
         // remove path to get relative path in schematic folder.
-        var rawKey = directory.toString().replace(source.getPath(), "");
+        var rawKey = directory.toString().replace(source.path(), "");
 
         String cleanKey;
         if (!rawKey.isEmpty()) {
-            cleanKey = rawKey.replace(" ", "_").substring(1).replace("\\", configuration.schematicConfig().getPathSeparator());
+            cleanKey = rawKey.replace(" ", "_").substring(1).replace("\\", configuration.schematicConfig().pathSeparator());
         } else {
             cleanKey = rawKey;
         }
@@ -170,7 +169,7 @@ public class SchematicBrushCache implements SchematicCache {
         }
 
         if (configuration.schematicConfig().isPathSourceAsPrefix()) {
-            cleanKey = source.getPrefix() + configuration.schematicConfig().getPathSeparator() + cleanKey;
+            cleanKey = source.prefix() + configuration.schematicConfig().pathSeparator() + cleanKey;
         }
 
         Schematic schematic;
@@ -330,7 +329,7 @@ public class SchematicBrushCache implements SchematicCache {
     @Override
     public List<String> getMatchingDirectories(Player player, String dir, int count) {
         Set<String> matches = new HashSet<>();
-        var separator = configuration.schematicConfig().getPathSeparator().charAt(0);
+        var separator = configuration.schematicConfig().pathSeparator().charAt(0);
         var deep = TextUtil.countChars(dir, separator);
         for (var key : schematicsCache.keySet()) {
             if (key.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {

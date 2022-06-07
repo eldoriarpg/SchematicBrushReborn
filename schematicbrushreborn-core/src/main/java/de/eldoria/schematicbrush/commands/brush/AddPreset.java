@@ -12,6 +12,8 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.utils.Consumers;
+import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.config.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -38,13 +40,16 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var session = sessions.getOrCreateSession(player);
 
-        var preset = configuration.presets().getPreset(player, args.asString(0));
-        CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
+        configuration.presets().getPreset(player, args.asString(0))
+                .whenComplete(Futures.whenComplete(preset -> {
+                    CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
 
-        for (var builder : preset.get().schematicSets()) {
-            session.addSchematicSet(builder.copy());
-        }
-        sessions.showBrush(player);
+                    for (var builder : preset.get().schematicSetsCopy()) {
+                        session.addSchematicSet(builder.copy());
+                    }
+                    sessions.showBrush(player);
+                }, err -> handleCommandError(player, err)))
+                .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
     }
 
     @Override

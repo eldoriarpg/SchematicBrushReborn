@@ -7,8 +7,14 @@
 package de.eldoria.schematicbrush.config.sections.presets;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.events.ConfigModifiedEvent;
+import de.eldoria.schematicbrush.storage.preset.Preset;
+import de.eldoria.schematicbrush.storage.preset.PresetContainer;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,17 +24,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
-public class PresetContainerImpl implements PresetContainer {
+public class YamlPresetContainer implements PresetContainer, ConfigurationSerializable {
     private final Map<String, Preset> presets = new HashMap<>();
 
-    public PresetContainerImpl(Map<String, Object> objectMap) {
+    public YamlPresetContainer(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         List<Preset> presetList = map.getValue("presets");
         presetList.forEach(p -> presets.put(p.name(), p));
     }
 
-    public PresetContainerImpl() {
+    public YamlPresetContainer() {
     }
 
     @Override
@@ -46,18 +53,20 @@ public class PresetContainerImpl implements PresetContainer {
      * @return optional containing the preset if found
      */
     @Override
-    public Optional<Preset> getPreset(String name) {
-        return Optional.ofNullable(presets.get(name.toLowerCase(Locale.ROOT)));
+    public CompletableFuture<Optional<Preset>> get(String name) {
+        return CompletableFuture.completedFuture(Optional.ofNullable(presets.get(name.toLowerCase(Locale.ROOT))));
     }
 
     /**
      * Add a preset
      *
      * @param preset preset to add
+     * @return
      */
     @Override
-    public void addPreset(Preset preset) {
+    public CompletableFuture<Void> add(Preset preset) {
         presets.put(preset.name(), preset);
+        return CompletableFuture.completedFuture(null);
     }
 
     /**
@@ -67,8 +76,8 @@ public class PresetContainerImpl implements PresetContainer {
      * @return true if the preset was removed
      */
     @Override
-    public boolean remove(String name) {
-        return presets.remove(name.toLowerCase(Locale.ROOT)) != null;
+    public CompletableFuture<Boolean> remove(String name) {
+        return CompletableFuture.completedFuture(presets.remove(name.toLowerCase(Locale.ROOT)) != null);
     }
 
     /**
@@ -77,8 +86,8 @@ public class PresetContainerImpl implements PresetContainer {
      * @return unmodifiable collection
      */
     @Override
-    public Collection<Preset> getPresets() {
-        return Collections.unmodifiableCollection(presets.values());
+    public CompletableFuture<Collection<Preset>> getPresets() {
+        return CompletableFuture.completedFuture(Collections.unmodifiableCollection(presets.values()));
     }
 
     /**
@@ -89,5 +98,10 @@ public class PresetContainerImpl implements PresetContainer {
     @Override
     public Set<String> names() {
         return presets.keySet();
+    }
+
+    @Override
+    public void close() throws IOException {
+        Bukkit.getPluginManager().callEvent(new ConfigModifiedEvent());
     }
 }

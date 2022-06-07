@@ -59,12 +59,12 @@ public class SchematicConfigImpl implements SchematicConfig {
     }
 
     @Override
-    public List<SchematicSource> getSources() {
+    public List<SchematicSource> sources() {
         return sources;
     }
 
     @Override
-    public String getPathSeparator() {
+    public String pathSeparator() {
         return pathSeparator.substring(0, 1);
     }
 
@@ -75,6 +75,6 @@ public class SchematicConfigImpl implements SchematicConfig {
 
     @Override
     public Optional<SchematicSource> getSourceForPath(Path path) {
-        return sources.stream().filter(source -> path.startsWith(source.getPath())).findFirst();
+        return sources.stream().filter(source -> path.startsWith(source.path())).findFirst();
     }
 }

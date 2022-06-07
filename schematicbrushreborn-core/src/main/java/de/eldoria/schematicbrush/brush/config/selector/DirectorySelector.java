@@ -41,7 +41,7 @@ public class DirectorySelector extends BaseSelector {
 
     @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
-        return registry.getCache(SchematicCache.DEFAULT_CACHE).getSchematicsByDirectory(player, directory, term());
+        return registry.getCache(SchematicCache.STORAGE).getSchematicsByDirectory(player, directory, term());
     }
 
     @Override

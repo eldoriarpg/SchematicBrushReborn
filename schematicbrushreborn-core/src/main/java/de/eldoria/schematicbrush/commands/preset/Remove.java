@@ -13,6 +13,7 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
+import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     private final Configuration configuration;
@@ -37,14 +39,22 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
+        CompletableFuture<Boolean> removal;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            CommandAssertions.isTrue(configuration.presets().removePreset(name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
+            removal = configuration.presets().globalContainer().remove(name)
+                    .whenComplete(Futures.whenComplete(
+                            success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
+                            err -> handleCommandError(player, err)));
         } else {
-            CommandAssertions.isTrue(configuration.presets().removePreset(player, name), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
+            removal = configuration.presets().playerContainer(player).remove(name)
+                    .whenComplete(Futures.whenComplete(
+                            success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
+                            err -> handleCommandError(player, err)));
         }
-
-        messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!");
+        removal.whenComplete(Futures.whenComplete(
+                succ -> messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!"),
+                err -> handleCommandError(player, err)));
     }
 
     @Override

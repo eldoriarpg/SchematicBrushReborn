@@ -65,6 +65,7 @@ public interface PasteMutation {
 
     /**
      * Set the mask which will be applied on the clipboard.
+     * @param mask mask
      */
     void maskSource(Mask mask);
 

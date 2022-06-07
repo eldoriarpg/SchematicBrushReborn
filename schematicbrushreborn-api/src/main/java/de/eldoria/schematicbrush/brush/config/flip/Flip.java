@@ -119,6 +119,10 @@ public interface Flip extends Shiftable<Flip> {
         }
     };
 
+    /**
+     * A enum like representation of all flip values.
+     * @return flip values
+     */
     static Flip[] values() {
         return new Flip[]{NONE, NORTH_SOUTH, EAST_WEST, UP_DOWN};
     }

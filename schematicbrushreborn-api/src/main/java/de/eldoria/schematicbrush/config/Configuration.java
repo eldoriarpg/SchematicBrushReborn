@@ -8,7 +8,7 @@ package de.eldoria.schematicbrush.config;
 
 import de.eldoria.schematicbrush.config.sections.GeneralConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicConfig;
-import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
+import de.eldoria.schematicbrush.storage.preset.Presets;
 
 /**
  * Plugin configuration
@@ -38,5 +38,5 @@ public interface Configuration {
      *
      * @return preset registry
      */
-    PresetRegistry presets();
+    Presets presets();
 }

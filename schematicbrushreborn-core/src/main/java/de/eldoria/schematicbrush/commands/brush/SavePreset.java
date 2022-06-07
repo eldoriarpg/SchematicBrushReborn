@@ -12,8 +12,10 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.config.ConfigurationImpl;
+import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -23,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
@@ -46,20 +50,29 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         var schematicSets = session.schematicSets().stream().map(SchematicSetBuilder::copy).toList();
         CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
         var preset = new PresetImpl(args.asString(0), schematicSets);
+        CompletableFuture<Optional<Preset>> addition;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            if (config.presets().getGlobalPreset(preset.name()).isPresent()) {
-                CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
-            }
-            config.presets().addPreset(preset);
+            addition = config.presets().getGlobalPreset(preset.name())
+                    .whenComplete(Futures.whenComplete(succ -> {
+                        if (succ.isPresent()) {
+                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                        }
+                        config.presets().addPreset(preset).join();
+                    }, err -> handleCommandError(player, err)));
         } else {
-            if (config.presets().getPreset(player, preset.name()).isPresent()) {
-                CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
-            }
-            config.presets().addPreset(player, preset);
+            addition = config.presets().getPreset(player, preset.name())
+                    .whenComplete(Futures.whenComplete(succ -> {
+                        if (succ.isPresent()) {
+                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                        }
+                        config.presets().addPreset(player, preset).join();
+                    }, err -> handleCommandError(player, err)));
         }
-        config.save();
-        messageSender().sendMessage(player, "Preset saved.");
+        addition.whenComplete(Futures.whenComplete(res -> {
+            config.save();
+            messageSender().sendMessage(player, "Preset saved.");
+        }, err -> handleCommandError(player, err)));
     }
 
     @Override

@@ -36,9 +36,9 @@ import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
-import de.eldoria.schematicbrush.config.sections.presets.PresetContainerImpl;
+import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
-import de.eldoria.schematicbrush.config.sections.presets.PresetRegistryImpl;
+import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
@@ -46,6 +46,8 @@ import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
+import de.eldoria.schematicbrush.storage.preset.PresetStorage;
+import de.eldoria.schematicbrush.storage.preset.PresetStorageImpl;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -62,6 +64,12 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private ConfigurationImpl config;
     private SchematicBrushCache cache;
     private RenderService renderService;
+    private PresetStorage presetStorage;
+
+    @Override
+    public void onPluginLoad() throws Throwable {
+        presetStorage = new PresetStorageImpl();
+    }
 
     @Override
     public void onPluginEnable() {
@@ -82,7 +90,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         config = new ConfigurationImpl(this);
 
         cache = new SchematicBrushCache(this, config);
-        schematics.register(SchematicCache.DEFAULT_CACHE, cache);
+        schematics.register(SchematicCache.STORAGE, cache);
+
+        presetStorage.register(PresetStorage.YAML, config.presets());
 
         reload();
 
@@ -140,7 +150,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         metrics.addCustomChart(new SimplePie("directory_count",
                 () -> reduceMetricValue(schematics.directoryCount(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("preset_count",
-                () -> reduceMetricValue(config.presets().count(), 100, 10, 50, 100)));
+                () -> reduceMetricValue(config.presets().count().join(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(UserData.get().isPremium())));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
@@ -165,7 +175,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
         return Arrays.asList(GeneralConfigImpl.class, PresetImpl.class,
-                SchematicConfigImpl.class, SchematicSourceImpl.class, PresetContainerImpl.class, PresetRegistryImpl.class,
+                SchematicConfigImpl.class, SchematicSourceImpl.class, YamlPresetContainer.class, YamlPresets.class,
                 SchematicSetBuilderImpl.class);
     }
 
@@ -177,6 +187,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public BrushSettingsRegistry brushSettingsRegistry() {
         return settingsRegistry;
+    }
+
+    @Override
+    public PresetStorage presetStorage() {
+        return null;
     }
 
     @Override

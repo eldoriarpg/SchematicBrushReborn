@@ -10,6 +10,8 @@ import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.utils.Consumers;
+import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.Colors;
@@ -40,18 +42,22 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         messageBlocker.blockPlayer(player);
-        var global = configuration.presets().getPresets()
-                .stream()
-                .map(preset -> "  " + preset.infoComponent(true, player.hasPermission(Permissions.Preset.GLOBAL)))
-                .collect(Collectors.joining("\n"));
-        var local = configuration.presets().getPresets(player)
-                .stream()
-                .map(preset -> "  " + preset.infoComponent(false, true))
-                .collect(Collectors.joining("\n"));
+        configuration.presets().globalContainer().getPresets().thenApply(globals -> globals.stream()
+                        .map(preset -> "  " + preset.infoComponent(true, player.hasPermission(Permissions.Preset.GLOBAL)))
+                        .collect(Collectors.joining("\n")))
+                .exceptionally(err -> {
+                    handleCommandError(player, err);
+                    return "";
+                })
+                .thenAcceptBoth(configuration.presets().playerContainer(player).getPresets(), (global, locals) -> {
+                    var local = locals.stream()
+                            .map(preset -> "  " + preset.infoComponent(false, true))
+                            .collect(Collectors.joining("\n"));
+                    var message = String.format("<%s>Presets:%n%s%n<%s>Global:%n%s", Colors.HEADING, local, Colors.HEADING, global);
+                    message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+                    messageBlocker.announce(player, "[x]");
+                    audiences.sender(player).sendMessage(miniMessage.deserialize(message));
+                }).whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
 
-        var message = String.format("<%s>Presets:%n%s%n<%s>Global:%n%s", Colors.HEADING, local, Colors.HEADING, global);
-        message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
-        messageBlocker.announce(player, "[x]");
-        audiences.sender(player).sendMessage(miniMessage.deserialize(message));
     }
 }
