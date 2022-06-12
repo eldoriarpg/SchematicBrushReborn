@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.messages.MessageChannel;
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,7 @@ public interface GeneralConfig extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();
 
+    Nameable storageType();
     boolean isCheckUpdates();
 
     boolean isPreviewDefault();

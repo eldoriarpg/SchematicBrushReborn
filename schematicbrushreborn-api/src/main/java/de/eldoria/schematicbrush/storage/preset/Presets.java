@@ -93,6 +93,17 @@ public interface Presets {
     }
 
     /**
+     * Returns the global or player container based on the preset name provided
+     *
+     * @param player player
+     * @param name   preset name
+     * @return preset container, which holds the player or global presets
+     */
+    default PresetContainer containerByName(Player player, String name) {
+        return name.startsWith("g:") ? globalContainer() : playerContainer(player);
+    }
+
+    /**
      * Get presets of a player
      *
      * @param player player

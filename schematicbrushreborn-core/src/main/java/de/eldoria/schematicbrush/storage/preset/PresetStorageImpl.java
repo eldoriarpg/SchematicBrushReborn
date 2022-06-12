@@ -12,14 +12,20 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class PresetStorageImpl implements PresetStorage {
     private final Map<Nameable, Presets> storages = new HashMap<>();
 
     @Override
     public Presets getRegistry(Nameable key) {
-        return storages.get(key);
+        return Optional.ofNullable(storages.get(key))
+                .orElseThrow(() -> new IllegalArgumentException("No storage preset with name " + key.name() + " registered.\n" +
+                                                                "Applicable are: " + storages.keySet().stream()
+                                                                        .map(Nameable::name)
+                                                                        .collect(Collectors.joining(", "))));
     }
 
     /**

@@ -8,6 +8,8 @@ package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
+import de.eldoria.schematicbrush.storage.preset.PresetStorage;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +18,7 @@ import java.util.Map;
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "CanBeFinal"})
 @SerializableAs("sbrGeneralSettings")
 public class GeneralConfigImpl implements GeneralConfig {
+    private String storageType = PresetStorage.YAML.name();
     private boolean checkUpdates = true;
     private boolean previewDefault = true;
     private boolean showNameDefault = false;
@@ -40,6 +43,7 @@ public class GeneralConfigImpl implements GeneralConfig {
         maxRenderSize = map.getValueOrDefault("maxRenderSize", 2500);
         maxEffectiveRenderSize = map.getValueOrDefault("maxEffectiveRenderSize", maxRenderSize);
         renderDistance = map.getValueOrDefault("renderDistance", 100);
+        storageType = map.getValueOrDefault("storageType", PresetStorage.YAML.name());
     }
 
     @Override
@@ -54,7 +58,13 @@ public class GeneralConfigImpl implements GeneralConfig {
                 .add("maxRenderSize", maxRenderSize)
                 .add("maxEffectiveRenderSize", maxEffectiveRenderSize)
                 .add("renderDistance", renderDistance)
+                .add("storageType", storageType)
                 .build();
+    }
+
+    @Override
+    public Nameable storageType() {
+        return Nameable.of(storageType);
     }
 
     @Override

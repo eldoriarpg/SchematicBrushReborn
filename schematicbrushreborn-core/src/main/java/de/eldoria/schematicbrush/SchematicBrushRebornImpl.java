@@ -48,6 +48,7 @@ import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
 import de.eldoria.schematicbrush.storage.preset.PresetStorage;
 import de.eldoria.schematicbrush.storage.preset.PresetStorageImpl;
+import de.eldoria.schematicbrush.storage.preset.Presets;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -65,6 +66,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private SchematicBrushCache cache;
     private RenderService renderService;
     private PresetStorage presetStorage;
+    private Presets presets;
 
     @Override
     public void onPluginLoad() throws Throwable {
@@ -92,7 +94,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         cache = new SchematicBrushCache(this, config);
         schematics.register(SchematicCache.STORAGE, cache);
 
+
+
         presetStorage.register(PresetStorage.YAML, config.presets());
+
+        presets = presetStorage.getRegistry(config.general().storageType());
 
         reload();
 
@@ -101,8 +107,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         var messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
 
-        var brushCommand = new Brush(this, schematics, config, settingsRegistry, messageBlocker);
-        var presetCommand = new Preset(this, config, messageBlocker);
+        var brushCommand = new Brush(this, schematics, presets, settingsRegistry, messageBlocker);
+        var presetCommand = new Preset(this, presets, messageBlocker);
         var adminCommand = new Admin(this, schematics);
         var settingsCommand = new Settings(this, config, renderService, notifyListener, messageBlocker);
 
@@ -129,6 +135,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginDisable() {
+        config.saveConfigs();
         cache.shutdown();
     }
 
@@ -150,7 +157,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         metrics.addCustomChart(new SimplePie("directory_count",
                 () -> reduceMetricValue(schematics.directoryCount(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("preset_count",
-                () -> reduceMetricValue(config.presets().count().join(), 100, 10, 50, 100)));
+                () -> reduceMetricValue(presets.count().join(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(UserData.get().isPremium())));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",

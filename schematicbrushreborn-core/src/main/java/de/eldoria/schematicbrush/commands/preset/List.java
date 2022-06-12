@@ -14,6 +14,7 @@ import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.storage.preset.Presets;
 import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.Permissions;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -25,15 +26,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.stream.Collectors;
 
 public class List extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Configuration configuration;
+    private final Presets presets;
     private final MessageBlocker messageBlocker;
     private final MiniMessage miniMessage;
     private final BukkitAudiences audiences;
 
-    public List(Plugin plugin, Configuration configuration, MessageBlocker messageBlocker) {
+    public List(Plugin plugin, Presets presets, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("list")
                 .build());
-        this.configuration = configuration;
+        this.presets = presets;
         this.messageBlocker = messageBlocker;
         miniMessage = MiniMessage.miniMessage();
         audiences = BukkitAudiences.create(plugin);
@@ -42,14 +43,14 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         messageBlocker.blockPlayer(player);
-        configuration.presets().globalContainer().getPresets().thenApply(globals -> globals.stream()
+        presets.globalContainer().getPresets().thenApply(globals -> globals.stream()
                         .map(preset -> "  " + preset.infoComponent(true, player.hasPermission(Permissions.Preset.GLOBAL)))
                         .collect(Collectors.joining("\n")))
                 .exceptionally(err -> {
                     handleCommandError(player, err);
                     return "";
                 })
-                .thenAcceptBoth(configuration.presets().playerContainer(player).getPresets(), (global, locals) -> {
+                .thenAcceptBoth(presets.playerContainer(player).getPresets(), (global, locals) -> {
                     var local = locals.stream()
                             .map(preset -> "  " + preset.infoComponent(false, true))
                             .collect(Collectors.joining("\n"));

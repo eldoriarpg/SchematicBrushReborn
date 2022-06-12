@@ -17,6 +17,7 @@ import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
+import de.eldoria.schematicbrush.storage.preset.Presets;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -30,10 +31,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
-    private final ConfigurationImpl config;
+    private final Presets config;
     private final Sessions sessions;
 
-    public SavePreset(Plugin plugin, Sessions sessions, ConfigurationImpl config) {
+    public SavePreset(Plugin plugin, Sessions sessions, Presets config) {
         super(plugin, CommandMeta.builder("savePreset")
                 .addUnlocalizedArgument("name", true)
                 .withPermission(Permissions.Preset.USE)
@@ -53,24 +54,24 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         CompletableFuture<Optional<Preset>> addition;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            addition = config.presets().getGlobalPreset(preset.name())
+            addition = config.globalContainer().get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
                             CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
                         }
-                        config.presets().addPreset(preset).join();
+                        config.globalContainer().add(preset).join();
                     }, err -> handleCommandError(player, err)));
         } else {
-            addition = config.presets().getPreset(player, preset.name())
+            addition = config.playerContainer(player).get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
                             CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
                         }
-                        config.presets().addPreset(player, preset).join();
+                        config.playerContainer(player).add(preset).join();
                     }, err -> handleCommandError(player, err)));
         }
         addition.whenComplete(Futures.whenComplete(res -> {
-            config.save();
+            //TODO: Think about storage saving
             messageSender().sendMessage(player, "Preset saved.");
         }, err -> handleCommandError(player, err)));
     }

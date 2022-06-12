@@ -18,6 +18,7 @@ import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.storage.preset.Presets;
 import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -30,12 +31,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Configuration configuration;
+    private final Presets configuration;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
     private final MessageBlocker messageBlocker;
 
-    public Info(Plugin plugin, Configuration configuration, MessageBlocker messageBlocker) {
+    public Info(Plugin plugin, Presets configuration, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("info")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
@@ -49,7 +50,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
 
-        configuration.presets().getPreset(player, name)
+        configuration.playerContainer(player).get(name)
                 .whenComplete(Futures.whenComplete(res -> {
                     CommandAssertions.isTrue(res.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
                     var preset = res.get();
@@ -68,7 +69,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return configuration.presets().complete(player, args.asString(0));
+            return configuration.complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }

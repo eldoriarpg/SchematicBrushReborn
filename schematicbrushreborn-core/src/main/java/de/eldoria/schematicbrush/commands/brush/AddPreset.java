@@ -14,7 +14,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.storage.preset.Presets;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +25,9 @@ import java.util.List;
 
 public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
-    private final Configuration configuration;
+    private final Presets configuration;
 
-    public AddPreset(Plugin plugin, Sessions sessions, Configuration configuration) {
+    public AddPreset(Plugin plugin, Sessions sessions, Presets configuration) {
         super(plugin, CommandMeta.builder("addpreset")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
@@ -40,7 +40,8 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var session = sessions.getOrCreateSession(player);
 
-        configuration.presets().getPreset(player, args.asString(0))
+        configuration.containerByName(player, args.asString(0))
+                .get(args.asString(0))
                 .whenComplete(Futures.whenComplete(preset -> {
                     CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
 
@@ -55,7 +56,7 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return configuration.presets().complete(player, args.asString(0));
+            return configuration.complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }
