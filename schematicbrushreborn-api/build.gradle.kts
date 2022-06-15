@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api("de.eldoria", "eldo-util", "1.13.5")
     api("de.eldoria", "messageblocker", "1.1.1")
-    api("net.kyori", "adventure-platform-bukkit", "4.1.0")
+    api("net.kyori", "adventure-platform-bukkit", "4.1.1")
     api("net.kyori", "adventure-text-minimessage", "4.10.1")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
