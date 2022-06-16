@@ -67,16 +67,17 @@ public class SchematicBrushCache implements SchematicCache {
 
         schematicsCache.clear();
 
-        for (var key : configuration.schematicConfig().sources()) {
-            var path = key.path();
+        for (var source : configuration.schematicConfig().sources()) {
+            var path = source.path();
             if (path == null || path.isEmpty()) {
-                plugin.getLogger().log(Level.CONFIG, "Path " + key + " has no path. Skipping!");
+                plugin.getLogger().log(Level.CONFIG, "Path " + source + " has no path. Skipping!");
                 continue;
             }
 
             path = path.replace("\\", "/");
 
-            loadSchematics(Paths.get(root, path));
+            var load = source.isRelative() ? Paths.get(root, path) : Paths.get(path);
+            loadSchematics(load);
         }
     }
 

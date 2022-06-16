@@ -12,4 +12,5 @@ import de.eldoria.schematicbrush.storage.base.ContainerHolder;
  * A schematic registry to manage {@link PresetContainer}
  */
 public interface Presets extends ContainerHolder<Preset, PresetContainer> {
+
 }

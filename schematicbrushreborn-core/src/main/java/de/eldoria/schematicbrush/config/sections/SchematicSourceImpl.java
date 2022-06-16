@@ -18,6 +18,7 @@ import java.util.Map;
 @SerializableAs("sbrSchematicSource")
 public class SchematicSourceImpl implements SchematicSource {
     private final String path;
+    private final boolean relative;
     private final String prefix;
     private final List<String> excludedPath;
 
@@ -25,12 +26,14 @@ public class SchematicSourceImpl implements SchematicSource {
         var map = SerializationUtil.mapOf(objectMap);
         path = map.getValue("path");
         prefix = map.getValue("prefix");
+        relative = map.getValueOrDefault("relative", true);
         excludedPath = map.getValue("excludedPath");
     }
 
-    public SchematicSourceImpl(String path, String prefix, List<String> excludedPath) {
+    public SchematicSourceImpl(String path, String prefix,boolean relative, List<String> excludedPath) {
         this.path = path;
         this.prefix = prefix;
+        this.relative = relative;
         this.excludedPath = excludedPath;
     }
 
@@ -42,6 +45,11 @@ public class SchematicSourceImpl implements SchematicSource {
     @Override
     public String path() {
         return path;
+    }
+
+    @Override
+    public boolean isRelative() {
+        return relative;
     }
 
     @Override

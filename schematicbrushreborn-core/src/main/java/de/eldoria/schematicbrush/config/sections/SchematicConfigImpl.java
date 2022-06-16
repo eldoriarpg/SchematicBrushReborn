@@ -24,9 +24,9 @@ public class SchematicConfigImpl implements SchematicConfig {
 
     public SchematicConfigImpl() {
         sources = new ArrayList<>();
-        sources.add(new SchematicSourceImpl("SchematicBrushReborn/schematics", "sbr", new ArrayList<>()));
-        sources.add(new SchematicSourceImpl("FastAsyncWorldEdit/schematics", "fawe", new ArrayList<>()));
-        sources.add(new SchematicSourceImpl("WorldEdit/schematics", "we", new ArrayList<>()));
+        sources.add(new SchematicSourceImpl("SchematicBrushReborn/schematics", "sbr", true, new ArrayList<>()));
+        sources.add(new SchematicSourceImpl("FastAsyncWorldEdit/schematics", "fawe", true, new ArrayList<>()));
+        sources.add(new SchematicSourceImpl("WorldEdit/schematics", "we", true, new ArrayList<>()));
         pathSeparator = "/";
         pathSourceAsPrefix = false;
     }
