@@ -6,11 +6,10 @@
 
 package de.eldoria.schematicbrush.storage.brush;
 
-import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.storage.base.Container;
 
 import java.io.Closeable;
 
-public interface BrushContainer extends Closeable, Container<BrushBuilder> {
+public interface BrushContainer extends Closeable, Container<Brush> {
 
 }

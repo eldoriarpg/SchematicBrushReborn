@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.storage.brush;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,15 @@ import java.util.Map;
 public class Brush implements ConfigurationSerializable {
     private final String name;
     private final BrushBuilderSnapshot snapshot;
+
+    public Brush(String name, BrushBuilderSnapshot snapshot) {
+        this.name = name;
+        this.snapshot = snapshot;
+    }
+    public Brush(String name, BrushBuilder snapshot) {
+        this.name = name;
+        this.snapshot = snapshot.snapshot();
+    }
 
     public Brush(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
