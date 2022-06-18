@@ -6,8 +6,6 @@
 
 package de.eldoria.schematicbrush.brush.config.builder;
 
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.SchematicBrushImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsImpl;
@@ -17,7 +15,6 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,12 +26,12 @@ import java.util.stream.Collectors;
 
 public final class BrushBuilderImpl implements BrushBuilder {
     private final List<SchematicSetBuilder> schematicSets;
-    private Player owner;
-    private BrushSettingsRegistry settingsRegistry;
-    private SchematicRegistry schematicRegistry;
+    private final Player owner;
+    private final BrushSettingsRegistry settingsRegistry;
+    private final SchematicRegistry schematicRegistry;
     private final Map<Nameable, Mutator<?>> placementModifier;
 
-    private BrushBuilderImpl(List<SchematicSetBuilder> schematicSets, Player owner, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry, Map<Nameable, Mutator<?>> placementModifier) {
+    BrushBuilderImpl(List<SchematicSetBuilder> schematicSets, Player owner, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry, Map<Nameable, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
         this.owner = owner;
         this.settingsRegistry = settingsRegistry;
@@ -53,19 +50,6 @@ public final class BrushBuilderImpl implements BrushBuilder {
         }
     }
 
-    public BrushBuilderImpl(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
-        this.schematicSets = map.getValue("schematicSets");
-        placementModifier = map.getMap("placementModifier", (key, v) -> Nameable.of(key));
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .addMap("placementModifier", placementModifier, (key, v) -> key.name())
-                .build();
-    }
 
     /**
      * Get the schematic set builder for the set with the id
@@ -195,13 +179,14 @@ public final class BrushBuilderImpl implements BrushBuilder {
     }
 
     @Override
-    public BrushBuilder load(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
-        Map<Nameable, Mutator<?>> mutatorMap = placementModifier.entrySet()
+    public BrushBuilderSnapshot snapshot(){
+        Map<Nameable, Mutator<?>> placementModifier = this.placementModifier.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, k -> k.getValue().copy()));
         var schematicSets = this.schematicSets.stream()
                 .map(SchematicSetBuilder::copy)
                 .collect(Collectors.toCollection(ArrayList::new));
-        return new BrushBuilderImpl(schematicSets, player, settingsRegistry, schematicRegistry, mutatorMap);
+        return new BrushBuilderSnapshotImpl(placementModifier, schematicSets);
     }
+
 }

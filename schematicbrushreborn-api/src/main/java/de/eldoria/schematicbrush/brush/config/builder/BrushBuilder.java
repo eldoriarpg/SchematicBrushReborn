@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Builder to build brushes.
  */
-public interface BrushBuilder extends ConfigurationSerializable {
+public interface BrushBuilder {
     /**
      * Get the schematic set builder for the set with the id
      *
@@ -101,15 +101,5 @@ public interface BrushBuilder extends ConfigurationSerializable {
      */
     void refresh();
 
-    /**
-     * Loads a brush builder after getting deserialized.
-     *
-     * This is required to inject required dependencies which were not serialized.
-     *
-     * @param player player of the builder
-     * @param settingsRegistry settings registry
-     * @param schematicRegistry schematic registry
-     * @return new BrushBuilder instance.
-     */
-    BrushBuilder load(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry);
+    BrushBuilderSnapshot snapshot();
 }
