@@ -22,6 +22,7 @@ public class Brush implements ConfigurationSerializable {
         this.name = name;
         this.snapshot = snapshot;
     }
+
     public Brush(String name, BrushBuilder snapshot) {
         this.name = name;
         this.snapshot = snapshot.snapshot();
