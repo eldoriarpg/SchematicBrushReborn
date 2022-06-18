@@ -7,15 +7,18 @@
 package de.eldoria.schematicbrush.storage.base;
 
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
+import de.eldoria.eldoutilities.utils.Futures;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public interface ContainerHolder<T extends Container<?>> {
+public interface ContainerHolder<V, T extends Container<V>> {
     /**
      * Get container of a player
      *
@@ -104,4 +107,13 @@ public interface ContainerHolder<T extends Container<?>> {
      * @return preset count
      */
     CompletableFuture<Integer> count();
+
+    default void migrate(ContainerHolder<V, T> container) {
+        globalContainer().migrate(container.globalContainer());
+        container.playerContainers().whenComplete(Futures.whenComplete(map -> {
+            for (Map.Entry<UUID, ? extends T> entry : map.entrySet()) {
+                playerContainer(entry.getKey()).migrate(entry.getValue());
+            }
+        }, err -> SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load player containers", err)));
+    }
 }

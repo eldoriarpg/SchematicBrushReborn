@@ -35,6 +35,9 @@ public class StorageRegistryImpl implements StorageRegistry {
 
     @Override
     public void migrate(Nameable source, Nameable target) {
-        // TODO
+        var sourceStorage = getRegistry(source);
+        var targetStorage = getRegistry(target);
+
+
     }
 }

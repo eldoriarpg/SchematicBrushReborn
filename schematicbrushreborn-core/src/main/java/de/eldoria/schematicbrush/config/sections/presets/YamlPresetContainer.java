@@ -86,7 +86,7 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
      * @return unmodifiable collection
      */
     @Override
-    public CompletableFuture<Collection<Preset>> getPresets() {
+    public CompletableFuture<Collection<Preset>> all() {
         return CompletableFuture.completedFuture(Collections.unmodifiableCollection(presets.values()));
     }
 

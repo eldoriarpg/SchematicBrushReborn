@@ -42,14 +42,14 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         messageBlocker.blockPlayer(player);
-        storage.presets().globalContainer().getPresets().thenApply(globals -> globals.stream()
+        storage.presets().globalContainer().all().thenApply(globals -> globals.stream()
                         .map(preset -> "  " + preset.infoComponent(true, player.hasPermission(Permissions.Preset.GLOBAL)))
                         .collect(Collectors.joining("\n")))
                 .exceptionally(err -> {
                     handleCommandError(player, err);
                     return "";
                 })
-                .thenAcceptBoth(storage.presets().playerContainer(player).getPresets(), (global, locals) -> {
+                .thenAcceptBoth(storage.presets().playerContainer(player).all(), (global, locals) -> {
                     var local = locals.stream()
                             .map(preset -> "  " + preset.infoComponent(false, true))
                             .collect(Collectors.joining("\n"));

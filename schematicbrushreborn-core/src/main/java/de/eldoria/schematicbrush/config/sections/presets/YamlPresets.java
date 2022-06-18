@@ -62,6 +62,6 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
 
     @Override
     public CompletableFuture<Integer> count() {
-        return CompletableFuture.completedFuture(globalPresets.getPresets().join().size() + playerPresets.values().stream().mapToInt(container -> container.getPresets().join().size()).sum());
+        return CompletableFuture.completedFuture(globalPresets.all().join().size() + playerPresets.values().stream().mapToInt(container -> container.all().join().size()).sum());
     }
 }

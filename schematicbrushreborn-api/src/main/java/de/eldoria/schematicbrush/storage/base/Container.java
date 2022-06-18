@@ -6,10 +6,14 @@
 
 package de.eldoria.schematicbrush.storage.base;
 
+import de.eldoria.eldoutilities.utils.Futures;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public interface Container<T> {
     /**
@@ -32,7 +36,7 @@ public interface Container<T> {
      *
      * @return unmodifiable collection
      */
-    CompletableFuture<Collection<T>> getPresets();
+    CompletableFuture<Collection<T>> all();
 
     /**
      * Remove a entry by name
@@ -48,4 +52,13 @@ public interface Container<T> {
      * @return set of names
      */
     Set<String> names();
+
+    default void migrate(Container<T> container) {
+        container.all().whenComplete(Futures.whenComplete(entries -> {
+            for (var entry : entries)
+                add(entry).whenComplete(Futures.whenComplete(
+                        res -> {
+                        }, err -> SchematicBrushReborn.logger().log(Level.SEVERE, "Could not save player container", err)));
+        }, err -> SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load player container", err)));
+    }
 }

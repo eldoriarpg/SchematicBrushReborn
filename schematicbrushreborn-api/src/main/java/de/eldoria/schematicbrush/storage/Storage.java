@@ -23,4 +23,9 @@ public interface Storage {
      * @return brushes storages
      */
     Brushes brushes();
+
+    default void migrate(Storage storage) {
+        presets().migrate(storage.presets());
+        brushes().migrate(storage.brushes());
+    }
 }
