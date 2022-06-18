@@ -183,7 +183,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
         return Arrays.asList(GeneralConfigImpl.class, PresetImpl.class,
                 SchematicConfigImpl.class, SchematicSourceImpl.class, YamlPresetContainer.class, YamlPresets.class,
-                SchematicSetBuilderImpl.class);
+                SchematicSetBuilderImpl.class, de.eldoria.schematicbrush.storage.brush.Brush.class);
     }
 
     @Override
