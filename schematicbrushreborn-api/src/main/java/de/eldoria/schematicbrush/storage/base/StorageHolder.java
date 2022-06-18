@@ -4,14 +4,12 @@
  *     Copyright (C) 2021 EldoriaRPG Team and Contributor
  */
 
-package de.eldoria.schematicbrush.storage.preset;
+package de.eldoria.schematicbrush.storage.base;
 
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 
-public interface PresetStorage {
-    Nameable YAML = Nameable.of("yaml");
-
-    Presets getRegistry(Nameable key);
+public interface StorageHolder<T> {
+    T getRegistry(Nameable key);
 
     /**
      * Registers a new storage type
@@ -19,7 +17,7 @@ public interface PresetStorage {
      * @param key     key
      * @param storage the storage access provider
      */
-    void register(Nameable key, Presets storage);
+    void register(Nameable key, T storage);
 
     /**
      * Unregisters a storage type

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @SerializableAs("sbrPreset")
-public class PresetImpl extends Preset implements ConfigurationSerializable {
+public class PresetImpl extends Preset {
 
     public PresetImpl(String name, List<SchematicSetBuilder> schematicSets) {
         this(name, "none", schematicSets);

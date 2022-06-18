@@ -4,12 +4,13 @@
  *     Copyright (C) 2021 EldoriaRPG Team and Contributor
  */
 
-package de.eldoria.schematicbrush.storage.preset;
+package de.eldoria.schematicbrush.storage.brush;
 
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.storage.base.Container;
 
 import java.io.Closeable;
 
-public interface PresetContainer extends Closeable, Container<Preset> {
+public interface BrushContainer extends Closeable, Container<BrushBuilder> {
 
 }

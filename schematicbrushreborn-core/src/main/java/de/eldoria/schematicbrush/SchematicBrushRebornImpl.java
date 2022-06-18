@@ -36,8 +36,8 @@ import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
-import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
+import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
@@ -46,9 +46,10 @@ import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
-import de.eldoria.schematicbrush.storage.preset.PresetStorage;
-import de.eldoria.schematicbrush.storage.preset.PresetStorageImpl;
-import de.eldoria.schematicbrush.storage.preset.Presets;
+import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
+import de.eldoria.schematicbrush.storage.StorageRegistryImpl;
+import de.eldoria.schematicbrush.storage.YamlStorage;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -65,12 +66,12 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private ConfigurationImpl config;
     private SchematicBrushCache cache;
     private RenderService renderService;
-    private PresetStorage presetStorage;
-    private Presets presets;
+    private StorageRegistry storageRegistry;
+    private Storage storage;
 
     @Override
     public void onPluginLoad() throws Throwable {
-        presetStorage = new PresetStorageImpl();
+        storageRegistry = new StorageRegistryImpl();
     }
 
     @Override
@@ -95,10 +96,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         schematics.register(SchematicCache.STORAGE, cache);
 
 
+        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config.presets()));
 
-        presetStorage.register(PresetStorage.YAML, config.presets());
-
-        presets = presetStorage.getRegistry(config.general().storageType());
+        storage = storageRegistry.getRegistry(config.general().storageType());
 
         reload();
 
@@ -107,8 +107,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         var messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
 
-        var brushCommand = new Brush(this, schematics, presets, settingsRegistry, messageBlocker);
-        var presetCommand = new Preset(this, presets, messageBlocker);
+        var brushCommand = new Brush(this, schematics, storage, settingsRegistry, messageBlocker);
+        var presetCommand = new Preset(this, storage, messageBlocker);
         var adminCommand = new Admin(this, schematics);
         var settingsCommand = new Settings(this, config, renderService, notifyListener, messageBlocker);
 
@@ -157,7 +157,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         metrics.addCustomChart(new SimplePie("directory_count",
                 () -> reduceMetricValue(schematics.directoryCount(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("preset_count",
-                () -> reduceMetricValue(presets.count().join(), 100, 10, 50, 100)));
+                () -> reduceMetricValue(storage.presets().count().join(), 100, 10, 50, 100)));
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(UserData.get().isPremium())));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
@@ -197,8 +197,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     @Override
-    public PresetStorage presetStorage() {
-        return null;
+    public StorageRegistry storageRegistry() {
+        return storageRegistry;
     }
 
     @Override

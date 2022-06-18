@@ -12,6 +12,7 @@ import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
@@ -32,13 +33,13 @@ public final class BrushSettingsImpl implements BrushSettings {
      */
     private final List<SchematicSet> schematicSets;
 
-    private final Map<PlacementModifier, Mutator<?>> placementModifier;
+    private final Map<Nameable, Mutator<?>> placementModifier;
     /**
      * The total weight of all brushes in the {@link #schematicSets} list
      */
     private final int totalWeight;
 
-    public BrushSettingsImpl(List<SchematicSet> schematicSets, Map<PlacementModifier, Mutator<?>> placementModifier) {
+    public BrushSettingsImpl(List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
         this.placementModifier = placementModifier;
 

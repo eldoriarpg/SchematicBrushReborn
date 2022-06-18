@@ -23,9 +23,8 @@ import de.eldoria.schematicbrush.commands.brush.SavePreset;
 import de.eldoria.schematicbrush.commands.brush.Sessions;
 import de.eldoria.schematicbrush.commands.brush.Show;
 import de.eldoria.schematicbrush.commands.brush.ShowSet;
-import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import de.eldoria.schematicbrush.storage.preset.Presets;
+import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.plugin.Plugin;
 
@@ -33,7 +32,7 @@ import org.bukkit.plugin.Plugin;
  * Command which is used to create a new brush. Rewrite of old schbr command.
  */
 public class Brush extends AdvancedCommand {
-    public Brush(Plugin plugin, SchematicRegistry schematics, Presets config, BrushSettingsRegistry setting, MessageBlocker messageBlocker) {
+    public Brush(Plugin plugin, SchematicRegistry schematics, Storage storage, BrushSettingsRegistry setting, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("sbr")
                 .withPermission(Permissions.Brush.USE)
                 .buildSubCommands((cmds, self) -> {
@@ -49,8 +48,8 @@ public class Brush extends AdvancedCommand {
                     cmds.add(new RemoveSet(plugin, sessions));
                     cmds.add(new Show(plugin, sessions));
                     cmds.add(new ShowSet(plugin, sessions));
-                    cmds.add(new AddPreset(plugin, sessions, config));
-                    cmds.add(new SavePreset(plugin, sessions, config));
+                    cmds.add(new AddPreset(plugin, sessions, storage));
+                    cmds.add(new SavePreset(plugin, sessions, storage));
                     cmds.add(new RefreshSchematics(plugin, sessions, setting, schematics));
                 })
                 .build());

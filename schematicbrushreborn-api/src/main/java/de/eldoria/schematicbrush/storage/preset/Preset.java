@@ -11,17 +11,15 @@ import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.util.Colors;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Representing a schematic preset which holds multiple schematic sets.
  */
-public abstract class Preset {
+public abstract class Preset implements ConfigurationSerializable {
     protected final String name;
     protected final List<SchematicSetBuilder> schematicSets;
     protected String description;
@@ -37,7 +35,7 @@ public abstract class Preset {
      *
      * @return name
      */
-    public String name(){
+    public String name() {
         return name;
     }
 

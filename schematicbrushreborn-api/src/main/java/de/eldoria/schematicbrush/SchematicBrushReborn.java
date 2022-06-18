@@ -11,7 +11,7 @@ import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import de.eldoria.schematicbrush.storage.preset.PresetStorage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
      *
      * @return preset storage
      */
-    public abstract PresetStorage presetStorage();
+    public abstract StorageRegistry storageRegistry();
 
     /**
      * Get the plugin config

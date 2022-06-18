@@ -14,7 +14,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.storage.preset.Presets;
+import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -25,15 +25,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Presets config;
+    private final Storage storage;
 
-    public Descr(Plugin plugin, Presets config) {
+    public Descr(Plugin plugin, Storage storage) {
         super(plugin, CommandMeta.builder("descr")
                 .addUnlocalizedArgument("name", true)
                 .addUnlocalizedArgument("descr", true)
                 .hidden()
                 .build());
-        this.config = config;
+        this.storage = storage;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
 
         if (name.startsWith("g:")) CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
 
-        config.playerContainer(player).get(name)
+        storage.presets().playerContainer(player).get(name)
                 .whenComplete(Futures.whenComplete(preset -> {
                     CommandAssertions.isTrue(preset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
 
@@ -54,7 +54,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return config.complete(player, args.asString(0));
+            return storage.presets().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }
