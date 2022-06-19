@@ -3,12 +3,11 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.1.9"
+version = "2.1.10"
 
 repositories {
     maven("https://eldonexus.de/repository/maven-public")
     maven("https://eldonexus.de/repository/maven-proxies")
-    //maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
