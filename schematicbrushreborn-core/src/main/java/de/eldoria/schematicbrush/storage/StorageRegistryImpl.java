@@ -38,6 +38,9 @@ public class StorageRegistryImpl implements StorageRegistry {
         var sourceStorage = getRegistry(source);
         var targetStorage = getRegistry(target);
 
+        if (sourceStorage == null) throw new IllegalArgumentException("Storage " + source + " does not exist.");
+        if (targetStorage == null) throw new IllegalArgumentException("Storage " + target + " does not exist.");
 
+        targetStorage.migrate(sourceStorage);
     }
 }
