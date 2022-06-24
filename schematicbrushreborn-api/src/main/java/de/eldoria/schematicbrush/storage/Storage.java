@@ -9,6 +9,8 @@ package de.eldoria.schematicbrush.storage;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import de.eldoria.schematicbrush.storage.preset.Presets;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface Storage {
     /**
      * Get the preset storage
@@ -24,8 +26,10 @@ public interface Storage {
      */
     Brushes brushes();
 
-    default void migrate(Storage storage) {
-        presets().migrate(storage.presets());
-        brushes().migrate(storage.brushes());
+    default CompletableFuture<Void> migrate(Storage storage) {
+        var presets = presets().migrate(storage.presets());
+        var brushes = brushes().migrate(storage.brushes());
+
+        return CompletableFuture.allOf(presets, brushes);
     }
 }

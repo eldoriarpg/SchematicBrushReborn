@@ -42,6 +42,7 @@ public final class Permissions {
         public static final String RELOAD = perm(ADMIN, "reload");
         public static final String RELOAD_CACHE = perm(ADMIN, "reloadcache");
         public static final String DEBUG = perm(ADMIN, "debug");
+        public static final String MIGRATE = perm(ADMIN, "migrate");
 
         private Admin() {
             throw new UnsupportedOperationException("This is a utility class.");

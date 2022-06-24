@@ -11,6 +11,7 @@ import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -108,12 +109,17 @@ public interface ContainerHolder<V, T extends Container<V>> {
      */
     CompletableFuture<Integer> count();
 
-    default void migrate(ContainerHolder<V, T> container) {
-        globalContainer().migrate(container.globalContainer());
-        container.playerContainers().whenComplete(Futures.whenComplete(map -> {
+    default CompletableFuture<Void> migrate(ContainerHolder<V, T> container) {
+        List<CompletableFuture<?>> migrations = new ArrayList<>();
+        var global = globalContainer().migrate(container.globalContainer());
+        var playerMigration = container.playerContainers().whenComplete(Futures.whenComplete(map -> {
             for (Map.Entry<UUID, ? extends T> entry : map.entrySet()) {
-                playerContainer(entry.getKey()).migrate(entry.getValue());
+                var migrate = playerContainer(entry.getKey()).migrate(entry.getValue());
+                migrations.add(migrate);
             }
         }, err -> SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load player containers", err)));
+        migrations.add(global);
+        migrations.add(playerMigration);
+        return CompletableFuture.allOf(migrations.toArray(CompletableFuture[]::new));
     }
 }

@@ -48,9 +48,9 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
     public abstract BrushSettingsRegistry brushSettingsRegistry();
 
     /**
-     * Get the preset storage
+     * Get the storage registry
      *
-     * @return preset storage
+     * @return storage registry
      */
     public abstract StorageRegistry storageRegistry();
 

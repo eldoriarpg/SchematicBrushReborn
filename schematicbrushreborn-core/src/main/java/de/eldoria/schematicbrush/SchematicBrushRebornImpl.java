@@ -109,7 +109,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         var brushCommand = new Brush(this, schematics, storage, settingsRegistry, messageBlocker);
         var presetCommand = new Preset(this, storage, messageBlocker);
-        var adminCommand = new Admin(this, schematics);
+        var adminCommand = new Admin(this, schematics, storageRegistry);
         var settingsCommand = new Settings(this, config, renderService, notifyListener, messageBlocker);
 
         enableMetrics();
