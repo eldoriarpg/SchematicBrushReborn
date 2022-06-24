@@ -16,6 +16,7 @@ import de.eldoria.eldoutilities.updater.spigotupdater.SpigotUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
@@ -36,6 +37,8 @@ import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
+import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushContainer;
+import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
 import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
@@ -96,7 +99,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         schematics.register(SchematicCache.STORAGE, cache);
 
 
-        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config.presets()));
+        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config.presets(), config.brushes()));
 
         storage = storageRegistry.getRegistry(config.general().storageType());
 
@@ -182,8 +185,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
         return Arrays.asList(GeneralConfigImpl.class, PresetImpl.class,
-                SchematicConfigImpl.class, SchematicSourceImpl.class, YamlPresetContainer.class, YamlPresets.class,
-                SchematicSetBuilderImpl.class, de.eldoria.schematicbrush.storage.brush.Brush.class);
+                SchematicConfigImpl.class, SchematicSourceImpl.class, YamlPresetContainer.class, YamlPresets.class, YamlBrushes.class, YamlBrushContainer.class,
+                SchematicSetBuilderImpl.class, de.eldoria.schematicbrush.storage.brush.Brush.class, BrushBuilderSnapshotImpl.class);
     }
 
     @Override

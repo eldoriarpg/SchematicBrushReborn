@@ -11,9 +11,11 @@ import de.eldoria.schematicbrush.storage.preset.Presets;
 
 public class YamlStorage implements Storage {
     private final Presets yamlPresets;
+    private final Brushes yamlBrushes;
 
-    public YamlStorage(Presets yamlPresets) {
+    public YamlStorage(Presets yamlPresets, Brushes yamlBrushes) {
         this.yamlPresets = yamlPresets;
+        this.yamlBrushes = yamlBrushes;
     }
 
     @Override
@@ -23,7 +25,6 @@ public class YamlStorage implements Storage {
 
     @Override
     public Brushes brushes() {
-        //TODO:
-        return null;
+        return yamlBrushes;
     }
 }

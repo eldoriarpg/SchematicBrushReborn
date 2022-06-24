@@ -1,0 +1,77 @@
+/*
+ *     SPDX-License-Identifier: AGPL-3.0-only
+ *
+ *     Copyright (C) 2021 EldoriaRPG Team and Contributor
+ */
+
+package de.eldoria.schematicbrush.config.sections.brushes;
+
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.events.ConfigModifiedEvent;
+import de.eldoria.schematicbrush.storage.brush.Brush;
+import de.eldoria.schematicbrush.storage.brush.BrushContainer;
+import de.eldoria.schematicbrush.storage.preset.Preset;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
+public class YamlBrushContainer implements BrushContainer, ConfigurationSerializable {
+    private final Map<String, Brush> brushes = new HashMap<>();
+
+    public YamlBrushContainer(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        List<Brush> brushList = map.getValue("brushes");
+        brushList.forEach(p -> brushes.put(p.name(), p));
+    }
+
+    public YamlBrushContainer() {
+    }
+
+    @Override
+    @NotNull
+    public Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("presets", new ArrayList<>(brushes.values()))
+                .build();
+    }
+
+    @Override
+    public CompletableFuture<Optional<Brush>> get(String name) {
+        return CompletableFuture.completedFuture(Optional.ofNullable(brushes.get(name.toLowerCase(Locale.ROOT))));
+    }
+
+    @Override
+    public CompletableFuture<Void> add(Brush brush) {
+        brushes.put(brush.name(), brush);
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @Override
+    public CompletableFuture<Boolean> remove(String name) {
+        return CompletableFuture.completedFuture(brushes.remove(name.toLowerCase(Locale.ROOT)) != null);
+    }
+
+    @Override
+    public CompletableFuture<Collection<Brush>> all() {
+        return CompletableFuture.completedFuture(Collections.unmodifiableCollection(brushes.values()));
+    }
+
+    /**
+     * Returns all names in this preset container
+     *
+     * @return set of names
+     */
+    @Override
+    public Set<String> names() {
+        return brushes.keySet();
+    }
+
+    @Override
+    public void close() throws IOException {
+        Bukkit.getPluginManager().callEvent(new ConfigModifiedEvent());
+    }
+}
