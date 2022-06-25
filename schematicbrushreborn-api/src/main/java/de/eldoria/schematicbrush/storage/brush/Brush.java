@@ -43,7 +43,7 @@ public class Brush implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
                 .add("name", name)
-                .add("snapshot", snapshot.serialize())
+                .add("snapshot", snapshot)
                 .build();
     }
 
