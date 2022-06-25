@@ -15,6 +15,7 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.brush.Brush;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -27,15 +28,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
+public class SaveBrush extends AdvancedCommand implements IPlayerTabExecutor {
 
     private final Storage config;
     private final Sessions sessions;
 
-    public SavePreset(Plugin plugin, Sessions sessions, Storage storage) {
-        super(plugin, CommandMeta.builder("savePreset")
+    public SaveBrush(Plugin plugin, Sessions sessions, Storage storage) {
+        super(plugin, CommandMeta.builder("saveBrush")
                 .addUnlocalizedArgument("name", true)
-                .withPermission(Permissions.Preset.USE)
+                .withPermission(Permissions.BrushPreset.USE)
                 .hidden()
                 .build());
         this.config = storage;
@@ -46,31 +47,30 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var session = sessions.getOrCreateSession(player);
 
-        var schematicSets = session.schematicSets().stream().map(SchematicSetBuilder::copy).toList();
-        CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
-        var preset = new Preset(args.asString(0), schematicSets);
-        CompletableFuture<Optional<Preset>> addition;
+        var schematicSets = session.snapshot();
+        var brush = new Brush(args.asString(0), schematicSets);
+        CompletableFuture<Optional<Brush>> addition;
         if (args.flags().has("g")) {
-            CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            addition = config.presets().globalContainer().get(preset.name())
+            CommandAssertions.permission(player, false, Permissions.BrushPreset.GLOBAL);
+            addition = config.brushes().globalContainer().get(brush.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                            CommandAssertions.isTrue(args.flags().has("f"), "Brush already exists. Use -f to override");
                         }
-                        config.presets().globalContainer().add(preset).join();
+                        config.brushes().globalContainer().add(brush).join();
                     }, err -> handleCommandError(player, err)));
         } else {
-            addition = config.presets().playerContainer(player).get(preset.name())
+            addition = config.brushes().playerContainer(player).get(brush.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                            CommandAssertions.isTrue(args.flags().has("f"), "Brush already exists. Use -f to override");
                         }
-                        config.presets().playerContainer(player).add(preset).join();
+                        config.brushes().playerContainer(player).add(brush).join();
                     }, err -> handleCommandError(player, err)));
         }
         addition.whenComplete(Futures.whenComplete(res -> {
             //TODO: Think about storage saving
-            messageSender().sendMessage(player, "Preset saved.");
+            messageSender().sendMessage(player, "Brush saved.");
         }, err -> handleCommandError(player, err)));
     }
 

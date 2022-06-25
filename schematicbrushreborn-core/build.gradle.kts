@@ -9,11 +9,10 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 dependencies {
     implementation(project(":schematicbrushreborn-api"))
 
+    testImplementation(project(":schematicbrushreborn-api"))
     testImplementation("org.jetbrains", "annotations", "23.0.0")
-    testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
     testImplementation("org.mockito", "mockito-core", "4.5.1")
+    testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.0.1")
 }
 
 publishData {

@@ -23,12 +23,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
-    private final Map<Nameable, Mutator<?>> placementModifier;
-    private final List<SchematicSetBuilder> schematicSets;
+    private Map<Nameable, Mutator<?>> placementModifier;
+    private List<SchematicSetBuilder> schematicSets;
+
+    public BrushBuilderSnapshotImpl() {
+    }
 
     public BrushBuilderSnapshotImpl(Map<String, Object> objectMap) {
-        TypeResolvingMap map = SerializationUtil.mapOf(objectMap);
-        this.schematicSets = map.getValue("schematicSets");
+        var map = SerializationUtil.mapOf(objectMap);
+        schematicSets = map.getValue("schematicSets");
         placementModifier = map.getMap("placementModifier", (key, v) -> Nameable.of(key));
     }
 
@@ -37,6 +40,7 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
                 .addMap("placementModifier", placementModifier, (key, v) -> key.name())
+                .add("schematicSets", schematicSets)
                 .build();
     }
 

@@ -15,12 +15,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class Brush implements ConfigurationSerializable {
-    private final String name;
-    private final BrushBuilderSnapshot snapshot;
+    private String name;
+    private BrushBuilderSnapshot snapshot;
 
     public Brush(String name, BrushBuilderSnapshot snapshot) {
         this.name = name;
         this.snapshot = snapshot;
+    }
+
+    @Deprecated
+    public Brush() {
     }
 
     public Brush(String name, BrushBuilder snapshot) {
@@ -37,7 +41,10 @@ public class Brush implements ConfigurationSerializable {
     @Override
     @NotNull
     public Map<String, Object> serialize() {
-        return SerializationUtil.objectToMap(this);
+        return SerializationUtil.newBuilder()
+                .add("name", name)
+                .add("snapshot", snapshot.serialize())
+                .build();
     }
 
     public String name() {

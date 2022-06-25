@@ -30,7 +30,6 @@ import de.eldoria.schematicbrush.brush.provider.RotationProvider;
 import de.eldoria.schematicbrush.brush.provider.SelectorProviderImpl;
 import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
-import de.eldoria.schematicbrush.commands.Preset;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.ConfigurationImpl;
@@ -39,7 +38,7 @@ import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
 import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushContainer;
 import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
-import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
+import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
 import de.eldoria.schematicbrush.listener.BrushModifier;
@@ -56,8 +55,11 @@ import de.eldoria.schematicbrush.storage.YamlStorage;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,6 +73,13 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private RenderService renderService;
     private StorageRegistry storageRegistry;
     private Storage storage;
+
+    public SchematicBrushRebornImpl() {
+    }
+
+    public SchematicBrushRebornImpl(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description, @NotNull File dataFolder, @NotNull File file) {
+        super(loader, description, dataFolder, file);
+    }
 
     @Override
     public void onPluginLoad() throws Throwable {
@@ -111,7 +120,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
 
         var brushCommand = new Brush(this, schematics, storage, settingsRegistry, messageBlocker);
-        var presetCommand = new Preset(this, storage, messageBlocker);
+        var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storage, messageBlocker);
         var adminCommand = new Admin(this, schematics, storageRegistry);
         var settingsCommand = new Settings(this, config, renderService, notifyListener, messageBlocker);
 
@@ -184,7 +193,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfigImpl.class, PresetImpl.class,
+        return Arrays.asList(GeneralConfigImpl.class, Preset.class,
                 SchematicConfigImpl.class, SchematicSourceImpl.class, YamlPresetContainer.class, YamlPresets.class, YamlBrushes.class, YamlBrushContainer.class,
                 SchematicSetBuilderImpl.class, de.eldoria.schematicbrush.storage.brush.Brush.class, BrushBuilderSnapshotImpl.class);
     }

@@ -58,6 +58,5 @@ public class List extends AdvancedCommand implements IPlayerTabExecutor {
                     messageBlocker.announce(player, "[x]");
                     audiences.sender(player).sendMessage(miniMessage.deserialize(message));
                 }).whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
-
     }
 }
