@@ -47,6 +47,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         selector = map.getValue("selector");
         schematicModifier = map.getMap("modifiers", (key, v) -> Nameable.of(key));
         weight = map.getValue("weight");
+        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }
 
     public SchematicSetBuilderImpl(Selector selector) {
@@ -58,11 +59,13 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         this.schematicModifier = schematicModifier;
         this.schematics = schematics;
         this.weight = weight;
+        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }
 
     @Override
     @NotNull
     public Map<String, Object> serialize() {
+        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
         return SerializationUtil.newBuilder()
                 .add("selector", selector)
                 .addMap("modifiers", schematicModifier, (key, v) -> key.name())

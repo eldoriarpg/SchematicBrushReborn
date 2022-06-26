@@ -30,6 +30,7 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
         var map = SerializationUtil.mapOf(objectMap);
         schematicSets = map.getValue("schematicSets");
         placementModifier = map.getMap("placementModifier", (key, v) -> Nameable.of(key));
+        placementModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }
 
     public BrushBuilderSnapshotImpl(Map<Nameable, Mutator<?>> placementModifier, List<SchematicSetBuilder> schematicSets) {
@@ -40,6 +41,7 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
     @Override
     @NotNull
     public Map<String, Object> serialize() {
+        placementModifier.entrySet().removeIf(entry -> entry.getValue() == null);
         return SerializationUtil.newBuilder()
                 .addMap("placementModifier", placementModifier, (key, v) -> key.name())
                 .add("schematicSets", schematicSets)
