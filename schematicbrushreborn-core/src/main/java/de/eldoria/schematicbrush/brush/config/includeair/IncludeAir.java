@@ -68,4 +68,17 @@ public class IncludeAir implements Mutator<Boolean> {
     public String name() {
         return "Fixed";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IncludeAir that)) return false;
+
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (value ? 1 : 0);
+    }
 }

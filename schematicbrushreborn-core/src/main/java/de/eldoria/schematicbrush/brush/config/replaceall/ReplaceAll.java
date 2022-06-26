@@ -82,4 +82,17 @@ public class ReplaceAll implements Mutator<Boolean> {
     public String descriptor() {
         return String.format("%s", value);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReplaceAll that)) return false;
+
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (value ? 1 : 0);
+    }
 }

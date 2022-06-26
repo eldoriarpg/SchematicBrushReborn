@@ -75,4 +75,19 @@ public class RotationList extends ARotation {
     public Mutator<Rotation> copy() {
         return new RotationList(values);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RotationList that)) return false;
+
+        return values.equals(that.values);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + values.hashCode();
+        return result;
+    }
 }

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class DirectorySelector extends BaseSelector {
@@ -55,5 +56,21 @@ public class DirectorySelector extends BaseSelector {
             return directory + " - " + term();
         }
         return directory;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DirectorySelector that)) return false;
+        if (!super.equals(o)) return false;
+
+        return Objects.equals(directory, that.directory);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (directory != null ? directory.hashCode() : 0);
+        return result;
     }
 }

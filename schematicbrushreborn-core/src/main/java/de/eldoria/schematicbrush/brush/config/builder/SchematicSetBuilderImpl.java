@@ -262,4 +262,24 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy()));
         return new SchematicSetBuilderImpl(selector, mutatorCopy, new LinkedHashSet<>(schematics), weight);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SchematicSetBuilderImpl that)) return false;
+
+        if (weight != that.weight) return false;
+        if (!selector.equals(that.selector)) return false;
+        if (!schematicModifier.equals(that.schematicModifier)) return false;
+        return schematics.equals(that.schematics);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = selector.hashCode();
+        result = 31 * result + schematicModifier.hashCode();
+        result = 31 * result + schematics.hashCode();
+        result = 31 * result + weight;
+        return result;
+    }
 }

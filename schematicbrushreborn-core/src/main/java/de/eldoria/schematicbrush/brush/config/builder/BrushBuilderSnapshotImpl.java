@@ -69,4 +69,20 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
                 .collect(Collectors.toCollection(ArrayList::new));
         return new BrushBuilderImpl(schematicSets, player, settingsRegistry, schematicRegistry, mutatorMap);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BrushBuilderSnapshotImpl that)) return false;
+
+        if (!placementModifier.equals(that.placementModifier)) return false;
+        return schematicSets.equals(that.schematicSets);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = placementModifier.hashCode();
+        result = 31 * result + schematicSets.hashCode();
+        return result;
+    }
 }
