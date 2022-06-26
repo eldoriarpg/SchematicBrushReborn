@@ -16,6 +16,7 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.Colors;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +35,7 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
 /**
  * This class is a builder to build a {@link SchematicSetImpl}.
  */
+@SerializableAs("sbrSchematicSetBuilder")
 public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     private static final String WEIGHT_DESCRIPTION = "The weight of the schematic set when multiple sets are used.\nHigher numbers will result in more schematics from this set.";
     private Selector selector;

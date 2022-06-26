@@ -10,10 +10,12 @@ import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SerializableAs("sbrBrush")
 public class Brush implements ConfigurationSerializable {
     private String name;
     private BrushBuilderSnapshot snapshot;

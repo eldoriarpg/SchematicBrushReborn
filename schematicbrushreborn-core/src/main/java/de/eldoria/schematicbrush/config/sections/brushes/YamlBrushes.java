@@ -10,6 +10,7 @@ import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.brush.BrushContainer;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+@SerializableAs("sbrYamlBrushes")
 public class YamlBrushes implements Brushes, ConfigurationSerializable {
     private final Map<UUID, YamlBrushContainer> playerBrushes;
     private final YamlBrushContainer globalBrushes;

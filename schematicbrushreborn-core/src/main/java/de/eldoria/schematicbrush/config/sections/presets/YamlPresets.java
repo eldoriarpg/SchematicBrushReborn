@@ -10,6 +10,7 @@ import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
 import de.eldoria.schematicbrush.storage.preset.Presets;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+@SerializableAs("sbrYamlPresets")
 public class YamlPresets implements Presets, ConfigurationSerializable {
     private final Map<UUID, YamlPresetContainer> playerPresets;
     private final YamlPresetContainer globalPresets;

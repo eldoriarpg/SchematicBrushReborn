@@ -7,12 +7,11 @@
 package de.eldoria.schematicbrush.brush.config.builder;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,12 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@SerializableAs("sbrBrushBuilderSnapshot")
 public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
     private Map<Nameable, Mutator<?>> placementModifier;
     private List<SchematicSetBuilder> schematicSets;
-
-    public BrushBuilderSnapshotImpl() {
-    }
 
     public BrushBuilderSnapshotImpl(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
