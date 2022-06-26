@@ -25,6 +25,7 @@ public final class BuildUtil {
     }
 
     public static String buildModifier(Permissible permissible, String baseCommand, BaseModifier type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
+        if(current == null) current = (Mutator<?>) provider.get(0).defaultSetting();
         String types;
         var filteredProvider = provider.stream().filter(set -> set.hasPermission(permissible)).toList();
         if (filteredProvider.size() > 1) {

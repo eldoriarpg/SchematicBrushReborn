@@ -34,7 +34,6 @@ public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
     public LoadBrush(Plugin plugin, Sessions sessions, Storage storage, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         super(plugin, CommandMeta.builder("loadbrush")
                 .addUnlocalizedArgument("name", true)
-                .hidden()
                 .build());
         this.sessions = sessions;
         this.storage = storage;
