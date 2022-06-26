@@ -72,4 +72,20 @@ public class OffsetList extends AOffset {
     public Mutator<Integer> copy() {
         return new OffsetList(values);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OffsetList that)) return false;
+        if (!super.equals(o)) return false;
+
+        return values.equals(that.values);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + values.hashCode();
+        return result;
+    }
 }

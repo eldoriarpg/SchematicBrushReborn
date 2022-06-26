@@ -20,9 +20,13 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.3.0") { isTransitive = false }
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
-    testImplementation("com.github.seeseemelk", "MockBukkit-v1.16", "1.5.2")
+    testImplementation("org.junit.jupiter", "junit-jupiter")
+    testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.29.0")
+    testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.3.0"){
+        exclude("com.intellectualsites.paster")
+    }
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.3.0") { isTransitive = false }
 }
 
 allprojects {
@@ -40,5 +44,13 @@ tasks {
 
     compileTestJava {
         options.encoding = "UTF-8"
+    }
+
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
     }
 }

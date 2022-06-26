@@ -66,4 +66,17 @@ public abstract class AFlip implements Mutator<Flip> {
             mutation.transform(mutation.transform().scale(value().direction().abs().multiply(-2.0).add(1.0, 1.0, 1.0)));
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AFlip aFlip)) return false;
+
+        return flip.equals(aFlip.flip);
+    }
+
+    @Override
+    public int hashCode() {
+        return flip.hashCode();
+    }
 }

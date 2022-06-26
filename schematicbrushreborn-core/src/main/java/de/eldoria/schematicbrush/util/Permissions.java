@@ -37,6 +37,16 @@ public final class Permissions {
         }
     }
 
+    public static final class BrushPreset {
+        private static final String BRUSHPRESET = perm(BASE, "brushpreset");
+        public static final String USE = perm(BRUSHPRESET, "use");
+        public static final String GLOBAL = perm(BRUSHPRESET, "global");
+
+        private BrushPreset() {
+            throw new UnsupportedOperationException("This is a utility class.");
+        }
+    }
+
     public static final class Admin {
         private static final String ADMIN = perm(BASE, "admin");
         public static final String RELOAD = perm(ADMIN, "reload");

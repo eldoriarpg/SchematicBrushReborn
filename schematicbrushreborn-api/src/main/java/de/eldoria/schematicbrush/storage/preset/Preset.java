@@ -7,27 +7,54 @@
 package de.eldoria.schematicbrush.storage.preset;
 
 import de.eldoria.eldoutilities.localization.MessageComposer;
+import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.util.Colors;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Representing a schematic preset which holds multiple schematic sets.
- */
-public abstract class Preset implements ConfigurationSerializable {
+@SerializableAs("sbrPreset")
+public class Preset implements ConfigurationSerializable {
+
     protected final String name;
     protected final List<SchematicSetBuilder> schematicSets;
     protected String description;
 
-    public Preset(String name, List<SchematicSetBuilder> schematicSets, String description) {
+    public Preset(String name, List<SchematicSetBuilder> schematicSets) {
+        this(name, "none", schematicSets);
+    }
+
+    public Preset(String name, String description, List<SchematicSetBuilder> schematicSets) {
         this.name = name;
         this.schematicSets = schematicSets;
         this.description = description == null ? "none" : description;
+    }
+
+    public static Preset deserialize(Map<String, Object> objectMap) {
+        var map = SerializationUtil.mapOf(objectMap);
+        String name = map.getValue("name");
+        String description = map.getValue("description");
+        if (description == null) {
+            description = "none";
+        }
+        List<SchematicSetBuilder> schematicSets = map.getValue("sets");
+        return new Preset(name, description, schematicSets);
+    }
+
+    @Override
+    public @NotNull Map<String, Object> serialize() {
+        return SerializationUtil.newBuilder()
+                .add("name", name)
+                .add("description", description)
+                .add("sets", schematicSets)
+                .build();
     }
 
     /**

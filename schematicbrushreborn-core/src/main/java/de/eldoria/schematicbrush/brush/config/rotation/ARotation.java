@@ -64,4 +64,17 @@ public abstract class ARotation implements Mutator<Rotation> {
             mutation.transform(mutation.transform().rotateY(rotation.value().degree()));
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ARotation aRotation)) return false;
+
+        return rotation.equals(aRotation.rotation);
+    }
+
+    @Override
+    public int hashCode() {
+        return rotation.hashCode();
+    }
 }

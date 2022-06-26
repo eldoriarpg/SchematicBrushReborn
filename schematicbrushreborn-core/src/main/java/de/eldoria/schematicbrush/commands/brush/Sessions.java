@@ -67,6 +67,9 @@ public class Sessions {
         if (player.hasPermission(Permissions.Preset.USE)) {
             composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>", Colors.ADD);
         }
+        if (player.hasPermission(Permissions.BrushPreset.USE)) {
+            composer.space().text("<click:suggest_command:'/sbr loadbrush '><%s>[Load Brush]</click>", Colors.ADD);
+        }
         composer.space().text("<click:run_command:'/sbr refreshSchematics session'><%s>[Refresh Schematics]</click>", Colors.ADD);
         var count = new AtomicInteger(0);
         var sets = builder.schematicSets().stream()
@@ -89,7 +92,11 @@ public class Sessions {
                 .text("<click:run_command:'/sbr clear'><%s>[Clear]</click>", Colors.REMOVE);
 
         if (player.hasPermission(Permissions.Preset.USE)) {
-            composer.space().text("<click:suggest_command:'/sbr savepreset '><%s>[Save]</click>", Colors.CHANGE);
+            composer.space().text("<click:suggest_command:'/sbr savepreset '><%s>[Save Preset]</click>", Colors.CHANGE);
+        }
+
+        if (player.hasPermission(Permissions.BrushPreset.USE)) {
+            composer.space().text("<click:suggest_command:'/sbr savebrush '><%s>[Save Brush]</click>", Colors.CHANGE);
         }
 
         composer.prependLines(20);
@@ -116,5 +123,9 @@ public class Sessions {
         message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
         audiences.player(player).sendMessage(miniMessage.deserialize(MessageComposer.create().text(message).prependLines(20).build()));
+    }
+
+    public void setSession(Player player, BrushBuilder load) {
+        session.put(player.getUniqueId(), load);
     }
 }

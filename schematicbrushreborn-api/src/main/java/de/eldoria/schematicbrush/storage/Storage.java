@@ -32,4 +32,12 @@ public interface Storage {
 
         return CompletableFuture.allOf(presets, brushes);
     }
+
+    /**
+     * Attempts to save the storage.
+     * <p>
+     * Only required for file based storages.
+     */
+    default void save() {
+    }
 }

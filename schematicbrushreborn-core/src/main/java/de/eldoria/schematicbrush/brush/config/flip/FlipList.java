@@ -76,4 +76,17 @@ public class FlipList extends AFlip {
     public Mutator<Flip> copy() {
         return new FlipList(values);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FlipList flipList)) return false;
+
+        return values.equals(flipList.values);
+    }
+
+    @Override
+    public int hashCode() {
+        return values.hashCode();
+    }
 }

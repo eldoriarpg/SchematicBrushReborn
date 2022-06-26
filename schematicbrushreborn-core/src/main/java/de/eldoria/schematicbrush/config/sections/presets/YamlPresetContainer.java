@@ -27,15 +27,17 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class YamlPresetContainer implements PresetContainer, ConfigurationSerializable {
-    private final Map<String, Preset> presets = new HashMap<>();
+    private final Map<String, Preset> presets;
 
     public YamlPresetContainer(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
-        List<Preset> presetList = map.getValue("presets");
+        List<Preset> presetList = map.getValueOrDefault("presets", Collections.emptyList());
+        presets = new HashMap<>();
         presetList.forEach(p -> presets.put(p.name(), p));
     }
 
     public YamlPresetContainer() {
+        presets = new HashMap<>();
     }
 
     @Override
