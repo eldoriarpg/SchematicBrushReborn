@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class ARotation implements Mutator<Rotation> {
     protected Rotation rotation = null;
@@ -70,11 +71,11 @@ public abstract class ARotation implements Mutator<Rotation> {
         if (this == o) return true;
         if (!(o instanceof ARotation aRotation)) return false;
 
-        return rotation.equals(aRotation.rotation);
+        return Objects.equals(rotation, aRotation.rotation);
     }
 
     @Override
     public int hashCode() {
-        return rotation.hashCode();
+        return rotation != null ? rotation.hashCode() : 0;
     }
 }

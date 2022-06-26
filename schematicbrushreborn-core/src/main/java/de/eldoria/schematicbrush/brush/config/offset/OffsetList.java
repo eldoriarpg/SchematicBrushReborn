@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush.config.offset;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+@SerializableAs("sbrOffsetList")
 public class OffsetList extends AOffset {
 
     private final List<Integer> values;

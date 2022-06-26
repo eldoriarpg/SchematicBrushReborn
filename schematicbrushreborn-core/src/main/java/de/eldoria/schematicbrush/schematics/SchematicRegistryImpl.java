@@ -50,9 +50,6 @@ public class SchematicRegistryImpl implements SchematicRegistry {
      */
     @Override
     public void unregister(Nameable key) {
-        if (key.equals(SchematicCache.STORAGE)) {
-            throw new AlreadyRegisteredException("Default cache can't be unregistered.");
-        }
         caches.remove(key);
     }
 

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class AFlip implements Mutator<Flip> {
     protected Flip flip = null;
@@ -72,11 +73,11 @@ public abstract class AFlip implements Mutator<Flip> {
         if (this == o) return true;
         if (!(o instanceof AFlip aFlip)) return false;
 
-        return flip.equals(aFlip.flip);
+        return Objects.equals(flip, aFlip.flip);
     }
 
     @Override
     public int hashCode() {
-        return flip.hashCode();
+        return flip != null ? flip.hashCode() : 0;
     }
 }

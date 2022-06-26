@@ -7,9 +7,11 @@
 package de.eldoria.schematicbrush.brush.config.flip;
 
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Map;
 
+@SerializableAs("sbrFlipFixed")
 public class FlipFixed extends AFlip {
     public FlipFixed(Flip flip) {
         super(flip);

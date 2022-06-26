@@ -28,7 +28,7 @@ public class StorageRegistryImpl implements StorageRegistry {
             throw new IllegalStateException(String.format("Tried to register storage %s with key %s, but this key is already used by %s.",
                     storage.getClass().getName(), key, getRegistry(key).getClass().getName()));
         }
-        SchematicBrushReborn.logger().info("Registered storagy type " + key.name());
+        SchematicBrushReborn.logger().info("Registered storage type " + key.name());
         storages.put(key, storage);
     }
 

@@ -9,11 +9,13 @@ package de.eldoria.schematicbrush.brush.config.selector;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.Set;
 
+@SerializableAs("sbrRegexSelector")
 public class RegexSelector extends BaseSelector {
     public RegexSelector(String term) {
         super("^" + term);
