@@ -80,9 +80,9 @@ public abstract class APlacement implements Mutator<APlacement> {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof APlacement that)) return false;
+        if (!(obj instanceof APlacement placement)) return false;
 
-        return name().equals(that.name());
+        return name().equals(placement.name());
     }
 
     @Override

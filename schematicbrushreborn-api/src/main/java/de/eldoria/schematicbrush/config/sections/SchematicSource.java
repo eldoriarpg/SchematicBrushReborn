@@ -22,10 +22,24 @@ public interface SchematicSource extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();
 
+    /**
+     * Path of the schematic source.
+     * @return path as string
+     */
     String path();
 
+    /**
+     * An ideally unique prefix for this source
+     *
+     * @return prefix
+     */
     String prefix();
 
+    /**
+     * A list of relative pathes to the source which should be excluded
+     *
+     * @return list of paths
+     */
     List<String> excludedPath();
 
     /**

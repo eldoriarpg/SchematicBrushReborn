@@ -79,14 +79,14 @@ public class RotationList extends ARotation {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RotationList that)) return false;
+        if (!(o instanceof RotationList rotationList)) return false;
 
-        return values.equals(that.values);
+        return values.equals(rotationList.values);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
+        var result = super.hashCode();
         result = 31 * result + values.hashCode();
         return result;
     }

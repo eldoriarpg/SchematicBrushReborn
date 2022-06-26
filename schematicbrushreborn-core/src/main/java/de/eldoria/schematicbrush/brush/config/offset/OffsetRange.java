@@ -76,16 +76,16 @@ public class OffsetRange extends AOffset {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof OffsetRange that)) return false;
+        if (!(o instanceof OffsetRange range)) return false;
         if (!super.equals(o)) return false;
 
-        if (min != that.min) return false;
-        return max == that.max;
+        if (min != range.min) return false;
+        return max == range.max;
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
+        var result = super.hashCode();
         result = 31 * result + min;
         result = 31 * result + max;
         return result;

@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public class Schematic implements Comparable<Schematic> {
     private static final Pattern numEnd = Pattern.compile("(?<name>.+?)(?<num>\\d+?)$");
     private static final Set<BaseBlock> SIZE_EXCLUSION = Set.of(BukkitAdapter.adapt(Material.AIR.createBlockData()).toBaseBlock());
 
-    private final Map<Material, Integer> materialMap = new HashMap<>();
+    private final Map<Material, Integer> materialMap = new EnumMap<>(Material.class);
 
     /**
      * Regex which matches the end of a filename.
@@ -271,7 +272,7 @@ public class Schematic implements Comparable<Schematic> {
                 clipboard.getRegion().iterator()
                         .forEachRemaining(pos ->{
                             var mat = BukkitAdapter.adapt(clipboard.getBlock(pos)).getMaterial();
-                            materialMap.compute(mat, (k, v) -> v == null ? 1 : v + 1);
+                            materialMap.compute(mat, (key, v) -> v == null ? 1 : v + 1);
                                 });
             } catch (IOException e) {
                 return Collections.emptyMap();

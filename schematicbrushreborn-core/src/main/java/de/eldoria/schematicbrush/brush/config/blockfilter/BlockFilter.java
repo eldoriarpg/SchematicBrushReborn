@@ -82,9 +82,9 @@ public class BlockFilter implements Mutator<String> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BlockFilter that)) return false;
+        if (!(o instanceof BlockFilter blockFilter)) return false;
 
-        return maskString.equals(that.maskString);
+        return maskString.equals(blockFilter.maskString);
     }
 
     @Override

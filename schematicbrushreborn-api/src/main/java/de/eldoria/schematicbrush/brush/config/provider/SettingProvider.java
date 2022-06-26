@@ -32,6 +32,8 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     private final Class<? extends ConfigurationSerializable> clazz;
 
     /**
+     * Create a new settings provider
+     *
      * @param clazz which is returned by the provider
      * @param name  name. Must be unique inside the provider.
      */

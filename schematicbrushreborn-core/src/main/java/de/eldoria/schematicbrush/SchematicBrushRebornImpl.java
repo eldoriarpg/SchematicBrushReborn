@@ -20,6 +20,7 @@ import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.provider.FilterProvider;
 import de.eldoria.schematicbrush.brush.provider.FlipProvider;
 import de.eldoria.schematicbrush.brush.provider.IncludeAirProvider;
@@ -62,6 +63,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class SchematicBrushRebornImpl extends SchematicBrushReborn {
@@ -107,10 +109,15 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         cache = new SchematicBrushCache(this, config);
         schematics.register(SchematicCache.STORAGE, cache);
 
-
         storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config));
 
         storage = storageRegistry.getRegistry(config.general().storageType());
+
+        if (storage == null) {
+            storage = storageRegistry.getRegistry(StorageRegistry.YAML);
+            getLogger().warning("Storage type " + config.general().storageType() + " not registered. Using YAML storage.");
+            getLogger().warning("Available storage types are :" + storageRegistry.storages().keySet().stream().map(Nameable::name).collect(Collectors.joining(", ")));
+        }
 
         reload();
 
@@ -149,6 +156,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     public void onPluginDisable() {
         config.save();
         cache.shutdown();
+        schematics.unregister(SchematicCache.STORAGE);
+        storageRegistry.unregister(StorageRegistry.YAML);
     }
 
     @Override

@@ -73,5 +73,8 @@ public interface BrushSettings extends Randomable {
      */
     BrushBuilder toBuilder(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry);
 
+    /**
+     * Refresehs the underlying mutators.
+     */
     void refreshMutator();
 }

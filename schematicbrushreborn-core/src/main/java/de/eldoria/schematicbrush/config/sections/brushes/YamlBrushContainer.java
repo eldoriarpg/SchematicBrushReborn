@@ -81,6 +81,5 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
 
     @Override
     public void close() throws IOException {
-        Bukkit.getPluginManager().callEvent(new ConfigModifiedEvent());
     }
 }

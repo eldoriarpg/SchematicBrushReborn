@@ -7,12 +7,17 @@
 package de.eldoria.schematicbrush.storage.base;
 
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
+import de.eldoria.schematicbrush.storage.Storage;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public interface StorageHolder<T> {
+/**
+ * An interface which represents a Storageholder, holding any type of {@link Storage} implementation.
+ * @param <T> type of storage
+ */
+public interface StorageHolder<T extends Storage> {
     /**
      * Get a storage type
      * @param key name of storage
@@ -49,7 +54,7 @@ public interface StorageHolder<T> {
      *
      * @param source source
      * @param target target
-     * @return
+     * @return Returns a future which completes once all underlying processes complete
      */
     CompletableFuture<Void> migrate(Nameable source, Nameable target);
 }

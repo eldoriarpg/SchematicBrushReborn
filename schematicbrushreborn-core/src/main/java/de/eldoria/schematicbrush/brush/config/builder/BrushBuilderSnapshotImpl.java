@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 
 @SerializableAs("sbrBrushBuilderSnapshot")
 public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
-    private Map<Nameable, Mutator<?>> placementModifier;
-    private List<SchematicSetBuilder> schematicSets;
+    private final Map<Nameable, Mutator<?>> placementModifier;
+    private final List<SchematicSetBuilder> schematicSets;
 
     public BrushBuilderSnapshotImpl(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
@@ -60,7 +60,7 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
     public BrushBuilder load(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         Map<Nameable, Mutator<?>> mutatorMap = placementModifier.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, k -> k.getValue().copy()));
+                .collect(Collectors.toMap(Map.Entry::getKey, key -> key.getValue().copy()));
         var schematicSets = this.schematicSets.stream()
                 .map(SchematicSetBuilder::copy)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -70,15 +70,15 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BrushBuilderSnapshotImpl that)) return false;
+        if (!(o instanceof BrushBuilderSnapshot snapshot)) return false;
 
-        if (!placementModifier.equals(that.placementModifier)) return false;
-        return schematicSets.equals(that.schematicSets);
+        if (!placementModifier.equals(snapshot.placementModifier())) return false;
+        return schematicSets.equals(snapshot.schematicSets());
     }
 
     @Override
     public int hashCode() {
-        int result = placementModifier.hashCode();
+        var result = placementModifier.hashCode();
         result = 31 * result + schematicSets.hashCode();
         return result;
     }

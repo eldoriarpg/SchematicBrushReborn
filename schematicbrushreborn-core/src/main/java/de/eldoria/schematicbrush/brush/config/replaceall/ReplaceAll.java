@@ -86,9 +86,9 @@ public class ReplaceAll implements Mutator<Boolean> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ReplaceAll that)) return false;
+        if (!(o instanceof ReplaceAll replaceAll)) return false;
 
-        return value == that.value;
+        return value == replaceAll.value;
     }
 
     @Override

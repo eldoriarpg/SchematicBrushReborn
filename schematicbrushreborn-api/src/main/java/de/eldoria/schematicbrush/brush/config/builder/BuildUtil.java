@@ -16,6 +16,9 @@ import org.bukkit.permissions.Permissible;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class providing utility methods for building text UIs.
+ */
 public final class BuildUtil {
     private BuildUtil() {
         throw new UnsupportedOperationException("This is a utility class.");
@@ -23,7 +26,7 @@ public final class BuildUtil {
 
     public static String buildModifier(Permissible permissible, String baseCommand, BaseModifier type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
         String types;
-        var filteredProvider = provider.stream().filter(set -> set.hasPermission(permissible)).collect(Collectors.toList());
+        var filteredProvider = provider.stream().filter(set -> set.hasPermission(permissible)).toList();
         if (filteredProvider.size() > 1) {
             types = filteredProvider.stream()
                     .map(p -> String.format("<click:%s:'%s %s %s '><hover:show_text:'<%s>%s'>[%s]</hover></click>",

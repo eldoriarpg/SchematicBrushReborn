@@ -76,15 +76,15 @@ public class OffsetList extends AOffset {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof OffsetList that)) return false;
+        if (!(o instanceof OffsetList offsetList)) return false;
         if (!super.equals(o)) return false;
 
-        return values.equals(that.values);
+        return values.equals(offsetList.values);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
+        var result = super.hashCode();
         result = 31 * result + values.hashCode();
         return result;
     }

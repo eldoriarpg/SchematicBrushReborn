@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -241,8 +240,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
                 .toList();
 
         if (schematics.size() > 10) {
-            List<String> schematics = new ArrayList<>();
-            schematics.addAll(showSchematics.subList(0, 5));
+            List<String> schematics = new ArrayList<>(showSchematics.subList(0, 5));
             schematics.add("...");
             schematics.addAll(showSchematics.subList(showSchematics.size() - 5, showSchematics.size()));
             showSchematics = schematics;
@@ -268,17 +266,17 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SchematicSetBuilderImpl that)) return false;
+        if (!(o instanceof SchematicSetBuilder builder)) return false;
 
-        if (weight != that.weight) return false;
-        if (!selector.equals(that.selector)) return false;
-        if (!schematicModifier.equals(that.schematicModifier)) return false;
-        return schematics.equals(that.schematics);
+        if (weight != builder.weight()) return false;
+        if (!selector.equals(builder.selector())) return false;
+        if (!schematicModifier.equals(builder.schematicModifier())) return false;
+        return schematics.equals(builder.schematics());
     }
 
     @Override
     public int hashCode() {
-        int result = selector.hashCode();
+        var result = selector.hashCode();
         result = 31 * result + schematicModifier.hashCode();
         result = 31 * result + schematics.hashCode();
         result = 31 * result + weight;

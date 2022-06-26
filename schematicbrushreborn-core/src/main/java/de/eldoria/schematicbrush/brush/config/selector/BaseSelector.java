@@ -45,9 +45,9 @@ public abstract class BaseSelector implements Selector {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaseSelector that)) return false;
+        if (!(o instanceof BaseSelector baseSelector)) return false;
 
-        return Objects.equals(term, that.term);
+        return Objects.equals(term, baseSelector.term);
     }
 
     @Override

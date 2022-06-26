@@ -7,9 +7,13 @@
 package de.eldoria.schematicbrush.storage.preset;
 
 import de.eldoria.schematicbrush.storage.base.Container;
+import de.eldoria.schematicbrush.storage.brush.Brush;
 
 import java.io.Closeable;
 
+/**
+ * Container used to store {@link Preset}s.
+ */
 public interface PresetContainer extends Closeable, Container<Preset> {
 
 }

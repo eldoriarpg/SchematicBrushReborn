@@ -58,7 +58,7 @@ public class Preset implements ConfigurationSerializable {
     }
 
     /**
-     * Name of the preset. This is unique for each container
+     * Name of the preset. This is unique for each preset
      *
      * @return name
      */

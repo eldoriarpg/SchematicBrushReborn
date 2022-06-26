@@ -7,11 +7,8 @@
 package de.eldoria.schematicbrush.brush.config.builder;
 
 import de.eldoria.schematicbrush.brush.SchematicBrush;
-import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
-import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -51,6 +48,7 @@ public interface BrushBuilder {
      *
      * @param type     type
      * @param provider provider
+     * @param <T> Type of the placement modifier
      */
     <T extends Nameable> void setPlacementModifier(T type, Mutator<?> provider);
 
@@ -101,5 +99,9 @@ public interface BrushBuilder {
      */
     void refresh();
 
+    /**
+     * Get a immutable snapshot of the brush builder.
+     * @return snapshot
+     */
     BrushBuilderSnapshot snapshot();
 }

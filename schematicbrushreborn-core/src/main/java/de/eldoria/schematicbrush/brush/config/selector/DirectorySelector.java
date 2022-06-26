@@ -61,15 +61,15 @@ public class DirectorySelector extends BaseSelector {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DirectorySelector that)) return false;
+        if (!(o instanceof DirectorySelector selector)) return false;
         if (!super.equals(o)) return false;
 
-        return Objects.equals(directory, that.directory);
+        return Objects.equals(directory, selector.directory);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
+        var result = super.hashCode();
         result = 31 * result + (directory != null ? directory.hashCode() : 0);
         return result;
     }

@@ -22,6 +22,7 @@ import de.eldoria.eldoutilities.serialization.wrapper.YamlContainer;
 
 import java.io.IOException;
 
+@SuppressWarnings("ALL")
 public class TestBrush {
     private static ServerMock server;
     private static SchematicBrushRebornImpl load;
@@ -40,9 +41,9 @@ public class TestBrush {
 
     @Test
     public void testSerialization() throws IOException, InvalidConfigurationException {
-        PlayerMock someone = server.addPlayer("Someone");
+        var someone = server.addPlayer("Someone");
         var brushBuilder = new BrushBuilderImpl(someone, load.brushSettingsRegistry(), load.schematics());
-        Brush some = new Brush("some", brushBuilder);
+        var some = new Brush("some", brushBuilder);
 
         //This is only required for the sake of unit testing.
         ConfigurationSerialization.registerClass(MapEntry.class);

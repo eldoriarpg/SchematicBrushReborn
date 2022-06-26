@@ -6,7 +6,6 @@
 
 package de.eldoria.schematicbrush.brush.config.offset;
 
-import com.sk89q.worldedit.math.BlockVector3;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;

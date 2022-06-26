@@ -19,6 +19,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * Interface which represents a container holder.
+ * <p>
+ * A container holder always contains containers for any requested player.
+ * <p>
+ * A container holder always contains a global container.
+ *
+ * @param <V> Type which is contained in the container
+ * @param <T> Type of the container
+ */
 public interface ContainerHolder<V, T extends Container<V>> {
     /**
      * Get container of a player
@@ -109,6 +119,15 @@ public interface ContainerHolder<V, T extends Container<V>> {
      */
     CompletableFuture<Integer> count();
 
+    /**
+     * Methdod to merge a container into this container.
+     * <p>
+     * This will override entries if they already exist whith the same name.
+     * This will not remove already existing entries.
+     *
+     * @param container container to merge
+     * @return A future which completes when all underlying futures are completed.
+     */
     default CompletableFuture<Void> migrate(ContainerHolder<V, T> container) {
         List<CompletableFuture<?>> migrations = new ArrayList<>();
         var global = globalContainer().migrate(container.globalContainer());

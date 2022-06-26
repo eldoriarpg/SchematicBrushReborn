@@ -10,6 +10,9 @@ import de.eldoria.schematicbrush.storage.base.Container;
 
 import java.io.Closeable;
 
+/**
+ * Container used to store {@link Brush}es.
+ */
 public interface BrushContainer extends Closeable, Container<Brush> {
 
 }

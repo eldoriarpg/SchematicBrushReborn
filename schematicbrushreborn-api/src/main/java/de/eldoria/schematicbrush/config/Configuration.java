@@ -35,11 +35,15 @@ public interface Configuration {
     GeneralConfig general();
 
     /**
-     * The preset registry
+     * The preset storage
      *
-     * @return preset registry
+     * @return preset storage
      */
     Presets presets();
 
+    /**
+     * The brush storage
+     * @return brush storage
+     */
     Brushes brushes();
 }

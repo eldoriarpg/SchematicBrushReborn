@@ -61,8 +61,8 @@ public class Migrate extends AdvancedCommand implements ITabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         if (args.sizeIs(1) || args.sizeIs(2)) {
-            return TabCompleteUtil.complete(args.asString(0), storageRegistry.storages().entrySet()
-                    .stream().map(Map.Entry::getKey)
+            return TabCompleteUtil.complete(args.asString(0), storageRegistry.storages().keySet()
+                    .stream()
                     .map(Nameable::name));
         }
 

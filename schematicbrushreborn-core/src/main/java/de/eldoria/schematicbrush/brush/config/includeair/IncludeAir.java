@@ -72,9 +72,9 @@ public class IncludeAir implements Mutator<Boolean> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof IncludeAir that)) return false;
+        if (!(o instanceof IncludeAir includeAir)) return false;
 
-        return value == that.value;
+        return value == includeAir.value;
     }
 
     @Override

@@ -17,21 +17,34 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a snapshot of a {@link BrushBuilder}.
+ */
 public interface BrushBuilderSnapshot extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();
 
+    /**
+     * Placement modifiers of the snapshot.
+     *
+     * @return placement modifiers as map
+     */
     Map<Nameable, Mutator<?>> placementModifier();
 
+    /**
+     * Schematic sets of the snapshot
+     *
+     * @return list of schematic sets
+     */
     List<SchematicSetBuilder> schematicSets();
 
     /**
      * Loads a brush builder snapshot.
-     *
+     * <p>
      * This is required to inject required dependencies which were not serialized.
      *
-     * @param player player of the builder
-     * @param settingsRegistry settings registry
+     * @param player            player of the builder
+     * @param settingsRegistry  settings registry
      * @param schematicRegistry schematic registry
      * @return new BrushBuilder instance.
      */

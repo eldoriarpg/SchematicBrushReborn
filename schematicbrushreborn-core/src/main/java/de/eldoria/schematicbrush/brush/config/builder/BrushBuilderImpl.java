@@ -182,7 +182,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
     public BrushBuilderSnapshot snapshot(){
         Map<Nameable, Mutator<?>> placementModifier = this.placementModifier.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, k -> k.getValue().copy()));
+                .collect(Collectors.toMap(Map.Entry::getKey, key -> key.getValue().copy()));
         var schematicSets = this.schematicSets.stream()
                 .map(SchematicSetBuilder::copy)
                 .collect(Collectors.toCollection(ArrayList::new));

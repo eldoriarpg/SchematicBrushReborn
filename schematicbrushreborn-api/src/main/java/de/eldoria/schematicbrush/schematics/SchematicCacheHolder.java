@@ -9,6 +9,9 @@ package de.eldoria.schematicbrush.schematics;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 
+/**
+ * A schematic cache holder.
+ */
 public interface SchematicCacheHolder {
     /**
      * Gets a cache by key
