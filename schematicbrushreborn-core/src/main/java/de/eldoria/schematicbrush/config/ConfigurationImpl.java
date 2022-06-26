@@ -118,7 +118,7 @@ public class ConfigurationImpl extends EldoConfig implements Configuration {
                             excluded.add(currpath.replace(prefix + "/", ""));
                         }
                     }
-                    sources.add(new SchematicSourceImpl(path, prefix, excluded));
+                    sources.add(new SchematicSourceImpl(path, prefix, true, excluded));
                     plugin.getLogger().info("Source " + path + " successfully converted.");
                 }
             }

@@ -34,6 +34,8 @@ public interface SchematicSource extends ConfigurationSerializable {
      *
      * @return prefix
      */
+    boolean isRelative();
+
     String prefix();
 
     /**
