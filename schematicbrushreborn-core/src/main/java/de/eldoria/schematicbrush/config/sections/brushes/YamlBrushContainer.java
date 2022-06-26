@@ -23,7 +23,7 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
 
     public YamlBrushContainer(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
-        List<Brush> brushList = map.getValue("brushes");
+        List<Brush> brushList = map.getValueOrDefault("brushes", Collections.emptyList());
         brushList.forEach(p -> brushes.put(p.name(), p));
     }
 
