@@ -22,6 +22,17 @@ import org.bukkit.entity.Player;
  * Represents a paste mutation, which will be applied when the brush is pasted.
  */
 public interface PasteMutation {
+    static ParserContext createContext(Actor actor, Extent clipboard, World world) {
+        var parserContext = new ParserContext();
+        parserContext.setActor(actor);
+        parserContext.setExtent(clipboard);
+        parserContext.setRestricted(true);
+        parserContext.setPreferringWildcard(false);
+        parserContext.setTryLegacy(true);
+        parserContext.setWorld(world);
+        return parserContext;
+    }
+
     /**
      * Clipboard of next paste.
      *
@@ -59,12 +70,14 @@ public interface PasteMutation {
 
     /**
      * A mask which will be applied on the clipboard.
+     *
      * @return a mask
      */
     Mask maskSource();
 
     /**
      * Set the mask which will be applied on the clipboard.
+     *
      * @param mask mask
      */
     void maskSource(Mask mask);
@@ -115,20 +128,10 @@ public interface PasteMutation {
 
     /**
      * Gets a parser context for the paste action
+     *
      * @return a new parser action
      */
     default ParserContext parserContext() {
         return createContext(actor(), clipboard(), session().getWorld());
-    }
-
-    static ParserContext createContext(Actor actor, Extent clipboard, World world){
-        var parserContext = new ParserContext();
-        parserContext.setActor(actor);
-        parserContext.setExtent(clipboard);
-        parserContext.setRestricted(true);
-        parserContext.setPreferringWildcard(false);
-        parserContext.setTryLegacy(true);
-        parserContext.setWorld(world);
-        return parserContext;
     }
 }

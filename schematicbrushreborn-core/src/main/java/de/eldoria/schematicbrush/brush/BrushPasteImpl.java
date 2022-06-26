@@ -94,7 +94,7 @@ public class BrushPasteImpl implements BrushPaste {
     }
 
     @Override
-    public BrushSettings settings(){
+    public BrushSettings settings() {
         return settings;
     }
 

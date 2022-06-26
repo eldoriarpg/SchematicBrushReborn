@@ -10,7 +10,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class ConfigModifiedEvent  extends Event {
+public class ConfigModifiedEvent extends Event {
     public static final HandlerList HANDLERS = new HandlerList();
 
     public static HandlerList getHandlerList() {

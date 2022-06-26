@@ -8,8 +8,8 @@ package de.eldoria.schematicbrush.storage;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import de.eldoria.eldoutilities.serialization.wrapper.MapEntry;
+import de.eldoria.eldoutilities.serialization.wrapper.YamlContainer;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.storage.brush.Brush;
@@ -18,7 +18,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import de.eldoria.eldoutilities.serialization.wrapper.YamlContainer;
 
 import java.io.IOException;
 

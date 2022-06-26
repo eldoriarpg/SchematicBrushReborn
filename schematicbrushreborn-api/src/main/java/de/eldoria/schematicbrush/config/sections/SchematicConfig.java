@@ -26,12 +26,14 @@ public interface SchematicConfig extends ConfigurationSerializable {
 
     /**
      * Defines wheather the path should be prefixed or not
+     *
      * @return true if the prefix should used as a suffix for the source path
      */
     boolean isPathSourceAsPrefix();
 
     /**
      * Gets the source for a path if present
+     *
      * @param path path
      * @return optional holding a source
      */

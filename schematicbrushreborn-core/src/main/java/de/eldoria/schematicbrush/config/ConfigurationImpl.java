@@ -14,9 +14,9 @@ import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
 import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
+import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import de.eldoria.schematicbrush.storage.preset.Presets;
-import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
@@ -160,7 +160,7 @@ public class ConfigurationImpl extends EldoConfig implements Configuration {
     }
 
     @Override
-    public Brushes brushes(){
+    public Brushes brushes() {
         return brushes;
     }
 }

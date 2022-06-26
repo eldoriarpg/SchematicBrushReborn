@@ -35,7 +35,8 @@ public class SchematicModifier extends BaseModifier {
 
     /**
      * Creates a new schematic modifier
-     * @param name name. Defines the type of the modifier
+     *
+     * @param name        name. Defines the type of the modifier
      * @param description description of the modifier
      */
     public SchematicModifier(String name, String description) {
@@ -45,7 +46,7 @@ public class SchematicModifier extends BaseModifier {
     /**
      * Creates a new PlacementModifier.
      *
-     * @param name name of the modifier
+     * @param name        name of the modifier
      * @param description description of the modifier
      * @return new PlacementModifier
      */

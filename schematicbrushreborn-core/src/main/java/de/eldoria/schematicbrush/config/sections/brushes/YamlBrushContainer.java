@@ -7,10 +7,8 @@
 package de.eldoria.schematicbrush.config.sections.brushes;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.schematicbrush.events.ConfigModifiedEvent;
 import de.eldoria.schematicbrush.storage.brush.Brush;
 import de.eldoria.schematicbrush.storage.brush.BrushContainer;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;

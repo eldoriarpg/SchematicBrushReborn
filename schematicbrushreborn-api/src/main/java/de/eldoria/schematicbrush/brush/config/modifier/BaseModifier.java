@@ -10,7 +10,7 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 
 /**
  * Represents a modifier.
- *
+ * <p>
  * A modifier is an extended {@link Nameable} which also has a description.
  */
 public class BaseModifier extends Nameable {

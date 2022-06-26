@@ -179,7 +179,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
     }
 
     @Override
-    public BrushBuilderSnapshot snapshot(){
+    public BrushBuilderSnapshot snapshot() {
         Map<Nameable, Mutator<?>> placementModifier = this.placementModifier.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, key -> key.getValue().copy()));

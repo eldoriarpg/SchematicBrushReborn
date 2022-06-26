@@ -21,6 +21,7 @@ public interface Shiftable<T> extends ValueProvider<T> {
 
     /**
      * Indicates if a value is shiftable
+     *
      * @return true if it is shiftable
      */
     default boolean shiftable() {

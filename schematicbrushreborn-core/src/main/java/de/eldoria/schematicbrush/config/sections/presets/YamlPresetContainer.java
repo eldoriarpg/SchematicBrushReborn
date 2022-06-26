@@ -7,10 +7,8 @@
 package de.eldoria.schematicbrush.config.sections.presets;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.schematicbrush.events.ConfigModifiedEvent;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;

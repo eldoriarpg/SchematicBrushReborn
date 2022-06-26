@@ -48,7 +48,7 @@ public interface BrushBuilder {
      *
      * @param type     type
      * @param provider provider
-     * @param <T> Type of the placement modifier
+     * @param <T>      Type of the placement modifier
      */
     <T extends Nameable> void setPlacementModifier(T type, Mutator<?> provider);
 
@@ -101,6 +101,7 @@ public interface BrushBuilder {
 
     /**
      * Get a immutable snapshot of the brush builder.
+     *
      * @return snapshot
      */
     BrushBuilderSnapshot snapshot();

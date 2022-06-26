@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -37,13 +36,11 @@ import java.util.regex.Pattern;
 public class Schematic implements Comparable<Schematic> {
     private static final Pattern numEnd = Pattern.compile("(?<name>.+?)(?<num>\\d+?)$");
     private static final Set<BaseBlock> SIZE_EXCLUSION = Set.of(BukkitAdapter.adapt(Material.AIR.createBlockData()).toBaseBlock());
-
-    private final Map<Material, Integer> materialMap = new EnumMap<>(Material.class);
-
     /**
      * Regex which matches the end of a filename.
      */
     private static final String EXTENSION = "\\..+$";
+    private final Map<Material, Integer> materialMap = new EnumMap<>(Material.class);
     /**
      * Format of the schematic.
      */
@@ -217,6 +214,7 @@ public class Schematic implements Comparable<Schematic> {
 
     /**
      * The total block size of the schematic. Including air blocks.
+     *
      * @return block count of schematics
      */
     public int size() {
@@ -251,6 +249,7 @@ public class Schematic implements Comparable<Schematic> {
 
     /**
      * Calculates and returns a map which contains the block count of every material in this schematic.
+     *
      * @return map with block counts
      */
     public Map<Material, Integer> blockCount() {
@@ -270,10 +269,10 @@ public class Schematic implements Comparable<Schematic> {
             try {
                 var clipboard = loadSchematic();
                 clipboard.getRegion().iterator()
-                        .forEachRemaining(pos ->{
+                        .forEachRemaining(pos -> {
                             var mat = BukkitAdapter.adapt(clipboard.getBlock(pos)).getMaterial();
                             materialMap.compute(mat, (key, v) -> v == null ? 1 : v + 1);
-                                });
+                        });
             } catch (IOException e) {
                 return Collections.emptyMap();
             }

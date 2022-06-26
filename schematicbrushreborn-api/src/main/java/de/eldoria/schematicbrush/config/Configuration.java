@@ -43,6 +43,7 @@ public interface Configuration {
 
     /**
      * The brush storage
+     *
      * @return brush storage
      */
     Brushes brushes();

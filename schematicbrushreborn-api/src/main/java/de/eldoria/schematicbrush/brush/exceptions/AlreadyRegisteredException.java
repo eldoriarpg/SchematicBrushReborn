@@ -15,6 +15,7 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 public class AlreadyRegisteredException extends RuntimeException {
     /**
      * Creates a new exception with a message
+     *
      * @param message message
      */
     public AlreadyRegisteredException(String message) {
@@ -23,6 +24,7 @@ public class AlreadyRegisteredException extends RuntimeException {
 
     /**
      * Create a new exception with a message based on the provider name
+     *
      * @param provider provider
      */
     public AlreadyRegisteredException(SettingProvider<?> provider) {
@@ -31,6 +33,7 @@ public class AlreadyRegisteredException extends RuntimeException {
 
     /**
      * Creates a new exception with a message based on the nameable and provider name
+     *
      * @param nameable nameable
      * @param provider provider
      */

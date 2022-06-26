@@ -7,7 +7,6 @@
 package de.eldoria.schematicbrush.storage.preset;
 
 import de.eldoria.schematicbrush.storage.base.Container;
-import de.eldoria.schematicbrush.storage.brush.Brush;
 
 import java.io.Closeable;
 

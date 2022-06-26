@@ -24,6 +24,7 @@ public interface SchematicSource extends ConfigurationSerializable {
 
     /**
      * Path of the schematic source.
+     *
      * @return path as string
      */
     String path();

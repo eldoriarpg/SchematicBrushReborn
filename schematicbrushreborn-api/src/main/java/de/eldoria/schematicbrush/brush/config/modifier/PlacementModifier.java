@@ -50,7 +50,7 @@ public class PlacementModifier extends BaseModifier {
     /**
      * Creates a new PlacementModifier.
      *
-     * @param name name of the modifier
+     * @param name        name of the modifier
      * @param description the description of the modifier
      * @return new PlacementModifier
      */

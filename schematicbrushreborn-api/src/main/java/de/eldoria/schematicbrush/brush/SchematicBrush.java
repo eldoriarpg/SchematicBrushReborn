@@ -28,12 +28,14 @@ import java.util.Optional;
 public interface SchematicBrush extends Brush {
     /**
      * Get the player associated with this brush
+     *
      * @return player
      */
     Player brushOwner();
 
     /**
      * Get the bukkit player associated with this brush
+     *
      * @return bukkit palyer
      */
     BukkitPlayer actor();
@@ -50,6 +52,7 @@ public interface SchematicBrush extends Brush {
 
     /**
      * Get the location of the current brush
+     *
      * @return location based on the conditions of {@link com.sk89q.worldedit.bukkit.BukkitPlayer#getBlockTraceFace(int, boolean, Mask)}
      */
     Optional<Location> getBrushLocation();

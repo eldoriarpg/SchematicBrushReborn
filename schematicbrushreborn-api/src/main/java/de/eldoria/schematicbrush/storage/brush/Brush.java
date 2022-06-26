@@ -7,7 +7,6 @@
 package de.eldoria.schematicbrush.storage.brush;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
-import de.eldoria.eldoutilities.serialization.TypeResolvingMap;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -26,7 +25,8 @@ public class Brush implements ConfigurationSerializable {
 
     /**
      * Constructs a new brush with the given snapshot.
-     * @param name name of brush
+     *
+     * @param name     name of brush
      * @param snapshot snapshot of brush
      */
     public Brush(String name, BrushBuilderSnapshot snapshot) {
@@ -36,7 +36,8 @@ public class Brush implements ConfigurationSerializable {
 
     /**
      * Constructs a new brush with the given brush.
-     * @param name name of brush
+     *
+     * @param name    name of brush
      * @param builder brush builder
      */
     public Brush(String name, BrushBuilder builder) {
@@ -64,6 +65,7 @@ public class Brush implements ConfigurationSerializable {
 
     /**
      * Name of brush
+     *
      * @return name
      */
     public String name() {
@@ -72,6 +74,7 @@ public class Brush implements ConfigurationSerializable {
 
     /**
      * Snapshot of the brush
+     *
      * @return snapshot
      */
     public BrushBuilderSnapshot snapshot() {

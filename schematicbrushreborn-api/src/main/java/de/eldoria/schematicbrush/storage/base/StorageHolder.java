@@ -15,11 +15,13 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * An interface which represents a Storageholder, holding any type of {@link Storage} implementation.
+ *
  * @param <T> type of storage
  */
 public interface StorageHolder<T extends Storage> {
     /**
      * Get a storage type
+     *
      * @param key name of storage
      * @return storage type if it is present
      */
