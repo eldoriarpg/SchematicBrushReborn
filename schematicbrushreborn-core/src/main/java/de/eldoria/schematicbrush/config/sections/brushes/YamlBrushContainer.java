@@ -34,7 +34,7 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
-                .add("presets", new ArrayList<>(brushes.values()))
+                .add("brushes", new ArrayList<>(brushes.values()))
                 .build();
     }
 
