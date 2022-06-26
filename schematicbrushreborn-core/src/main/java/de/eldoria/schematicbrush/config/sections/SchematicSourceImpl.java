@@ -30,7 +30,7 @@ public class SchematicSourceImpl implements SchematicSource {
         excludedPath = map.getValue("excludedPath");
     }
 
-    public SchematicSourceImpl(String path, String prefix,boolean relative, List<String> excludedPath) {
+    public SchematicSourceImpl(String path, String prefix, boolean relative, List<String> excludedPath) {
         this.path = path;
         this.prefix = prefix;
         this.relative = relative;
