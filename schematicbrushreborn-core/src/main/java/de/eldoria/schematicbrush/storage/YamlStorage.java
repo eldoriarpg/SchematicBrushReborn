@@ -6,25 +6,29 @@
 
 package de.eldoria.schematicbrush.storage;
 
+import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import de.eldoria.schematicbrush.storage.preset.Presets;
 
 public class YamlStorage implements Storage {
-    private final Presets yamlPresets;
-    private final Brushes yamlBrushes;
+    private final ConfigurationImpl configuration;
 
-    public YamlStorage(Presets yamlPresets, Brushes yamlBrushes) {
-        this.yamlPresets = yamlPresets;
-        this.yamlBrushes = yamlBrushes;
+    public YamlStorage(ConfigurationImpl configuration) {
+        this.configuration = configuration;
     }
 
     @Override
     public Presets presets() {
-        return yamlPresets;
+        return configuration.presets();
     }
 
     @Override
     public Brushes brushes() {
-        return yamlBrushes;
+        return configuration.brushes();
+    }
+
+    @Override
+    public void save() {
+        configuration.save();
     }
 }

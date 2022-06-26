@@ -68,7 +68,7 @@ public class Sessions {
             composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>", Colors.ADD);
         }
         if (player.hasPermission(Permissions.BrushPreset.USE)) {
-            composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Load Brush]</click>", Colors.ADD);
+            composer.space().text("<click:suggest_command:'/sbr loadbrush '><%s>[Load Brush]</click>", Colors.ADD);
         }
         composer.space().text("<click:run_command:'/sbr refreshSchematics session'><%s>[Refresh Schematics]</click>", Colors.ADD);
         var count = new AtomicInteger(0);

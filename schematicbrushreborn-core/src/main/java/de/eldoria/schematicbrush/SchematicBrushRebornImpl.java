@@ -38,7 +38,6 @@ import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
 import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushContainer;
 import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
-import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
 import de.eldoria.schematicbrush.listener.BrushModifier;
@@ -52,6 +51,7 @@ import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistryImpl;
 import de.eldoria.schematicbrush.storage.YamlStorage;
+import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -108,7 +108,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         schematics.register(SchematicCache.STORAGE, cache);
 
 
-        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config.presets(), config.brushes()));
+        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config));
 
         storage = storageRegistry.getRegistry(config.general().storageType());
 
@@ -147,7 +147,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginDisable() {
-        config.saveConfigs();
+        config.save();
         cache.shutdown();
     }
 

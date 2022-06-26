@@ -54,4 +54,20 @@ public class Brush implements ConfigurationSerializable {
     public BrushBuilderSnapshot snapshot() {
         return snapshot;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Brush brush)) return false;
+
+        if (!name.equals(brush.name)) return false;
+        return snapshot.equals(brush.snapshot);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + snapshot.hashCode();
+        return result;
+    }
 }

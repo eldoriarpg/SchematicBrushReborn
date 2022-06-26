@@ -19,8 +19,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class YamlBrushes implements Brushes, ConfigurationSerializable {
-    private Map<UUID, YamlBrushContainer> playerBrushes = new HashMap<>();
-    private YamlBrushContainer globalBrushes = new YamlBrushContainer();
+    private final Map<UUID, YamlBrushContainer> playerBrushes;
+    private final YamlBrushContainer globalBrushes;
 
     public YamlBrushes(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
@@ -29,6 +29,8 @@ public class YamlBrushes implements Brushes, ConfigurationSerializable {
     }
 
     public YamlBrushes() {
+        playerBrushes = new HashMap<>();
+        globalBrushes = new YamlBrushContainer();
     }
 
     @Override

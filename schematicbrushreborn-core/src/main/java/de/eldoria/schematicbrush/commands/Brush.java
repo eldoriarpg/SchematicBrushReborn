@@ -15,10 +15,12 @@ import de.eldoria.schematicbrush.commands.brush.AddSet;
 import de.eldoria.schematicbrush.commands.brush.Bind;
 import de.eldoria.schematicbrush.commands.brush.Clear;
 import de.eldoria.schematicbrush.commands.brush.Create;
+import de.eldoria.schematicbrush.commands.brush.LoadBrush;
 import de.eldoria.schematicbrush.commands.brush.Modify;
 import de.eldoria.schematicbrush.commands.brush.ModifySet;
 import de.eldoria.schematicbrush.commands.brush.RefreshSchematics;
 import de.eldoria.schematicbrush.commands.brush.RemoveSet;
+import de.eldoria.schematicbrush.commands.brush.SaveBrush;
 import de.eldoria.schematicbrush.commands.brush.SavePreset;
 import de.eldoria.schematicbrush.commands.brush.Sessions;
 import de.eldoria.schematicbrush.commands.brush.Show;
@@ -51,6 +53,8 @@ public class Brush extends AdvancedCommand {
                     cmds.add(new AddPreset(plugin, sessions, storage));
                     cmds.add(new SavePreset(plugin, sessions, storage));
                     cmds.add(new RefreshSchematics(plugin, sessions, setting, schematics));
+                    cmds.add(new LoadBrush(plugin, sessions, storage, setting, schematics));
+                    cmds.add(new SaveBrush(plugin, sessions, storage));
                 })
                 .build());
     }

@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
-    private final Storage config;
+    private final Storage storage;
     private final Sessions sessions;
 
     public SavePreset(Plugin plugin, Sessions sessions, Storage storage) {
@@ -38,7 +38,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
                 .withPermission(Permissions.Preset.USE)
                 .hidden()
                 .build());
-        this.config = storage;
+        this.storage = storage;
         this.sessions = sessions;
     }
 
@@ -52,24 +52,25 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         CompletableFuture<Optional<Preset>> addition;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            addition = config.presets().globalContainer().get(preset.name())
+            addition = storage.presets().globalContainer().get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
                             CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
                         }
-                        config.presets().globalContainer().add(preset).join();
+                        storage.presets().globalContainer().add(preset).join();
                     }, err -> handleCommandError(player, err)));
         } else {
-            addition = config.presets().playerContainer(player).get(preset.name())
+            addition = storage.presets().playerContainer(player).get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
                             CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
                         }
-                        config.presets().playerContainer(player).add(preset).join();
+                        storage.presets().playerContainer(player).add(preset).join();
                     }, err -> handleCommandError(player, err)));
         }
         addition.whenComplete(Futures.whenComplete(res -> {
             //TODO: Think about storage saving
+            storage.save();
             messageSender().sendMessage(player, "Preset saved.");
         }, err -> handleCommandError(player, err)));
     }

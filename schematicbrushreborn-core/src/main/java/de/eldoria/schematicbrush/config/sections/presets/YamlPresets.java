@@ -19,8 +19,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class YamlPresets implements Presets, ConfigurationSerializable {
-    private Map<UUID, YamlPresetContainer> playerPresets = new HashMap<>();
-    private YamlPresetContainer globalPresets = new YamlPresetContainer();
+    private final Map<UUID, YamlPresetContainer> playerPresets;
+    private final YamlPresetContainer globalPresets;
 
     public YamlPresets(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
@@ -29,6 +29,8 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
     }
 
     public YamlPresets() {
+        playerPresets = new HashMap<>();
+        globalPresets = new YamlPresetContainer();
     }
 
     @Override
