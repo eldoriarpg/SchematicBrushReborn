@@ -34,7 +34,9 @@ public class StorageRegistryImpl implements StorageRegistry {
 
     @Override
     public void unregister(Nameable key) {
-        storages.remove(key);
+        if (storages.remove(key) != null) {
+            SchematicBrushReborn.logger().info("Storage type " + key.name() + " unregistered.");
+        }
     }
 
     @Override
@@ -51,5 +53,15 @@ public class StorageRegistryImpl implements StorageRegistry {
     @Override
     public Map<Nameable, Storage> storages() {
         return Collections.unmodifiableMap(storages);
+    }
+
+    public void shutdown() {
+        var storages = this.storages.entrySet().iterator();
+        while (storages.hasNext()) {
+            var entry = storages.next();
+            entry.getValue().shutdown();
+            storages.remove();
+            SchematicBrushReborn.logger().info("Storage " + entry.getKey() + " shutdown.");
+        }
     }
 }

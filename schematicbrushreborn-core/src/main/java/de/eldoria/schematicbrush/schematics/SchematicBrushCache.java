@@ -405,6 +405,7 @@ public class SchematicBrushCache implements SchematicCache {
         return schematicsCache.keySet().size();
     }
 
+    @Override
     public void shutdown() {
         watchService.shutdown();
     }

@@ -52,4 +52,11 @@ public interface Storage {
      */
     default void save() {
     }
+
+    /**
+     * Called when the plugin shuts down and the storages get unregistered.
+     */
+    default void shutdown() {
+
+    }
 }

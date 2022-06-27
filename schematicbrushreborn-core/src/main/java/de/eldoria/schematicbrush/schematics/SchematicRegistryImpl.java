@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.schematics;
 
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 
@@ -37,9 +38,10 @@ public class SchematicRegistryImpl implements SchematicRegistry {
     @Override
     public void register(Nameable key, SchematicCache cache) {
         if (caches.containsKey(key)) {
-            throw new AlreadyRegisteredException("Cache with key " + key.name() + " is already registered");
+            throw new AlreadyRegisteredException("Cache with key " + key.name() + " is already registered via " + getCache(key).getClass().getName());
         }
         cache.init();
+        SchematicBrushReborn.logger().info("Schematic cache " + key + " registered.");
         caches.put(key, cache);
     }
 
@@ -50,7 +52,9 @@ public class SchematicRegistryImpl implements SchematicRegistry {
      */
     @Override
     public void unregister(Nameable key) {
-        caches.remove(key);
+        if (caches.remove(key) != null) {
+            SchematicBrushReborn.logger().info("Schematic cache " + key + " unregistered.");
+        }
     }
 
     /**
@@ -79,5 +83,15 @@ public class SchematicRegistryImpl implements SchematicRegistry {
     @Override
     public int directoryCount() {
         return caches.values().stream().mapToInt(SchematicCache::directoryCount).sum();
+    }
+
+    public void shutdown() {
+        var storages = caches.entrySet().iterator();
+        while (storages.hasNext()) {
+            var entry = storages.next();
+            entry.getValue().shutdown();
+            storages.remove();
+            SchematicBrushReborn.logger().info("Schematic cache " + entry.getKey() + " shutdown.");
+        }
     }
 }

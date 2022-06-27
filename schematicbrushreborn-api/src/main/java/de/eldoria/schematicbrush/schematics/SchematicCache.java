@@ -83,4 +83,11 @@ public interface SchematicCache {
      * @return directory count
      */
     int directoryCount();
+
+    /**
+     * Called when the plugin gets shutdown and the cache is unregistered.
+     */
+    default void shutdown() {
+
+    }
 }

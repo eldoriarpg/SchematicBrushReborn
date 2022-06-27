@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush;
 
 import de.eldoria.eldoutilities.bstats.EldoMetrics;
+import de.eldoria.eldoutilities.bstats.charts.AdvancedPie;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
 import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.ILocalizer;
@@ -69,11 +70,10 @@ import java.util.stream.Collectors;
 public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistry settingsRegistry;
-    private SchematicRegistry schematics;
+    private SchematicRegistryImpl schematics;
     private ConfigurationImpl config;
-    private SchematicBrushCache cache;
     private RenderService renderService;
-    private StorageRegistry storageRegistry;
+    private StorageRegistryImpl storageRegistry;
     private Storage storage;
 
     public SchematicBrushRebornImpl() {
@@ -85,31 +85,21 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginLoad() throws Throwable {
+        config = new ConfigurationImpl(this);
+
         storageRegistry = new StorageRegistryImpl();
+        schematics = new SchematicRegistryImpl();
+        settingsRegistry = new BrushSettingsRegistryImpl();
+        schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, config));
+        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config));
     }
 
     @Override
     public void onPluginEnable() {
-        if (!getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
-            logger().warning("WorldEdit is not installed on this Server!");
-            return;
-        }
-
         MessageSender.create(this, "§6[SB]");
-        var iLocalizer = ILocalizer.create(this, "en_US");
-        iLocalizer.setLocale("en_US");
+        ILocalizer.create(this, "en_US").setLocale("en_US");
 
-        schematics = new SchematicRegistryImpl();
-
-        settingsRegistry = new BrushSettingsRegistryImpl();
         registerDefaults();
-
-        config = new ConfigurationImpl(this);
-
-        cache = new SchematicBrushCache(this, config);
-        schematics.register(SchematicCache.STORAGE, cache);
-
-        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config));
 
         storage = storageRegistry.getRegistry(config.general().storageType());
 
@@ -155,9 +145,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public void onPluginDisable() {
         config.save();
-        cache.shutdown();
-        schematics.unregister(SchematicCache.STORAGE);
-        storageRegistry.unregister(StorageRegistry.YAML);
+        schematics.shutdown();
+        storageRegistry.shutdown();
     }
 
     @Override
@@ -175,19 +164,27 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         metrics.addCustomChart(new SimplePie("schematic_count",
                 () -> reduceMetricValue(schematics.schematicCount(), 1000, 50, 100, 250, 500, 1000)));
+
         metrics.addCustomChart(new SimplePie("directory_count",
                 () -> reduceMetricValue(schematics.directoryCount(), 100, 10, 50, 100)));
+
         metrics.addCustomChart(new SimplePie("preset_count",
                 () -> reduceMetricValue(storage.presets().count().join(), 100, 10, 50, 100)));
-        metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(UserData.get().isPremium())));
+
+        metrics.addCustomChart(new SimplePie("brush_count",
+                () -> reduceMetricValue(storage.brushes().count().join(), 100, 10, 50, 100)));
+
+        metrics.addCustomChart(new SimplePie("premium",
+                () -> String.valueOf(UserData.get().isPremium())));
+
+        metrics.addCustomChart(new AdvancedPie("installed_storage_type",
+                () -> storageRegistry.storages().keySet().stream().collect(Collectors.toMap(Nameable::name, e -> 1))));
+
+        metrics.addCustomChart(new SimplePie("used_storage_type",
+                () -> config.general().storageType().name()));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
-                () -> {
-                    if (getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
-                        return "FAWE";
-                    }
-                    return "WorldEdit";
-                }));
+                () -> getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit") ? "FAWE" : "WorldEdit"));
     }
 
     private String reduceMetricValue(int count, int baseValue, int... steps) {
