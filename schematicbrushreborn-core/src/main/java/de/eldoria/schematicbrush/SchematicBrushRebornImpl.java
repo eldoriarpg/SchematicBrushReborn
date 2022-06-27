@@ -71,7 +71,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistry settingsRegistry;
     private SchematicRegistryImpl schematics;
-    private ConfigurationImpl config;
+    private ConfigurationImpl configuration;
     private RenderService renderService;
     private StorageRegistryImpl storageRegistry;
     private Storage storage;
@@ -85,13 +85,18 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginLoad() throws Throwable {
-        config = new ConfigurationImpl(this);
-
-        storageRegistry = new StorageRegistryImpl();
-        schematics = new SchematicRegistryImpl();
         settingsRegistry = new BrushSettingsRegistryImpl();
-        schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, config));
-        storageRegistry.register(StorageRegistry.YAML, new YamlStorage(config));
+        registerDefaults();
+
+
+        configuration = new ConfigurationImpl(this);
+
+        var yamlStorage = new YamlStorage(configuration);
+        storageRegistry = new StorageRegistryImpl(yamlStorage, configuration);
+        storageRegistry.register(StorageRegistry.YAML, yamlStorage);
+
+        schematics = new SchematicRegistryImpl();
+        schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, configuration));
     }
 
     @Override
@@ -99,27 +104,19 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         MessageSender.create(this, "§6[SB]");
         ILocalizer.create(this, "en_US").setLocale("en_US");
 
-        registerDefaults();
-
-        storage = storageRegistry.getRegistry(config.general().storageType());
-
-        if (storage == null) {
-            storage = storageRegistry.getRegistry(StorageRegistry.YAML);
-            getLogger().warning("Storage type " + config.general().storageType() + " not registered. Using YAML storage.");
-            getLogger().warning("Available storage types are :" + storageRegistry.storages().keySet().stream().map(Nameable::name).collect(Collectors.joining(", ")));
-        }
+        storage = storageRegistry.activeStorage();
 
         reload();
 
-        var notifyListener = new NotifyListener(this, config);
-        renderService = new RenderService(this, config);
+        var notifyListener = new NotifyListener(this, configuration);
+        renderService = new RenderService(this, configuration);
 
         var messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
 
         var brushCommand = new Brush(this, schematics, storage, settingsRegistry, messageBlocker);
         var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storage, messageBlocker);
         var adminCommand = new Admin(this, schematics, storageRegistry);
-        var settingsCommand = new Settings(this, config, renderService, notifyListener, messageBlocker);
+        var settingsCommand = new Settings(this, configuration, renderService, notifyListener, messageBlocker);
 
         enableMetrics();
 
@@ -131,20 +128,20 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand(adminCommand);
         registerCommand(settingsCommand);
 
-        if (config.general().isCheckUpdates() && UserData.get().isPremium()) {
-            Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, config.general().isCheckUpdates(),
+        if (configuration.general().isCheckUpdates() && UserData.get().isPremium()) {
+            Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, configuration.general().isCheckUpdates(),
                     UserData.get().resourceId())).start();
         }
     }
 
     public void reload() {
         schematics.reload();
-        config.reload();
+        configuration.reload();
     }
 
     @Override
     public void onPluginDisable() {
-        config.save();
+        configuration.save();
         schematics.shutdown();
         storageRegistry.shutdown();
     }
@@ -178,10 +175,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
                 () -> String.valueOf(UserData.get().isPremium())));
 
         metrics.addCustomChart(new AdvancedPie("installed_storage_type",
-                () -> storageRegistry.storages().keySet().stream().collect(Collectors.toMap(Nameable::name, e -> 1))));
+                () -> storageRegistry.registry().keySet().stream().collect(Collectors.toMap(Nameable::name, e -> 1))));
 
         metrics.addCustomChart(new SimplePie("used_storage_type",
-                () -> config.general().storageType().name()));
+                () -> configuration.general().storageType().name()));
 
         metrics.addCustomChart(new SimplePie("world_edit_version",
                 () -> getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit") ? "FAWE" : "WorldEdit"));
@@ -221,7 +218,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public Configuration config() {
-        return config;
+        return configuration;
     }
 
     private void registerDefaults() {

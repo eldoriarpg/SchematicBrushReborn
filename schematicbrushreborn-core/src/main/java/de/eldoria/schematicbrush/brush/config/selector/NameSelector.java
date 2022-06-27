@@ -28,7 +28,7 @@ public class NameSelector extends BaseSelector {
 
     @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
-        return registry.getCache(SchematicCache.STORAGE).getSchematicsByName(player, term());
+        return registry.get(SchematicCache.STORAGE).getSchematicsByName(player, term());
     }
 
     @Override

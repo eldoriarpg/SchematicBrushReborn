@@ -22,7 +22,7 @@ public interface SchematicCache {
     Nameable STORAGE = Nameable.of("storage");
 
     /**
-     * Init method which will be executed when registered via {@link SchematicRegistry#register(Nameable, SchematicCache)}
+     * Init method which will be executed when registered via {@link SchematicRegistry#register(Nameable, Object)}
      */
     void init();
 

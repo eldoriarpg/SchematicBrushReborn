@@ -8,41 +8,38 @@ package de.eldoria.schematicbrush.storage;
 
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
+import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.registry.BaseRegistry;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-public class StorageRegistryImpl implements StorageRegistry {
-    private final Map<Nameable, Storage> storages = new HashMap<>();
+public class StorageRegistryImpl extends BaseRegistry<Nameable, Storage> implements StorageRegistry {
+    private final Storage defaultStorage;
+    private final Configuration configuration;
 
-    @Override
-    public Storage getRegistry(Nameable key) {
-        return storages.get(key);
+    public StorageRegistryImpl(Storage defaultStorage, Configuration configuration) {
+        this.defaultStorage = defaultStorage;
+        this.configuration = configuration;
     }
 
     @Override
-    public void register(Nameable key, Storage storage) {
-        if (storages.containsKey(key)) {
-            throw new IllegalStateException(String.format("Tried to register storage %s with key %s, but this key is already used by %s.",
-                    storage.getClass().getName(), key, getRegistry(key).getClass().getName()));
+    @NotNull
+    public Storage activeStorage() {
+        if (!isRegistered(configuration.general().storageType())) {
+            SchematicBrushReborn.logger().warning("Storage type " + configuration.general().storageType() + " not registered. Using fallback YAML storage.");
+            SchematicBrushReborn.logger().warning("Available storage types are :" + registry().keySet().stream().map(Nameable::name).collect(Collectors.joining(", ")));
+            return defaultStorage;
         }
-        SchematicBrushReborn.logger().info("Registered storage type " + key.name());
-        storages.put(key, storage);
-    }
-
-    @Override
-    public void unregister(Nameable key) {
-        if (storages.remove(key) != null) {
-            SchematicBrushReborn.logger().info("Storage type " + key.name() + " unregistered.");
-        }
+        return get(configuration.general().storageType());
     }
 
     @Override
     public CompletableFuture<Void> migrate(Nameable source, Nameable target) {
-        var sourceStorage = getRegistry(source);
-        var targetStorage = getRegistry(target);
+        var sourceStorage = get(source);
+        var targetStorage = get(target);
 
         if (sourceStorage == null) throw new IllegalArgumentException("Storage " + source + " does not exist.");
         if (targetStorage == null) throw new IllegalArgumentException("Storage " + target + " does not exist.");
@@ -50,18 +47,11 @@ public class StorageRegistryImpl implements StorageRegistry {
         return targetStorage.migrate(sourceStorage);
     }
 
-    @Override
-    public Map<Nameable, Storage> storages() {
-        return Collections.unmodifiableMap(storages);
-    }
-
     public void shutdown() {
-        var storages = this.storages.entrySet().iterator();
-        while (storages.hasNext()) {
-            var entry = storages.next();
-            entry.getValue().shutdown();
-            storages.remove();
-            SchematicBrushReborn.logger().info("Storage " + entry.getKey() + " shutdown.");
+        for (var nameable : new HashSet<>(registry().keySet())) {
+            get(nameable).shutdown();
+            SchematicBrushReborn.logger().info("Storage " + nameable + " shutdown.");
+            unregister(nameable);
         }
     }
 }

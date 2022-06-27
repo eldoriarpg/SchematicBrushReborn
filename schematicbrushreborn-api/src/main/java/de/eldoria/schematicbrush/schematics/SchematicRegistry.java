@@ -6,10 +6,18 @@
 
 package de.eldoria.schematicbrush.schematics;
 
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
+import de.eldoria.schematicbrush.registry.Registry;
+
 /**
  * A registry to register, manage and retrieve a {@link SchematicCache}.
  */
-public interface SchematicRegistry extends SchematicCacheHolder {
+public interface SchematicRegistry extends Registry<Nameable, SchematicCache> {
+
+    @Deprecated(forRemoval = true)
+    default SchematicCache getCache(Nameable key) {
+        return get(key);
+    }
 
     /**
      * Reloads all registered caches.
