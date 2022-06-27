@@ -96,7 +96,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         storageRegistry.register(StorageRegistry.YAML, yamlStorage);
 
         schematics = new SchematicRegistryImpl();
-        schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, configuration));
     }
 
     @Override
@@ -104,6 +103,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         MessageSender.create(this, "§6[SB]");
         ILocalizer.create(this, "en_US").setLocale("en_US");
 
+        schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, configuration));
         storage = storageRegistry.activeStorage();
 
         reload();

@@ -54,4 +54,9 @@ public class StorageRegistryImpl extends BaseRegistry<Nameable, Storage> impleme
             unregister(nameable);
         }
     }
+
+    @Override
+    protected String name() {
+        return "Storage Registry";
+    }
 }

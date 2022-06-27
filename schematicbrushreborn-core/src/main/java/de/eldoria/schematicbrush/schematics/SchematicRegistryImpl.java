@@ -15,6 +15,13 @@ import java.util.HashSet;
 @SuppressWarnings("unused")
 public class SchematicRegistryImpl extends BaseRegistry<Nameable, SchematicCache> implements SchematicRegistry {
 
+
+    @Override
+    public void register(Nameable key, SchematicCache entry) {
+        super.register(key, entry);
+        entry.init();
+    }
+
     /**
      * Reloads all registered caches.
      */
@@ -49,5 +56,10 @@ public class SchematicRegistryImpl extends BaseRegistry<Nameable, SchematicCache
             SchematicBrushReborn.logger().info("Storage " + nameable + " shutdown.");
             unregister(nameable);
         }
+    }
+
+    @Override
+    protected String name() {
+        return "Schematic Registry";
     }
 }

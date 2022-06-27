@@ -21,18 +21,18 @@ public class BaseRegistry<T extends Nameable, V> implements Registry<T, V> {
     public void register(T key, V entry) {
         if (isRegistered(key)) {
             throw new AlreadyRegisteredException(String.format("Tried to register entry %s with key %s at %s, but this key is already used by %s.",
-                    registry.getClass().getName(), key, getClass().getSimpleName(), get(key).getClass().getName()));
+                    entry.getClass().getName(), key, name(), get(key).getClass().getName()));
         }
-        SchematicBrushReborn.logger().info("Registered entry of type " + key.name() + " with " + entry.getClass().getName());
+        SchematicBrushReborn.logger().info(String.format("Registered entry of type %s with %s at %s", key, entry.getClass().getName(), name()));
         registry.put(key, entry);
     }
 
     @Override
     public void unregister(T key) {
         if (registry.remove(key) != null) {
-            SchematicBrushReborn.logger().info("Entry " + key.name() + " unregistered at " + getClass().getSimpleName());
+            SchematicBrushReborn.logger().info("Entry " + key + " unregistered at " + name());
         } else {
-            SchematicBrushReborn.logger().info("Attempted to unregister entry " + key.name() + " at " + getClass().getSimpleName() + ", but entry was not registered.");
+            SchematicBrushReborn.logger().info("Attempted to unregister entry " + key + " at " + name() + ", but entry was not registered.");
         }
     }
 
@@ -40,7 +40,7 @@ public class BaseRegistry<T extends Nameable, V> implements Registry<T, V> {
     public V get(T key) {
         var value = registry.get(key);
         if (value == null) {
-            throw new IllegalArgumentException("No entry with key " + key + " registered at " + getClass().getSimpleName());
+            throw new IllegalArgumentException("No entry with key " + key + " registered at " + name());
         }
         return value;
     }
@@ -53,5 +53,14 @@ public class BaseRegistry<T extends Nameable, V> implements Registry<T, V> {
     @Override
     public Map<T, V> registry() {
         return Collections.unmodifiableMap(registry);
+    }
+
+    /**
+     * Get a name for the registry
+     *
+     * @return registry name
+     */
+    protected String name() {
+        return getClass().getSimpleName();
     }
 }
