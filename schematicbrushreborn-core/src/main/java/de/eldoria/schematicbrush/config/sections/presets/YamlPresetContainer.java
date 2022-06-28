@@ -13,7 +13,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,9 +71,5 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     @Override
     public Set<String> names() {
         return presets.keySet();
-    }
-
-    @Override
-    public void close() throws IOException {
     }
 }

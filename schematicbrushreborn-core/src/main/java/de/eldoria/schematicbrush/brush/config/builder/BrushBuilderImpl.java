@@ -41,8 +41,8 @@ public final class BrushBuilderImpl implements BrushBuilder {
 
     public BrushBuilderImpl(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         owner = player;
-        this.schematicSets = new ArrayList<>();
-        this.placementModifier = new HashMap<>();
+        schematicSets = new ArrayList<>();
+        placementModifier = new HashMap<>();
         this.settingsRegistry = settingsRegistry;
         this.schematicRegistry = schematicRegistry;
         for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {

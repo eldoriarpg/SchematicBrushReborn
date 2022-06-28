@@ -20,7 +20,7 @@ public interface StorageRegistry extends Registry<Nameable, Storage> {
     /**
      * The default storage method which should be always available.
      */
-    public static final Nameable YAML = Nameable.of("yaml");
+    Nameable YAML = Nameable.of("yaml");
 
     /**
      * Get the active storage, which is defined in the {@link GeneralConfig#storageType()} or a fallback {@link Storage}.

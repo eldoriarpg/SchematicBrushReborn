@@ -87,15 +87,14 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     public void onPluginLoad() throws Throwable {
         settingsRegistry = new BrushSettingsRegistryImpl();
         schematics = new SchematicRegistryImpl();
-        registerDefaults();
 
+        registerDefaults();
 
         configuration = new ConfigurationImpl(this);
 
         var yamlStorage = new YamlStorage(configuration);
         storageRegistry = new StorageRegistryImpl(yamlStorage, configuration);
         storageRegistry.register(StorageRegistry.YAML, yamlStorage);
-
     }
 
     @Override

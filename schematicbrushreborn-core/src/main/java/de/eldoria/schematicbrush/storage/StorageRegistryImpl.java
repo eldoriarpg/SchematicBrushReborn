@@ -30,7 +30,7 @@ public class StorageRegistryImpl extends BaseRegistry<Nameable, Storage> impleme
     public Storage activeStorage() {
         if (!isRegistered(configuration.general().storageType())) {
             SchematicBrushReborn.logger().warning("Storage type " + configuration.general().storageType() + " not registered. Using fallback YAML storage.");
-            SchematicBrushReborn.logger().warning("Available storage types are :" + registry().keySet().stream().map(Nameable::name).collect(Collectors.joining(", ")));
+            SchematicBrushReborn.logger().warning("Available storage types are: " + registry().keySet().stream().map(Nameable::name).collect(Collectors.joining(", ")));
             return defaultStorage;
         }
         return get(configuration.general().storageType());
