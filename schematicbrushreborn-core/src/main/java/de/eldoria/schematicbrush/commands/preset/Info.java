@@ -49,7 +49,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
 
-        storage.presets().playerContainer(player).get(name)
+        storage.presets().containerByName(player, name).get(name)
                 .whenComplete(Futures.whenComplete(res -> {
                     CommandAssertions.isTrue(res.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
                     var preset = res.get();

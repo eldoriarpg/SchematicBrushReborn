@@ -7,6 +7,8 @@
 package de.eldoria.schematicbrush.config.sections.brushes;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
+import de.eldoria.schematicbrush.storage.YamlContainerPagedAccess;
 import de.eldoria.schematicbrush.storage.brush.Brush;
 import de.eldoria.schematicbrush.storage.brush.BrushContainer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -64,6 +66,11 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
     @Override
     public CompletableFuture<Collection<Brush>> all() {
         return CompletableFuture.completedFuture(Collections.unmodifiableCollection(brushes.values()));
+    }
+
+    @Override
+    public ContainerPagedAccess<Brush> paged() {
+        return new YamlContainerPagedAccess<>(this);
     }
 
     /**
