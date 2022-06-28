@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Storage configuration;
+    private final Storage storage;
 
     public Remove(Plugin plugin, Storage storage) {
         super(plugin, CommandMeta.builder("remove")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
                 .build());
-        this.configuration = storage;
+        this.storage = storage;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
         CompletableFuture<Boolean> removal;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            removal = configuration.presets().globalContainer().remove(name)
+            removal = storage.presets().globalContainer().remove(name)
                     .whenComplete(Futures.whenComplete(
                             success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
                             err -> handleCommandError(player, err)));
         } else {
-            removal = configuration.presets().playerContainer(player).remove(name)
+            removal = storage.presets().playerContainer(player).remove(name)
                     .whenComplete(Futures.whenComplete(
                             success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
                             err -> handleCommandError(player, err)));
@@ -60,7 +60,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return configuration.presets().complete(player, args.asString(0));
+            return storage.presets().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }

@@ -43,8 +43,8 @@ public class Migrate extends AdvancedCommand implements ITabExecutor {
         var sourceNameable = Nameable.of(args.asString(0));
         var targetNameable = Nameable.of(args.asString(1));
 
-        var source = storageRegistry.getRegistry(sourceNameable);
-        var target = storageRegistry.getRegistry(targetNameable);
+        var source = storageRegistry.get(sourceNameable);
+        var target = storageRegistry.get(targetNameable);
 
         CommandAssertions.isFalse(source == null, "Source type %TYPE% is unvalid.",
                 Replacement.create("TYPE", sourceNameable.name()));
@@ -60,12 +60,12 @@ public class Migrate extends AdvancedCommand implements ITabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         if (args.sizeIs(1)) {
-            return TabCompleteUtil.complete(args.asString(0), storageRegistry.storages().keySet()
+            return TabCompleteUtil.complete(args.asString(0), storageRegistry.registry().keySet()
                     .stream()
                     .map(Nameable::name));
         }
         if (args.sizeIs(2)) {
-            return TabCompleteUtil.complete(args.asString(1), storageRegistry.storages().keySet()
+            return TabCompleteUtil.complete(args.asString(1), storageRegistry.registry().keySet()
                     .stream()
                     .map(Nameable::name));
         }
