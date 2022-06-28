@@ -43,6 +43,17 @@ public class PlacementModifier extends BaseModifier {
      */
     public static final PlacementModifier FILTER = of("Filter", "Remove blocks from the schematic.", false);
 
+    /**
+     * Flip modifier key
+     */
+    public static final PlacementModifier FLIP = of("Flip", "Flip a schematic", false);
+
+    /**
+     * Rotation modifier key
+     */
+    public static final PlacementModifier ROTATION = of("Rotation", "Rotate a schematic", false);
+
+
     private PlacementModifier(String name, String description, boolean required) {
         super(name, description, required);
     }

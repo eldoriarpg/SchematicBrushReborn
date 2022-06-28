@@ -244,6 +244,14 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.LIST);
         settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.RANGE);
 
+        settingsRegistry.registerPlacementModifier(PlacementModifier.FLIP, FlipProvider.FIXED);
+        settingsRegistry.registerPlacementModifier(PlacementModifier.FLIP, FlipProvider.LIST);
+        settingsRegistry.registerPlacementModifier(PlacementModifier.FLIP, FlipProvider.RANDOM);
+
+        settingsRegistry.registerPlacementModifier(PlacementModifier.ROTATION, RotationProvider.FIXED);
+        settingsRegistry.registerPlacementModifier(PlacementModifier.ROTATION, RotationProvider.LIST);
+        settingsRegistry.registerPlacementModifier(PlacementModifier.ROTATION, RotationProvider.RANDOM);
+
         settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.BOTTOM);
         settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.DROP);
         settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.MIDDLE);
