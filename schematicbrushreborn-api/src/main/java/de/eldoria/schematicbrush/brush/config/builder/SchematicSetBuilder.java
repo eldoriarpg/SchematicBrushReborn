@@ -126,4 +126,13 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
     String infoComponent();
 
     SchematicSetBuilder copy();
+
+    void setModifier(Nameable modifier, Mutator<?> mutator);
+
+    /**
+     * Removes the modifier
+     *
+     * @param modifier modifier
+     */
+    void removeModifier(Nameable modifier);
 }

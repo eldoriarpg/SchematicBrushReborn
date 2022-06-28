@@ -15,10 +15,12 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
  */
 public class BaseModifier extends Nameable {
     private final String description;
+    private final boolean required;
 
-    protected BaseModifier(String name, String description) {
+    protected BaseModifier(String name, String description, boolean required) {
         super(name);
         this.description = description;
+        this.required = required;
     }
 
     /**
@@ -28,5 +30,15 @@ public class BaseModifier extends Nameable {
      */
     public String description() {
         return description;
+    }
+
+    /**
+     * Defines wheather this provider is required or not for a brush.
+     * If the brush behaviour wouldn't change when the default value is applied a modifier is usually not considered required.
+     *
+     * @return true if the modifier is required.
+     */
+    public boolean required() {
+        return required;
     }
 }

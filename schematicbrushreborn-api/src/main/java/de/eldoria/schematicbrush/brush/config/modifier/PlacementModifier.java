@@ -21,30 +21,30 @@ public class PlacementModifier extends BaseModifier {
     /**
      * Placement modifier key
      */
-    public static final PlacementModifier PLACEMENT = of("Placement", "Define how the schematic should be placed on the position.");
+    public static final PlacementModifier PLACEMENT = of("Placement", "Define how the schematic should be placed on the position.", true);
 
     /**
      * IncludeAir modifier key
      */
-    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir", "Include air when placing. Will only have an effect when ReplaceAll is active.");
+    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir", "Include air when placing. Will only have an effect when ReplaceAll is active.", true);
 
     /**
      * ReplaceAll modifier key
      */
-    public static final PlacementModifier REPLACE_ALL = of("ReplaceAll", "Replace non air blocks");
+    public static final PlacementModifier REPLACE_ALL = of("ReplaceAll", "Replace non air blocks", true);
 
     /**
      * Offset modifier key
      */
-    public static final PlacementModifier OFFSET = of("Offset", "The schematic offset when placed.");
+    public static final PlacementModifier OFFSET = of("Offset", "The schematic offset when placed.", false);
 
     /**
      * Filter modifier key
      */
-    public static final PlacementModifier FILTER = of("Filter", "Remove blocks from the schematic.");
+    public static final PlacementModifier FILTER = of("Filter", "Remove blocks from the schematic.", false);
 
-    private PlacementModifier(String name, String description) {
-        super(name, description);
+    private PlacementModifier(String name, String description, boolean required) {
+        super(name, description, required);
     }
 
     /**
@@ -54,8 +54,8 @@ public class PlacementModifier extends BaseModifier {
      * @param description the description of the modifier
      * @return new PlacementModifier
      */
-    public static PlacementModifier of(String name, String description) {
-        return new PlacementModifier(name, description) {
+    public static PlacementModifier of(String name, String description, boolean required) {
+        return new PlacementModifier(name, description, required) {
         };
     }
 }

@@ -11,6 +11,7 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
+import de.eldoria.schematicbrush.brush.config.modifier.BaseModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -121,10 +123,11 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         return getDefaultMap(placementModifier);
     }
 
-    private <T> Map<T, Mutator<?>> getDefaultMap(Map<T, List<ModifierProvider>> map) {
+    private <T extends BaseModifier> Map<T, Mutator<?>> getDefaultMap(Map<T, List<ModifierProvider>> map) {
         return map
                 .entrySet()
                 .stream()
+                .filter(e -> e.getKey().required())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         (e) -> e.getValue().get(0).defaultSetting()));
@@ -204,6 +207,18 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     @Override
     public Map<PlacementModifier, List<ModifierProvider>> placementModifier() {
         return Collections.unmodifiableMap(placementModifier);
+    }
+
+    @Override
+    public Optional<PlacementModifierRegistration> getPlacementModifier(String name) {
+        return placementModifier.keySet().stream().filter(modifier -> modifier.name().equalsIgnoreCase(name)).findFirst()
+                .map(modifier -> new PlacementModifierRegistrationImpl(placementModifier.get(modifier), modifier));
+    }
+
+    @Override
+    public Optional<SchematicModifierRegistration> getSchematicModifier(String name) {
+        return schematicModifier.keySet().stream().filter(modifier -> modifier.name().equalsIgnoreCase(name)).findFirst()
+                .map(modifier -> new SchematicModifierRegistrationImpl(schematicModifier.get(modifier), modifier));
     }
 
     // Tab completion

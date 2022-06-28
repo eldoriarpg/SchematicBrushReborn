@@ -15,12 +15,14 @@ import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class to register, save and parse brush settings.
@@ -127,6 +129,9 @@ public interface BrushSettingsRegistry {
      */
     Map<PlacementModifier, List<ModifierProvider>> placementModifier();
 
+    Optional<PlacementModifierRegistration> getPlacementModifier(String name);
+    Optional<SchematicModifierRegistration> getSchematicModifier(String name);
+
     /**
      * Complete selectors
      *
@@ -154,4 +159,12 @@ public interface BrushSettingsRegistry {
      * @throws CommandException if the arguments are invalid
      */
     List<String> completeSchematicModifier(Arguments args) throws CommandException;
+
+    default Optional<PlacementModifierRegistration> getPlacementModifier(Nameable key){
+        return getPlacementModifier(key.name());
+    }
+
+    default Optional<SchematicModifierRegistration> getSchematicModifier(Nameable key){
+        return getSchematicModifier(key.name());
+    }
 }
