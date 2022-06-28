@@ -13,8 +13,10 @@ import de.eldoria.schematicbrush.config.sections.SchematicConfig;
 import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
-import de.eldoria.schematicbrush.config.sections.presets.PresetRegistry;
-import de.eldoria.schematicbrush.config.sections.presets.PresetRegistryImpl;
+import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
+import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
+import de.eldoria.schematicbrush.storage.brush.Brushes;
+import de.eldoria.schematicbrush.storage.preset.Presets;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
@@ -27,9 +29,11 @@ import java.util.logging.Level;
 
 public class ConfigurationImpl extends EldoConfig implements Configuration {
     private static final String PRESET_FILE = "presets";
+    private static final String BRUSH_FILE = "brushes";
     private SchematicConfig schematicConfig;
     private GeneralConfig general;
-    private PresetRegistry presets;
+    private Presets presets;
+    private Brushes brushes;
 
     public ConfigurationImpl(Plugin plugin) {
         super(plugin);
@@ -39,12 +43,14 @@ public class ConfigurationImpl extends EldoConfig implements Configuration {
     public void saveConfigs() {
         getConfig().set("schematicConfig", schematicConfig);
         loadConfig(PRESET_FILE, null, false).set("presets", presets);
+        loadConfig(BRUSH_FILE, null, false).set("brushes", brushes);
         getConfig().set("general", general);
     }
 
     @Override
     public void reloadConfigs() {
-        presets = loadConfig(PRESET_FILE, null, false).getObject("presets", PresetRegistry.class, new PresetRegistryImpl());
+        presets = loadConfig(PRESET_FILE, null, false).getObject("presets", Presets.class, new YamlPresets());
+        brushes = loadConfig(BRUSH_FILE, null, false).getObject("brushes", Brushes.class, new YamlBrushes());
         schematicConfig = getConfig().getObject("schematicConfig", SchematicConfig.class, new SchematicConfigImpl());
         general = getConfig().getObject("general", GeneralConfig.class, new GeneralConfigImpl());
     }
@@ -112,7 +118,7 @@ public class ConfigurationImpl extends EldoConfig implements Configuration {
                             excluded.add(currpath.replace(prefix + "/", ""));
                         }
                     }
-                    sources.add(new SchematicSourceImpl(path, prefix, excluded));
+                    sources.add(new SchematicSourceImpl(path, prefix, true, excluded));
                     plugin.getLogger().info("Source " + path + " successfully converted.");
                 }
             }
@@ -149,7 +155,12 @@ public class ConfigurationImpl extends EldoConfig implements Configuration {
     }
 
     @Override
-    public PresetRegistry presets() {
+    public Presets presets() {
         return presets;
+    }
+
+    @Override
+    public Brushes brushes() {
+        return brushes;
     }
 }

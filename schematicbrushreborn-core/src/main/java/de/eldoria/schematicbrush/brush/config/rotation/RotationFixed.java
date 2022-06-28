@@ -7,9 +7,11 @@
 package de.eldoria.schematicbrush.brush.config.rotation;
 
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Map;
 
+@SerializableAs("sbrRotationFixed")
 public class RotationFixed extends ARotation {
     public RotationFixed(Rotation rotation) {
         super(rotation);

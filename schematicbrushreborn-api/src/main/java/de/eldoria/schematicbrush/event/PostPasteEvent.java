@@ -7,11 +7,7 @@
 package de.eldoria.schematicbrush.event;
 
 import de.eldoria.schematicbrush.brush.BrushPaste;
-import de.eldoria.schematicbrush.brush.config.SchematicSet;
-import de.eldoria.schematicbrush.schematics.Schematic;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 

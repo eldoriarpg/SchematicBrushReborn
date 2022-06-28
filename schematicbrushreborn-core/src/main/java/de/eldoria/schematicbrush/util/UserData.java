@@ -8,16 +8,16 @@ package de.eldoria.schematicbrush.util;
 
 public final class UserData {
 
-    private UserData() {
-    }
-
-    public static UserData get(){
-        return new UserData();
-    }
-
     public final String user = "%%__USER__%%";
     public final String resource = "%%__RESOURCE__%%";
     public final String nonce = "%%__NONCE__%%";
+
+    private UserData() {
+    }
+
+    public static UserData get() {
+        return new UserData();
+    }
 
     public int resourceId() {
         return Integer.parseInt(resource);

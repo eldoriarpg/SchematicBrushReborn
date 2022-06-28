@@ -9,7 +9,6 @@ package de.eldoria.schematicbrush.brush.config.modifier;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
-import de.eldoria.schematicbrush.brush.config.util.Nameable;
 
 /**
  * Represents a placement modifier which is applied to a {@link SchematicBrush}.
@@ -51,7 +50,8 @@ public class PlacementModifier extends BaseModifier {
     /**
      * Creates a new PlacementModifier.
      *
-     * @param name name of the modifier
+     * @param name        name of the modifier
+     * @param description the description of the modifier
      * @return new PlacementModifier
      */
     public static PlacementModifier of(String name, String description) {

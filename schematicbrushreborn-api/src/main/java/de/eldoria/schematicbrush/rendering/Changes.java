@@ -32,15 +32,32 @@ public interface Changes {
 
     /**
      * The amount of changes
+     *
      * @return changes
      */
     int size();
 
     void hide(Player player, Changes newChanges);
 
+    /**
+     * Changed blocks
+     *
+     * @return map of blocks
+     */
     Map<Location, BlockData> changed();
 
+    /**
+     * Original blocks
+     *
+     * @return map of blocks
+     */
     Map<Location, BlockData> original();
 
+    /**
+     * Shows the changes to the player based on old changes. This can be seen as an incremental update.
+     *
+     * @param player     player
+     * @param oldChanges old changes
+     */
     void show(Player player, Changes oldChanges);
 }

@@ -49,7 +49,7 @@ public class ChangesImpl implements Changes {
 
     @Override
     public void show(Player player, Changes oldChanges) {
-        var filter  = new HashMap<>(changed);
+        var filter = new HashMap<>(changed);
         for (var entry : oldChanges.changed().entrySet()) {
             filter.remove(entry.getKey(), entry.getValue());
         }
@@ -58,7 +58,7 @@ public class ChangesImpl implements Changes {
 
     @Override
     public void hide(Player player, Changes newChanges) {
-        var filter  = new HashMap<>(original);
+        var filter = new HashMap<>(original);
         for (var location : newChanges.changed().keySet()) {
             filter.remove(location);
         }

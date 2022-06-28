@@ -19,10 +19,10 @@ public interface SchematicCache {
     /**
      * The nameable key for the default cache
      */
-    Nameable DEFAULT_CACHE = Nameable.of("default");
+    Nameable STORAGE = Nameable.of("storage");
 
     /**
-     * Init method which will be executed when registered via {@link SchematicRegistry#register(Nameable, SchematicCache)}
+     * Init method which will be executed when registered via {@link SchematicRegistry#register(Nameable, Object)}
      */
     void init();
 
@@ -83,4 +83,11 @@ public interface SchematicCache {
      * @return directory count
      */
     int directoryCount();
+
+    /**
+     * Called when the plugin gets shutdown and the cache is unregistered.
+     */
+    default void shutdown() {
+
+    }
 }

@@ -61,7 +61,7 @@ public class BrushModifier implements Listener {
         } else {
             if (schematicBrush.get().nextPaste().shiftSchematic()) {
                 messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Skipped Schematic.");
-            }else {
+            } else {
                 messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "The set only contains 1 schematic");
             }
         }

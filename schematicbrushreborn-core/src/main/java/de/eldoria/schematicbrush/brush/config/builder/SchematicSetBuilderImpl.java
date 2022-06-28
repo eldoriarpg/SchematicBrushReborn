@@ -16,12 +16,12 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.Colors;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,6 +34,7 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
 /**
  * This class is a builder to build a {@link SchematicSetImpl}.
  */
+@SerializableAs("sbrSchematicSetBuilder")
 public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     private static final String WEIGHT_DESCRIPTION = "The weight of the schematic set when multiple sets are used.\nHigher numbers will result in more schematics from this set.";
     private Selector selector;
@@ -46,6 +47,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         selector = map.getValue("selector");
         schematicModifier = map.getMap("modifiers", (key, v) -> Nameable.of(key));
         weight = map.getValue("weight");
+        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }
 
     public SchematicSetBuilderImpl(Selector selector) {
@@ -57,11 +59,13 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         this.schematicModifier = schematicModifier;
         this.schematics = schematics;
         this.weight = weight;
+        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }
 
     @Override
     @NotNull
     public Map<String, Object> serialize() {
+        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
         return SerializationUtil.newBuilder()
                 .add("selector", selector)
                 .addMap("modifiers", schematicModifier, (key, v) -> key.name())
@@ -239,8 +243,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
                 .toList();
 
         if (schematics.size() > 10) {
-            List<String> schematics = new ArrayList<>();
-            schematics.addAll(showSchematics.subList(0, 5));
+            List<String> schematics = new ArrayList<>(showSchematics.subList(0, 5));
             schematics.add("...");
             schematics.addAll(showSchematics.subList(showSchematics.size() - 5, showSchematics.size()));
             showSchematics = schematics;
@@ -261,5 +264,25 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy()));
         return new SchematicSetBuilderImpl(selector, mutatorCopy, new LinkedHashSet<>(schematics), weight);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SchematicSetBuilder builder)) return false;
+
+        if (weight != builder.weight()) return false;
+        if (!selector.equals(builder.selector())) return false;
+        if (!schematicModifier.equals(builder.schematicModifier())) return false;
+        return schematics.equals(builder.schematics());
+    }
+
+    @Override
+    public int hashCode() {
+        var result = selector.hashCode();
+        result = 31 * result + schematicModifier.hashCode();
+        result = 31 * result + schematics.hashCode();
+        result = 31 * result + weight;
+        return result;
     }
 }

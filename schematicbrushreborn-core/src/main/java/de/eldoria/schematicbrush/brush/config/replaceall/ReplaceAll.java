@@ -12,10 +12,12 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SerializableAs("sbrReplaceAll")
 public class ReplaceAll implements Mutator<Boolean> {
     private final boolean value;
 
@@ -81,5 +83,18 @@ public class ReplaceAll implements Mutator<Boolean> {
     @Override
     public String descriptor() {
         return String.format("%s", value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReplaceAll replaceAll)) return false;
+
+        return value == replaceAll.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (value ? 1 : 0);
     }
 }

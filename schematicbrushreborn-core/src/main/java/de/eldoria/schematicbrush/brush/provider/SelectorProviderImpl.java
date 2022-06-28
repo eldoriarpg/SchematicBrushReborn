@@ -46,7 +46,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
-                        return registry().getCache(SchematicCache.DEFAULT_CACHE).getMatchingDirectories(player, args.asString(0), 50);
+                        return registry().get(SchematicCache.STORAGE).getMatchingDirectories(player, args.asString(0), 50);
                     }
 
                     if (args.size() == 2) {
@@ -79,7 +79,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
-                        return registry().getCache(SchematicCache.DEFAULT_CACHE).getMatchingSchematics(player, args.asString(0), 50);
+                        return registry().get(SchematicCache.STORAGE).getMatchingSchematics(player, args.asString(0), 50);
                     }
                     return Collections.emptyList();
                 }

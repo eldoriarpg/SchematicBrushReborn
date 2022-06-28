@@ -55,7 +55,7 @@ public interface Flip extends Shiftable<Flip> {
 
         @Override
         public String[] alias() {
-            return new String[]{"E", "W", "EW", "WE"};
+            return new String[]{"E", "W", "EW", "WE", "west"};
         }
 
         @Override
@@ -80,7 +80,7 @@ public interface Flip extends Shiftable<Flip> {
 
         @Override
         public String[] alias() {
-            return new String[]{"NS", "SN", "N", "S"};
+            return new String[]{"NS", "SN", "N", "S", "south"};
         }
 
         @Override
@@ -105,7 +105,7 @@ public interface Flip extends Shiftable<Flip> {
 
         @Override
         public String[] alias() {
-            return new String[]{"U", "D", "UD", "DU"};
+            return new String[]{"U", "D", "UD", "DU", "down"};
         }
 
         @Override
@@ -119,6 +119,11 @@ public interface Flip extends Shiftable<Flip> {
         }
     };
 
+    /**
+     * A enum like representation of all flip values.
+     *
+     * @return flip values
+     */
     static Flip[] values() {
         return new Flip[]{NONE, NORTH_SOUTH, EAST_WEST, UP_DOWN};
     }
@@ -141,6 +146,12 @@ public interface Flip extends Shiftable<Flip> {
         throw CommandException.message("Invalid flip type");
     }
 
+    /**
+     * Get the flip value by name of the flip.
+     *
+     * @param input input
+     * @return value of flip or {@link #NONE} if no match was found.
+     */
     static Flip valueOf(String input) {
         for (var value : values()) {
             if (value.name().equals(input)) {

@@ -111,8 +111,7 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
     /**
      * Schematic set as interactable component
      *
-     *
-     * @param player
+     * @param player   player
      * @param registry registry
      * @param id       id
      * @return component

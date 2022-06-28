@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush.config.flip;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+@SerializableAs("sbrFlipList")
 public class FlipList extends AFlip {
     private final List<Flip> values;
 
@@ -75,5 +77,18 @@ public class FlipList extends AFlip {
     @Override
     public Mutator<Flip> copy() {
         return new FlipList(values);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FlipList flipList)) return false;
+
+        return values.equals(flipList.values);
+    }
+
+    @Override
+    public int hashCode() {
+        return values.hashCode();
     }
 }

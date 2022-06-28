@@ -129,7 +129,7 @@ public class SchematicWatchService implements Runnable {
     private void init() {
         var root = plugin.getDataFolder().toPath().getParent().toString();
 
-        var sources = configuration.schematicConfig().getSources();
+        var sources = configuration.schematicConfig().sources();
         try {
             watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
@@ -138,7 +138,7 @@ public class SchematicWatchService implements Runnable {
         }
 
         for (var source : sources) {
-            var path = Paths.get(root, source.getPath());
+            var path = Paths.get(root, source.path());
             watchDirectory(watchService, path);
         }
     }

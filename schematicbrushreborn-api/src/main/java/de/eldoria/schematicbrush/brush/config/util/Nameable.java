@@ -12,6 +12,11 @@ package de.eldoria.schematicbrush.brush.config.util;
 public class Nameable {
     private final String name;
 
+    /**
+     * Create a new nameable
+     *
+     * @param name name
+     */
     protected Nameable(String name) {
         this.name = name;
     }
@@ -33,6 +38,11 @@ public class Nameable {
      * @return name
      */
     public String name() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 

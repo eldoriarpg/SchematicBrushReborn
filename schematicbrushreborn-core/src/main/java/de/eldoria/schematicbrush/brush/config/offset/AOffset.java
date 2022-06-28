@@ -6,7 +6,6 @@
 
 package de.eldoria.schematicbrush.brush.config.offset;
 
-import com.sk89q.worldedit.math.BlockVector3;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -63,5 +62,18 @@ public abstract class AOffset implements Mutator<Integer> {
     @Override
     public void invoke(PasteMutation mutation) {
         mutation.pasteOffset(mutation.pasteOffset().add(0, value(), 0));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AOffset aOffset)) return false;
+
+        return offset == aOffset.offset;
+    }
+
+    @Override
+    public int hashCode() {
+        return offset;
     }
 }
