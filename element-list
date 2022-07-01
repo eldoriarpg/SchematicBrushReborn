@@ -11,8 +11,12 @@ de.eldoria.schematicbrush.brush.config.util
 de.eldoria.schematicbrush.brush.exceptions
 de.eldoria.schematicbrush.config
 de.eldoria.schematicbrush.config.sections
-de.eldoria.schematicbrush.config.sections.presets
 de.eldoria.schematicbrush.event
+de.eldoria.schematicbrush.registry
 de.eldoria.schematicbrush.rendering
 de.eldoria.schematicbrush.schematics
+de.eldoria.schematicbrush.storage
+de.eldoria.schematicbrush.storage.base
+de.eldoria.schematicbrush.storage.brush
+de.eldoria.schematicbrush.storage.preset
 de.eldoria.schematicbrush.util
