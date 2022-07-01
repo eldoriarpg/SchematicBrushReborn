@@ -40,12 +40,8 @@ public class Private extends BasePageCommand implements IPlayerTabExecutor {
                 addEntries(composer, entries, e -> e.infoComponent(false, true));
                 addPageFooter(composer, index, paged);
                 send(composer, player);
-            }, err -> {
-
-            }));
-        }, err -> {
-
-        }));
+            }, err -> handleCommandError(player, err)));
+        }, err -> handleCommandError(player, err)));
     }
 
 }

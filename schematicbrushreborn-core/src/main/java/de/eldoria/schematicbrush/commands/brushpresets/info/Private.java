@@ -39,16 +39,12 @@ public class Private extends BasePageCommand implements IPlayerTabExecutor {
         storage.brushes().playerContainer(player).paged().whenComplete(Futures.whenComplete(paged -> {
             paged.page(index, PAGE_SIZE).whenComplete(Futures.whenComplete(entries -> {
                 var composer = MessageComposer.create();
-                addPageHeader(composer, "Presets", false);
+                addPageHeader(composer, "Brush Presets", false);
                 addEntries(composer, entries, e -> e.infoComponent(false, true, registry));
                 addPageFooter(composer, index, paged);
                 send(composer, player);
-            }, err -> {
-
-            }));
-        }, err -> {
-
-        }));
+            }, err -> handleCommandError(player, err)));
+        }, err -> handleCommandError(player, err)));
     }
 
 }
