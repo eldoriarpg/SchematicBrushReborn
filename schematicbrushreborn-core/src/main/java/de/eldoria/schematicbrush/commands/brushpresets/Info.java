@@ -51,16 +51,17 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
-
-        storage.brushes().containerByName(player, name).get(name)
+        var strippedName = name.replaceAll("^g:", "");
+        storage.brushes().containerByName(player, name).get(strippedName)
                 .whenComplete(Futures.whenComplete(res -> {
-                    CommandAssertions.isTrue(res.isPresent(), "error.unkownBrush", Replacement.create("name", name).addFormatting('b'));
+                    CommandAssertions.isTrue(res.isPresent(), "error.unkownBrush", Replacement.create("name", strippedName).addFormatting('b'));
                     var preset = res.get();
 
+                    var global = name.startsWith("g:");
                     var composer = MessageComposer.create()
-                            .text(preset.detailComponent(name.startsWith("g:"), registry))
+                            .text(preset.detailComponent(global, registry))
                             .newLine()
-                            .text("<click:run_command:'/sbrbp'><%s>[Back]</click>", Colors.REMOVE);
+                            .text("<click:run_command:'/sbrbp list %s'><%s>[Back]</click>", global ? "global" : "private", Colors.CHANGE);
                     messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
                     messageBlocker.announce(player, "[x]");
                     audiences.player(player).sendMessage(miniMessage.deserialize(composer.build()));

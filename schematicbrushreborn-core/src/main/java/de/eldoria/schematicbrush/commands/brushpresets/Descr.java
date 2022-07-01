@@ -42,8 +42,9 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
 
         if (name.startsWith("g:")) CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
 
+        var strippedName = name.replaceAll("^g:", "");
         var container = storage.brushes().containerByName(player, name);
-        container.get(name)
+        container.get(strippedName)
                 .whenComplete(Futures.whenComplete(brush -> {
                     CommandAssertions.isTrue(brush.isPresent(), "error.unkownBrush", Replacement.create("name", name).addFormatting('b'));
 

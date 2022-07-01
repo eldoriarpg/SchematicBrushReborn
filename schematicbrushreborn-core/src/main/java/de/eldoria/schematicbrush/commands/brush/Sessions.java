@@ -122,12 +122,14 @@ public class Sessions {
         var set = optSet.get();
         var interactComponent = set.interactComponent(player, registry, id);
 
-        var buttons = "<click:run_command:'/sbr showsets'>[Back]</click>";
-        var message = String.join("\n", interactComponent, buttons);
+        var composer = MessageComposer.create()
+                .text(interactComponent)
+                .newLine()
+                .text("<click:run_command:'/sbr showsets'><%s>[Back]</click>", Colors.CHANGE);
 
-        message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.ifEnabled(() ->  composer.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
-        audiences.player(player).sendMessage(miniMessage.deserialize(MessageComposer.create().text(message).prependLines(20).build()));
+        audiences.player(player).sendMessage(miniMessage.deserialize(MessageComposer.create().text(composer.build()).prependLines(20).build()));
     }
 
     public void showSets(Player player) {
@@ -154,7 +156,7 @@ public class Sessions {
             composer.newLine().text("<click:suggest_command:'/sbr savepreset '><%s>[Save Preset]</click>", Colors.CHANGE);
         }
 
-        composer.newLine().text("<click:run_command:'/sbr show'>[Back]</click>");
+        composer.newLine().text("<click:run_command:'/sbr show'><%s>[Back]</click>", Colors.CHANGE);
 
         messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
