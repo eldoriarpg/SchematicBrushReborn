@@ -101,6 +101,11 @@ public final class BrushBuilderImpl implements BrushBuilder {
         placementModifier.put(type, provider);
     }
 
+    @Override
+    public <T extends Nameable> void removePlacementModifier(T type) {
+        placementModifier.remove(type);
+    }
+
     /**
      * Build the schematic brush
      *
@@ -152,6 +157,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
      */
     @Override
     public void clear() {
+        placementModifier.clear();
         for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {
             setPlacementModifier(entry.getKey(), entry.getValue());
         }

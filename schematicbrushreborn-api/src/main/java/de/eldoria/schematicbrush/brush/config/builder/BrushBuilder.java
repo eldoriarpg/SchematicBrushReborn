@@ -53,6 +53,14 @@ public interface BrushBuilder {
     <T extends Nameable> void setPlacementModifier(T type, Mutator<?> provider);
 
     /**
+     * Removes the placement modifier
+     *
+     * @param type     type
+     * @param <T>      Type of the placement modifier
+     */
+    <T extends Nameable> void removePlacementModifier(T type);
+
+    /**
      * Build the schematic brush
      *
      * @param plugin plugin

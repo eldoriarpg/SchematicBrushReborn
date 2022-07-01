@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @SerializableAs("sbrPreset")
-public class Preset implements ConfigurationSerializable {
+public class Preset implements ConfigurationSerializable, Comparable<Preset> {
 
     protected final String name;
     protected final List<SchematicSetBuilder> schematicSets;
@@ -140,5 +140,10 @@ public class Preset implements ConfigurationSerializable {
      */
     public List<SchematicSetBuilder> schematicSets() {
         return Collections.unmodifiableList(schematicSets);
+    }
+
+    @Override
+    public int compareTo(@NotNull Preset o) {
+        return name.compareTo(o.name);
     }
 }

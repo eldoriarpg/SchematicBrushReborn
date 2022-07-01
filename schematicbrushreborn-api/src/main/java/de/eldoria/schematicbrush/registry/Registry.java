@@ -11,6 +11,12 @@ import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 
 import java.util.Map;
 
+/**
+ * Interface which represents the base for a registry, which holds values associated with a {@link Nameable} key.
+ *
+ * @param <T> Type of {@link Nameable}
+ * @param <V> Type of stored entries
+ */
 public interface Registry<T extends Nameable, V> {
     /**
      * Registers an enty with this key
@@ -33,7 +39,7 @@ public interface Registry<T extends Nameable, V> {
      *
      * @param key key
      * @return value
-     * @throws IllegalArgumentException if no entry is registered witht his key.
+     * @throws IllegalArgumentException if no entry is registered with this key.
      */
     V get(T key);
 

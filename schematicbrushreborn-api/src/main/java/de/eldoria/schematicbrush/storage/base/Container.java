@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.storage.base;
 
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
+import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +48,13 @@ public interface Container<T> {
     CompletableFuture<Collection<T>> all();
 
     /**
+     * Returns an object which should provide access to entry pages of this container.
+     *
+     * @return container pages
+     */
+    CompletableFuture<? extends ContainerPagedAccess<T>> paged();
+
+    /**
      * Remove a entry by name
      *
      * @param name name of entry
@@ -60,6 +68,13 @@ public interface Container<T> {
      * @return set of names
      */
     Set<String> names();
+
+    /**
+     * Get the amount of entries in this container.
+     *
+     * @return A future providing the size of the container.
+     */
+    CompletableFuture<Integer> size();
 
     /**
      * Migrate the container into this container.

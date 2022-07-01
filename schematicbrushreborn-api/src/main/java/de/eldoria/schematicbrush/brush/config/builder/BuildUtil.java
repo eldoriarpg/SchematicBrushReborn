@@ -24,7 +24,7 @@ public final class BuildUtil {
         throw new UnsupportedOperationException("This is a utility class.");
     }
 
-    public static String buildModifier(Permissible permissible, String baseCommand, BaseModifier type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
+    public static String buildModifier(Permissible permissible, String baseCommand, String removeBaseCommand, BaseModifier type, List<? extends SettingProvider<?>> provider, Mutator<?> current) {
         if (current == null) current = (Mutator<?>) provider.get(0).defaultSetting();
         String types;
         var filteredProvider = provider.stream().filter(set -> set.hasPermission(permissible)).toList();
@@ -37,8 +37,15 @@ public final class BuildUtil {
             types = String.format("<click:%s:'%s %s %s '>[Change]</click>",
                     filteredProvider.get(0).commandType(), baseCommand, type.name(), filteredProvider.get(0).name());
         }
-        return String.format("<hover:show_text:'<%s>%s'><%s>%s:</hover> <%s>%s\n  %s",
-                Colors.NEUTRAL, type.description(), Colors.HEADING, type.name(), Colors.CHANGE, types,
+
+        var remove = "";
+
+        if (!type.required()) {
+            remove = String.format("<%s><click:run_command:'%s %s'>[Remove]</click>", Colors.REMOVE, removeBaseCommand, type.name());
+        }
+
+        return String.format("<hover:show_text:'<%s>%s'><%s>%s:</hover> <%s>%s %s\n  %s",
+                Colors.NEUTRAL, type.description(), Colors.HEADING, type.name(), Colors.CHANGE, types, remove,
                 filteredProvider.size() > 1 ? renderProvider(current) : renderSingleProvider(current));
     }
 

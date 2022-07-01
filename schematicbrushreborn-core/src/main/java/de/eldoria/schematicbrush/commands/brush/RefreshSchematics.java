@@ -62,7 +62,7 @@ public class RefreshSchematics extends AdvancedCommand implements IPlayerTabExec
     private void refreshSession(@NotNull Player player) {
         var builder = sessions.getOrCreateSession(player);
         builder.refresh();
-        sessions.showBrush(player);
+        sessions.showSets(player);
         messageSender().sendMessage(player, "Schematics refreshed.");
     }
 }

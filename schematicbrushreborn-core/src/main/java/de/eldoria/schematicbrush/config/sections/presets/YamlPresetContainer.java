@@ -7,6 +7,8 @@
 package de.eldoria.schematicbrush.config.sections.presets;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
+import de.eldoria.schematicbrush.storage.YamlContainerPagedAccess;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -69,7 +71,17 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     }
 
     @Override
+    public CompletableFuture<ContainerPagedAccess<Preset>> paged() {
+        return CompletableFuture.completedFuture(new YamlContainerPagedAccess<>(this));
+    }
+
+    @Override
     public Set<String> names() {
         return presets.keySet();
+    }
+
+    @Override
+    public CompletableFuture<Integer> size() {
+        return CompletableFuture.completedFuture(presets.size());
     }
 }

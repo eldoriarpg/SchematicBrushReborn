@@ -66,7 +66,9 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
         var schematicSets = this.schematicSets.stream()
                 .map(SchematicSetBuilder::copy)
                 .collect(Collectors.toCollection(ArrayList::new));
-        return new BrushBuilderImpl(schematicSets, player, settingsRegistry, schematicRegistry, mutatorMap);
+        var brushBuilder = new BrushBuilderImpl(schematicSets, player, settingsRegistry, schematicRegistry, mutatorMap);
+        brushBuilder.refresh();
+        return brushBuilder;
     }
 
     @Override

@@ -19,19 +19,10 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
-import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
-import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
-import de.eldoria.schematicbrush.brush.provider.FilterProvider;
-import de.eldoria.schematicbrush.brush.provider.FlipProvider;
-import de.eldoria.schematicbrush.brush.provider.IncludeAirProvider;
-import de.eldoria.schematicbrush.brush.provider.OffsetProvider;
-import de.eldoria.schematicbrush.brush.provider.PlacementProvider;
-import de.eldoria.schematicbrush.brush.provider.ReplaceAllProvider;
-import de.eldoria.schematicbrush.brush.provider.RotationProvider;
-import de.eldoria.schematicbrush.brush.provider.SelectorProviderImpl;
 import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
+import de.eldoria.schematicbrush.commands.BrushPresets;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.ConfigurationImpl;
@@ -69,7 +60,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
-    private BrushSettingsRegistry settingsRegistry;
+    private BrushSettingsRegistryImpl settingsRegistry;
     private SchematicRegistryImpl schematics;
     private ConfigurationImpl configuration;
     private RenderService renderService;
@@ -88,7 +79,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         settingsRegistry = new BrushSettingsRegistryImpl();
         schematics = new SchematicRegistryImpl();
 
-        registerDefaults();
+        settingsRegistry.registerDefaults(schematics);
 
         configuration = new ConfigurationImpl(this);
 
@@ -116,6 +107,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storage, messageBlocker);
         var adminCommand = new Admin(this, schematics, storageRegistry);
         var settingsCommand = new Settings(this, configuration, renderService, notifyListener, messageBlocker);
+        var brushPresetsCommand = new BrushPresets(this, storage, messageBlocker, settingsRegistry);
 
         enableMetrics();
 
@@ -126,6 +118,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand(presetCommand);
         registerCommand(adminCommand);
         registerCommand(settingsCommand);
+        registerCommand(brushPresetsCommand);
 
         if (configuration.general().isCheckUpdates() && UserData.get().isPremium()) {
             Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, configuration.general().isCheckUpdates(),
@@ -220,41 +213,4 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         return configuration;
     }
 
-    private void registerDefaults() {
-        // SELECTORS
-        settingsRegistry.registerSelector(SelectorProviderImpl.NAME.apply(schematics));
-        settingsRegistry.registerSelector(SelectorProviderImpl.REGEX.apply(schematics));
-        settingsRegistry.registerSelector(SelectorProviderImpl.DIRECTORY.apply(schematics));
-
-        // SCHEMATIC MODIFIER
-        settingsRegistry.registerSchematicModifier(SchematicModifier.FLIP, FlipProvider.FIXED);
-        settingsRegistry.registerSchematicModifier(SchematicModifier.FLIP, FlipProvider.LIST);
-        settingsRegistry.registerSchematicModifier(SchematicModifier.FLIP, FlipProvider.RANDOM);
-
-        settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.FIXED);
-        settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.LIST);
-        settingsRegistry.registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.RANDOM);
-
-        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.FIXED);
-        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.LIST);
-        settingsRegistry.registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.RANGE);
-
-        // PLACEMENT MODIFIER
-        settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.FIXED);
-        settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.LIST);
-        settingsRegistry.registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.RANGE);
-
-        settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.BOTTOM);
-        settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.DROP);
-        settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.MIDDLE);
-        settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.ORIGINAL);
-        settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.RAISE);
-        settingsRegistry.registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.TOP);
-
-        settingsRegistry.registerPlacementModifier(PlacementModifier.INCLUDE_AIR, IncludeAirProvider.FIXED);
-
-        settingsRegistry.registerPlacementModifier(PlacementModifier.REPLACE_ALL, ReplaceAllProvider.FIXED);
-
-        settingsRegistry.registerPlacementModifier(PlacementModifier.FILTER, FilterProvider.BLOCK_FILTER);
-    }
 }

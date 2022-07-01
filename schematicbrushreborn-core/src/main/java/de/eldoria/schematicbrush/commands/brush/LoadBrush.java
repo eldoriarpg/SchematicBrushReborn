@@ -43,8 +43,10 @@ public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        storage.brushes().containerByName(player, args.asString(0))
-                .get(args.asString(0))
+        var name = args.asString(0);
+        var strippedName = name.replaceAll("^g:", "");
+        storage.brushes().containerByName(player, name)
+                .get(strippedName)
                 .whenComplete(Futures.whenComplete(brush -> {
                     CommandAssertions.isTrue(brush.isPresent(), "Unkown brush.");
 

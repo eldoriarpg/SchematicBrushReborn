@@ -37,6 +37,12 @@ public interface Changes {
      */
     int size();
 
+    /**
+     * Hides the changes to the player based on new changes. This can be seen as an incremental update.
+     *
+     * @param player     player
+     * @param newChanges new changes
+     */
     void hide(Player player, Changes newChanges);
 
     /**

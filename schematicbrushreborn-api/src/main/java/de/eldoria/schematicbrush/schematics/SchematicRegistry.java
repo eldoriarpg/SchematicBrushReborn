@@ -14,6 +14,14 @@ import de.eldoria.schematicbrush.registry.Registry;
  */
 public interface SchematicRegistry extends Registry<Nameable, SchematicCache> {
 
+    /**
+     * Get the cache associated with this name
+     *
+     * @param key name
+     * @return cache
+     * @deprecated Replaced by {@link Registry#get(Nameable)}
+     * @throws IllegalArgumentException if no entry is registered with this key.
+     */
     @Deprecated(forRemoval = true)
     default SchematicCache getCache(Nameable key) {
         return get(key);

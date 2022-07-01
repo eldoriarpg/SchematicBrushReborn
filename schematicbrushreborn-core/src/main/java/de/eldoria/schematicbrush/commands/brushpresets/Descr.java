@@ -4,7 +4,7 @@
  *     Copyright (C) 2021 EldoriaRPG Team and Contributor
  */
 
-package de.eldoria.schematicbrush.commands.preset;
+package de.eldoria.schematicbrush.commands.brushpresets;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
@@ -15,7 +15,6 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.storage.Storage;
-import de.eldoria.schematicbrush.storage.preset.PresetContainer;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -44,21 +43,21 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
         if (name.startsWith("g:")) CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
 
         var strippedName = name.replaceAll("^g:", "");
-        var container = storage.presets().containerByName(player, name);
+        var container = storage.brushes().containerByName(player, name);
         container.get(strippedName)
-                .whenComplete(Futures.whenComplete(preset -> {
-                    CommandAssertions.isTrue(preset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
+                .whenComplete(Futures.whenComplete(brush -> {
+                    CommandAssertions.isTrue(brush.isPresent(), "error.unkownBrush", Replacement.create("name", name).addFormatting('b'));
 
-                    preset.get().description(args.join(1));
-                    container.add(preset.get());
-                    messageSender().sendMessage(player, "Changed description of preset §b" + name + "§r!");
+                    brush.get().description(args.join(1));
+                    container.add(brush.get());
+                    messageSender().sendMessage(player, "Changed description of brush §b" + name + "§r!");
                 }, err -> handleCommandError(player, err)));
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return storage.presets().complete(player, args.asString(0));
+            return storage.brushes().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }
