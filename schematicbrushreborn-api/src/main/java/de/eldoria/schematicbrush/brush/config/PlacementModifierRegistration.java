@@ -7,6 +7,14 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
+import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
+import de.eldoria.schematicbrush.registry.Registry;
 
-public interface PlacementModifierRegistration extends Registration<PlacementModifier> {
+import java.util.List;
+
+/**
+ * Represents a {@link Registration} at a {@link Registry} or similar pattern,
+ * which allows to register {@link PlacementModifier} with multiple {@link ModifierProvider}s
+ */
+public interface PlacementModifierRegistration extends Registration<PlacementModifier, List<ModifierProvider>> {
 }

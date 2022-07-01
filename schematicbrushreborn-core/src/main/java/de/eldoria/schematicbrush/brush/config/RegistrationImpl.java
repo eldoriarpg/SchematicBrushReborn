@@ -12,7 +12,7 @@ import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import java.util.Collections;
 import java.util.List;
 
-public class RegistrationImpl<T extends BaseModifier> implements Registration<T> {
+public class RegistrationImpl<T extends BaseModifier> implements Registration<T, List<ModifierProvider>> {
     private final List<ModifierProvider> mutators;
     private final T modifier;
 

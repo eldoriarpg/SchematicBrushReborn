@@ -129,7 +129,20 @@ public interface BrushSettingsRegistry {
      */
     Map<PlacementModifier, List<ModifierProvider>> placementModifier();
 
+    /**
+     * Gets a modifier registration.
+     *
+     * @param name name of the registration
+     * @return Optional holding the registration if present
+     */
     Optional<PlacementModifierRegistration> getPlacementModifier(String name);
+
+    /**
+     * Gets a modifier registration.
+     *
+     * @param name name of the registration
+     * @return Optional holding the registration if present
+     */
     Optional<SchematicModifierRegistration> getSchematicModifier(String name);
 
     /**
@@ -160,11 +173,23 @@ public interface BrushSettingsRegistry {
      */
     List<String> completeSchematicModifier(Arguments args) throws CommandException;
 
-    default Optional<PlacementModifierRegistration> getPlacementModifier(Nameable key){
+    /**
+     * Gets a modifier registration.
+     *
+     * @param key Key or name of the registration
+     * @return Optional holding the registration if present
+     */
+    default Optional<PlacementModifierRegistration> getPlacementModifier(Nameable key) {
         return getPlacementModifier(key.name());
     }
 
-    default Optional<SchematicModifierRegistration> getSchematicModifier(Nameable key){
+    /**
+     * Gets a modifier registration.
+     *
+     * @param key Key or name of the registration
+     * @return Optional holding the registration if present
+     */
+    default Optional<SchematicModifierRegistration> getSchematicModifier(Nameable key) {
         return getSchematicModifier(key.name());
     }
 }

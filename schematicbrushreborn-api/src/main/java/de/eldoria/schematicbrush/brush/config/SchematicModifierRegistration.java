@@ -7,6 +7,12 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
+import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 
-public interface SchematicModifierRegistration extends Registration<SchematicModifier> {
+import java.util.List;
+
+/**
+ * Represents the registrations for a {@link SchematicModifier}
+ */
+public interface SchematicModifierRegistration extends Registration<SchematicModifier, List<ModifierProvider>> {
 }

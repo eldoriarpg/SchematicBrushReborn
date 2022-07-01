@@ -38,6 +38,7 @@ public class SchematicModifier extends BaseModifier {
      *
      * @param name        name. Defines the type of the modifier
      * @param description description of the modifier
+     * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
      */
     public SchematicModifier(String name, String description, boolean required) {
         super(name, description, required);
@@ -48,6 +49,7 @@ public class SchematicModifier extends BaseModifier {
      *
      * @param name        name of the modifier
      * @param description description of the modifier
+     * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
      * @return new PlacementModifier
      */
     public static SchematicModifier of(String name, String description, boolean required) {

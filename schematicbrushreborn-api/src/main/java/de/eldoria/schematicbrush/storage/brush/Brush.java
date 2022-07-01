@@ -67,6 +67,7 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
 
     /**
      * Constructor required by {@link ConfigurationSerializable} in order to deserialize the object.
+     * @param objectMap map of the already deserialized object
      */
     @SuppressWarnings("unused")
     public static Brush deserialize(Map<String, Object> objectMap) {

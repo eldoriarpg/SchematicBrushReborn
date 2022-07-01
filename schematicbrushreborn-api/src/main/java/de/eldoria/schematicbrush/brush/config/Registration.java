@@ -11,8 +11,16 @@ import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 
 import java.util.List;
 
-public interface Registration<T extends BaseModifier> {
-    List<ModifierProvider> mutators();
+/**
+ * Represents a registration in a {@link de.eldoria.schematicbrush.registry.Registry} or similar pattern.
+ * @param <T> Type of modifier
+ */
+public interface Registration<T extends BaseModifier, V> {
+    /**
+     * List of registered Modifier providers
+     * @return list of registered entries
+     */
+    V mutators();
 
     T modifier();
 }

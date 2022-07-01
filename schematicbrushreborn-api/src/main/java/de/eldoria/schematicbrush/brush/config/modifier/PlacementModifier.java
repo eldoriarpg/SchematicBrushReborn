@@ -63,6 +63,7 @@ public class PlacementModifier extends BaseModifier {
      *
      * @param name        name of the modifier
      * @param description the description of the modifier
+     * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
      * @return new PlacementModifier
      */
     public static PlacementModifier of(String name, String description, boolean required) {
