@@ -1,3 +1,6 @@
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -20,17 +23,32 @@ publishData {
     useEldoNexusRepos()
 }
 
+fun getBuildType(): String {
+    return when {
+        System.getenv("PATREON")?.equals("true", true) == true ->{
+            "PATREON"
+        }
+        publishData.isPublicBuild() -> {
+            "PUBLIC";
+        }
+        else -> "LOCAL"
+    }
+}
+
 tasks {
     processResources {
         from(sourceSets.main.get().resources.srcDirs) {
-            filesMatching("plugin.yml") {
+            filesMatching("build.data") {
                 expand(
-                    "name" to project.rootProject.name,
-                    "version" to publishData.getVersion(true)
+                    "type" to getBuildType(),
+                    "time" to DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+                    "branch" to publishData.getBranch(),
+                    "commit" to publishData.getCommitHash()
                 )
             }
-            duplicatesStrategy = DuplicatesStrategy.INCLUDE
         }
+
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
     compileJava {
