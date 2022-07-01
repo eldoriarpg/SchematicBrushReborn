@@ -79,4 +79,9 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     public Set<String> names() {
         return presets.keySet();
     }
+
+    @Override
+    public CompletableFuture<Integer> size() {
+        return CompletableFuture.completedFuture(presets.size());
+    }
 }

@@ -20,7 +20,7 @@ public class YamlContainerPagedAccess<T> implements ContainerPagedAccess<T> {
 
     @Override
     public int size() {
-        return container.all().join().size();
+        return container.size().join();
     }
 
     @Override

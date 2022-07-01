@@ -82,4 +82,9 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
     public Set<String> names() {
         return brushes.keySet();
     }
+
+    @Override
+    public CompletableFuture<Integer> size() {
+        return CompletableFuture.completedFuture(brushes.size());
+    }
 }

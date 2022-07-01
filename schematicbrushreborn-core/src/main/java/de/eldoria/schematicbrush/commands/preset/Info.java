@@ -58,7 +58,8 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
                     var composer = MessageComposer.create()
                             .text(preset.detailComponent(global))
                             .newLine()
-                            .text("<click:run_command:'/sbrbp list %s'><%s>[Back]</click>", Colors.CHANGE, global ? "global" : "private");
+                            .text("<click:run_command:'/sbrbp list %s'><%s>[Back]</click>", Colors.CHANGE, global ? "global" : "private")
+                            .prependLines(20);
                     messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
                     messageBlocker.announce(player, "[x]");
                     audiences.player(player).sendMessage(miniMessage.deserialize(composer.build()));

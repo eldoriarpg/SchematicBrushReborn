@@ -49,6 +49,7 @@ public interface Container<T> {
 
     /**
      * Returns an object which should provide access to entry pages of this container.
+     *
      * @return container pages
      */
     CompletableFuture<ContainerPagedAccess<T>> paged();
@@ -67,6 +68,13 @@ public interface Container<T> {
      * @return set of names
      */
     Set<String> names();
+
+    /**
+     * Get the amount of entries in this container.
+     *
+     * @return A future providing the size of the container.
+     */
+    CompletableFuture<Integer> size();
 
     /**
      * Migrate the container into this container.
