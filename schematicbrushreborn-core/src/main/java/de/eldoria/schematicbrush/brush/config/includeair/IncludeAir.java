@@ -9,10 +9,12 @@ package de.eldoria.schematicbrush.brush.config.includeair;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SerializableAs("sbrIncludeAir")
 public class IncludeAir implements Mutator<Boolean> {
     private boolean value;
 
@@ -67,5 +69,18 @@ public class IncludeAir implements Mutator<Boolean> {
     @Override
     public String name() {
         return "Fixed";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IncludeAir includeAir)) return false;
+
+        return value == includeAir.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (value ? 1 : 0);
     }
 }

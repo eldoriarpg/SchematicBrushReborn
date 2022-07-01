@@ -9,11 +9,13 @@ package de.eldoria.schematicbrush.brush.config.selector;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.Set;
 
+@SerializableAs("sbrNameSelector")
 public class NameSelector extends BaseSelector {
 
     public NameSelector(String term) {
@@ -26,7 +28,7 @@ public class NameSelector extends BaseSelector {
 
     @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
-        return registry.getCache(SchematicCache.DEFAULT_CACHE).getSchematicsByName(player, term());
+        return registry.get(SchematicCache.STORAGE).getSchematicsByName(player, term());
     }
 
     @Override

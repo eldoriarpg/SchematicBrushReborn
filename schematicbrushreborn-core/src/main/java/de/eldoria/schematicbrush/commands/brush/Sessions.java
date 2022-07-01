@@ -23,6 +23,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,34 +63,45 @@ public class Sessions {
     public void showBrush(Player player) {
         messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
+
+        var selectors = builder.schematicSets().stream().map(set -> BuildUtil.renderProvider(set.selector())).collect(Collectors.joining("\n"));
+
         var composer = MessageComposer.create()
-                .text("<%s>Schematic Sets: <click:run_command:'/sbr addSet'><%s>[Add]</click>", Colors.HEADING, Colors.ADD);
-        if (player.hasPermission(Permissions.Preset.USE)) {
-            composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>", Colors.ADD);
-        }
-        composer.space().text("<click:run_command:'/sbr refreshSchematics session'><%s>[Refresh Schematics]</click>", Colors.ADD);
-        var count = new AtomicInteger(0);
-        var sets = builder.schematicSets().stream()
-                .map(set -> String.format("  <%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
-                        Colors.NAME, set.infoComponent(), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
-                .collect(Collectors.joining("\n"));
+                .text("<%s>Schematic Brush Menu", Colors.HEADING)
+                .newLine()
+                .text("<%s>Schematic Sets: <hover:show_text:'%s'><%s>%s Sets </hover><%s><click:run_command:'/sbr showsets'>[Change]</click>",
+                        Colors.HEADING, selectors, Colors.VALUE, builder.schematicSets().size(), Colors.CHANGE);
+
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
-        for (var entry : registry.placementModifier().entrySet()) {
-            modifierStrings.add(buildModifier(player, "/sbr modify", entry.getKey(), entry.getValue(), mutatorMap.get(entry.getKey())));
+        for (var entry : mutatorMap.entrySet()) {
+            var registration = registry.getPlacementModifier(entry.getKey()).get();
+            modifierStrings.add(buildModifier(player, "/sbr modify", "/sbr removebrushmodifier",
+                    registration.modifier(), registration.mutators(), mutatorMap.get(entry.getKey())));
         }
 
         composer.newLine()
-                .text(sets)
-                .newLine()
-                .text(modifierStrings)
-                .newLine()
+                .text(modifierStrings);
+
+        var missing = registry.placementModifier().keySet().stream().filter(providers -> !mutatorMap.containsKey(providers))
+                .map(provider -> String.format("<click:run_command:'/sbr addbrushmodifier %s'><hover:show_text:'<%s>%s'><%s>[%s]</click>",
+                        provider.name(), Colors.NEUTRAL, provider.description(), Colors.CHANGE, provider.name()))
+                .toList();
+
+        if (!missing.isEmpty()) {
+            composer.newLine()
+                    .text("<%s>Add Modifiers: ", Colors.HEADING)
+                    .text(missing, " ");
+        }
+
+        composer.newLine()
                 .text("<click:run_command:'/sbr bind'><%s>[Bind]</click>", Colors.ADD)
                 .space()
                 .text("<click:run_command:'/sbr clear'><%s>[Clear]</click>", Colors.REMOVE);
 
-        if (player.hasPermission(Permissions.Preset.USE)) {
-            composer.space().text("<click:suggest_command:'/sbr savepreset '><%s>[Save]</click>", Colors.CHANGE);
+        if (player.hasPermission(Permissions.BrushPreset.USE)) {
+            composer.space().text("<click:suggest_command:'/sbr loadbrush '><%s>[Load Brush]</click>", Colors.ADD)
+                    .space().text("<click:suggest_command:'/sbr savebrush '><%s>[Save Brush]</click>", Colors.CHANGE);
         }
 
         composer.prependLines(20);
@@ -110,11 +122,49 @@ public class Sessions {
         var set = optSet.get();
         var interactComponent = set.interactComponent(player, registry, id);
 
-        var buttons = "<click:run_command:'/sbr show'>[Back]</click>";
-        var message = String.join("\n", interactComponent, buttons);
+        var composer = MessageComposer.create()
+                .text(interactComponent)
+                .newLine()
+                .text("<click:run_command:'/sbr showsets'><%s>[Back]</click>", Colors.CHANGE);
 
-        message = messageBlocker.ifEnabled(message, mess -> mess + String.format("%n<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.ifEnabled(() ->  composer.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
         messageBlocker.announce(player, "[x]");
-        audiences.player(player).sendMessage(miniMessage.deserialize(MessageComposer.create().text(message).prependLines(20).build()));
+        audiences.player(player).sendMessage(miniMessage.deserialize(MessageComposer.create().text(composer.build()).prependLines(20).build()));
+    }
+
+    public void showSets(Player player) {
+        messageBlocker.blockPlayer(player);
+        var builder = getOrCreateSession(player);
+        var count = new AtomicInteger(0);
+
+        var composer = MessageComposer.create()
+                .text("<%s>Schematic Sets: <click:run_command:'/sbr addSet'><%s>[Add]</click>", Colors.HEADING, Colors.ADD)
+                .space().text("<click:run_command:'/sbr refreshSchematics session'><%s>[Refresh Schematics]</click>", Colors.ADD);
+
+        if (player.hasPermission(Permissions.Preset.USE)) {
+            composer.space().text("<click:suggest_command:'/sbr addpreset '><%s>[Add Preset]</click>", Colors.ADD);
+        }
+
+        var sets = builder.schematicSets().stream()
+                .map(set -> String.format("  <%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
+                        Colors.NAME, set.infoComponent(), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
+                .collect(Collectors.joining("\n"));
+
+        composer.newLine().text(sets);
+
+        if (player.hasPermission(Permissions.Preset.USE)) {
+            composer.newLine().text("<click:suggest_command:'/sbr savepreset '><%s>[Save Preset]</click>", Colors.CHANGE);
+        }
+
+        composer.newLine().text("<click:run_command:'/sbr show'><%s>[Back]</click>", Colors.CHANGE);
+
+        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.announce(player, "[x]");
+
+        audiences.player(player).sendMessage(miniMessage.deserialize(composer.prependLines(20).build()));
+    }
+
+    public void setSession(Player player, BrushBuilder load) {
+        session.put(player.getUniqueId(), load);
     }
 }

@@ -8,9 +8,11 @@ package de.eldoria.schematicbrush.brush.config.placement;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Map;
 
+@SerializableAs("sbrPlacementBottom")
 public class Bottom extends APlacement {
     public Bottom() {
     }

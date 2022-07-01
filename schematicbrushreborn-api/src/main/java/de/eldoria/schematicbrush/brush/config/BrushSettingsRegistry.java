@@ -15,12 +15,14 @@ import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class to register, save and parse brush settings.
@@ -128,6 +130,22 @@ public interface BrushSettingsRegistry {
     Map<PlacementModifier, List<ModifierProvider>> placementModifier();
 
     /**
+     * Gets a modifier registration.
+     *
+     * @param name name of the registration
+     * @return Optional holding the registration if present
+     */
+    Optional<PlacementModifierRegistration> getPlacementModifier(String name);
+
+    /**
+     * Gets a modifier registration.
+     *
+     * @param name name of the registration
+     * @return Optional holding the registration if present
+     */
+    Optional<SchematicModifierRegistration> getSchematicModifier(String name);
+
+    /**
      * Complete selectors
      *
      * @param args   arguments to complete
@@ -154,4 +172,24 @@ public interface BrushSettingsRegistry {
      * @throws CommandException if the arguments are invalid
      */
     List<String> completeSchematicModifier(Arguments args) throws CommandException;
+
+    /**
+     * Gets a modifier registration.
+     *
+     * @param key Key or name of the registration
+     * @return Optional holding the registration if present
+     */
+    default Optional<PlacementModifierRegistration> getPlacementModifier(Nameable key) {
+        return getPlacementModifier(key.name());
+    }
+
+    /**
+     * Gets a modifier registration.
+     *
+     * @param key Key or name of the registration
+     * @return Optional holding the registration if present
+     */
+    default Optional<SchematicModifierRegistration> getSchematicModifier(Nameable key) {
+        return getSchematicModifier(key.name());
+    }
 }

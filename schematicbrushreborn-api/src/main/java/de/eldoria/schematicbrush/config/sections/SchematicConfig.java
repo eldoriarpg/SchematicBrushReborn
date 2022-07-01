@@ -18,13 +18,37 @@ public interface SchematicConfig extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();
 
+    /**
+     * Adds a new schematic source.
+     * @param source source
+     */
     void addSource(SchematicSource source);
 
-    List<SchematicSource> getSources();
+    /**
+     * A list of registered sources.
+     *
+     * @return list of sources
+     */
+    List<SchematicSource> sources();
 
-    String getPathSeparator();
+    /**
+     * The path separator which should be used when showing pathes.
+     * @return path separator
+     */
+    String pathSeparator();
 
+    /**
+     * Defines wheather the path should be prefixed or not
+     *
+     * @return true if the prefix should used as a suffix for the source path
+     */
     boolean isPathSourceAsPrefix();
 
+    /**
+     * Gets the source for a path if present
+     *
+     * @param path path
+     * @return optional holding a source
+     */
     Optional<SchematicSource> getSourceForPath(Path path);
 }

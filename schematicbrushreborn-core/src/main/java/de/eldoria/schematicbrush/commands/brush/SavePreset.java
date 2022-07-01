@@ -12,9 +12,10 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
-import de.eldoria.schematicbrush.config.ConfigurationImpl;
-import de.eldoria.schematicbrush.config.sections.presets.PresetImpl;
+import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -23,19 +24,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
-    private final ConfigurationImpl config;
+    private final Storage storage;
     private final Sessions sessions;
 
-    public SavePreset(Plugin plugin, Sessions sessions, ConfigurationImpl config) {
+    public SavePreset(Plugin plugin, Sessions sessions, Storage storage) {
         super(plugin, CommandMeta.builder("savePreset")
                 .addUnlocalizedArgument("name", true)
                 .withPermission(Permissions.Preset.USE)
                 .hidden()
                 .build());
-        this.config = config;
+        this.storage = storage;
         this.sessions = sessions;
     }
 
@@ -45,21 +48,31 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
         var schematicSets = session.schematicSets().stream().map(SchematicSetBuilder::copy).toList();
         CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
-        var preset = new PresetImpl(args.asString(0), schematicSets);
+        var preset = new Preset(args.asString(0), schematicSets);
+        CompletableFuture<Optional<Preset>> addition;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            if (config.presets().getGlobalPreset(preset.name()).isPresent()) {
-                CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
-            }
-            config.presets().addPreset(preset);
+            addition = storage.presets().globalContainer().get(preset.name())
+                    .whenComplete(Futures.whenComplete(succ -> {
+                        if (succ.isPresent()) {
+                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                        }
+                        storage.presets().globalContainer().add(preset).join();
+                    }, err -> handleCommandError(player, err)));
         } else {
-            if (config.presets().getPreset(player, preset.name()).isPresent()) {
-                CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
-            }
-            config.presets().addPreset(player, preset);
+            addition = storage.presets().playerContainer(player).get(preset.name())
+                    .whenComplete(Futures.whenComplete(succ -> {
+                        if (succ.isPresent()) {
+                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                        }
+                        storage.presets().playerContainer(player).add(preset).join();
+                    }, err -> handleCommandError(player, err)));
         }
-        config.save();
-        messageSender().sendMessage(player, "Preset saved.");
+        addition.whenComplete(Futures.whenComplete(res -> {
+            //TODO: Think about storage saving
+            storage.save();
+            messageSender().sendMessage(player, "Preset saved.");
+        }, err -> handleCommandError(player, err)));
     }
 
     @Override

@@ -8,8 +8,10 @@ package de.eldoria.schematicbrush.brush.config.selector;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class BaseSelector implements Selector {
     private final String term;
@@ -19,7 +21,7 @@ public abstract class BaseSelector implements Selector {
         term = map.getValue("term");
     }
 
-    public BaseSelector(String term) {
+    public BaseSelector(@Nullable String term) {
         this.term = term;
     }
 
@@ -38,5 +40,18 @@ public abstract class BaseSelector implements Selector {
     @Override
     public String descriptor() {
         return term;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseSelector baseSelector)) return false;
+
+        return Objects.equals(term, baseSelector.term);
+    }
+
+    @Override
+    public int hashCode() {
+        return term != null ? term.hashCode() : 0;
     }
 }

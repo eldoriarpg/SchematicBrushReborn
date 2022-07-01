@@ -7,35 +7,25 @@
 package de.eldoria.schematicbrush.schematics;
 
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
-import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
+import de.eldoria.schematicbrush.registry.Registry;
 
 /**
  * A registry to register, manage and retrieve a {@link SchematicCache}.
  */
-public interface SchematicRegistry {
-    /**
-     * Gets a cache by key
-     *
-     * @param key key of cache
-     * @return the cache. If the cache was not registered this will be null
-     */
-    SchematicCache getCache(Nameable key);
+public interface SchematicRegistry extends Registry<Nameable, SchematicCache> {
 
     /**
-     * Registers a cache
+     * Get the cache associated with this name
      *
-     * @param key   key
-     * @param cache cache
-     * @throws AlreadyRegisteredException when a cache with this key is already registered
+     * @param key name
+     * @return cache
+     * @deprecated Replaced by {@link Registry#get(Nameable)}
+     * @throws IllegalArgumentException if no entry is registered with this key.
      */
-    void register(Nameable key, SchematicCache cache);
-
-    /**
-     * Unregister a cache
-     *
-     * @param key key
-     */
-    void unregister(Nameable key);
+    @Deprecated(forRemoval = true)
+    default SchematicCache getCache(Nameable key) {
+        return get(key);
+    }
 
     /**
      * Reloads all registered caches.

@@ -8,10 +8,12 @@ package de.eldoria.schematicbrush.brush.config.offset;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SerializableAs("sbrOffsetFixed")
 public class OffsetFixed extends AOffset {
     public OffsetFixed(int offset) {
         super(offset);

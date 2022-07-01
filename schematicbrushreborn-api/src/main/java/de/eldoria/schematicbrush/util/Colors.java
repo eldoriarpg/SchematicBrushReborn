@@ -19,6 +19,7 @@ public final class Colors {
     public static final String REMOVE = NamedTextColor.RED.toString();
     public static final String ADD = NamedTextColor.GREEN.toString();
     public static final String NEUTRAL = NamedTextColor.AQUA.toString();
+    public static final String INACTIVE = NamedTextColor.GRAY.toString();
 
     private Colors() {
         throw new UnsupportedOperationException("This is a utility class.");

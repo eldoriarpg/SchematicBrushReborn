@@ -28,42 +28,49 @@ public interface BrushPaste {
 
     /**
      * Shift to next flip value
+     *
      * @return true if flip was shiftable
      */
     boolean shiftFlip();
 
     /**
      * Shift to next rotation value
+     *
      * @return true if rotation was shiftable
      */
     boolean shiftRotation();
 
     /**
      * The flip mutator
+     *
      * @return flip mutator
      */
     Mutator<?> flip();
 
     /**
      * The rotation mutator
+     *
      * @return rotation mutator
      */
     Mutator<?> rotation();
 
     /**
      * The offset mutator of the set
+     *
      * @return offset mutator
      */
     Mutator<?> offsetSet();
 
     /**
      * The offset mutator of the brush
+     *
      * @return offset mutator
      */
     Mutator<?> offsetBrush();
 
     /**
      * The brush settings
+     *
      * @return settings of the brush
      */
     BrushSettings settings();
@@ -91,6 +98,7 @@ public interface BrushPaste {
 
     /**
      * Shift to the next schematic
+     *
      * @return true if the schematic changed
      */
     boolean shiftSchematic();
@@ -131,6 +139,7 @@ public interface BrushPaste {
 
     /**
      * Shift to the next offset value.
+     *
      * @return true if the offset was shiftable
      */
     boolean shiftOffset();

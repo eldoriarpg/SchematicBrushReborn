@@ -12,14 +12,20 @@ import org.bukkit.Bukkit;
 import java.util.function.Supplier;
 
 public final class FAWE {
+    /**
+     * Check if FAWE is used on this server.
+     * @return true if FAWE was found.
+     */
+    public static boolean isFawe() {
+        return isFawe.get();
+    }
+
     private static Supplier<Boolean> isFawe = () -> {
-        var fawe=   Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
+        var fawe = Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit");
         isFawe = () -> fawe;
         SchematicBrushReborn.getInstance().getLogger().info("Detected FAWE: " + fawe);
         return fawe;
     };
 
-    public static boolean isFawe(){
-        return isFawe.get();
-    }
+
 }

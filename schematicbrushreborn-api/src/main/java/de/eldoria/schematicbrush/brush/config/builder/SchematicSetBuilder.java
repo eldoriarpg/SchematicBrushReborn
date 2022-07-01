@@ -111,8 +111,7 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
     /**
      * Schematic set as interactable component
      *
-     *
-     * @param player
+     * @param player   player
      * @param registry registry
      * @param id       id
      * @return component
@@ -126,5 +125,25 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
      */
     String infoComponent();
 
+    /**
+     * Copy the schematic set by creating a new instance and copying the entries by value to the new builder to allow independent modification
+     *
+     * @return new schematic set builder instande
+     */
     SchematicSetBuilder copy();
+
+    /**
+     * Sets a modifier for this schematic set. Will override already present values
+     *
+     * @param modifier modifier name
+     * @param mutator  mutator to set
+     */
+    void setModifier(Nameable modifier, Mutator<?> mutator);
+
+    /**
+     * Removes the modifier
+     *
+     * @param modifier modifier
+     */
+    void removeModifier(Nameable modifier);
 }

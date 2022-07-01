@@ -25,10 +25,10 @@ import java.util.List;
 public abstract class FilterProvider extends ModifierProvider {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
 
-    public static FilterProvider BLOCK_FILTER = new FilterProvider(BlockFilter.class, "BlockFilter") {
+    public static final FilterProvider BLOCK_FILTER = new FilterProvider(BlockFilter.class, "BlockFilter") {
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
-            if("none".equalsIgnoreCase(args.asString(0))){
+            if ("none".equalsIgnoreCase(args.asString(0))) {
                 return defaultSetting();
             }
             try {

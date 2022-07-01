@@ -9,7 +9,6 @@ package de.eldoria.schematicbrush.brush.config.modifier;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
-import de.eldoria.schematicbrush.brush.config.util.Nameable;
 
 /**
  * Represents a placement modifier which is applied to a {@link SchematicSet}.
@@ -22,30 +21,39 @@ public class SchematicModifier extends BaseModifier {
     /**
      * Rotation modifier key
      */
-    public static final SchematicModifier ROTATION = of("Rotation", "Rotate a schematic");
+    public static final SchematicModifier ROTATION = of("Rotation", "Rotate a schematic", false);
 
     /**
      * Flip modifier key
      */
-    public static final SchematicModifier FLIP = of("Flip", "Flip a schematic");
+    public static final SchematicModifier FLIP = of("Flip", "Flip a schematic", false);
 
     /**
      * Offset modifier key
      */
-    public static final SchematicModifier OFFSET = of("Offset", "The schematic offset when placed.");
+    public static final SchematicModifier OFFSET = of("Offset", "The schematic offset when placed.", false);
 
-    public SchematicModifier(String name, String description) {
-        super(name, description);
+    /**
+     * Creates a new schematic modifier
+     *
+     * @param name        name. Defines the type of the modifier
+     * @param description description of the modifier
+     * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
+     */
+    public SchematicModifier(String name, String description, boolean required) {
+        super(name, description, required);
     }
 
     /**
      * Creates a new PlacementModifier.
      *
-     * @param name name of the modifier
+     * @param name        name of the modifier
+     * @param description description of the modifier
+     * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
      * @return new PlacementModifier
      */
-    public static SchematicModifier of(String name, String description) {
-        return new SchematicModifier(name, description) {
+    public static SchematicModifier of(String name, String description, boolean required) {
+        return new SchematicModifier(name, description, required) {
         };
     }
 }

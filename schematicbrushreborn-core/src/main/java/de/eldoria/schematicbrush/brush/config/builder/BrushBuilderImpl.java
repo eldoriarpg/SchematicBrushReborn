@@ -10,8 +10,8 @@ import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.SchematicBrushImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -25,20 +25,31 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class BrushBuilderImpl implements BrushBuilder {
-    private final List<SchematicSetBuilder> schematicSets = new ArrayList<>();
+    private final List<SchematicSetBuilder> schematicSets;
     private final Player owner;
     private final BrushSettingsRegistry settingsRegistry;
     private final SchematicRegistry schematicRegistry;
-    private final Map<PlacementModifier, Mutator<?>> placementModifier = new HashMap<>();
+    private final Map<Nameable, Mutator<?>> placementModifier;
+
+    BrushBuilderImpl(List<SchematicSetBuilder> schematicSets, Player owner, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry, Map<Nameable, Mutator<?>> placementModifier) {
+        this.schematicSets = schematicSets;
+        this.owner = owner;
+        this.settingsRegistry = settingsRegistry;
+        this.schematicRegistry = schematicRegistry;
+        this.placementModifier = placementModifier;
+    }
 
     public BrushBuilderImpl(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         owner = player;
+        schematicSets = new ArrayList<>();
+        placementModifier = new HashMap<>();
         this.settingsRegistry = settingsRegistry;
         this.schematicRegistry = schematicRegistry;
         for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {
             setPlacementModifier(entry.getKey(), entry.getValue());
         }
     }
+
 
     /**
      * Get the schematic set builder for the set with the id
@@ -86,8 +97,13 @@ public final class BrushBuilderImpl implements BrushBuilder {
      * @param provider provider
      */
     @Override
-    public void setPlacementModifier(PlacementModifier type, Mutator<?> provider) {
+    public <T extends Nameable> void setPlacementModifier(T type, Mutator<?> provider) {
         placementModifier.put(type, provider);
+    }
+
+    @Override
+    public <T extends Nameable> void removePlacementModifier(T type) {
+        placementModifier.remove(type);
     }
 
     /**
@@ -132,7 +148,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
      * @return unmodifiable map of the placement modifier
      */
     @Override
-    public Map<PlacementModifier, Mutator<?>> placementModifier() {
+    public Map<? extends Nameable, Mutator<?>> placementModifier() {
         return Collections.unmodifiableMap(placementModifier);
     }
 
@@ -141,6 +157,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
      */
     @Override
     public void clear() {
+        placementModifier.clear();
         for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {
             setPlacementModifier(entry.getKey(), entry.getValue());
         }
@@ -166,4 +183,16 @@ public final class BrushBuilderImpl implements BrushBuilder {
             schematicSet.refreshSchematics(owner, schematicRegistry);
         }
     }
+
+    @Override
+    public BrushBuilderSnapshot snapshot() {
+        Map<Nameable, Mutator<?>> placementModifier = this.placementModifier.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, key -> key.getValue().copy()));
+        var schematicSets = this.schematicSets.stream()
+                .map(SchematicSetBuilder::copy)
+                .collect(Collectors.toCollection(ArrayList::new));
+        return new BrushBuilderSnapshotImpl(placementModifier, schematicSets);
+    }
+
 }

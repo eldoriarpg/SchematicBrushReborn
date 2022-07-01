@@ -199,7 +199,7 @@ public class RenderService implements Runnable, Listener {
 
         @Override
         public void run() {
-            if(active) return;
+            if (active) return;
             active = true;
             while (!queue.isEmpty()) {
                 var poll = queue.poll();

@@ -11,6 +11,7 @@ import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,15 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
     }
 
     /**
+     * Get the instance of the plugin.
+     *
+     * @return the current plugin instance.
+     */
+    public static SchematicBrushReborn instance() {
+        return (SchematicBrushReborn) getInstance();
+    }
+
+    /**
      * Get schematic registry
      *
      * @return schematic registry
@@ -47,18 +57,16 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
     public abstract BrushSettingsRegistry brushSettingsRegistry();
 
     /**
+     * Get the storage registry
+     *
+     * @return storage registry
+     */
+    public abstract StorageRegistry storageRegistry();
+
+    /**
      * Get the plugin config
      *
      * @return plugin config
      */
     public abstract Configuration config();
-
-    /**
-     * Get the instance of the plugin.
-     *
-     * @return the current plugin instance.
-     */
-    public static SchematicBrushReborn instance() {
-        return (SchematicBrushReborn) getInstance();
-    }
 }

@@ -22,10 +22,10 @@ public class RollingQueue<T> {
         queue = new ConcurrentLinkedQueue<>();
     }
 
-    public boolean add(@NotNull T t) {
+    public void add(@NotNull T t) {
         synchronized (queue) {
             if (size == queue.size()) queue.remove();
-            return queue.add(t);
+            queue.add(t);
         }
     }
 

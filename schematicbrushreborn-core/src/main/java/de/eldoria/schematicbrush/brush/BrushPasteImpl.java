@@ -44,7 +44,7 @@ public class BrushPasteImpl implements BrushPaste {
 
 
     @Override
-    public void refresh() {
+    public final void refresh() {
         schematicSet.refreshMutator();
         settings.refreshMutator();
     }
@@ -94,7 +94,7 @@ public class BrushPasteImpl implements BrushPaste {
     }
 
     @Override
-    public BrushSettings settings(){
+    public BrushSettings settings() {
         return settings;
     }
 

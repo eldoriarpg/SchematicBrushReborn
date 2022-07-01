@@ -76,4 +76,17 @@ public abstract class APlacement implements Mutator<APlacement> {
     public String descriptor() {
         return name();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof APlacement placement)) return false;
+
+        return name().equals(placement.name());
+    }
+
+    @Override
+    public int hashCode() {
+        return name().hashCode();
+    }
 }

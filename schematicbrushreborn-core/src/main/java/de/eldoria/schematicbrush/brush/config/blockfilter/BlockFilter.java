@@ -78,4 +78,17 @@ public class BlockFilter implements Mutator<String> {
         }
         return Masks.alwaysTrue();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BlockFilter blockFilter)) return false;
+
+        return maskString.equals(blockFilter.maskString);
+    }
+
+    @Override
+    public int hashCode() {
+        return maskString.hashCode();
+    }
 }

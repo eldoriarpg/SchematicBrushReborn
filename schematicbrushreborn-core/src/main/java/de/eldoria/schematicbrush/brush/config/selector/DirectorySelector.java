@@ -10,13 +10,16 @@ import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+@SerializableAs("sbrDirectorySelector")
 public class DirectorySelector extends BaseSelector {
     private final String directory;
 
@@ -41,7 +44,7 @@ public class DirectorySelector extends BaseSelector {
 
     @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
-        return registry.getCache(SchematicCache.DEFAULT_CACHE).getSchematicsByDirectory(player, directory, term());
+        return registry.get(SchematicCache.STORAGE).getSchematicsByDirectory(player, directory, term());
     }
 
     @Override
@@ -55,5 +58,21 @@ public class DirectorySelector extends BaseSelector {
             return directory + " - " + term();
         }
         return directory;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DirectorySelector selector)) return false;
+        if (!super.equals(o)) return false;
+
+        return Objects.equals(directory, selector.directory);
+    }
+
+    @Override
+    public int hashCode() {
+        var result = super.hashCode();
+        result = 31 * result + (directory != null ? directory.hashCode() : 0);
+        return result;
     }
 }

@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush.config.offset;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+@SerializableAs("sbrOffsetList")
 public class OffsetList extends AOffset {
 
     private final List<Integer> values;
@@ -71,5 +73,21 @@ public class OffsetList extends AOffset {
     @Override
     public Mutator<Integer> copy() {
         return new OffsetList(values);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OffsetList offsetList)) return false;
+        if (!super.equals(o)) return false;
+
+        return values.equals(offsetList.values);
+    }
+
+    @Override
+    public int hashCode() {
+        var result = super.hashCode();
+        result = 31 * result + values.hashCode();
+        return result;
     }
 }

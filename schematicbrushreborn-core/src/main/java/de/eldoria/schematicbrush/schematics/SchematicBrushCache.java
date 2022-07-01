@@ -11,13 +11,13 @@ import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.config.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +37,7 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 public class SchematicBrushCache implements SchematicCache {
-    private static final Pattern UUID_PATTERN = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
+    private static final Pattern UUID_PATTERN = Pattern.compile("[\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}");
     private static final Logger logger = SchematicBrushRebornImpl.logger();
     private final JavaPlugin plugin;
     private final Configuration configuration;
@@ -67,16 +67,17 @@ public class SchematicBrushCache implements SchematicCache {
 
         schematicsCache.clear();
 
-        for (var key : configuration.schematicConfig().getSources()) {
-            var path = key.getPath();
+        for (var source : configuration.schematicConfig().sources()) {
+            var path = source.path();
             if (path == null || path.isEmpty()) {
-                plugin.getLogger().log(Level.CONFIG, "Path " + key + " has no path. Skipping!");
+                plugin.getLogger().log(Level.CONFIG, "Path " + source + " has no path. Skipping!");
                 continue;
             }
 
             path = path.replace("\\", "/");
 
-            loadSchematics(Paths.get(root, path));
+            var load = source.isRelative() ? Paths.get(root, path) : Paths.get(path);
+            loadSchematics(load);
         }
     }
 
@@ -150,11 +151,11 @@ public class SchematicBrushCache implements SchematicCache {
         }
 
         // remove path to get relative path in schematic folder.
-        var rawKey = directory.toString().replace(source.getPath(), "");
+        var rawKey = directory.toString().replace(source.path(), "");
 
         String cleanKey;
         if (!rawKey.isEmpty()) {
-            cleanKey = rawKey.replace(" ", "_").substring(1).replace("\\", configuration.schematicConfig().getPathSeparator());
+            cleanKey = rawKey.replace(" ", "_").substring(1).replace("\\", configuration.schematicConfig().pathSeparator());
         } else {
             cleanKey = rawKey;
         }
@@ -170,7 +171,7 @@ public class SchematicBrushCache implements SchematicCache {
         }
 
         if (configuration.schematicConfig().isPathSourceAsPrefix()) {
-            cleanKey = source.getPrefix() + configuration.schematicConfig().getPathSeparator() + cleanKey;
+            cleanKey = source.prefix() + configuration.schematicConfig().pathSeparator() + cleanKey;
         }
 
         Schematic schematic;
@@ -197,12 +198,13 @@ public class SchematicBrushCache implements SchematicCache {
         // Get a list of all files and directories in a directory
         try (var paths = Files.list(directory)) {
             // Check for each file if it's a directory or a file.
-            for (var path : paths.collect(Collectors.toList())) {
+            for (var path : paths.toList()) {
                 if (path.equals(directory)) continue;
                 var file = path.toFile();
-                if (file.isDirectory()) {
+                var attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+                if (attributes.isDirectory()) {
                     directories.add(path);
-                } else if (file.isFile()) {
+                } else if (attributes.isRegularFile()) {
                     files.add(file);
                 }
             }
@@ -330,7 +332,7 @@ public class SchematicBrushCache implements SchematicCache {
     @Override
     public List<String> getMatchingDirectories(Player player, String dir, int count) {
         Set<String> matches = new HashSet<>();
-        var separator = configuration.schematicConfig().getPathSeparator().charAt(0);
+        var separator = configuration.schematicConfig().pathSeparator().charAt(0);
         var deep = TextUtil.countChars(dir, separator);
         for (var key : schematicsCache.keySet()) {
             if (key.toLowerCase().startsWith(dir.toLowerCase()) || dir.isEmpty()) {
@@ -403,6 +405,7 @@ public class SchematicBrushCache implements SchematicCache {
         return schematicsCache.keySet().size();
     }
 
+    @Override
     public void shutdown() {
         watchService.shutdown();
     }
