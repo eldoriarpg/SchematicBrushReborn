@@ -52,7 +52,7 @@ public interface Container<T> {
      *
      * @return container pages
      */
-    CompletableFuture<ContainerPagedAccess<T>> paged();
+    CompletableFuture<? extends ContainerPagedAccess<T>> paged();
 
     /**
      * Remove a entry by name
