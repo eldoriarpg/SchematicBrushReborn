@@ -120,9 +120,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand(settingsCommand);
         registerCommand(brushPresetsCommand);
 
-        if (configuration.general().isCheckUpdates() && UserData.get().isPremium()) {
+        if (configuration.general().isCheckUpdates() && UserData.get(this).isSpigotPremium()) {
             Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, configuration.general().isCheckUpdates(),
-                    UserData.get().resourceId())).start();
+                    UserData.get(this).resourceId())).start();
         }
     }
 
@@ -140,7 +140,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public @NotNull EntryData[] getDebugInformations() {
-        return new EntryData[]{new EntryData("Customer Data", UserData.get().asString()),
+        return new EntryData[]{new EntryData("Customer Data", UserData.get(this).asString()),
                 new EntryData("Performance", String.format("Render Time: %s ms%nRender Operation Queue: %s%nOperation Paket Count: %s",
                         renderService.renderTimeAverage(), renderService.paketQueueSize(), renderService.paketQueuePaketCount()))};
     }
@@ -164,7 +164,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
                 () -> reduceMetricValue(storage.brushes().count().join(), 100, 10, 50, 100)));
 
         metrics.addCustomChart(new SimplePie("premium",
-                () -> String.valueOf(UserData.get().isPremium())));
+                () -> String.valueOf(UserData.get(this).isPremium())));
 
         metrics.addCustomChart(new AdvancedPie("installed_storage_type",
                 () -> storageRegistry.registry().keySet().stream().collect(Collectors.toMap(Nameable::name, e -> 1))));
