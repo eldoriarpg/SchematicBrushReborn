@@ -46,5 +46,4 @@ public class Private extends BasePageCommand implements IPlayerTabExecutor {
             }, err -> handleCommandError(player, err)));
         }, err -> handleCommandError(player, err)));
     }
-
 }
