@@ -71,8 +71,8 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     }
 
     @Override
-    public ContainerPagedAccess<Preset> paged() {
-        return new YamlContainerPagedAccess<>(this);
+    public CompletableFuture<ContainerPagedAccess<Preset>> paged() {
+        return CompletableFuture.completedFuture(new YamlContainerPagedAccess<>(this));
     }
 
     @Override

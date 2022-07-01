@@ -36,14 +36,14 @@ commands:
     aliases:
       - sbrp
       - schbrp
-    permission: "schematicbrush.preset"
+    permission: "schematicbrush.preset.use"
     permission-message: "You dont have the permission to do this!"
-  schematicbrushes:
+  schematicbrushbrushpresets:
     description: List or edit saved schematic brushes
     aliases:
-      - sbrb
-      - schbrb
-    permission: "schematicbrush.brushes"
+      - sbrbp
+      - schbrbp
+    permission: "schematicbrush.brushPreset.use"
     permission-message: "You dont have the permission to do this!"
 
 

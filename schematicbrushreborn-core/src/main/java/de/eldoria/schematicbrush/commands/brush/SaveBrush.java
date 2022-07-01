@@ -45,8 +45,7 @@ public class SaveBrush extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var session = sessions.getOrCreateSession(player);
 
-        var schematicSets = session.snapshot();
-        var brush = new Brush(args.asString(0), schematicSets);
+        var brush = new Brush(args.asString(0), session);
         CompletableFuture<Optional<Brush>> addition;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.BrushPreset.GLOBAL);

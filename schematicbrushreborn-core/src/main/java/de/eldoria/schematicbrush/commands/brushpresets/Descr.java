@@ -4,7 +4,7 @@
  *     Copyright (C) 2021 EldoriaRPG Team and Contributor
  */
 
-package de.eldoria.schematicbrush.commands.brush;
+package de.eldoria.schematicbrush.commands.brushpresets;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
@@ -12,9 +12,10 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.utils.Consumers;
+import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -23,40 +24,39 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Sessions sessions;
+public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     private final Storage storage;
 
-    public AddPreset(Plugin plugin, Sessions sessions, Storage storage) {
-        super(plugin, CommandMeta.builder("addpreset")
+    public Descr(Plugin plugin, Storage storage) {
+        super(plugin, CommandMeta.builder("descr")
                 .addUnlocalizedArgument("name", true)
+                .addUnlocalizedArgument("descr", true)
                 .hidden()
                 .build());
-        this.sessions = sessions;
         this.storage = storage;
     }
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var session = sessions.getOrCreateSession(player);
+        var name = args.asString(0);
 
-        storage.presets().containerByName(player, args.asString(0))
-                .get(args.asString(0))
-                .whenComplete(Futures.whenComplete(preset -> {
-                    CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
+        if (name.startsWith("g:")) CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
 
-                    for (var builder : preset.get().schematicSetsCopy()) {
-                        session.addSchematicSet(builder.copy());
-                    }
-                    sessions.showSets(player);
-                }, err -> handleCommandError(player, err)))
-                .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
+        var container = storage.brushes().containerByName(player, name);
+        container.get(name)
+                .whenComplete(Futures.whenComplete(brush -> {
+                    CommandAssertions.isTrue(brush.isPresent(), "error.unkownBrush", Replacement.create("name", name).addFormatting('b'));
+
+                    brush.get().description(args.join(1));
+                    container.add(brush.get());
+                    messageSender().sendMessage(player, "Changed description of brush §b" + name + "§r!");
+                }, err -> handleCommandError(player, err)));
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return storage.presets().complete(player, args.asString(0));
+            return storage.brushes().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }

@@ -21,6 +21,15 @@ import de.eldoria.schematicbrush.brush.config.provider.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
+import de.eldoria.schematicbrush.brush.provider.FilterProvider;
+import de.eldoria.schematicbrush.brush.provider.FlipProvider;
+import de.eldoria.schematicbrush.brush.provider.IncludeAirProvider;
+import de.eldoria.schematicbrush.brush.provider.OffsetProvider;
+import de.eldoria.schematicbrush.brush.provider.PlacementProvider;
+import de.eldoria.schematicbrush.brush.provider.ReplaceAllProvider;
+import de.eldoria.schematicbrush.brush.provider.RotationProvider;
+import de.eldoria.schematicbrush.brush.provider.SelectorProviderImpl;
+import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
@@ -299,5 +308,51 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     private <T extends SettingProvider<?>> List<String> completeProvider(Arguments args, List<T> provider) {
         return TabCompleteUtil.complete(args.asString(0), provider.stream().map(p -> p.name()));
+    }
+
+    public void registerDefaults(SchematicRegistry schematics) {
+        // SELECTORS
+        registerSelector(SelectorProviderImpl.NAME.apply(schematics));
+        registerSelector(SelectorProviderImpl.REGEX.apply(schematics));
+        registerSelector(SelectorProviderImpl.DIRECTORY.apply(schematics));
+
+        // SCHEMATIC MODIFIER
+        registerSchematicModifier(SchematicModifier.FLIP, FlipProvider.FIXED);
+        registerSchematicModifier(SchematicModifier.FLIP, FlipProvider.LIST);
+        registerSchematicModifier(SchematicModifier.FLIP, FlipProvider.RANDOM);
+
+        registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.FIXED);
+        registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.LIST);
+        registerSchematicModifier(SchematicModifier.ROTATION, RotationProvider.RANDOM);
+
+        registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.FIXED);
+        registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.LIST);
+        registerSchematicModifier(SchematicModifier.OFFSET, OffsetProvider.RANGE);
+
+        // PLACEMENT MODIFIER
+        registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.FIXED);
+        registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.LIST);
+        registerPlacementModifier(PlacementModifier.OFFSET, OffsetProvider.RANGE);
+
+        registerPlacementModifier(PlacementModifier.FLIP, FlipProvider.FIXED);
+        registerPlacementModifier(PlacementModifier.FLIP, FlipProvider.LIST);
+        registerPlacementModifier(PlacementModifier.FLIP, FlipProvider.RANDOM);
+
+        registerPlacementModifier(PlacementModifier.ROTATION, RotationProvider.FIXED);
+        registerPlacementModifier(PlacementModifier.ROTATION, RotationProvider.LIST);
+        registerPlacementModifier(PlacementModifier.ROTATION, RotationProvider.RANDOM);
+
+        registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.BOTTOM);
+        registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.DROP);
+        registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.MIDDLE);
+        registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.ORIGINAL);
+        registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.RAISE);
+        registerPlacementModifier(PlacementModifier.PLACEMENT, PlacementProvider.TOP);
+
+        registerPlacementModifier(PlacementModifier.INCLUDE_AIR, IncludeAirProvider.FIXED);
+
+        registerPlacementModifier(PlacementModifier.REPLACE_ALL, ReplaceAllProvider.FIXED);
+
+        registerPlacementModifier(PlacementModifier.FILTER, FilterProvider.BLOCK_FILTER);
     }
 }

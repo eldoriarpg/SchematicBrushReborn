@@ -69,8 +69,8 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
     }
 
     @Override
-    public ContainerPagedAccess<Brush> paged() {
-        return new YamlContainerPagedAccess<>(this);
+    public CompletableFuture<ContainerPagedAccess<Brush>> paged() {
+        return CompletableFuture.completedFuture(new YamlContainerPagedAccess<>(this));
     }
 
     /**

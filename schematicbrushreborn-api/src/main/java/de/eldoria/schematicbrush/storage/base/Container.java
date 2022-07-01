@@ -51,7 +51,7 @@ public interface Container<T> {
      * Returns an object which should provide access to entry pages of this container.
      * @return container pages
      */
-    ContainerPagedAccess<T> paged();
+    CompletableFuture<ContainerPagedAccess<T>> paged();
 
     /**
      * Remove a entry by name
