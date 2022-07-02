@@ -75,6 +75,6 @@ public class SchematicConfigImpl implements SchematicConfig {
 
     @Override
     public Optional<SchematicSource> getSourceForPath(Path path) {
-        return sources.stream().filter(source -> path.startsWith(source.path())).findFirst();
+        return sources.stream().filter(source -> source.isSource(path)).findFirst();
     }
 }

@@ -134,12 +134,11 @@ public class SchematicBrushCache implements SchematicCache {
 
     public void addSchematic(Path file) {
         var directory = file.getParent();
-        directory = directory.subpath(1, directory.getNameCount());
 
         var sourceForPath = configuration.schematicConfig().getSourceForPath(directory);
 
         if (sourceForPath.isEmpty()) {
-            logger.log(Level.CONFIG, "File " + directory + "is not part of a source");
+            logger.log(Level.CONFIG, "File " + directory + " is not part of a source");
             return;
         }
 
@@ -151,11 +150,11 @@ public class SchematicBrushCache implements SchematicCache {
         }
 
         // remove path to get relative path in schematic folder.
-        var rawKey = directory.toString().replace(source.path(), "");
+        var rawKey = source.internalPath(directory).toString();
 
         String cleanKey;
         if (!rawKey.isEmpty()) {
-            cleanKey = rawKey.replace(" ", "_").substring(1).replace("\\", configuration.schematicConfig().pathSeparator());
+            cleanKey = rawKey.replace(" ", "_").replace("\\", configuration.schematicConfig().pathSeparator());
         } else {
             cleanKey = rawKey;
         }
