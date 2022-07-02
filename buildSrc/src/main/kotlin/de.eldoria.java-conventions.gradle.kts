@@ -2,9 +2,6 @@ plugins {
     `java-library`
 }
 
-group = "de.eldoria"
-version = "2.2.0"
-
 repositories {
     maven("https://eldonexus.de/repository/maven-public")
     maven("https://eldonexus.de/repository/maven-proxies")

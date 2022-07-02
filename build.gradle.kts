@@ -4,10 +4,11 @@ import org.cadixdev.gradle.licenser.Licenser
 plugins {
     java
     id("org.cadixdev.licenser") version "0.6.1"
-    id("de.chojo.publishdata") version "1.0.6"
+    id("de.chojo.publishdata") version "1.0.7"
 }
 
 group = "de.eldoria"
+version = "2.2.1"
 
 subprojects {
     apply {

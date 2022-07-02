@@ -52,4 +52,20 @@ public interface SchematicSource extends ConfigurationSerializable {
      * @return true if excluded
      */
     boolean isExcluded(Path path);
+
+    /**
+     * Checks if the path is part of this source.
+     *
+     * @param path path
+     * @return true if path is in source
+     */
+    boolean isSource(Path path);
+
+    /**
+     * Get the internal path by stripping the path of the source.
+     *
+     * @param path path to strip
+     * @return stripped path. Path may be empty.
+     */
+    Path internalPath(Path path);
 }

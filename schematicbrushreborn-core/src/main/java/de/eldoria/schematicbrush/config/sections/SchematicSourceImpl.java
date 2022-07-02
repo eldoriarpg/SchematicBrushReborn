@@ -11,7 +11,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -64,12 +64,36 @@ public class SchematicSourceImpl implements SchematicSource {
 
     @Override
     public boolean isExcluded(Path path) {
-        var split = path.toString().split("/");
-        var internalPath = String.join("/", Arrays.copyOfRange(split, 1, split.length));
+        var internal = internalPath(path);
+
         for (var excluded : excludedPath) {
-            if (excluded.equalsIgnoreCase(internalPath)) return true;
-            if (excluded.endsWith("*") && internalPath.startsWith(excluded)) return true;
+            if (excluded.equalsIgnoreCase(internal.toString())) return true;
+            if (excluded.endsWith("*") && internal.startsWith(excluded)) return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean isSource(Path path) {
+        if (isRelative()) {
+            // Strip plugin directory
+            var directory = path.subpath(1, path.getNameCount());
+            return directory.startsWith(path());
+        }
+        return path.startsWith(path());
+    }
+
+    @Override
+    public Path internalPath(Path path) {
+        var internal = path;
+        if (isRelative()) {
+            // Strip relative plugin directory.
+            internal = internal.subpath(1, internal.getNameCount());
+        }
+        // Strip base path from internal path
+        if (!internal.equals(Paths.get(path()))) {
+            return internal.subpath(Paths.get(path()).getNameCount(), internal.getNameCount());
+        }
+        return Paths.get("");
     }
 }
