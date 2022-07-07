@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.config.sections.presets;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
 import de.eldoria.schematicbrush.storage.preset.Presets;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -27,12 +28,12 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
     public YamlPresets(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         playerPresets = map.getMap("playerPresets", (key, v) -> UUID.fromString(key));
-        globalPresets = map.getValueOrDefault("globalPresets", new YamlPresetContainer());
+        globalPresets = map.getValueOrDefault("globalPresets", new YamlPresetContainer(Container.GLOBAL));
     }
 
     public YamlPresets() {
         playerPresets = new HashMap<>();
-        globalPresets = new YamlPresetContainer();
+        globalPresets = new YamlPresetContainer(Container.GLOBAL);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
 
     @Override
     public PresetContainer playerContainer(UUID player) {
-        return playerPresets.computeIfAbsent(player, key -> new YamlPresetContainer());
+        return playerPresets.computeIfAbsent(player, key -> new YamlPresetContainer(player));
     }
 
     @Override

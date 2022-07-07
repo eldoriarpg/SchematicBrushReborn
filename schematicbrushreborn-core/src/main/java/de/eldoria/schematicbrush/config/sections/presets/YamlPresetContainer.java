@@ -24,20 +24,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @SerializableAs("sbrYamlPresetContainer")
 public class YamlPresetContainer implements PresetContainer, ConfigurationSerializable {
+    private final UUID uuid;
     private final Map<String, Preset> presets;
 
     public YamlPresetContainer(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
+        uuid = UUID.fromString(map.getValue("uuid"));
         List<Preset> presetList = map.getValueOrDefault("presets", Collections.emptyList());
         presets = new HashMap<>();
         presetList.forEach(p -> presets.put(p.name(), p));
     }
 
-    public YamlPresetContainer() {
+    public YamlPresetContainer(UUID uuid) {
+        this.uuid = uuid;
         presets = new HashMap<>();
     }
 
@@ -46,6 +50,7 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
                 .add("presets", new ArrayList<>(presets.values()))
+                .add("uuid", uuid.toString())
                 .build();
     }
 
@@ -83,5 +88,10 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     @Override
     public CompletableFuture<Integer> size() {
         return CompletableFuture.completedFuture(presets.size());
+    }
+
+    @Override
+    public @NotNull UUID owner() {
+        return null;
     }
 }

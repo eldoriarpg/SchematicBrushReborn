@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.config.sections.brushes;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.brush.BrushContainer;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -27,12 +28,12 @@ public class YamlBrushes implements Brushes, ConfigurationSerializable {
     public YamlBrushes(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         playerBrushes = map.getMap("playerBrushes", (key, v) -> UUID.fromString(key));
-        globalBrushes = map.getValueOrDefault("globalBrushes", new YamlBrushContainer());
+        globalBrushes = map.getValueOrDefault("globalBrushes", new YamlBrushContainer(Container.GLOBAL));
     }
 
     public YamlBrushes() {
         playerBrushes = new HashMap<>();
-        globalBrushes = new YamlBrushContainer();
+        globalBrushes = new YamlBrushContainer(Container.GLOBAL);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class YamlBrushes implements Brushes, ConfigurationSerializable {
 
     @Override
     public BrushContainer playerContainer(UUID player) {
-        return playerBrushes.computeIfAbsent(player, key -> new YamlBrushContainer());
+        return playerBrushes.computeIfAbsent(player, key -> new YamlBrushContainer(player));
     }
 
     @Override

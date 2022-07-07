@@ -24,19 +24,25 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @SerializableAs("sbrYamlBrushContainer")
 public class YamlBrushContainer implements BrushContainer, ConfigurationSerializable {
-    private final Map<String, Brush> brushes = new HashMap<>();
+    private final UUID uuid;
+    private final Map<String, Brush> brushes;
 
     public YamlBrushContainer(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
+        uuid = UUID.fromString(map.getValue("uuid"));
         List<Brush> brushList = map.getValueOrDefault("brushes", Collections.emptyList());
+        brushes = new HashMap<>();
         brushList.forEach(p -> brushes.put(p.name(), p));
     }
 
-    public YamlBrushContainer() {
+    public YamlBrushContainer(UUID uuid) {
+        brushes = new HashMap<>();
+        this.uuid = uuid;
     }
 
     @Override
@@ -86,5 +92,10 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
     @Override
     public CompletableFuture<Integer> size() {
         return CompletableFuture.completedFuture(brushes.size());
+    }
+
+    @Override
+    public @NotNull UUID owner() {
+        return uuid;
     }
 }

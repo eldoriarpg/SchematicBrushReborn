@@ -9,12 +9,14 @@ package de.eldoria.schematicbrush.storage.base;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -24,6 +26,8 @@ import java.util.logging.Level;
  * @param <T> Type of contained entries.
  */
 public interface Container<T> {
+    UUID GLOBAL = new UUID(0L, 0L);
+
     /**
      * Get a entry by name
      *
@@ -75,6 +79,25 @@ public interface Container<T> {
      * @return A future providing the size of the container.
      */
     CompletableFuture<Integer> size();
+
+    /**
+     * Get the owner of the container.
+     * <p>
+     * This might be the uuid of the owning player or {@link #GLOBAL} when it is a global container.
+     *
+     * @return owner uuid
+     */
+    @NotNull
+    UUID owner();
+
+    /**
+     * Checks if the {@link #owner()} is equal to {@link #GLOBAL}
+     *
+     * @return true if this container has the global UUID
+     */
+    default boolean isGlobalcontainer() {
+        return GLOBAL.equals(owner());
+    }
 
     /**
      * Migrate the container into this container.
