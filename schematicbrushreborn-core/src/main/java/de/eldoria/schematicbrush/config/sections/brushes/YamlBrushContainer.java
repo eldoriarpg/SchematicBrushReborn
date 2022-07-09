@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.config.sections.brushes;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
 import de.eldoria.schematicbrush.storage.YamlContainerPagedAccess;
+import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.brush.Brush;
 import de.eldoria.schematicbrush.storage.brush.BrushContainer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -29,12 +30,12 @@ import java.util.concurrent.CompletableFuture;
 
 @SerializableAs("sbrYamlBrushContainer")
 public class YamlBrushContainer implements BrushContainer, ConfigurationSerializable {
-    private final UUID uuid;
+    private UUID uuid;
     private final Map<String, Brush> brushes;
 
     public YamlBrushContainer(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
-        uuid = UUID.fromString(map.getValue("uuid"));
+        uuid = UUID.fromString(map.getValueOrDefault("uuid", Container.GLOBAL.toString()));
         List<Brush> brushList = map.getValueOrDefault("brushes", Collections.emptyList());
         brushes = new HashMap<>();
         brushList.forEach(p -> brushes.put(p.name(), p));
@@ -97,5 +98,10 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
     @Override
     public @NotNull UUID owner() {
         return uuid;
+    }
+
+    public YamlBrushContainer updateOwner(UUID uuid) {
+        this.uuid = uuid;
+        return this;
     }
 }

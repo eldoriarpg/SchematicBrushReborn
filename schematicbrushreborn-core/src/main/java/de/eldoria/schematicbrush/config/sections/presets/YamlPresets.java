@@ -52,7 +52,7 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
 
     @Override
     public PresetContainer playerContainer(UUID player) {
-        return playerPresets.computeIfAbsent(player, key -> new YamlPresetContainer(player));
+        return playerPresets.computeIfAbsent(player, key -> new YamlPresetContainer(player)).updateOwner(player);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class YamlBrushes implements Brushes, ConfigurationSerializable {
 
     @Override
     public BrushContainer playerContainer(UUID player) {
-        return playerBrushes.computeIfAbsent(player, key -> new YamlBrushContainer(player));
+        return playerBrushes.computeIfAbsent(player, key -> new YamlBrushContainer(player)).updateOwner(player);
     }
 
     @Override

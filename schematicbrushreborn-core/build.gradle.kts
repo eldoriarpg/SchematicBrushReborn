@@ -60,8 +60,8 @@ tasks {
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         relocate("net.kyori", shadebase + "kyori")
         mergeServiceFiles()
-        minimize()
         archiveClassifier.set("")
+        archiveVersion.set(rootProject.version as String)
         archiveBaseName.set("SchematicBrushReborn")
     }
 
