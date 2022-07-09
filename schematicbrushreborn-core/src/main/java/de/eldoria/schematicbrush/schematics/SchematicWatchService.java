@@ -138,7 +138,12 @@ public class SchematicWatchService implements Runnable {
         }
 
         for (var source : sources) {
-            var path = Paths.get(root, source.path());
+            Path path;
+            if (source.isRelative()) {
+                path = Paths.get(root, source.path());
+            } else {
+                path = Paths.get(source.path());
+            }
             watchDirectory(watchService, path);
         }
     }

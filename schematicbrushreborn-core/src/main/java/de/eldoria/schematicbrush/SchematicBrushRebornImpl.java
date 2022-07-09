@@ -169,6 +169,13 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         metrics.addCustomChart(new AdvancedPie("installed_storage_type",
                 () -> storageRegistry.registry().keySet().stream().collect(Collectors.toMap(Nameable::name, e -> 1))));
 
+        metrics.addCustomChart(new AdvancedPie("installed_add_ons",
+                () -> Arrays.stream(getServer().getPluginManager().getPlugins())
+                        .filter(plugin -> {
+                            var descr = plugin.getDescription();
+                            return descr.getSoftDepend().contains("SchematicBrushReborn") || descr.getDepend().contains("SchematicBrushReborn");
+                        }).collect(Collectors.toMap(e -> e.getDescription().getName(), e -> 1))));
+
         metrics.addCustomChart(new SimplePie("used_storage_type",
                 () -> configuration.general().storageType().name()));
 
