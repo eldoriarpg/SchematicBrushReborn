@@ -168,7 +168,7 @@ public final class WorldEditBrush {
      * @return true if the item stack is not of type block
      */
     public static boolean canBeBound(ItemStack stack) {
-        return toItemType(stack).hasBlockType();
+        return !toItemType(stack).hasBlockType();
     }
 
     public static ItemType toItemType(ItemStack stack) {
