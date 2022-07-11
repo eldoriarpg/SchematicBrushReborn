@@ -93,34 +93,60 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable com.sk89q.worldedit.command.tool.brush.Brush</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBrush(org.bukkit.entity.Player)" class="member-name-link">getBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#canBeBound(org.bukkit.inventory.ItemStack)" class="member-name-link">canBeBound</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Get the schematic brush of a player registered on the item in its main hand.</div>
+<div class="block">Checks if the stack is not of type block.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable com.sk89q.worldedit.command.tool.brush.Brush</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBrush(org.bukkit.entity.Player,org.bukkit.Material)" class="member-name-link">getBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
- <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBrush(org.bukkit.entity.Player)" class="member-name-link">getBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Get the schematic brush of a player registered on the item in its main hand.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="../brush/SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSchematicBrush(org.bukkit.entity.Player)" class="member-name-link">getSchematicBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable com.sk89q.worldedit.command.tool.brush.Brush</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBrush(org.bukkit.entity.Player,org.bukkit.Material)" class="member-name-link">getBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Get the schematic brush of a player registered on the item in its main hand.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="../brush/SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSchematicBrush(org.bukkit.entity.Player,org.bukkit.Material)" class="member-name-link">getSchematicBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
- <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSchematicBrush(org.bukkit.entity.Player)" class="member-name-link">getSchematicBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Get the schematic brush of a player registered on the item in its main hand.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="../brush/SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSchematicBrush(org.bukkit.entity.Player,org.bukkit.Material)" class="member-name-link">getSchematicBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Get the schematic brush of a player registered on the item in its main hand.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#removeBrush(org.bukkit.entity.Player)" class="member-name-link">removeBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Remove the brush for a player of the item in its main hand.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBrush(org.bukkit.entity.Player,com.sk89q.worldedit.command.tool.brush.Brush)" class="member-name-link">setBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#removeBrush(org.bukkit.entity.Player,org.bukkit.inventory.ItemStack)" class="member-name-link">removeBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Remove a brush for this player on the item stack type..</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBrush(org.bukkit.entity.Player,com.sk89q.worldedit.command.tool.brush.Brush)" class="member-name-link">setBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
  com.sk89q.worldedit.command.tool.brush.Brush&nbsp;brush)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Set the brush for a player and the item in its main hand.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBrush(org.bukkit.entity.Player,com.sk89q.worldedit.command.tool.brush.Brush,java.lang.String)" class="member-name-link">setBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ com.sk89q.worldedit.command.tool.brush.Brush&nbsp;brush,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;permission)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Set the brush for a player and the item in its main hand.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.sk89q.worldedit.world.item.ItemType</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toItemType(org.bukkit.inventory.ItemStack)" class="member-name-link">toItemType</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -209,6 +235,69 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>true if the brush was set.</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setBrush(org.bukkit.entity.Player,com.sk89q.worldedit.command.tool.brush.Brush,java.lang.String)">
+<h3>setBrush</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">setBrush</span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ com.sk89q.worldedit.command.tool.brush.Brush&nbsp;brush,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;permission)</span></div>
+<div class="block">Set the brush for a player and the item in its main hand.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - player to set</dd>
+<dd><code>brush</code> - brush to set</dd>
+<dt>Returns:</dt>
+<dd>true if the brush was set.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removeBrush(org.bukkit.entity.Player)">
+<h3>removeBrush</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">removeBrush</span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</span></div>
+<div class="block">Remove the brush for a player of the item in its main hand.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - player to set</dd>
+<dt>Returns:</dt>
+<dd>true if the brush was remove.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removeBrush(org.bukkit.entity.Player,org.bukkit.inventory.ItemStack)">
+<h3>removeBrush</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">removeBrush</span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</span></div>
+<div class="block">Remove a brush for this player on the item stack type..</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - player to set</dd>
+<dd><code>stack</code> - the item stack</dd>
+<dt>Returns:</dt>
+<dd>true if the brush was removed.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="canBeBound(org.bukkit.inventory.ItemStack)">
+<h3>canBeBound</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canBeBound</span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</span></div>
+<div class="block">Checks if the stack is not of type block.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>stack</code> - stack</dd>
+<dt>Returns:</dt>
+<dd>true if the item stack is not of type block</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="toItemType(org.bukkit.inventory.ItemStack)">
+<h3>toItemType</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.sk89q.worldedit.world.item.ItemType</span>&nbsp;<span class="element-name">toItemType</span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</span></div>
 </section>
 </li>
 </ul>
