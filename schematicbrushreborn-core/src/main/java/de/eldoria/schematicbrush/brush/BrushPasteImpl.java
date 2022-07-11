@@ -20,9 +20,14 @@ import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.util.Shiftable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
 /**
@@ -52,23 +57,27 @@ public class BrushPasteImpl implements BrushPaste {
     @Override
     public boolean shiftFlip() {
         reloadSchematic();
-        schematicSet.getMutator(SchematicModifier.FLIP).shift();
-        return schematicSet.getMutator(SchematicModifier.FLIP).shiftable();
+        return shift(schematicSet.getMutator(SchematicModifier.FLIP), settings.getMutator(PlacementModifier.FLIP));
     }
 
     @Override
     public boolean shiftRotation() {
         reloadSchematic();
-        schematicSet.getMutator(SchematicModifier.ROTATION).shift();
-        return schematicSet.getMutator(SchematicModifier.ROTATION).shiftable();
+        return shift(schematicSet.getMutator(SchematicModifier.ROTATION), settings.getMutator(PlacementModifier.ROTATION));
     }
 
     @Override
     public boolean shiftOffset() {
         reloadSchematic();
-        schematicSet.getMutator(SchematicModifier.OFFSET).shift();
-        settings.getMutator(PlacementModifier.OFFSET).shift();
-        return settings.getMutator(PlacementModifier.OFFSET).shiftable() || schematicSet.getMutator(SchematicModifier.OFFSET).shiftable();
+        return shift(schematicSet.getMutator(SchematicModifier.OFFSET), settings.getMutator(PlacementModifier.OFFSET));
+    }
+
+    private boolean shift(Mutator<?>... mutators) {
+        var shifts = new ArrayList<>(Arrays.asList(mutators));
+        shifts.removeIf(Objects::isNull);
+        if (shifts.isEmpty()) return false;
+        shifts.forEach(Mutator::shift);
+        return shifts.stream().anyMatch(Shiftable::shiftable);
     }
 
     @Override

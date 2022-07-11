@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.config.sections.presets;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
 import de.eldoria.schematicbrush.storage.YamlContainerPagedAccess;
+import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -24,20 +25,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @SerializableAs("sbrYamlPresetContainer")
 public class YamlPresetContainer implements PresetContainer, ConfigurationSerializable {
+    private UUID uuid;
     private final Map<String, Preset> presets;
 
     public YamlPresetContainer(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
+        uuid = UUID.fromString(map.getValueOrDefault("uuid", Container.GLOBAL.toString()));
         List<Preset> presetList = map.getValueOrDefault("presets", Collections.emptyList());
         presets = new HashMap<>();
         presetList.forEach(p -> presets.put(p.name(), p));
     }
 
-    public YamlPresetContainer() {
+    public YamlPresetContainer(UUID uuid) {
+        this.uuid = uuid;
         presets = new HashMap<>();
     }
 
@@ -46,6 +51,7 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
                 .add("presets", new ArrayList<>(presets.values()))
+                .add("uuid", uuid.toString())
                 .build();
     }
 
@@ -83,5 +89,15 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     @Override
     public CompletableFuture<Integer> size() {
         return CompletableFuture.completedFuture(presets.size());
+    }
+
+    @Override
+    public @NotNull UUID owner() {
+        return uuid;
+    }
+
+    public YamlPresetContainer updateOwner(UUID uuid) {
+        this.uuid = uuid;
+        return this;
     }
 }
