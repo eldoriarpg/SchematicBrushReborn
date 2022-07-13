@@ -18,7 +18,7 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter", "junit-jupiter")
-    testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.73.0")
+    testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.85.1")
     testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
     testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.0"){
         exclude("com.intellectualsites.paster")
