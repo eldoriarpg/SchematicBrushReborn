@@ -11,7 +11,7 @@ dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains", "annotations", "23.0.0")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.0"){
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.1"){
         exclude("com.intellectualsites.paster")
     }
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.1") { isTransitive = false }
@@ -20,7 +20,7 @@ dependencies {
     testImplementation("org.junit.jupiter", "junit-jupiter")
     testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.73.0")
     testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
-    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.0"){
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.1"){
         exclude("com.intellectualsites.paster")
     }
     testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.1") { isTransitive = false }
