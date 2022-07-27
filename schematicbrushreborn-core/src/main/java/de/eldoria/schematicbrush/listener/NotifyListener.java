@@ -44,7 +44,7 @@ public class NotifyListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().hasPermission("schematicbrush.brush.use")) {
             if (configuration.general().isShowNameDefault()) {
-                setState(event.getPlayer(), true, MessageChannel.ACTION_BAR);
+                setState(event.getPlayer(), true, configuration.general().defaultNameChannel());
             }
         }
     }
