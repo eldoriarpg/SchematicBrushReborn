@@ -117,7 +117,7 @@ public class SchematicBrushCache implements SchematicCache {
             for (var file : directoryData.get().files()) {
                 addSchematic(file.toPath());
             }
-            logger.log(Level.CONFIG, "Loaded schematics from " + path.toString());
+            logger.log(Level.CONFIG, "Loaded " + directoryData.get().files().size() + "schematics from " + path.toString());
         }
         logger.log(Level.CONFIG, "Loaded schematics from " + schematicFolder);
     }

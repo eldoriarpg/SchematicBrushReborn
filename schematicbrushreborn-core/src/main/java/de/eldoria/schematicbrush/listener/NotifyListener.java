@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 public class NotifyListener implements Listener {
@@ -51,8 +52,22 @@ public class NotifyListener implements Listener {
     @EventHandler
     public void onPaste(PostPasteEvent event) {
         if (!players.containsKey(event.player().getUniqueId())) return;
+        var builder = new StringBuilder()
+                .append("§2Pasted §a%s §2from set §a%s".formatted(event.schematic().name(), event.schematicSet().selector().descriptor()));
+        var joiner = new StringJoiner(", ", "(", ")");
+        if (event.paste().flip() != null) {
+            joiner.add("Flip: %s".formatted(event.paste().flip().value()));
+        }
+        if (event.paste().rotation() != null) {
+            joiner.add("Rotation: %s".formatted(event.paste().rotation().value()));
+        }
+        if (event.paste().offsetSet() != null) {
+            joiner.add("Set Offset: %s".formatted(event.paste().offsetSet().value()));
+        }
+        if (event.paste().offsetBrush() != null) {
+            joiner.add("Brush Offset: %s".formatted(event.paste().offsetBrush().value()));
+        }
         messageSender.send(players.get(event.player().getUniqueId()), MessageType.NORMAL, event.player(),
-                String.format("§2Pasted §a%s §2from set §a%s (Flip: %s, Rotation: %s, Brush Offset: %s, Set Offset: %s)", event.schematic().name(), event.schematicSet().selector().descriptor(),
-                        event.paste().flip().value(), event.paste().rotation().value(), event.paste().offsetBrush().value(), event.paste().offsetSet().value()));
+                builder.append(" ").append(joiner.toString()).toString());
     }
 }
