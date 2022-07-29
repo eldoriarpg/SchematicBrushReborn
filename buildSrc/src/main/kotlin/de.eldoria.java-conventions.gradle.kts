@@ -14,7 +14,7 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.1"){
         exclude("com.intellectualsites.paster")
     }
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.1") { isTransitive = false }
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.2") { isTransitive = false }
 
     testImplementation(platform("org.junit:junit-bom:5.9.0"))
     testImplementation("org.junit.jupiter", "junit-jupiter")
@@ -23,7 +23,7 @@ dependencies {
     testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.1"){
         exclude("com.intellectualsites.paster")
     }
-    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.1") { isTransitive = false }
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.2") { isTransitive = false }
 }
 
 allprojects {
