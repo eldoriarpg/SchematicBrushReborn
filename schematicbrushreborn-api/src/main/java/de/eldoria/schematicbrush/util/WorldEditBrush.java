@@ -118,7 +118,7 @@ public final class WorldEditBrush {
             var brushTool = new BrushTool(permission);
             brushTool.setBrush(brush, permission);
             if (toItemType(stack).hasBlockType()) {
-                MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, "Can not bind brush on a blick.");
+                MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, "Can not bind brush on a block.");
                 return false;
             }
             if (FAWE.isFawe()) {
