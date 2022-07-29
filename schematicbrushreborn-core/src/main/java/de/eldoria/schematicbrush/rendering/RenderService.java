@@ -148,6 +148,12 @@ public class RenderService implements Runnable, Listener {
         }
 
         var collector = brush.pasteFake();
+
+        if (collector == null) {
+            resolveChanges(player);
+            return;
+        }
+
         renderChanges(player, collector.changes());
     }
 

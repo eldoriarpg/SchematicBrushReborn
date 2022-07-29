@@ -130,7 +130,7 @@ public class SchematicBrushImpl implements SchematicBrush {
         } catch (InvalidToolBindException e) {
             return Optional.empty();
         }
-        if (!(brushTool.getBrush() instanceof SchematicBrushImpl)) return Optional.empty();
+        if (brushTool == null || !(brushTool.getBrush() instanceof SchematicBrushImpl)) return Optional.empty();
         return Optional.of(brushTool);
     }
 
