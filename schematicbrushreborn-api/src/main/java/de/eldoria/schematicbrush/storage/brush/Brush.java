@@ -158,7 +158,7 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
                 .space()
                 .text("<%s><click:run_command:'/sbrbp info %s'>[Info]</click>", Colors.ADD, (global ? "g:" : "") + name())
                 .space()
-                .text("<%s><click:run_command:'/sbr loadbrush %s'>[Load]</click>", Colors.ADD, name(), (global ? "g:" : "") + name());
+                .text("<%s><click:run_command:'/sbr loadbrush %s'>[Load]</click>", Colors.ADD, (global ? "g:" : "") + name());
         if (canDelete) {
             text.space().text("<%s><click:run_command:'/sbrbp remove %s %s'>[Remove]</click>", Colors.REMOVE, name(), global ? "-g" : "");
         }
