@@ -38,7 +38,7 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
         uuid = UUID.fromString(map.getValueOrDefault("uuid", Container.GLOBAL.toString()));
         List<Brush> brushList = map.getValueOrDefault("brushes", Collections.emptyList());
         brushes = new HashMap<>();
-        brushList.forEach(p -> brushes.put(p.name(), p));
+        brushList.forEach(p -> brushes.put(p.name().toLowerCase(Locale.ROOT), p));
     }
 
     public YamlBrushContainer(UUID uuid) {

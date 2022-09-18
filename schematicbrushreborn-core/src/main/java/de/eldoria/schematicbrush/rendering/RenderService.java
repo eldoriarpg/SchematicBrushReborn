@@ -205,13 +205,19 @@ public class RenderService implements Runnable, Listener {
 
         @Override
         public void run() {
-            if (active) return;
-            active = true;
+            if(!claim()) return;
             while (!queue.isEmpty()) {
                 var poll = queue.poll();
                 poll.sendChanges();
             }
             active = false;
+        }
+
+        // There is a minimal chance of a race condition. That's why this method needs to be synchronized
+        private synchronized boolean claim() {
+            if (active) return false;
+            active = true;
+            return true;
         }
 
         public void queue(Player player, Changes oldChanges, Changes newChanges) {

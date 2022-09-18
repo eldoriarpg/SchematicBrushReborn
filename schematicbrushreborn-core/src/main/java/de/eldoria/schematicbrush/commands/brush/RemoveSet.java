@@ -39,7 +39,7 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
         if (!success) {
             messageSender().send(MessageChannel.ACTION_BAR, MessageType.ERROR, player, "Invalid set.");
         }
-        sessions.showBrush(player);
+        sessions.showSets(player);
     }
 
     @Override

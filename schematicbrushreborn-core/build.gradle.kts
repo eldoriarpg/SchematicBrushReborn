@@ -15,7 +15,7 @@ dependencies {
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation("org.jetbrains", "annotations", "23.0.0")
-    testImplementation("org.mockito", "mockito-core", "4.5.1")
+    testImplementation("org.mockito", "mockito-core", "4.7.0")
     testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.13.3")
 }
 

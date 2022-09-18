@@ -13,6 +13,7 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import de.eldoria.eldoutilities.utils.EMath;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.util.Clipboards;
 import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.Material;
@@ -51,7 +52,7 @@ public class Schematic implements Comparable<Schematic> {
     private final File file;
     private final String name;
     private final String effectiveName;
-    private final int number;
+    private final long number;
     private int effectiveSize = -1;
     private int size = -1;
 
@@ -69,7 +70,13 @@ public class Schematic implements Comparable<Schematic> {
         var matcher = numEnd.matcher(name);
         if (matcher.matches()) {
             effectiveName = matcher.group("name");
-            number = Integer.parseInt(matcher.group("num"));
+            var number = 0L;
+            try {
+                number = Long.parseLong(matcher.group("num"));
+            } catch (ArithmeticException | NumberFormatException e) {
+                SchematicBrushReborn.logger().info("Could not read number of schematic " + file.getPath() + " at ");
+            }
+            this.number = number;
         } else {
             effectiveName = name;
             number = 0;
@@ -269,10 +276,10 @@ public class Schematic implements Comparable<Schematic> {
             try {
                 var clipboard = loadSchematic();
                 clipboard.getRegion().iterator()
-                        .forEachRemaining(pos -> {
-                            var mat = BukkitAdapter.adapt(clipboard.getBlock(pos)).getMaterial();
-                            materialMap.compute(mat, (key, v) -> v == null ? 1 : v + 1);
-                        });
+                         .forEachRemaining(pos -> {
+                             var mat = BukkitAdapter.adapt(clipboard.getBlock(pos)).getMaterial();
+                             materialMap.compute(mat, (key, v) -> v == null ? 1 : v + 1);
+                         });
             } catch (IOException e) {
                 return Collections.emptyMap();
             }
@@ -285,7 +292,7 @@ public class Schematic implements Comparable<Schematic> {
     public int compareTo(@NotNull Schematic other) {
         var name = effectiveName.compareTo(other.effectiveName);
         if (name == 0) {
-            return Integer.compare(number, other.number);
+            return Long.compare(number, other.number);
         }
         return name;
     }

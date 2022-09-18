@@ -38,7 +38,7 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
         uuid = UUID.fromString(map.getValueOrDefault("uuid", Container.GLOBAL.toString()));
         List<Preset> presetList = map.getValueOrDefault("presets", Collections.emptyList());
         presets = new HashMap<>();
-        presetList.forEach(p -> presets.put(p.name(), p));
+        presetList.forEach(p -> presets.put(p.name().toLowerCase(Locale.ROOT), p));
     }
 
     public YamlPresetContainer(UUID uuid) {
