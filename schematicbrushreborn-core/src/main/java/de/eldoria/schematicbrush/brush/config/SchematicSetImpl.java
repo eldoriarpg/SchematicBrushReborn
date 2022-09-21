@@ -17,11 +17,13 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * The schematic set represents a part of a brush, which will be combined to a brush by the {@link BrushSettingsImpl} A
@@ -59,6 +61,7 @@ public class SchematicSetImpl implements SchematicSet {
      * @return schematic
      */
     @Override
+    @Nullable
     public Schematic getRandomSchematic() {
         if (schematics.isEmpty()) return null;
 
@@ -72,7 +75,10 @@ public class SchematicSetImpl implements SchematicSet {
                 clipboard = randomSchematic.loadSchematic();
             } catch (IOException e) {
                 // Silently fail and search for another schematic.
-                SchematicBrushReborn.logger().info("Schematic \"" + randomSchematic.path() + "\" does not exist anymore.");
+                SchematicBrushReborn.logger().log(Level.INFO, "Schematic \"" + randomSchematic.path() + "\" does not exist anymore.", e);
+                schematics.remove(randomSchematic);
+            } catch (Exception e) {
+                SchematicBrushReborn.logger().log(Level.SEVERE, "A critical error");
                 schematics.remove(randomSchematic);
             }
         }
