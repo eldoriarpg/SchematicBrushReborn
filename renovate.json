@@ -3,9 +3,8 @@
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "extends": ["config:base"],
-  "ignoreDeps": ["spigot-api"],
+  "ignoreDeps": ["spigot-api", "MockBukkit-v1.19"],
   "reviewers": ["RainbowDashLabs"],
   "prConcurrentLimit": 3,
-  "prHourlyLimit": 10,
-  "ignoreDeps": ["MockBukkit-v1.19"]
+  "prHourlyLimit": 10
 }
