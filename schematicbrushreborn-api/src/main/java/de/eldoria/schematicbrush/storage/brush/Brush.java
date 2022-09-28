@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.storage.brush;
 
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -176,9 +177,9 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
                 .toList();
     }
 
-    public String detailComponent(boolean global, BrushSettingsRegistry registry) {
+    public String detailComponent(ILocalizer localizer, boolean global, BrushSettingsRegistry registry) {
         var sets = snapshot.schematicSets().stream()
-                .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
+                .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(localizer), BuildUtil.renderProvider(set.selector())))
                 .collect(Collectors.toList());
 
         var modifier = simpleModifier(registry);

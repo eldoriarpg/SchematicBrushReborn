@@ -7,7 +7,10 @@
 package de.eldoria.schematicbrush.brush.config.builder;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.brush.config.Registration;
+import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
@@ -23,17 +26,20 @@ import java.util.stream.Collectors;
 
 @SerializableAs("sbrBrushBuilderSnapshot")
 public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
-    private final Map<Nameable, Mutator<?>> placementModifier;
+    private final Map<PlacementModifier, Mutator<?>> placementModifier;
     private final List<SchematicSetBuilder> schematicSets;
 
     public BrushBuilderSnapshotImpl(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         schematicSets = map.getValue("schematicSets");
-        placementModifier = map.getMap("placementModifier", (key, v) -> Nameable.of(key));
+        placementModifier = map.getMap("placementModifier", (key, v) -> SchematicBrushRebornImpl.settingsRegistry()
+                .getPlacementModifier(key)
+                .map(Registration::modifier)
+                .orElse(null));
         placementModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }
 
-    public BrushBuilderSnapshotImpl(Map<Nameable, Mutator<?>> placementModifier, List<SchematicSetBuilder> schematicSets) {
+    public BrushBuilderSnapshotImpl(Map<PlacementModifier, Mutator<?>> placementModifier, List<SchematicSetBuilder> schematicSets) {
         this.placementModifier = placementModifier;
         this.schematicSets = schematicSets;
     }
@@ -60,7 +66,7 @@ public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
 
     @Override
     public BrushBuilder load(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
-        Map<Nameable, Mutator<?>> mutatorMap = placementModifier.entrySet()
+        Map<PlacementModifier, Mutator<?>> mutatorMap = placementModifier.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, key -> key.getValue().copy()));
         var schematicSets = this.schematicSets.stream()

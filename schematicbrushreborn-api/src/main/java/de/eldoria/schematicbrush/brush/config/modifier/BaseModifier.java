@@ -14,11 +14,17 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
  * A modifier is an extended {@link Nameable} which also has a description.
  */
 public class BaseModifier extends Nameable {
+    private final String localeKey;
     private final String description;
     private final boolean required;
 
     protected BaseModifier(String name, String description, boolean required) {
+        this(name, name, description, required);
+    }
+
+    protected BaseModifier(String name, String localeKey, String description, boolean required) {
         super(name);
+        this.localeKey = localeKey;
         this.description = description;
         this.required = required;
     }
@@ -30,6 +36,15 @@ public class BaseModifier extends Nameable {
      */
     public String description() {
         return description;
+    }
+
+    /**
+     * Get the localization key of the modifier
+     *
+     * @return name key
+     */
+    public String localeKey() {
+        return localeKey;
     }
 
     /**

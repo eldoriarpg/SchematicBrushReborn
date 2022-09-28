@@ -29,6 +29,7 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      * Name of the provider
      */
     protected final String name;
+    protected final String localeKey;
     private final Class<? extends ConfigurationSerializable> clazz;
 
     /**
@@ -37,8 +38,9 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      * @param clazz which is returned by the provider
      * @param name  name. Must be unique inside the provider.
      */
-    public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
+    public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localeKey) {
         this.clazz = clazz;
+        this.localeKey = localeKey;
         if (name.isBlank()) {
             throw new IllegalArgumentException("Name of provider can not be blank");
         }
@@ -116,6 +118,15 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      */
     public String name() {
         return name;
+    }
+
+    /**
+     * Get the locale key for the name of the provider
+     *
+     * @return locale key
+     */
+    public String localeKey() {
+        return localeKey;
     }
 
     /**

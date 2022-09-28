@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
-    private BrushSettingsRegistryImpl settingsRegistry;
+    private static BrushSettingsRegistryImpl settingsRegistry;
     private SchematicRegistryImpl schematics;
     private ConfigurationImpl configuration;
     private RenderService renderService;
@@ -76,7 +76,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginLoad() throws Throwable {
-        settingsRegistry = new BrushSettingsRegistryImpl();
+        SchematicBrushRebornImpl.settingsRegistry = new BrushSettingsRegistryImpl();
         schematics = new SchematicRegistryImpl();
 
         settingsRegistry.registerDefaults(schematics);
@@ -220,4 +220,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         return configuration;
     }
 
+    public static BrushSettingsRegistryImpl settingsRegistry() {
+        return settingsRegistry;
+    }
 }

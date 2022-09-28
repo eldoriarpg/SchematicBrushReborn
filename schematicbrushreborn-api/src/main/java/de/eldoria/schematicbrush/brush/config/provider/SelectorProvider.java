@@ -24,8 +24,20 @@ public abstract class SelectorProvider extends SettingProvider<Selector> {
      * @param name     name of selector
      * @param registry schematic registry. Can be retrieved via {@link SchematicBrushReborn#schematics()}
      */
+    public SelectorProvider(Class<? extends Selector> clazz, String name, String localeKey, SchematicRegistry registry) {
+        super(clazz, name, localeKey);
+        this.registry = registry;
+    }
+
+    /**
+     * Creates a new provider instance
+     *
+     * @param clazz    class which is provided
+     * @param name     name of selector
+     * @param registry schematic registry. Can be retrieved via {@link SchematicBrushReborn#schematics()}
+     */
     public SelectorProvider(Class<? extends Selector> clazz, String name, SchematicRegistry registry) {
-        super(clazz, name);
+        super(clazz, name, name);
         this.registry = registry;
     }
 

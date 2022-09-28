@@ -6,8 +6,10 @@
 
 package de.eldoria.schematicbrush.brush.config.builder;
 
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
+import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Copyable;
@@ -35,7 +37,7 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
      * @param type     type of mutator
      * @param mutation rotation of the brush
      */
-    <T extends Nameable> void withMutator(T type, Mutator<?> mutation);
+    <T extends SchematicModifier> void withMutator(T type, Mutator<?> mutation);
 
     /**
      * Set the default modifier
@@ -70,7 +72,7 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
      *
      * @return unmodifiable map
      */
-    Map<? extends Nameable, Mutator<?>> schematicModifier();
+    Map<? extends SchematicModifier, Mutator<?>> schematicModifier();
 
     /**
      * Schematics
@@ -111,19 +113,20 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
     /**
      * Schematic set as interactable component
      *
-     * @param player   player
-     * @param registry registry
-     * @param id       id
+     * @param player    player
+     * @param registry  registry
+     * @param id        id
+     * @param localizer
      * @return component
      */
-    String interactComponent(Player player, BrushSettingsRegistry registry, int id);
+    String interactComponent(Player player, BrushSettingsRegistry registry, int id, ILocalizer localizer);
 
     /**
      * Schematic set as component
      *
      * @return component
      */
-    String infoComponent();
+    String infoComponent(ILocalizer localizer);
 
     /**
      * Copy the schematic set by creating a new instance and copying the entries by value to the new builder to allow independent modification
@@ -138,12 +141,12 @@ public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable
      * @param modifier modifier name
      * @param mutator  mutator to set
      */
-    void setModifier(Nameable modifier, Mutator<?> mutator);
+    void setModifier(SchematicModifier modifier, Mutator<?> mutator);
 
     /**
      * Removes the modifier
      *
      * @param modifier modifier
      */
-    void removeModifier(Nameable modifier);
+    void removeModifier(SchematicModifier modifier);
 }

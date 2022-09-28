@@ -21,41 +21,41 @@ public class PlacementModifier extends BaseModifier {
     /**
      * Placement modifier key
      */
-    public static final PlacementModifier PLACEMENT = of("Placement", "Define how the schematic should be placed on the position.", true);
+    public static final PlacementModifier PLACEMENT = of("Placement", "placementModifier.placement.name","placementModifier.placement.description", true);
 
     /**
      * IncludeAir modifier key
      */
-    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir", "Include air when placing. Will only have an effect when ReplaceAll is active.", true);
+    public static final PlacementModifier INCLUDE_AIR = of("IncludeAir", "placementModifier.includeAir.name","placementModifier.includeAir.description", true);
 
     /**
      * ReplaceAll modifier key
      */
-    public static final PlacementModifier REPLACE_ALL = of("ReplaceAll", "Replace non air blocks", true);
+    public static final PlacementModifier REPLACE_ALL = of("ReplaceAll", "placementModifier.replaceAll.name","placementModifier.replaceAll.description", true);
 
     /**
      * Offset modifier key
      */
-    public static final PlacementModifier OFFSET = of("Offset", "The schematic offset when placed.", false);
+    public static final PlacementModifier OFFSET = of("Offset", "placementModifier.offset.name","placementModifier.offset.description", false);
 
     /**
      * Filter modifier key
      */
-    public static final PlacementModifier FILTER = of("Filter", "Remove blocks from the schematic.", false);
+    public static final PlacementModifier FILTER = of("Filter", "placementModifier.filter.name","placementModifier.filter.description", false);
 
     /**
      * Flip modifier key
      */
-    public static final PlacementModifier FLIP = of("Flip", "Flip a schematic", false);
+    public static final PlacementModifier FLIP = of("Flip", "placementModifier.flip.name","Flip a schematic", false);
 
     /**
      * Rotation modifier key
      */
-    public static final PlacementModifier ROTATION = of("Rotation", "Rotate a schematic", false);
+    public static final PlacementModifier ROTATION = of("Rotation", "placementModifier.rotate.name","Rotate a schematic", false);
 
 
-    private PlacementModifier(String name, String description, boolean required) {
-        super(name, description, required);
+    private PlacementModifier(String name, String localeKey, String description, boolean required) {
+        super(name, localeKey, description, required);
     }
 
     /**
@@ -67,7 +67,20 @@ public class PlacementModifier extends BaseModifier {
      * @return new PlacementModifier
      */
     public static PlacementModifier of(String name, String description, boolean required) {
-        return new PlacementModifier(name, description, required) {
+        return new PlacementModifier(name, name, description, required) {
+        };
+    }
+
+    /**
+     * Creates a new PlacementModifier.
+     *
+     * @param name        name of the modifier
+     * @param description the description of the modifier
+     * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
+     * @return new PlacementModifier
+     */
+    public static PlacementModifier of(String name, String localeKey, String description, boolean required) {
+        return new PlacementModifier(name, localeKey, description, required) {
         };
     }
 }

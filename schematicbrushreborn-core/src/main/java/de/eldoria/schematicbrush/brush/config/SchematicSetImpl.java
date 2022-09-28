@@ -32,10 +32,10 @@ public class SchematicSetImpl implements SchematicSet {
 
     private final List<Schematic> schematics;
     private final Selector selector;
-    private final Map<? extends Nameable, Mutator<?>> schematicModifier;
+    private final Map<? extends SchematicModifier, Mutator<?>> schematicModifier;
     private int weight;
 
-    public SchematicSetImpl(Set<Schematic> schematics, Selector selector, Map<? extends Nameable, Mutator<?>> schematicModifier, int weight) {
+    public SchematicSetImpl(Set<Schematic> schematics, Selector selector, Map<? extends SchematicModifier, Mutator<?>> schematicModifier, int weight) {
         this.schematics = new ArrayList<>(schematics);
         this.selector = selector;
         this.schematicModifier = schematicModifier;

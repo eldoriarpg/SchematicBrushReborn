@@ -33,13 +33,13 @@ public final class BrushSettingsImpl implements BrushSettings {
      */
     private final List<SchematicSet> schematicSets;
 
-    private final Map<Nameable, Mutator<?>> placementModifier;
+    private final Map<PlacementModifier, Mutator<?>> placementModifier;
     /**
      * The total weight of all brushes in the {@link #schematicSets} list
      */
     private final int totalWeight;
 
-    public BrushSettingsImpl(List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
+    public BrushSettingsImpl(List<SchematicSet> schematicSets, Map<PlacementModifier, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
         this.placementModifier = placementModifier;
 

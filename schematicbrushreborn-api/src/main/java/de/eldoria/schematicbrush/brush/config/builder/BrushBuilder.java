@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.builder;
 
 import de.eldoria.schematicbrush.brush.SchematicBrush;
+import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public interface BrushBuilder {
      * @param provider provider
      * @param <T>      Type of the placement modifier
      */
-    <T extends Nameable> void setPlacementModifier(T type, Mutator<?> provider);
+    <T extends PlacementModifier> void setPlacementModifier(T type, Mutator<?> provider);
 
     /**
      * Removes the placement modifier
@@ -58,7 +59,7 @@ public interface BrushBuilder {
      * @param type     type
      * @param <T>      Type of the placement modifier
      */
-    <T extends Nameable> void removePlacementModifier(T type);
+    <T extends PlacementModifier> void removePlacementModifier(T type);
 
     /**
      * Build the schematic brush
@@ -88,7 +89,7 @@ public interface BrushBuilder {
      *
      * @return unmodifiable map of the placement modifier
      */
-    Map<? extends Nameable, Mutator<?>> placementModifier();
+    Map<? extends PlacementModifier, Mutator<?>> placementModifier();
 
     /**
      * Reset all modifier to default and clear schematic sets.

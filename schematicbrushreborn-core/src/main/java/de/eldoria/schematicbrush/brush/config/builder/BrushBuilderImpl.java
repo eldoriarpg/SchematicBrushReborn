@@ -10,6 +10,7 @@ import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.SchematicBrushImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
@@ -29,9 +30,9 @@ public final class BrushBuilderImpl implements BrushBuilder {
     private final Player owner;
     private final BrushSettingsRegistry settingsRegistry;
     private final SchematicRegistry schematicRegistry;
-    private final Map<Nameable, Mutator<?>> placementModifier;
+    private final Map<PlacementModifier, Mutator<?>> placementModifier;
 
-    BrushBuilderImpl(List<SchematicSetBuilder> schematicSets, Player owner, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry, Map<Nameable, Mutator<?>> placementModifier) {
+    BrushBuilderImpl(List<SchematicSetBuilder> schematicSets, Player owner, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry, Map<PlacementModifier, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
         this.owner = owner;
         this.settingsRegistry = settingsRegistry;
@@ -97,12 +98,12 @@ public final class BrushBuilderImpl implements BrushBuilder {
      * @param provider provider
      */
     @Override
-    public <T extends Nameable> void setPlacementModifier(T type, Mutator<?> provider) {
+    public <T extends PlacementModifier> void setPlacementModifier(T type, Mutator<?> provider) {
         placementModifier.put(type, provider);
     }
 
     @Override
-    public <T extends Nameable> void removePlacementModifier(T type) {
+    public <T extends PlacementModifier> void removePlacementModifier(T type) {
         placementModifier.remove(type);
     }
 
@@ -148,7 +149,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
      * @return unmodifiable map of the placement modifier
      */
     @Override
-    public Map<? extends Nameable, Mutator<?>> placementModifier() {
+    public Map<? extends PlacementModifier, Mutator<?>> placementModifier() {
         return Collections.unmodifiableMap(placementModifier);
     }
 
@@ -186,7 +187,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
 
     @Override
     public BrushBuilderSnapshot snapshot() {
-        Map<Nameable, Mutator<?>> placementModifier = this.placementModifier.entrySet()
+        Map<PlacementModifier, Mutator<?>> placementModifier = this.placementModifier.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, key -> key.getValue().copy()));
         var schematicSets = this.schematicSets.stream()

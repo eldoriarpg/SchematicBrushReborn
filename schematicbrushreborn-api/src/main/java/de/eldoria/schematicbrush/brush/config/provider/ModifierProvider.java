@@ -17,8 +17,18 @@ public abstract class ModifierProvider extends SettingProvider<Mutator<?>> {
      *
      * @param clazz class which is provided
      * @param name  name of provider
+     * @param localeKey the locale key of the name
+     */
+    public ModifierProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localeKey) {
+        super(clazz, name, localeKey);
+    }
+    /**
+     * Default constructor
+     *
+     * @param clazz class which is provided
+     * @param name  name of provider
      */
     public ModifierProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
-        super(clazz, name);
+        super(clazz, name, name);
     }
 }

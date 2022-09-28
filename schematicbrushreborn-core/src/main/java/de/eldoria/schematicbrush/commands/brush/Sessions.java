@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.commands.brush;
 
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -23,7 +24,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,6 +37,7 @@ public class Sessions {
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
     private final MessageBlocker messageBlocker;
+    private final ILocalizer localizer;
     private final Map<UUID, BrushBuilder> session = new HashMap<>();
 
     public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry, MessageBlocker messageBlocker) {
@@ -44,6 +45,7 @@ public class Sessions {
         audiences = BukkitAudiences.create(plugin);
         this.schematicRegistry = schematicRegistry;
         this.messageBlocker = messageBlocker;
+        this.localizer = ILocalizer.getPluginLocalizer(plugin);
     }
 
     public BrushBuilder getOrCreateSession(Player player) {
@@ -76,7 +78,7 @@ public class Sessions {
         var modifierStrings = new ArrayList<String>();
         for (var entry : mutatorMap.entrySet()) {
             var registration = registry.getPlacementModifier(entry.getKey()).get();
-            modifierStrings.add(buildModifier(player, "/sbr modify", "/sbr removebrushmodifier",
+            modifierStrings.add(buildModifier(localizer, player, "/sbr modify", "/sbr removebrushmodifier",
                     registration.modifier(), registration.mutators(), mutatorMap.get(entry.getKey())));
         }
 
@@ -85,7 +87,7 @@ public class Sessions {
 
         var missing = registry.placementModifier().keySet().stream().filter(providers -> !mutatorMap.containsKey(providers))
                 .map(provider -> String.format("<click:run_command:'/sbr addbrushmodifier %s'><hover:show_text:'<%s>%s'><%s>[%s]</click>",
-                        provider.name(), Colors.NEUTRAL, provider.description(), Colors.CHANGE, provider.name()))
+                        provider.name(), Colors.NEUTRAL, localizer.localize(provider.description()), Colors.CHANGE, provider.name()))
                 .toList();
 
         if (!missing.isEmpty()) {
@@ -120,7 +122,7 @@ public class Sessions {
         }
 
         var set = optSet.get();
-        var interactComponent = set.interactComponent(player, registry, id);
+        var interactComponent = set.interactComponent(player, registry, id, localizer);
 
         var composer = MessageComposer.create()
                 .text(interactComponent)
@@ -147,7 +149,7 @@ public class Sessions {
 
         var sets = builder.schematicSets().stream()
                 .map(set -> String.format("  <%s><hover:show_text:'%s'>%s</hover> <%s><click:run_command:'/sbr showSet %s'>[Edit]</click> <%s><click:run_command:'/sbr removeSet %s'>[Remove]</click>",
-                        Colors.NAME, set.infoComponent(), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
+                        Colors.NAME, set.infoComponent(localizer), BuildUtil.renderProvider(set.selector()), Colors.CHANGE, count.get(), Colors.REMOVE, count.getAndIncrement()))
                 .collect(Collectors.joining("\n"));
 
         composer.newLine().text(sets);

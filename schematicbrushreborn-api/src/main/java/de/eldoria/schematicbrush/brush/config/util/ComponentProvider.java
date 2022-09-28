@@ -18,6 +18,15 @@ public interface ComponentProvider {
     String name();
 
     /**
+     * Locale key of the component
+     *
+     * @return name as string
+     */
+    default String localeKey() {
+        return name();
+    }
+
+    /**
      * Descriptor of component. Should provide the value of the component.
      *
      * @return value as string

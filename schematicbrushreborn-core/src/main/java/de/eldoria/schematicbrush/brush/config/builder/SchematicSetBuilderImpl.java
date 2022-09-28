@@ -6,11 +6,16 @@
 
 package de.eldoria.schematicbrush.brush.config.builder;
 
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
+import de.eldoria.schematicbrush.brush.config.Registration;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.SchematicSetImpl;
+import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
@@ -39,14 +44,14 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
 public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     private static final String WEIGHT_DESCRIPTION = "The weight of the schematic set when multiple sets are used.\nHigher numbers will result in more schematics from this set.";
     private Selector selector;
-    private Map<Nameable, Mutator<?>> schematicModifier = new HashMap<>();
+    private Map<SchematicModifier, Mutator<?>> schematicModifier = new HashMap<>();
     private Set<Schematic> schematics = Collections.emptySet();
     private int weight = -1;
 
     public SchematicSetBuilderImpl(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         selector = map.getValue("selector");
-        schematicModifier = map.getMap("modifiers", (key, v) -> Nameable.of(key));
+        schematicModifier = map.getMap("modifiers", (key, v) -> SchematicBrushRebornImpl.settingsRegistry().getSchematicModifier(key).map(Registration::modifier).orElse(null));
         weight = map.getValue("weight");
         schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }
@@ -55,7 +60,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         this.selector = selector;
     }
 
-    private SchematicSetBuilderImpl(Selector selector, Map<Nameable, Mutator<?>> schematicModifier, Set<Schematic> schematics, int weight) {
+    private SchematicSetBuilderImpl(Selector selector, Map<SchematicModifier, Mutator<?>> schematicModifier, Set<Schematic> schematics, int weight) {
         this.selector = selector;
         this.schematicModifier = schematicModifier;
         this.schematics = schematics;
@@ -82,7 +87,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
      * @param mutation rotation of the brush
      */
     @Override
-    public <T extends Nameable> void withMutator(T type, Mutator<?> mutation) {
+    public <T extends SchematicModifier> void withMutator(T type, Mutator<?> mutation) {
         schematicModifier.put(type, mutation);
     }
 
@@ -134,7 +139,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
      * @return unmodifiable map
      */
     @Override
-    public Map<? extends Nameable, Mutator<?>> schematicModifier() {
+    public Map<? extends SchematicModifier, Mutator<?>> schematicModifier() {
         return Collections.unmodifiableMap(schematicModifier);
     }
 
@@ -192,13 +197,14 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     /**
      * Schematic set as interactable component
      *
-     * @param player   the player
-     * @param registry registry
-     * @param id       id
+     * @param player    the player
+     * @param registry  registry
+     * @param id        id
+     * @param localizer
      * @return component
      */
     @Override
-    public String interactComponent(Player player, BrushSettingsRegistry registry, int id) {
+    public String interactComponent(Player player, BrushSettingsRegistry registry, int id, ILocalizer localizer) {
         var composer = MessageComposer.create();
         composer.text("<%s>Selector: <%s>", Colors.HEADING, Colors.CHANGE)
                 .text(registry.selector().stream()
@@ -214,7 +220,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         var modifierStrings = new ArrayList<String>();
         for (var entry : mutatorMap.entrySet()) {
             var registration = registry.getSchematicModifier(entry.getKey()).get();
-            modifierStrings.add(buildModifier(player, "/sbr modifyset " + id, "/sbr removesetmodifier " + id,
+            modifierStrings.add(buildModifier(localizer, player, "/sbr modifyset " + id, "/sbr removesetmodifier " + id,
                     registration.modifier(), registration.mutators(), mutatorMap.get(entry.getKey())));
         }
         composer.newLine()
@@ -223,7 +229,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
 
         var missing = registry.schematicModifier().keySet().stream().filter(providers -> !mutatorMap.containsKey(providers))
                 .map(provider -> String.format("<click:run_command:'/sbr addsetmodifier %s %s'><hover:show_text:'<%s>%s'><%s>[%s]</click>",
-                        id, provider.name(), Colors.NEUTRAL, provider.description(), Colors.ADD, provider.name()))
+                        id, provider.name(), Colors.NEUTRAL, localizer.localize(provider.description()), Colors.ADD, localizer.localize(provider.localeKey())))
                 .toList();
 
         if (!missing.isEmpty()) {
@@ -244,7 +250,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
      * @return component
      */
     @Override
-    public String infoComponent() {
+    public String infoComponent(ILocalizer localizer) {
         var composer = MessageComposer.create();
         composer.text(BuildUtil.renderProvider(selector()));
 
@@ -253,7 +259,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
 
             var modifierStrings = new ArrayList<String>();
             for (var entry : mutatorMap.entrySet()) {
-                modifierStrings.add(String.format("<%s>%s%n  %s", Colors.HEADING, entry.getKey().name(), BuildUtil.renderProvider(entry.getValue())));
+                modifierStrings.add(String.format("<%s>%s%n  %s", Colors.HEADING, localizer.localize(entry.getKey().name()), BuildUtil.renderProvider(entry.getValue())));
             }
             composer.newLine()
                     .text(modifierStrings);
@@ -289,19 +295,19 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
 
     @Override
     public SchematicSetBuilderImpl copy() {
-        Map<Nameable, Mutator<?>> mutatorCopy = schematicModifier.entrySet()
+        Map<SchematicModifier, Mutator<?>> mutatorCopy = schematicModifier.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().copy()));
         return new SchematicSetBuilderImpl(selector, mutatorCopy, new LinkedHashSet<>(schematics), weight);
     }
 
     @Override
-    public void setModifier(Nameable modifier, Mutator<?> mutator) {
+    public void setModifier(SchematicModifier modifier, Mutator<?> mutator) {
         schematicModifier.put(modifier, mutator);
     }
 
     @Override
-    public void removeModifier(Nameable modifier) {
+    public void removeModifier(SchematicModifier modifier) {
         schematicModifier.remove(modifier);
     }
 

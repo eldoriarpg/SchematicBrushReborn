@@ -48,6 +48,11 @@ public class BlockFilter implements Mutator<String> {
     }
 
     @Override
+    public String localeKey() {
+        return "provider.filter.blockFilter.name";
+    }
+
+    @Override
     public void value(String value) {
     }
 

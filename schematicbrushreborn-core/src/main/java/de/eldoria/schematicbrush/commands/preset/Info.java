@@ -56,7 +56,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
 
                     var global = name.startsWith("g:");
                     var composer = MessageComposer.create()
-                            .text(preset.detailComponent(global))
+                            .text(preset.detailComponent(localizer(), global))
                             .newLine()
                             .text("<click:run_command:'/sbrp list %s'><%s>[Back]</click>", global ? "global" : "private", Colors.CHANGE)
                             .prependLines(20);
