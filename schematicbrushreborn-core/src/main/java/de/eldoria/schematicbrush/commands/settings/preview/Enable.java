@@ -3,7 +3,6 @@
  *
  *     Copyright (C) 2021 EldoriaRPG Team and Contributor
  */
-
 package de.eldoria.schematicbrush.commands.settings.preview;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;

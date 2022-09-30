@@ -3,7 +3,6 @@
  *
  *     Copyright (C) 2021 EldoriaRPG Team and Contributor
  */
-
 package de.eldoria.schematicbrush.rendering;
 
 import de.eldoria.schematicbrush.config.Configuration;
@@ -43,7 +42,6 @@ public class RenderSink {
         for (Player player : add) {
             if (newChanges == null || general.isOutOfRenderRange(player.getLocation(), newChanges.location())) continue;
             newChanges.show(player);
-
         }
 
         for (Player player : remove) {
