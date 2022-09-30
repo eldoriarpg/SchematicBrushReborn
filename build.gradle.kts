@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.2.5"
+version = "2.2.6"
 
 subprojects {
     apply {

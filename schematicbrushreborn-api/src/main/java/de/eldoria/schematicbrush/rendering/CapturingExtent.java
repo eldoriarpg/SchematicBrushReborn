@@ -27,6 +27,8 @@ import java.util.List;
  * A extend used to capture changes.
  */
 public interface CapturingExtent extends Extent, BlockChangeCollector {
+    Location location();
+
     @Override
     BlockVector3 getMinimumPoint();
 

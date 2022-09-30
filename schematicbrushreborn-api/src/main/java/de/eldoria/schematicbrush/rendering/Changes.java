@@ -16,6 +16,8 @@ import java.util.Map;
  * A class to manage changes and send them to a player.
  */
 public interface Changes {
+    Location location();
+
     /**
      * Show changes to the player
      *
