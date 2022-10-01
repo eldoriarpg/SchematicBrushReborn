@@ -2,8 +2,10 @@ package de.eldoria.schematicbrush.rendering;
 
 import de.eldoria.schematicbrush.config.Configuration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,7 +15,9 @@ public class RenderSink {
     private final Set<Player> add = new HashSet<>();
     private final Set<Player> remove = new HashSet<>();
     private final Set<Player> received = new HashSet<>();
+    @Nullable
     private Changes newChanges;
+    @Nullable
     private Changes oldChanges;
     // Defines if the sink has changes yet to be sent.
     private boolean dirty;
@@ -28,9 +32,12 @@ public class RenderSink {
     }
 
     public void sendChanges() {
+        var general = configuration.general();
         // Check if new changes are present to be sent.
         for (Player player : add) {
-            if (newChanges != null) newChanges.show(player);
+            if (newChanges == null || general.isOutOfRenderRange(player.getLocation(), newChanges.location())) continue;
+            newChanges.show(player);
+
         }
 
         for (Player player : remove) {
@@ -49,7 +56,6 @@ public class RenderSink {
         var lastReceived = new HashSet<>(this.received);
         this.received.clear();
 
-        var general = configuration.general();
         for (Player player : subscribers) {
             if (newChanges == null || general.isOutOfRenderRange(player.getLocation(), newChanges.location())) {
                 if (lastReceived.contains(player)) {
@@ -72,6 +78,7 @@ public class RenderSink {
     private void applySubscriberChange() {
         subscribers.removeAll(remove);
         subscribers.addAll(add);
+        if (newChanges != null) received.addAll(add);
         remove.clear();
         add.clear();
     }
@@ -79,6 +86,7 @@ public class RenderSink {
     /**
      * Update the preview. Only send changed blocks and reuse already sent blocks.
      */
+    @SuppressWarnings("ConstantConditions")
     private void update() {
         var lastReceived = new HashSet<>(this.received);
         this.received.clear();
@@ -90,6 +98,7 @@ public class RenderSink {
                     oldChanges.hide(player);
                     continue;
                 }
+                continue;
             }
 
             if (lastReceived.contains(player)) {
@@ -102,19 +111,28 @@ public class RenderSink {
     }
 
     public int size() {
-        return oldChanges.size() + newChanges.size();
+        return Optional.ofNullable(oldChanges).map(Changes::size).orElse(0)
+               + Optional.ofNullable(newChanges).map(Changes::size).orElse(0);
     }
 
-    public RenderSink push(Changes newChanges) {
+    public void push(Changes newChanges) {
         oldChanges = this.newChanges;
         this.newChanges = newChanges;
         dirty = true;
-        return this;
     }
 
     public void pushAndSend(Changes newChanges) {
         push(newChanges);
         sendChanges();
+    }
+
+    public void pushAndQueue(Changes newChanges) {
+        push(newChanges);
+        queueRender();
+    }
+
+    private void queueRender() {
+        worker.queue(this);
     }
 
     public UUID sinkOwner() {
@@ -127,11 +145,6 @@ public class RenderSink {
 
     public boolean isSubscribed() {
         return !subscribers.isEmpty();
-    }
-
-    public void pushAndQueue(Changes newChanges) {
-        push(newChanges);
-        queueRender();
     }
 
     /**
@@ -154,10 +167,6 @@ public class RenderSink {
         if (!subscribers.contains(subscriber)) return;
         remove.add(subscriber);
         queueRender();
-    }
-
-    private void queueRender() {
-        worker.queue(this);
     }
 
     public void unsubscribeAll() {

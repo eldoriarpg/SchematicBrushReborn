@@ -2,7 +2,6 @@ package de.eldoria.schematicbrush.rendering;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

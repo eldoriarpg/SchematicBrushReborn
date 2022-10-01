@@ -13,6 +13,7 @@ dependencies {
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.3"){
         exclude("com.intellectualsites.paster")
+        exclude("org.yaml")
     }
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.3") { isTransitive = false }
 
