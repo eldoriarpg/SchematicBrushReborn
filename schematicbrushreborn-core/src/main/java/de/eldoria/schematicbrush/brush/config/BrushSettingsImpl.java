@@ -37,7 +37,7 @@ public final class BrushSettingsImpl implements BrushSettings {
     /**
      * The total weight of all brushes in the {@link #schematicSets} list
      */
-    private final int totalWeight;
+    private int totalWeight;
 
     public BrushSettingsImpl(List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
@@ -63,6 +63,11 @@ public final class BrushSettingsImpl implements BrushSettings {
         this.totalWeight = schematicSets.stream().mapToInt(SchematicSet::weight).sum();
     }
 
+    private void cleanUp() {
+        schematicSets.removeIf(set -> set.schematics().isEmpty());
+        totalWeight = schematicSets.stream().mapToInt(SchematicSet::weight).sum();
+    }
+
     /**
      * Get a random brush from the {@link #schematicSets} list based on their {@link SchematicSetImpl#weight()}.
      *
@@ -70,6 +75,7 @@ public final class BrushSettingsImpl implements BrushSettings {
      */
     @Override
     public SchematicSet getRandomSchematicSet() {
+        cleanUp();
         var random = randomInt(totalWeight);
 
         var count = 0;
