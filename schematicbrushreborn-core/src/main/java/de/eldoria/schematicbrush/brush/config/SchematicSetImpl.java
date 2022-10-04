@@ -17,6 +17,7 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ public class SchematicSetImpl implements SchematicSet {
      * @return schematic
      */
     @Override
+    @Nullable
     public Schematic getRandomSchematic() {
         if (schematics.isEmpty()) return null;
 
