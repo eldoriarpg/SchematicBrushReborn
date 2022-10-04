@@ -16,6 +16,7 @@ dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains", "annotations", "23.0.0")
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12")
+    compileOnly("org.yaml", "snakeyaml", "1.30")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.3"){
         exclude("com.intellectualsites.paster")
     }
