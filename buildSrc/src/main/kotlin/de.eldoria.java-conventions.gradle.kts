@@ -4,7 +4,7 @@ plugins {
 
 repositories {
     mavenCentral() {
-        content{
+        content {
             includeGroup("org.yaml")
         }
     }
@@ -15,21 +15,33 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains", "annotations", "23.0.0")
-    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12")
-    compileOnly("org.yaml", "snakeyaml", "1.30")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.3"){
-        exclude("com.intellectualsites.paster")
+    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12") {
+        exclude("org.yaml")
     }
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.3") { isTransitive = false }
+    compileOnly("org.yaml", "snakeyaml", "1.30")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.3") {
+        exclude("com.intellectualsites.paster")
+        exclude("org.yaml")
+    }
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.3") {
+        isTransitive = false
+        exclude("org.yaml")
+    }
 
     testImplementation(platform("org.junit:junit-bom:5.9.0"))
     testImplementation("org.junit.jupiter", "junit-jupiter")
     testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.117.1")
-    testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12")
-    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.3"){
-        exclude("com.intellectualsites.paster")
+    testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12") {
+        exclude("org.yaml")
     }
-    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.3") { isTransitive = false }
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.3") {
+        exclude("com.intellectualsites.paster")
+        exclude("org.yaml")
+    }
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.4.3") {
+        isTransitive = false
+        exclude("org.yaml")
+    }
 }
 
 allprojects {
