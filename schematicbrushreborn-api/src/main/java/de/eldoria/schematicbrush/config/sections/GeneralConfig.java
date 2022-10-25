@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
+import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,6 +75,13 @@ public interface GeneralConfig extends ConfigurationSerializable {
     int renderDistance();
 
     /**
+     * The max distance of the render origin and the brush owner
+     *
+     * @return the distance in blocks
+     */
+    double renderDistanceSquared();
+
+    /**
      * The max render size. This is the size of the schematic based on the bounds including air blocks.
      * <p>
      * See {@link #maxEffectiveRenderSize()} for the size without air blocks
@@ -81,6 +89,10 @@ public interface GeneralConfig extends ConfigurationSerializable {
      * @return the max render size in blocks
      */
     int maxRenderSize();
+
+    default boolean isOutOfRenderRange(Location origin, Location other) {
+        return origin.distanceSquared(other) > renderDistanceSquared();
+    }
 
     /**
      * The max effective render size. This is the size of a schematic excluding air blocks

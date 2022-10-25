@@ -105,14 +105,16 @@ public class SchematicBrushImpl implements SchematicBrush {
     @Override
     public BlockChangeCollector pasteFake() {
         var world = new FakeWorldImpl(brushOwner().getWorld());
+        world.location(new Location(world));
         CapturingExtent capturingExtent;
         try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(100000).build()) {
             var bukkitPlayer = actor();
-            if (bukkitPlayer == null) return new CapturingExtentImpl(editSession, world, settings);
+            if (bukkitPlayer == null) return new CapturingExtentImpl(editSession, world, settings, new Location(world));
             var brushTool = getBrushTool();
             if (brushTool.isEmpty()) return null;
-            capturingExtent = new CapturingExtentImpl(editSession, world, settings);
             var target = bukkitPlayer.getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask());
+            world.location(target);
+            capturingExtent = new CapturingExtentImpl(editSession, world, settings, target);
             performPasteFake(editSession, capturingExtent, target.toVector().toBlockPoint());
         }
         return capturingExtent;

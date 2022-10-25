@@ -19,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -32,9 +31,13 @@ import java.util.UUID;
 
 public class RenderService implements Runnable, Listener {
     /**
-     * The changes which were send to the player lately
+     * The sinks of all active players. A sink does not require any subscribers by default.
      */
-    private final Map<UUID, Changes> changes = new HashMap<>();
+    private final Map<UUID, RenderSink> sinks = new HashMap<>();
+    /**
+     * The sink a player is subscribed to.
+     */
+    private final Map<UUID, RenderSink> subscription = new HashMap<>();
     /**
      * The paket worker which will process packet sending to players
      */
@@ -55,8 +58,7 @@ public class RenderService implements Runnable, Listener {
     public RenderService(Plugin plugin, Configuration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
-        worker = new PaketWorker();
-        worker.runTaskTimerAsynchronously(plugin, 0, 1);
+        worker = new PaketWorker(plugin);
     }
 
     @EventHandler
@@ -71,28 +73,40 @@ public class RenderService implements Runnable, Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         players.remove(event.getPlayer());
-        changes.remove(event.getPlayer().getUniqueId());
-        worker.remove(event.getPlayer());
+        Optional.ofNullable(sinks.remove(event.getPlayer().getUniqueId())).ifPresent(RenderSink::unsubscribeAll);
+        getSubscription(event.getPlayer()).ifPresent(sink -> sink.remove(event.getPlayer()));
+        subscription.remove(event.getPlayer().getUniqueId());
         skip.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrePaste(PrePasteEvent event) {
+        // Skip player if it has no active preview
         if (!players.contains(event.player())) return;
+        // Skip rendering for some time to avoid conflicts
         skip.add(event.player().getUniqueId());
+        // Resolve the last changes
         resolveBlocked(event.player());
     }
 
+    /**
+     * Removes a player from rendering by sending the current state of the world and negating all send changes.
+     *
+     * @param player player to resolve
+     */
     private void resolveBlocked(Player player) {
         worker.process(player);
-        getChanges(player).ifPresent(change -> new PaketWorker.ChangeEntry(player, change, null).sendChanges());
-        changes.remove(player.getUniqueId());
+        RenderSink playerSink = getSink(player);
+        // We push and send empty changes
+        playerSink.pushAndSend(null);
+        //getChanges(player).ifPresent(change -> new PaketWorker.ChangeEntry(player, change, null).sendChanges());
     }
 
     @EventHandler
     public void onPostPaste(PostPasteEvent event) {
         if (!players.contains(event.player())) return;
 
+        // Remove the player from the block after a second aka 20 ticks
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> skip.remove(event.player().getUniqueId()), 20);
     }
 
@@ -101,17 +115,27 @@ public class RenderService implements Runnable, Listener {
         if (players.isEmpty()) return;
         count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
-        while (count > 0 && !players.isEmpty() && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
+        while (count > 0 && !players.isEmpty()
+               && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
-            var player = players.remove();
+            var player = nextPlayer();
+            // No need to render dirty sinks or sinks without subscribers.
+            if (getSink(player).isDirty() || !getSink(player).isSubscribed()) {
+                continue;
+            }
             if (!skip.contains(player.getUniqueId())) {
                 render(player);
-            } else if (changes.containsKey(player.getUniqueId())) {
+            } else if (sinks.containsKey(player.getUniqueId())) {
                 resolveBlocked(player);
             }
-            players.add(player);
         }
         timings.add(System.currentTimeMillis() - start);
+    }
+
+    private Player nextPlayer() {
+        var player = players.remove();
+        players.add(player);
+        return player;
     }
 
     private void render(Player player) {
@@ -121,9 +145,12 @@ public class RenderService implements Runnable, Listener {
             return;
         }
         var brush = optBrush.get();
+        var general = configuration.general();
+
         var outOfRange = brush.getBrushLocation()
-                .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation().toVector()) > Math.pow(configuration.general().renderDistance(), 2))
-                .orElse(true);
+                              .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation()
+                                                                         .toVector()) > Math.pow(general.renderDistance(), 2))
+                              .orElse(true);
         if (outOfRange) {
             resolveChanges(player);
             return;
@@ -132,17 +159,17 @@ public class RenderService implements Runnable, Listener {
         var includeAir = (boolean) brush.getSettings().getMutator(PlacementModifier.INCLUDE_AIR).value();
         var replaceAll = (boolean) brush.getSettings().getMutator(PlacementModifier.REPLACE_ALL).value();
 
-        if (includeAir && replaceAll && brush.nextPaste().schematic().size() > configuration.general().maxRenderSize()) {
+        if (includeAir && replaceAll && brush.nextPaste().schematic().size() > general.maxRenderSize()) {
             resolveChanges(player);
             return;
         }
 
-        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > configuration.general().maxRenderSize()) {
+        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxRenderSize()) {
             resolveChanges(player);
             return;
         }
 
-        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > configuration.general().maxEffectiveRenderSize()) {
+        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxEffectiveRenderSize()) {
             resolveChanges(player);
             return;
         }
@@ -158,21 +185,18 @@ public class RenderService implements Runnable, Listener {
     }
 
     private void resolveChanges(Player player) {
-        getChanges(player).ifPresent(change -> worker.queue(player, change, null));
-        changes.remove(player.getUniqueId());
+        RenderSink sink = getSink(player);
+        // Push empty changes and queue the sink for sending.
+        sink.pushAndQueue(null);
     }
 
     private void renderChanges(Player player, Changes newChanges) {
-        worker.queue(player, changes.get(player.getUniqueId()), newChanges);
-        putChanges(player, newChanges);
+        var sink = getSink(player);
+        sink.pushAndQueue(newChanges);
     }
 
-    private void putChanges(Player player, Changes changes) {
-        this.changes.put(player.getUniqueId(), changes);
-    }
-
-    private Optional<Changes> getChanges(Player player) {
-        return Optional.ofNullable(changes.get(player.getUniqueId()));
+    private RenderSink getSink(Player player) {
+        return sinks.computeIfAbsent(player.getUniqueId(), k -> new RenderSink(player, worker, configuration));
     }
 
     public void setState(Player player, boolean state) {
@@ -187,77 +211,39 @@ public class RenderService implements Runnable, Listener {
         }
     }
 
+    private Optional<RenderSink> getSubscription(Player player) {
+        return Optional.ofNullable(subscription.get(player.getUniqueId()));
+    }
+
+    public boolean subscribe(Player target, Player subscriber) {
+        // Remove last subscription
+        getSubscription(subscriber).ifPresent(sink -> sink.unsubscribe(subscriber));
+        // Schedule new subscription. Leave some time in order to let the sink refresh.
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            getSink(target).subscribe(subscriber);
+            subscription.put(subscriber.getUniqueId(), getSink(target));
+        }, 10);
+        return hasSink(target);
+    }
+
+    private boolean hasSink(Player target) {
+        return sinks.containsKey(target.getUniqueId());
+    }
+
+    public void unsubscribe(Player player) {
+        // subscripe player to its own sink
+        subscribe(player, player);
+    }
+
     public int paketQueueSize() {
-        return worker.queue.size();
+        return worker.size();
     }
 
     public int paketQueuePaketCount() {
-        return worker.queue.stream().mapToInt(PaketWorker.ChangeEntry::size).sum();
+        return worker.packetQueuePacketCount();
     }
 
     public double renderTimeAverage() {
         return Math.ceil(timings.values().stream().mapToLong(value -> value).average().orElse(0));
-    }
-
-    public static class PaketWorker extends BukkitRunnable {
-        private final Queue<ChangeEntry> queue = new ArrayDeque<>();
-        private boolean active;
-
-        @Override
-        public void run() {
-            if(!claim()) return;
-            while (!queue.isEmpty()) {
-                var poll = queue.poll();
-                poll.sendChanges();
-            }
-            active = false;
-        }
-
-        // There is a minimal chance of a race condition. That's why this method needs to be synchronized
-        private synchronized boolean claim() {
-            if (active) return false;
-            active = true;
-            return true;
-        }
-
-        public void queue(Player player, Changes oldChanges, Changes newChanges) {
-            queue.add(new ChangeEntry(player, oldChanges, newChanges));
-        }
-
-        public void remove(Player player) {
-            queue.removeIf(e -> e.player.equals(player));
-        }
-
-        public void process(Player player) {
-            queue.removeIf(e -> {
-                if (e.player.equals(player)) {
-                    e.sendChanges();
-                    return true;
-                }
-                return false;
-            });
-        }
-
-        private record ChangeEntry(Player player, Changes oldChanges,
-                                   Changes newChanges) {
-
-            private void sendChanges() {
-                if (oldChanges != null && newChanges != null) {
-                    update();
-                    return;
-                }
-                if (oldChanges != null) oldChanges.hide(player);
-                if (newChanges != null) newChanges.show(player);
-            }
-
-            private void update() {
-                oldChanges.hide(player, newChanges);
-                newChanges.show(player, oldChanges);
-            }
-
-            public int size() {
-                return oldChanges.size() + newChanges.size();
-            }
-        }
     }
 }

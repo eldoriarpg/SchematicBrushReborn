@@ -78,7 +78,7 @@ public class SchematicSetImpl implements SchematicSet {
                 SchematicBrushReborn.logger().log(Level.INFO, "Schematic \"" + randomSchematic.path() + "\" does not exist anymore.", e);
                 schematics.remove(randomSchematic);
             } catch (Exception e) {
-                SchematicBrushReborn.logger().log(Level.SEVERE, "A critical error");
+                SchematicBrushReborn.logger().log(Level.SEVERE, "A critical error occured when loading \"" + randomSchematic.path() + "\".", e);
                 schematics.remove(randomSchematic);
             }
         }
