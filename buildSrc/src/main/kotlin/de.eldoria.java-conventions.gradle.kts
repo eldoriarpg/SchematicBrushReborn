@@ -26,7 +26,7 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter", "junit-jupiter")
-    testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.131.1")
+    testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.132.3")
     testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12") {
         exclude("org.yaml")
     }
