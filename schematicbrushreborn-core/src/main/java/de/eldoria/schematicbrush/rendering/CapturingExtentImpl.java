@@ -71,7 +71,7 @@ public class CapturingExtentImpl implements CapturingExtent {
     @Nullable
     @Override
     public Entity createEntity(Location location, BaseEntity entity) {
-        return session.createEntity(location, entity);
+        return null;
     }
 
     @Override
