@@ -4,50 +4,50 @@
  *     Copyright (C) 2021 EldoriaRPG Team and Contributor
  */
 
-package de.eldoria.schematicbrush.brush.config.rotation;
+package de.eldoria.schematicbrush.brush.config.advancedrotation;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
-import de.eldoria.schematicbrush.brush.config.advancedrotation.AdvancedRotation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class ARotation implements Mutator<Rotation> {
-    protected Rotation rotation = null;
+public abstract class AAdvancedRotation implements Mutator<Rotation> {
+    protected AdvancedRotation rotation = null;
 
-    public ARotation(Rotation rotation) {
+    public AAdvancedRotation(AdvancedRotation rotation) {
         this.rotation = rotation;
     }
 
-    public ARotation(Map<String, Object> objectMap) {
+    public AAdvancedRotation(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
-        rotation = Rotation.valueOf(map.getValue("value"));
+        rotation = AdvancedRotation.valueOf(map.getValue("value"));
     }
 
-    public ARotation() {
+    public AAdvancedRotation() {
     }
 
-    public static ARotation fixed(Rotation rotation) {
-        return new RotationFixed(rotation);
+    public static AAdvancedRotation fixed(Rotation x, Rotation y, Rotation z) {
+        return new AdvancedRotationFixed(x, y, z);
     }
 
-    public static ARotation list(List<Rotation> rotations) {
-        return new RotationList(rotations);
+    public static AAdvancedRotation list(List<RotationSupplier> rotations) {
+        return new AdvancedRotationList(rotations);
     }
 
-    public static ARotation random() {
-        return new RotationRandom();
+    public static AAdvancedRotation random(RandomRotationSupplier x, RandomRotationSupplier y, RandomRotationSupplier z) {
+        return new AdvancedRotationRandom(x, y, z);
     }
 
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
-                .add("value", rotation.degree())
-                .build();
+                                .add("value", rotation.degree())
+                                .build();
     }
 
     @Override
@@ -70,9 +70,9 @@ public abstract class ARotation implements Mutator<Rotation> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ARotation aRotation)) return false;
+        if (!(o instanceof AAdvancedRotation aAdvancedRotation)) return false;
 
-        return Objects.equals(rotation, aRotation.rotation);
+        return Objects.equals(rotation, aAdvancedRotation.rotation);
     }
 
     @Override
