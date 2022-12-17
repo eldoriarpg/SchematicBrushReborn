@@ -14,6 +14,7 @@ import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Randomable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public interface SchematicSet extends Randomable {
      *
      * @return schematic
      */
+    @Nullable
     Schematic getRandomSchematic();
 
     /**

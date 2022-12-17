@@ -34,11 +34,18 @@ public class CapturingExtentImpl implements CapturingExtent {
     private final EditSession session;
     private final FakeWorldImpl fakeWorld;
     private final BrushSettings settings;
+    private Location location;
 
-    public CapturingExtentImpl(EditSession session, FakeWorldImpl fakeWorld, BrushSettings settings) {
+    public CapturingExtentImpl(EditSession session, FakeWorldImpl fakeWorld, BrushSettings settings, Location location) {
         this.session = session;
         this.fakeWorld = fakeWorld;
         this.settings = settings;
+        this.location = location;
+    }
+
+    @Override
+    public Location location() {
+        return location;
     }
 
     @Override
@@ -64,7 +71,7 @@ public class CapturingExtentImpl implements CapturingExtent {
     @Nullable
     @Override
     public Entity createEntity(Location location, BaseEntity entity) {
-        return session.createEntity(location, entity);
+        return null;
     }
 
     @Override
@@ -108,7 +115,12 @@ public class CapturingExtentImpl implements CapturingExtent {
     }
 
     @Override
+    public void location(Location location) {
+        this.location = location;
+    }
+
+    @Override
     public Changes changes() {
-        return changes.build();
+        return changes.build(location);
     }
 }

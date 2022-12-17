@@ -6,6 +6,10 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import com.fastasyncworldedit.core.queue.implementation.packet.ChunkPacket;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import de.eldoria.eldoutilities.container.Pair;
+import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -14,12 +18,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChangesImpl implements Changes {
+    private final com.sk89q.worldedit.util.Location location;
     private final Map<Location, BlockData> changed;
     private final Map<Location, BlockData> original;
 
-    private ChangesImpl(Map<Location, BlockData> changed, Map<Location, BlockData> original) {
+    private ChangesImpl(com.sk89q.worldedit.util.Location location, Map<Location, BlockData> changed, Map<Location, BlockData> original) {
+        this.location = location;
         this.changed = changed;
         this.original = original;
+    }
+
+    @Override
+    public Location location() {
+        return BukkitAdapter.adapt(location);
     }
 
     public static Builder builder() {
@@ -42,6 +53,26 @@ public class ChangesImpl implements Changes {
     }
 
     private void sendChanges(Player player, Map<Location, BlockData> data) {
+        if (FAWE.isFawe()) {
+            // in an ideal world would be some cool FAWE stuff here. Sadly it isn't.
+            sendBlocks(player, data);
+        } else {
+            sendBlocks(player, data);
+        }
+    }
+
+    private void sendChunks(Player player, Map<Location, BlockData> data) {
+        // Time wasted: 2 hours.
+        Map<Pair<Integer, Integer>, ChunkPacket> packetMap = new HashMap<>();
+
+        for (var entry : data.entrySet()) {
+            int x = entry.getKey().getBlockX() << 4;
+            int z = entry.getKey().getBlockZ() << 4;
+            //packetMap.computeIfAbsent(Pair.of(x,z), k -> new ChunkPacket(x,z,() -> ))
+        }
+    }
+
+    private void sendBlocks(Player player, Map<Location, BlockData> data) {
         for (var entry : data.entrySet()) {
             player.sendBlockChange(entry.getKey(), entry.getValue());
         }
@@ -85,8 +116,8 @@ public class ChangesImpl implements Changes {
             this.changed.put(location, changed);
         }
 
-        public Changes build() {
-            return new ChangesImpl(changed, original);
+        public Changes build(com.sk89q.worldedit.util.Location location) {
+            return new ChangesImpl(location, changed, original);
         }
     }
 

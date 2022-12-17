@@ -108,6 +108,11 @@ public class GeneralConfigImpl implements GeneralConfig {
     }
 
     @Override
+    public double renderDistanceSquared() {
+        return Math.pow(renderDistance(), 2);
+    }
+
+    @Override
     public int maxEffectiveRenderSize() {
         return maxEffectiveRenderSize;
     }

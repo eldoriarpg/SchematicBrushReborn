@@ -26,7 +26,6 @@ import de.eldoria.schematicbrush.schematics.Schematic;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -141,10 +140,10 @@ public class BrushPasteImpl implements BrushPaste {
     private Operation paste(ClipboardHolder clipboardHolder, Extent targetExtent, BlockVector3 position, PasteMutation mutation) {
         // Create paste operation
         return clipboardHolder.createPaste(targetExtent)
-                .to(position.add(mutation.pasteOffset()))
-                .ignoreAirBlocks(!mutation.isIncludeAir())
-                .maskSource(mutation.maskSource())
-                .build();
+                              .to(position.add(mutation.pasteOffset()))
+                              .ignoreAirBlocks(!mutation.isIncludeAir())
+                              .maskSource(mutation.maskSource())
+                              .build();
     }
 
     private ClipboardHolder buildClipboard(PasteMutation mutation) {
@@ -161,10 +160,12 @@ public class BrushPasteImpl implements BrushPaste {
     @Override
     public boolean shiftSchematic() {
         schematicSet = settings.getRandomSchematicSet();
-        if (schematicSet.schematics().size() < 1) return false;
+        if (schematicSet.schematics().isEmpty()) return false;
         var newSchematic = schematicSet.getRandomSchematic();
         while (newSchematic == schematic) {
             newSchematic = schematicSet.getRandomSchematic();
+            if (schematicSet.schematics().isEmpty()) return false;
+            if (newSchematic == null) continue;
             if (schematicSet.schematics().size() <= 1) break;
         }
 
