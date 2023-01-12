@@ -61,7 +61,7 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
 
     @Override
     public CompletableFuture<Void> add(Brush brush) {
-        brushes.put(brush.name(), brush);
+        brushes.put(brush.name().toLowerCase(Locale.ROOT), brush);
         return CompletableFuture.completedFuture(null);
     }
 
