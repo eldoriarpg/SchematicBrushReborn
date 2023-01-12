@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api("de.eldoria", "eldo-util", "1.13.9a-SNAPSHOT")
+    api("de.eldoria", "eldo-util", "1.14.0")
     api("de.eldoria", "messageblocker", "1.1.1")
     api("net.kyori", "adventure-platform-bukkit", "4.1.2")
     api("net.kyori", "adventure-text-minimessage", "4.10.1")
