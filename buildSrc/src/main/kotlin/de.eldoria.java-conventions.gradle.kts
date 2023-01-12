@@ -12,7 +12,7 @@ dependencies {
     compileOnly("org.jetbrains", "annotations", "23.0.0")
     // Due to incompatibility by the yaml versions defined by world edit, fawe and bukkit we need to exclude it everywhere and add our own version...
     compileOnly("org.yaml", "snakeyaml", "1.33")
-    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12") {
+    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.13") {
         exclude("org.yaml")
     }
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.10") {
@@ -27,7 +27,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter", "junit-jupiter")
     testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.144.3")
-    testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.12") {
+    testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.13") {
         exclude("org.yaml")
     }
     testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.10") {
