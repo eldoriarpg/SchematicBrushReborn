@@ -62,7 +62,7 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
 
     @Override
     public CompletableFuture<Void> add(Preset preset) {
-        presets.put(preset.name(), preset);
+        presets.put(preset.name().toLowerCase(Locale.ROOT), preset);
         return CompletableFuture.completedFuture(null);
     }
 
