@@ -1,0 +1,110 @@
+Skip to content
+Your account has been flagged.
+Because of that, your profile is hidden from the public. If you believe this is a mistake, contact support to have your account status reviewed.
+zx2c4
+/
+password-store
+Public
+Read-only mirror of https://git.zx2c4.com/password-store - https://www.passwordstore.org/ . Pull requests and issues on GitHub cannot be accepted and will be automatically closed. The proper way to submit changes is via the mailing list; see https://lists.zx2c4.com/mailman/listinfo/password-store .
+
+License
+ View license
+ 524 stars  92 forks
+Code
+Pull requests
+Actions
+Security
+Insights
+zx2c4/password-store
+Latest commit
+@calancha
+calancha
+…
+3 weeks ago
+Git stats
+Files
+README
+======================
+Simple Password Store
+by Jason Donenfeld
+   Jason@zx2c4.com
+======================
+
+This is a very simple password store that encrypts passwords using gpg and
+places the encrypted password in a directory. It can generate new passwords
+and keep track of old ones.
+
+Visit the project page for more information: http://www.passwordstore.org/
+
+Please see the man page for documentation and examples.
+
+Depends on:
+- bash
+  http://www.gnu.org/software/bash/
+- GnuPG2
+  http://www.gnupg.org/
+- git
+  http://www.git-scm.com/
+- xclip (for X11 environments)
+  http://sourceforge.net/projects/xclip/
+- wl-clipboard (for wlroots Wayland-based environments)
+  https://github.com/bugaevc/wl-clipboard
+- tree >= 1.7.0
+  http://mama.indstate.edu/users/ice/tree/
+- GNU getopt
+  http://www.kernel.org/pub/linux/utils/util-linux/
+  http://software.frodo.looijaard.name/getopt/
+- qrencode
+  https://fukuchi.org/works/qrencode/
+Releases
+ 25 tags
+Packages
+No packages published
+Contributors 86
+@zx2c4
+@svend
+@calancha
+@dmedvinsky
+@von
+@cdown
+@phryneas
+@krobelus
+@iiska
+@cfergeau
+@dobbyth33lf
++ 75 contributors
+Languages
+Shell
+48.6%
+ 
+Python
+23.7%
+ 
+Emacs Lisp
+10.7%
+ 
+Ruby
+10.0%
+ 
+Makefile
+2.3%
+ 
+AppleScript
+2.2%
+ 
+Other
+2.5%
+Footer
+© 2023 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
