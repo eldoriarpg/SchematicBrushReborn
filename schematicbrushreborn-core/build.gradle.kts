@@ -4,7 +4,6 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("de.eldoria.java-conventions")
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
 }
 
