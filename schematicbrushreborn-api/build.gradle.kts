@@ -1,10 +1,11 @@
 plugins {
     java
-    id("de.eldoria.library-conventions")
+    `java-library`
+    `maven-publish`
 }
 
 dependencies {
-    api("de.eldoria", "eldo-util", "1.14.0")
+    api("de.eldoria", "eldo-util", "1.14.1")
     api("de.eldoria", "messageblocker", "1.1.1")
     api("net.kyori", "adventure-platform-bukkit", "4.2.0")
     api("net.kyori", "adventure-text-minimessage", "4.12.0")
