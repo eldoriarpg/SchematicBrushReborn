@@ -9,12 +9,14 @@ package de.eldoria.schematicbrush;
 import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.AdvancedPie;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
+import de.eldoria.eldoutilities.crossversion.ServerVersion;
 import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.spigotupdater.SpigotUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
+import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
@@ -101,7 +103,12 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var notifyListener = new NotifyListener(this, configuration);
         renderService = new RenderService(this, configuration);
 
-        var messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
+        MessageBlocker messageBlocker;
+        if (!ServerVersion.between(ServerVersion.MC_1_19, ServerVersion.MC_1_20, ServerVersion.CURRENT_VERSION)) {
+            messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
+        } else {
+            messageBlocker = MessageBlocker.dummy(this);
+        }
 
         var brushCommand = new Brush(this, schematics, storage, settingsRegistry, messageBlocker);
         var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storage, messageBlocker);
@@ -121,7 +128,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand(brushPresetsCommand);
 
         if (configuration.general().isCheckUpdates() && UserData.get(this).isSpigotPremium()) {
-            Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, configuration.general().isCheckUpdates(),
+            Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, configuration.general()
+                                                                                             .isCheckUpdates(),
                     UserData.get(this).resourceId())).start();
         }
     }
@@ -171,10 +179,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         metrics.addCustomChart(new AdvancedPie("installed_add_ons",
                 () -> Arrays.stream(getServer().getPluginManager().getPlugins())
-                        .filter(plugin -> {
-                            var descr = plugin.getDescription();
-                            return descr.getSoftDepend().contains("SchematicBrushReborn") || descr.getDepend().contains("SchematicBrushReborn");
-                        }).collect(Collectors.toMap(e -> e.getDescription().getName(), e -> 1))));
+                            .filter(plugin -> {
+                                var descr = plugin.getDescription();
+                                return descr.getSoftDepend().contains("SchematicBrushReborn") || descr.getDepend()
+                                                                                                      .contains("SchematicBrushReborn");
+                            }).collect(Collectors.toMap(e -> e.getDescription().getName(), e -> 1))));
 
         metrics.addCustomChart(new SimplePie("used_storage_type",
                 () -> configuration.general().storageType().name()));
