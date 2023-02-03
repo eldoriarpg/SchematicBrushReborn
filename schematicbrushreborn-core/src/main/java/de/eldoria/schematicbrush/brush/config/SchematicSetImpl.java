@@ -56,37 +56,6 @@ public class SchematicSetImpl implements SchematicSet {
     }
 
     /**
-     * Get a random schematic from the set
-     *
-     * @return schematic
-     */
-    @Override
-    @Nullable
-    public Schematic getRandomSchematic() {
-        if (schematics.isEmpty()) return null;
-
-        Clipboard clipboard = null;
-
-        Schematic randomSchematic = null;
-        // Search for loadable schematic. Should be likely always the first one.
-        while (clipboard == null && !schematics.isEmpty()) {
-            randomSchematic = schematics.get(randomInt(schematics.size()));
-            try {
-                clipboard = randomSchematic.loadSchematic();
-            } catch (IOException e) {
-                // Silently fail and search for another schematic.
-                SchematicBrushReborn.logger().log(Level.INFO, "Schematic \"" + randomSchematic.path() + "\" does not exist anymore.", e);
-                schematics.remove(randomSchematic);
-            } catch (Exception e) {
-                SchematicBrushReborn.logger().log(Level.SEVERE, "A critical error occured when loading \"" + randomSchematic.path() + "\".", e);
-                schematics.remove(randomSchematic);
-            }
-        }
-
-        return randomSchematic;
-    }
-
-    /**
      * Update a not weighted brush.
      *
      * @param weight weight to set.

@@ -156,8 +156,8 @@ public class RenderService implements Runnable, Listener {
             return;
         }
 
-        var includeAir = (boolean) brush.getSettings().getMutator(PlacementModifier.INCLUDE_AIR).value();
-        var replaceAll = (boolean) brush.getSettings().getMutator(PlacementModifier.REPLACE_ALL).value();
+        var includeAir = (boolean) brush.settings().getMutator(PlacementModifier.INCLUDE_AIR).value();
+        var replaceAll = (boolean) brush.settings().getMutator(PlacementModifier.REPLACE_ALL).value();
 
         if (includeAir && replaceAll && brush.nextPaste().schematic().size() > general.maxRenderSize()) {
             resolveChanges(player);

@@ -23,6 +23,8 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
+import de.eldoria.schematicbrush.brush.history.BrushHistory;
+import de.eldoria.schematicbrush.brush.history.BrushHistoryImpl;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
@@ -49,6 +51,7 @@ public class SchematicBrushImpl implements SchematicBrush {
     private BrushPaste nextPaste;
     @Nullable
     private BrushBuilder builder;
+    private final BrushHistory history = new BrushHistoryImpl(100);
 
     /**
      * Create a new schematic brush for a player.
@@ -144,14 +147,16 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     private void buildNextPaste() {
-        var randomSchematicSet = settings.getRandomSchematicSet();
-        var clipboard = randomSchematicSet.getRandomSchematic();
-        if (clipboard == null) {
+        var nextSchematic = settings.schematicSelection().nextSchematic(this, true);
+        if (nextSchematic.isEmpty()) {
             MessageSender.getPluginMessageSender(plugin).sendError(brushOwner(),
-                    "No valid schematic was found for brush: ");
+                    "No valid schematic was found for brush");
             return;
         }
-        nextPaste = new BrushPasteImpl(settings, randomSchematicSet, clipboard);
+        nextSchematic.ifPresent(pair -> {
+            history.push(pair);
+            nextPaste = new BrushPasteImpl(this, settings, pair.first, pair.second);
+        });
     }
 
     /**
@@ -160,7 +165,7 @@ public class SchematicBrushImpl implements SchematicBrush {
      * @return settings
      */
     @Override
-    public BrushSettings getSettings() {
+    public BrushSettings settings() {
         return settings;
     }
 
@@ -187,5 +192,10 @@ public class SchematicBrushImpl implements SchematicBrush {
             builder = settings.toBuilder(brushOwner(), settingsRegistry, schematicRegistry);
         }
         return builder;
+    }
+
+    @Override
+    public BrushHistory history() {
+        return history;
     }
 }
