@@ -99,26 +99,34 @@ extends <a href="util/Randomable.html" title="interface in de.eldoria.schematicb
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get a mutator of the brush</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="SchematicSet.html" title="interface in de.eldoria.schematicbrush.brush.config">SchematicSet</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRandomSchematicSet()" class="member-name-link">getRandomSchematicSet</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSchematicCount()" class="member-name-link">getSchematicCount</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Get a random schematic set from the <a href="#schematicSets()"><code>schematicSets()</code></a> list based on their <a href="SchematicSet.html#weight()"><code>SchematicSet.weight()</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSchematicCount()" class="member-name-link">getSchematicCount</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Counts all schematics in all brushes.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#mutate(de.eldoria.schematicbrush.brush.PasteMutation)" class="member-name-link">mutate</a><wbr>(<a href="../PasteMutation.html" title="interface in de.eldoria.schematicbrush.brush">PasteMutation</a>&nbsp;mutation)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#mutate(de.eldoria.schematicbrush.brush.PasteMutation)" class="member-name-link">mutate</a><wbr>(<a href="../PasteMutation.html" title="interface in de.eldoria.schematicbrush.brush">PasteMutation</a>&nbsp;mutation)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Mutate the <a href="../PasteMutation.html" title="interface in de.eldoria.schematicbrush.brush"><code>PasteMutation</code></a></div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://eldoriarpg.github.io/eldo-util/de/eldoria/eldoutilities/container/Pair.html" title="class or interface in de.eldoria.eldoutilities.container" class="external-link">Pair</a>&lt;<a href="SchematicSet.html" title="interface in de.eldoria.schematicbrush.brush.config">SchematicSet</a>,<wbr><a href="../../schematics/Schematic.html" title="class in de.eldoria.schematicbrush.schematics">Schematic</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#nextSchematic(de.eldoria.schematicbrush.brush.SchematicBrush)" class="member-name-link">nextSchematic</a><wbr>(<a href="../SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a>&nbsp;brush)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Get the next schematic and the set containing it from the <a href="#schematicSets()"><code>schematicSets()</code></a> list based on their <a href="SchematicSet.html#weight()"><code>SchematicSet.weight()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#refreshMutator()" class="member-name-link">refreshMutator</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Refresehs the underlying mutators.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="schematics/SchematicSelection.html" title="interface in de.eldoria.schematicbrush.brush.config.schematics">SchematicSelection</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#schematicSelection()" class="member-name-link">schematicSelection</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Get the current schematic selection mode</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#schematicSelection(de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection)" class="member-name-link">schematicSelection</a><wbr>(<a href="schematics/SchematicSelection.html" title="interface in de.eldoria.schematicbrush.brush.config.schematics">SchematicSelection</a>&nbsp;schematicSelection)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="SchematicSet.html" title="interface in de.eldoria.schematicbrush.brush.config">SchematicSet</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#schematicSets()" class="member-name-link">schematicSets</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -154,10 +162,10 @@ extends <a href="util/Randomable.html" title="interface in de.eldoria.schematicb
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="getRandomSchematicSet()">
-<h3>getRandomSchematicSet</h3>
-<div class="member-signature"><span class="return-type"><a href="SchematicSet.html" title="interface in de.eldoria.schematicbrush.brush.config">SchematicSet</a></span>&nbsp;<span class="element-name">getRandomSchematicSet</span>()</div>
-<div class="block">Get a random schematic set from the <a href="#schematicSets()"><code>schematicSets()</code></a> list based on their <a href="SchematicSet.html#weight()"><code>SchematicSet.weight()</code></a>.</div>
+<section class="detail" id="nextSchematic(de.eldoria.schematicbrush.brush.SchematicBrush)">
+<h3>nextSchematic</h3>
+<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://eldoriarpg.github.io/eldo-util/de/eldoria/eldoutilities/container/Pair.html" title="class or interface in de.eldoria.eldoutilities.container" class="external-link">Pair</a>&lt;<a href="SchematicSet.html" title="interface in de.eldoria.schematicbrush.brush.config">SchematicSet</a>,<wbr><a href="../../schematics/Schematic.html" title="class in de.eldoria.schematicbrush.schematics">Schematic</a>&gt;&gt;</span>&nbsp;<span class="element-name">nextSchematic</span><wbr><span class="parameters">(<a href="../SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a>&nbsp;brush)</span></div>
+<div class="block">Get the next schematic and the set containing it from the <a href="#schematicSets()"><code>schematicSets()</code></a> list based on their <a href="SchematicSet.html#weight()"><code>SchematicSet.weight()</code></a>.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>a random brush</dd>
@@ -243,6 +251,23 @@ extends <a href="util/Randomable.html" title="interface in de.eldoria.schematicb
 <h3>refreshMutator</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">refreshMutator</span>()</div>
 <div class="block">Refresehs the underlying mutators.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="schematicSelection()">
+<h3>schematicSelection</h3>
+<div class="member-signature"><span class="return-type"><a href="schematics/SchematicSelection.html" title="interface in de.eldoria.schematicbrush.brush.config.schematics">SchematicSelection</a></span>&nbsp;<span class="element-name">schematicSelection</span>()</div>
+<div class="block">Get the current schematic selection mode</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>schematic selection mode</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="schematicSelection(de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection)">
+<h3>schematicSelection</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">schematicSelection</span><wbr><span class="parameters">(<a href="schematics/SchematicSelection.html" title="interface in de.eldoria.schematicbrush.brush.config.schematics">SchematicSelection</a>&nbsp;schematicSelection)</span></div>
 </section>
 </li>
 </ul>

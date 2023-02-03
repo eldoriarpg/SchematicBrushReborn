@@ -128,6 +128,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Calculates and returns a map which contains the block count of every material in this schematic.</div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/BrushPaste.html#brush()" class="member-name-link">brush()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/BrushPaste.html" title="interface in de.eldoria.schematicbrush.brush">BrushPaste</a></dt>
+<dd>
+<div class="block">Get the brush which will paste this paste.</div>
+</dd>
 <dt><a href="de/eldoria/schematicbrush/storage/brush/Brush.html" class="type-name-link" title="class in de.eldoria.schematicbrush.storage.brush">Brush</a> - Class in <a href="de/eldoria/schematicbrush/storage/brush/package-summary.html">de.eldoria.schematicbrush.storage.brush</a></dt>
 <dd>
 <div class="block">Class used for serialization and saving of a <a href="de/eldoria/schematicbrush/brush/config/builder/BrushBuilderSnapshot.html" title="interface in de.eldoria.schematicbrush.brush.config.builder"><code>BrushBuilderSnapshot</code></a>/</div>
@@ -168,6 +172,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A schematic registry to manage <a href="de/eldoria/schematicbrush/storage/preset/PresetContainer.html" title="interface in de.eldoria.schematicbrush.storage.preset"><code>PresetContainer</code></a></div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/history/BrushHistory.html" class="type-name-link" title="interface in de.eldoria.schematicbrush.brush.history">BrushHistory</a> - Interface in <a href="de/eldoria/schematicbrush/brush/history/package-summary.html">de.eldoria.schematicbrush.brush.history</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/SchematicBrush.html#brushOwner()" class="member-name-link">brushOwner()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a></dt>
 <dd>
 <div class="block">Get the player associated with this brush</div>
@@ -311,6 +317,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Complete schematic modifier</div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#completeSchematicSelection(de.eldoria.eldoutilities.commands.command.util.Arguments,org.bukkit.entity.Player)" class="member-name-link">completeSchematicSelection(Arguments, Player)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
+<dd>
+<div class="block">Complete schematic selection</div>
+</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#completeSelector(de.eldoria.eldoutilities.commands.command.util.Arguments,org.bukkit.entity.Player)" class="member-name-link">completeSelector(Arguments, Player)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
 <dd>
 <div class="block">Complete selectors</div>
@@ -388,11 +398,15 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/rotation/package-summary.html">de.eldoria.schematicbrush.brush.config.rotation</a> - package de.eldoria.schematicbrush.brush.config.rotation</dt>
 <dd>&nbsp;</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/schematics/package-summary.html">de.eldoria.schematicbrush.brush.config.schematics</a> - package de.eldoria.schematicbrush.brush.config.schematics</dt>
+<dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/selector/package-summary.html">de.eldoria.schematicbrush.brush.config.selector</a> - package de.eldoria.schematicbrush.brush.config.selector</dt>
 <dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/util/package-summary.html">de.eldoria.schematicbrush.brush.config.util</a> - package de.eldoria.schematicbrush.brush.config.util</dt>
 <dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/exceptions/package-summary.html">de.eldoria.schematicbrush.brush.exceptions</a> - package de.eldoria.schematicbrush.brush.exceptions</dt>
+<dd>&nbsp;</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/history/package-summary.html">de.eldoria.schematicbrush.brush.history</a> - package de.eldoria.schematicbrush.brush.history</dt>
 <dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/config/package-summary.html">de.eldoria.schematicbrush.config</a> - package de.eldoria.schematicbrush.config</dt>
 <dd>&nbsp;</dd>
@@ -637,14 +651,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets a modifier registration.</div>
 </dd>
-<dt><a href="de/eldoria/schematicbrush/brush/config/SchematicSet.html#getRandomSchematic()" class="member-name-link">getRandomSchematic()</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/SchematicSet.html" title="interface in de.eldoria.schematicbrush.brush.config">SchematicSet</a></dt>
-<dd>
-<div class="block">Get a random schematic from the set</div>
-</dd>
-<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html#getRandomSchematicSet()" class="member-name-link">getRandomSchematicSet()</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettings</a></dt>
-<dd>
-<div class="block">Get a random schematic set from the <a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html#schematicSets()"><code>BrushSettings.schematicSets()</code></a> list based on their <a href="de/eldoria/schematicbrush/brush/config/SchematicSet.html#weight()"><code>SchematicSet.weight()</code></a>.</div>
-</dd>
 <dt><a href="de/eldoria/schematicbrush/util/WorldEditBrush.html#getSchematicBrush(org.bukkit.entity.Player)" class="member-name-link">getSchematicBrush(Player)</a> - Static method in class de.eldoria.schematicbrush.util.<a href="de/eldoria/schematicbrush/util/WorldEditBrush.html" title="class in de.eldoria.schematicbrush.util">WorldEditBrush</a></dt>
 <dd>
 <div class="block">Get the schematic brush of a player registered on the item in its main hand.</div>
@@ -680,10 +686,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="de/eldoria/schematicbrush/brush/config/builder/BrushBuilder.html#getSchematicSet(int)" class="member-name-link">getSchematicSet(int)</a> - Method in interface de.eldoria.schematicbrush.brush.config.builder.<a href="de/eldoria/schematicbrush/brush/config/builder/BrushBuilder.html" title="interface in de.eldoria.schematicbrush.brush.config.builder">BrushBuilder</a></dt>
 <dd>
 <div class="block">Get the schematic set builder for the set with the id</div>
-</dd>
-<dt><a href="de/eldoria/schematicbrush/brush/SchematicBrush.html#getSettings()" class="member-name-link">getSettings()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a></dt>
-<dd>
-<div class="block">Get the settings of the brush</div>
 </dd>
 <dt><a href="de/eldoria/schematicbrush/config/sections/SchematicConfig.html#getSourceForPath(java.nio.file.Path)" class="member-name-link">getSourceForPath(Path)</a> - Method in interface de.eldoria.schematicbrush.config.sections.<a href="de/eldoria/schematicbrush/config/sections/SchematicConfig.html" title="interface in de.eldoria.schematicbrush.config.sections">SchematicConfig</a></dt>
 <dd>
@@ -734,6 +736,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Hides the changes to the player based on new changes.</div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/SchematicBrush.html#history()" class="member-name-link">history()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
@@ -976,6 +980,16 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the next paste which will be executed</div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/BrushPaste.html#nextSchematic()" class="member-name-link">nextSchematic()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/BrushPaste.html" title="interface in de.eldoria.schematicbrush.brush">BrushPaste</a></dt>
+<dd>
+<div class="block">Shift to the next schematic</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html#nextSchematic(de.eldoria.schematicbrush.brush.SchematicBrush)" class="member-name-link">nextSchematic(SchematicBrush)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettings</a></dt>
+<dd>
+<div class="block">Get the next schematic and the set containing it from the <a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html#schematicSets()"><code>BrushSettings.schematicSets()</code></a> list based on their <a href="de/eldoria/schematicbrush/brush/config/SchematicSet.html#weight()"><code>SchematicSet.weight()</code></a>.</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/schematics/SchematicSelection.html#nextSchematic(de.eldoria.schematicbrush.brush.SchematicBrush,boolean)" class="member-name-link">nextSchematic(SchematicBrush, boolean)</a> - Method in interface de.eldoria.schematicbrush.brush.config.schematics.<a href="de/eldoria/schematicbrush/brush/config/schematics/SchematicSelection.html" title="interface in de.eldoria.schematicbrush.brush.config.schematics">SchematicSelection</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/flip/Flip.html#NONE" class="member-name-link">NONE</a> - Static variable in interface de.eldoria.schematicbrush.brush.config.flip.<a href="de/eldoria/schematicbrush/brush/config/flip/Flip.html" title="interface in de.eldoria.schematicbrush.brush.config.flip">Flip</a></dt>
 <dd>
 <div class="block">No flip.</div>
@@ -1065,6 +1079,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#parseSchematicModifier(de.eldoria.eldoutilities.commands.command.util.Arguments)" class="member-name-link">parseSchematicModifier(Arguments)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
 <dd>
 <div class="block">Parse a schematic modifier from arguments</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#parseSchematicSelection(de.eldoria.eldoutilities.commands.command.util.Arguments)" class="member-name-link">parseSchematicSelection(Arguments)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
+<dd>
+<div class="block">Parse a schematic selection from arguments</div>
 </dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#parseSelector(de.eldoria.eldoutilities.commands.command.util.Arguments)" class="member-name-link">parseSelector(Arguments)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
 <dd>
@@ -1197,6 +1215,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The refresh interval for each player of the rendering preview.</div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/history/BrushHistory.html#previous()" class="member-name-link">previous()</a> - Method in interface de.eldoria.schematicbrush.brush.history.<a href="de/eldoria/schematicbrush/brush/history/BrushHistory.html" title="interface in de.eldoria.schematicbrush.brush.history">BrushHistory</a></dt>
+<dd>
+<div class="block">Get and remove the head of the history.</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/BrushPaste.html#previousSchematic()" class="member-name-link">previousSchematic()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/BrushPaste.html" title="interface in de.eldoria.schematicbrush.brush">BrushPaste</a></dt>
+<dd>
+<div class="block">Shift to the previous schematic</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/history/BrushHistory.html#push(de.eldoria.eldoutilities.container.Pair)" class="member-name-link">push(Pair&lt;SchematicSet, Schematic&gt;)</a> - Method in interface de.eldoria.schematicbrush.brush.history.<a href="de/eldoria/schematicbrush/brush/history/BrushHistory.html" title="interface in de.eldoria.schematicbrush.brush.history">BrushHistory</a></dt>
+<dd>
+<div class="block">Push a new entry into the registry.</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/history/BrushHistory.html#push(de.eldoria.schematicbrush.brush.config.SchematicSet,de.eldoria.schematicbrush.schematics.Schematic)" class="member-name-link">push(SchematicSet, Schematic)</a> - Method in interface de.eldoria.schematicbrush.brush.history.<a href="de/eldoria/schematicbrush/brush/history/BrushHistory.html" title="interface in de.eldoria.schematicbrush.brush.history">BrushHistory</a></dt>
+<dd>
+<div class="block">Push a new entry into the registry.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:R">R</h2>
 <dl class="index">
@@ -1247,6 +1281,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#registerSchematicModifier(de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier,de.eldoria.schematicbrush.brush.config.provider.ModifierProvider)" class="member-name-link">registerSchematicModifier(SchematicModifier, ModifierProvider)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
 <dd>
 <div class="block">Register a new schematic modifier.</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#registerSchematicSelection(de.eldoria.schematicbrush.brush.config.provider.SchematicSelectionProvider)" class="member-name-link">registerSchematicSelection(SchematicSelectionProvider)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
+<dd>
+<div class="block">Registers a new schematic selection.</div>
 </dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#registerSelector(de.eldoria.schematicbrush.brush.config.provider.SelectorProvider)" class="member-name-link">registerSelector(SelectorProvider)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
 <dd>
@@ -1451,6 +1489,24 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get schematic registry</div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html#schematicSelection()" class="member-name-link">schematicSelection()</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettings</a></dt>
+<dd>
+<div class="block">Get the current schematic selection mode</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html#schematicSelection(de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection)" class="member-name-link">schematicSelection(SchematicSelection)</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettings</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/schematics/SchematicSelection.html" class="type-name-link" title="interface in de.eldoria.schematicbrush.brush.config.schematics">SchematicSelection</a> - Interface in <a href="de/eldoria/schematicbrush/brush/config/schematics/package-summary.html">de.eldoria.schematicbrush.brush.config.schematics</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/provider/SchematicSelectionProvider.html" class="type-name-link" title="class in de.eldoria.schematicbrush.brush.config.provider">SchematicSelectionProvider</a> - Class in <a href="de/eldoria/schematicbrush/brush/config/provider/package-summary.html">de.eldoria.schematicbrush.brush.config.provider</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/provider/SchematicSelectionProvider.html#%3Cinit%3E(java.lang.Class,java.lang.String)" class="member-name-link">SchematicSelectionProvider(Class&lt;? extends ConfigurationSerializable&gt;, String)</a> - Constructor for class de.eldoria.schematicbrush.brush.config.provider.<a href="de/eldoria/schematicbrush/brush/config/provider/SchematicSelectionProvider.html" title="class in de.eldoria.schematicbrush.brush.config.provider">SchematicSelectionProvider</a></dt>
+<dd>
+<div class="block">Create a new settings provider</div>
+</dd>
+<dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html#schematicSelections()" class="member-name-link">schematicSelections()</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettingsRegistry.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettingsRegistry</a></dt>
+<dd>
+<div class="block">Get registered schematic selections.</div>
+</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/BrushPaste.html#schematicSet()" class="member-name-link">schematicSet()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/BrushPaste.html" title="interface in de.eldoria.schematicbrush.brush">BrushPaste</a></dt>
 <dd>
 <div class="block">Current schematic set</div>
@@ -1583,6 +1639,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The brush settings</div>
 </dd>
+<dt><a href="de/eldoria/schematicbrush/brush/SchematicBrush.html#settings()" class="member-name-link">settings()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/SchematicBrush.html" title="interface in de.eldoria.schematicbrush.brush">SchematicBrush</a></dt>
+<dd>
+<div class="block">Get the settings of the brush</div>
+</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/util/Shiftable.html#shift()" class="member-name-link">shift()</a> - Method in interface de.eldoria.schematicbrush.brush.config.util.<a href="de/eldoria/schematicbrush/brush/config/util/Shiftable.html" title="interface in de.eldoria.schematicbrush.brush.config.util">Shiftable</a></dt>
 <dd>
 <div class="block">Shifts the value to the next.</div>
@@ -1606,10 +1666,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="de/eldoria/schematicbrush/brush/BrushPaste.html#shiftRotation()" class="member-name-link">shiftRotation()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/BrushPaste.html" title="interface in de.eldoria.schematicbrush.brush">BrushPaste</a></dt>
 <dd>
 <div class="block">Shift to next rotation value</div>
-</dd>
-<dt><a href="de/eldoria/schematicbrush/brush/BrushPaste.html#shiftSchematic()" class="member-name-link">shiftSchematic()</a> - Method in interface de.eldoria.schematicbrush.brush.<a href="de/eldoria/schematicbrush/brush/BrushPaste.html" title="interface in de.eldoria.schematicbrush.brush">BrushPaste</a></dt>
-<dd>
-<div class="block">Shift to the next schematic</div>
 </dd>
 <dt><a href="de/eldoria/schematicbrush/rendering/Changes.html#show(org.bukkit.entity.Player)" class="member-name-link">show(Player)</a> - Method in interface de.eldoria.schematicbrush.rendering.<a href="de/eldoria/schematicbrush/rendering/Changes.html" title="interface in de.eldoria.schematicbrush.rendering">Changes</a></dt>
 <dd>
@@ -1697,6 +1753,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="de/eldoria/schematicbrush/util/WorldEditBrush.html#toItemType(org.bukkit.inventory.ItemStack)" class="member-name-link">toItemType(ItemStack)</a> - Static method in class de.eldoria.schematicbrush.util.<a href="de/eldoria/schematicbrush/util/WorldEditBrush.html" title="class in de.eldoria.schematicbrush.util">WorldEditBrush</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/util/Nameable.html#toString()" class="member-name-link">toString()</a> - Method in class de.eldoria.schematicbrush.brush.config.util.<a href="de/eldoria/schematicbrush/brush/config/util/Nameable.html" title="class in de.eldoria.schematicbrush.brush.config.util">Nameable</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="de/eldoria/schematicbrush/schematics/Schematic.html#toString()" class="member-name-link">toString()</a> - Method in class de.eldoria.schematicbrush.schematics.<a href="de/eldoria/schematicbrush/schematics/Schematic.html" title="class in de.eldoria.schematicbrush.schematics">Schematic</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html#totalWeight()" class="member-name-link">totalWeight()</a> - Method in interface de.eldoria.schematicbrush.brush.config.<a href="de/eldoria/schematicbrush/brush/config/BrushSettings.html" title="interface in de.eldoria.schematicbrush.brush.config">BrushSettings</a></dt>
 <dd>

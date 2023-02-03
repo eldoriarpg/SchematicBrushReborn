@@ -6,9 +6,11 @@ de.eldoria.schematicbrush.brush.config.flip
 de.eldoria.schematicbrush.brush.config.modifier
 de.eldoria.schematicbrush.brush.config.provider
 de.eldoria.schematicbrush.brush.config.rotation
+de.eldoria.schematicbrush.brush.config.schematics
 de.eldoria.schematicbrush.brush.config.selector
 de.eldoria.schematicbrush.brush.config.util
 de.eldoria.schematicbrush.brush.exceptions
+de.eldoria.schematicbrush.brush.history
 de.eldoria.schematicbrush.config
 de.eldoria.schematicbrush.config.sections
 de.eldoria.schematicbrush.event
