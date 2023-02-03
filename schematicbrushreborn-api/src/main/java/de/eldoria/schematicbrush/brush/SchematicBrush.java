@@ -16,6 +16,7 @@ import com.sk89q.worldedit.util.Location;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
+import de.eldoria.schematicbrush.brush.history.BrushHistory;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
@@ -62,7 +63,7 @@ public interface SchematicBrush extends Brush {
      *
      * @return settings
      */
-    BrushSettings getSettings();
+    BrushSettings settings();
 
     /**
      * Get the next paste which will be executed
@@ -79,4 +80,6 @@ public interface SchematicBrush extends Brush {
      * @return brush as builder
      */
     BrushBuilder toBuilder(BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry);
+
+    BrushHistory history();
 }

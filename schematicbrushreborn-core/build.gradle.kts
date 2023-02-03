@@ -119,6 +119,11 @@ bukkit {
             aliases = listOf("sbrbp", "schbrbp")
             permission = "schematicbrush.brushpreset.use"
         }
+        register("schematicbrushbrushmodify") {
+            description = "Edit settings of the current brush"
+            aliases = listOf("sbrm", "schbrm")
+            permission = "schematicbrush.brush.use"
+        }
     }
 
     permissions {

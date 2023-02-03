@@ -30,14 +30,6 @@ public interface SchematicSet extends Randomable {
     Mutator<?> getMutator(SchematicModifier type);
 
     /**
-     * Get a random schematic from the set
-     *
-     * @return schematic
-     */
-    @Nullable
-    Schematic getRandomSchematic();
-
-    /**
      * Update a not weighted brush.
      *
      * @param weight weight to set.

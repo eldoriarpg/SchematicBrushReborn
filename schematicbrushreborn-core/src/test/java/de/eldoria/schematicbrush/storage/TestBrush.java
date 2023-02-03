@@ -12,6 +12,7 @@ import de.eldoria.eldoutilities.serialization.wrapper.MapEntry;
 import de.eldoria.eldoutilities.serialization.wrapper.YamlContainer;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
+import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
 import de.eldoria.schematicbrush.storage.brush.Brush;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -41,7 +42,7 @@ public class TestBrush {
     @Test
     public void testSerialization() throws IOException, InvalidConfigurationException {
         var someone = server.addPlayer("Someone");
-        var brushBuilder = new BrushBuilderImpl(someone, load.brushSettingsRegistry(), load.schematics());
+        var brushBuilder = new BrushBuilderImpl(someone, new RandomSelection(), load.brushSettingsRegistry(), load.schematics());
         var some = new Brush("some", brushBuilder);
 
         //This is only required for the sake of unit testing.

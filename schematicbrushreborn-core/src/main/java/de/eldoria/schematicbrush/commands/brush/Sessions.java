@@ -12,6 +12,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
+import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -23,7 +24,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,7 +57,7 @@ public class Sessions {
     private BrushBuilder getOrCreateBuilder(Player player) {
         return WorldEditBrush.getSchematicBrush(player)
                 .map(brush -> brush.toBuilder(registry, schematicRegistry))
-                .orElse(new BrushBuilderImpl(player, registry, schematicRegistry));
+                .orElse(new BrushBuilderImpl(player, new RandomSelection(), registry, schematicRegistry));
     }
 
     public void showBrush(Player player) {

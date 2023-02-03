@@ -33,12 +33,14 @@ import java.util.logging.Level;
  * Represents the next paste executed by the brush.
  */
 public class BrushPasteImpl implements BrushPaste {
+    private final SchematicBrush brush;
     private final BrushSettings settings;
     private SchematicSet schematicSet;
     private Schematic schematic;
     private Clipboard clipboard;
 
-    public BrushPasteImpl(BrushSettings settings, SchematicSet schematicSet, Schematic schematic) {
+    public BrushPasteImpl(SchematicBrush brush, BrushSettings settings, SchematicSet schematicSet, Schematic schematic) {
+        this.brush = brush;
         this.settings = settings;
         this.schematicSet = schematicSet;
         this.schematic = schematic;
@@ -140,10 +142,10 @@ public class BrushPasteImpl implements BrushPaste {
     private Operation paste(ClipboardHolder clipboardHolder, Extent targetExtent, BlockVector3 position, PasteMutation mutation) {
         // Create paste operation
         return clipboardHolder.createPaste(targetExtent)
-                              .to(position.add(mutation.pasteOffset()))
-                              .ignoreAirBlocks(!mutation.isIncludeAir())
-                              .maskSource(mutation.maskSource())
-                              .build();
+                .to(position.add(mutation.pasteOffset()))
+                .ignoreAirBlocks(!mutation.isIncludeAir())
+                .maskSource(mutation.maskSource())
+                .build();
     }
 
     private ClipboardHolder buildClipboard(PasteMutation mutation) {
@@ -158,24 +160,30 @@ public class BrushPasteImpl implements BrushPaste {
      * @return true if the schematic was changed
      */
     @Override
-    public boolean shiftSchematic() {
-        schematicSet = settings.getRandomSchematicSet();
-        if (schematicSet.schematics().isEmpty()) return false;
-        var newSchematic = schematicSet.getRandomSchematic();
-        while (newSchematic == schematic) {
-            newSchematic = schematicSet.getRandomSchematic();
-            if (schematicSet.schematics().isEmpty()) return false;
-            if (newSchematic == null) continue;
-            if (schematicSet.schematics().size() <= 1) break;
-        }
+    public boolean nextSchematic() {
+        brush.history().push(schematicSet, schematic);
+        var next = settings.nextSchematic(brush);
+        if (schematicSet.schematics().isEmpty() || next.isEmpty()) return false;
+        next.ifPresent(pair -> {
+            schematicSet = pair.first;
+            schematic = pair.second;
+        });
+        reloadSchematic();
+        return true;
+    }
 
-        schematic = newSchematic;
+    @Override
+    public boolean previousSchematic() {
+        var next = brush.history().previous();
+        if (schematicSet.schematics().isEmpty() || next.isEmpty()) return false;
+        schematicSet = next.get().first;
+        schematic = next.get().second;
         reloadSchematic();
         return true;
     }
 
     /**
-     * Load a new clipboard from schematic file
+     * Load a new clipboard from schematic file\
      */
     @Override
     public final void reloadSchematic() {
@@ -227,7 +235,12 @@ public class BrushPasteImpl implements BrushPaste {
         var minimumPoint = clipboard.getMinimumPoint();
         var maximumPoint = clipboard.getMaximumPoint();
         return (long) EMath.diff(minimumPoint.getBlockX(), maximumPoint.getBlockX())
-               * EMath.diff(minimumPoint.getBlockY(), maximumPoint.getBlockY())
-               * EMath.diff(minimumPoint.getBlockZ(), maximumPoint.getBlockZ());
+                * EMath.diff(minimumPoint.getBlockY(), maximumPoint.getBlockY())
+                * EMath.diff(minimumPoint.getBlockZ(), maximumPoint.getBlockZ());
+    }
+
+    @Override
+    public SchematicBrush brush() {
+        return brush;
     }
 }

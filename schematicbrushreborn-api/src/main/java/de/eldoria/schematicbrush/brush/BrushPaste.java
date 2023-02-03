@@ -101,7 +101,14 @@ public interface BrushPaste {
      *
      * @return true if the schematic changed
      */
-    boolean shiftSchematic();
+    boolean nextSchematic();
+
+    /**
+     * Shift to the previous schematic
+     *
+     * @return true if the schematic was changed
+     */
+    boolean previousSchematic();
 
     /**
      * Load a new clipboard from schematic file
@@ -143,4 +150,11 @@ public interface BrushPaste {
      * @return true if the offset was shiftable
      */
     boolean shiftOffset();
+
+    /**
+     * Get the brush which will paste this paste.
+     *
+     * @return schematic brush
+     */
+    SchematicBrush brush();
 }

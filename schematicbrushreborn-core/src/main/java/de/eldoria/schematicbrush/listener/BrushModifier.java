@@ -59,7 +59,7 @@ public class BrushModifier implements Listener {
                 messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "Offset is not shiftable.");
             }
         } else {
-            if (schematicBrush.get().nextPaste().shiftSchematic()) {
+            if (schematicBrush.get().nextPaste().nextSchematic()) {
                 messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Skipped Schematic.");
             } else {
                 messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "The set only contains 1 schematic");

@@ -14,31 +14,17 @@ import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.modifier.BaseModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
-import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
-import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
-import de.eldoria.schematicbrush.brush.config.provider.SettingProvider;
+import de.eldoria.schematicbrush.brush.config.provider.*;
+import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
-import de.eldoria.schematicbrush.brush.provider.FilterProvider;
-import de.eldoria.schematicbrush.brush.provider.FlipProvider;
-import de.eldoria.schematicbrush.brush.provider.IncludeAirProvider;
-import de.eldoria.schematicbrush.brush.provider.OffsetProvider;
-import de.eldoria.schematicbrush.brush.provider.PlacementProvider;
-import de.eldoria.schematicbrush.brush.provider.ReplaceAllProvider;
-import de.eldoria.schematicbrush.brush.provider.RotationProvider;
-import de.eldoria.schematicbrush.brush.provider.SelectorProviderImpl;
+import de.eldoria.schematicbrush.brush.provider.*;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,17 +32,10 @@ import java.util.stream.Collectors;
  */
 public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     private final List<SelectorProvider> selector = new ArrayList<>();
+    private final List<SchematicSelectionProvider> schematicSelection = new ArrayList<>();
     private final Map<SchematicModifier, List<ModifierProvider>> schematicModifier = new LinkedHashMap<>();
     private final Map<PlacementModifier, List<ModifierProvider>> placementModifier = new LinkedHashMap<>();
 
-    /**
-     * Registers a new selector.
-     * <p>
-     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
-     *
-     * @param provider provider of the selector
-     * @throws AlreadyRegisteredException when a selector with this name is already registered
-     */
     @Override
     public void registerSelector(SelectorProvider provider) {
         ConfigurationSerialization.registerClass(provider.serializationClass());
@@ -66,15 +45,15 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         selector.add(provider);
     }
 
-    /**
-     * Register a new schematic modifier.
-     * <p>
-     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
-     *
-     * @param type     type of modifier
-     * @param provider provider to add
-     * @throws AlreadyRegisteredException when a modifier with this type and name is already registered
-     */
+    @Override
+    public void registerSchematicSelection(SchematicSelectionProvider provider) {
+        ConfigurationSerialization.registerClass(provider.serializationClass());
+        if (schematicSelection.contains(provider)) {
+            throw new AlreadyRegisteredException(provider);
+        }
+        schematicSelection.add(provider);
+    }
+
     @Override
     public void registerSchematicModifier(SchematicModifier type, ModifierProvider provider) {
         ConfigurationSerialization.registerClass(provider.serializationClass());
@@ -84,15 +63,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         schematicModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
     }
 
-    /**
-     * Register a new schematic modifier.
-     * <p>
-     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
-     *
-     * @param type     type of modifier
-     * @param provider provider to add
-     * @throws AlreadyRegisteredException when a modifier with this type and name is already registered
-     */
     @Override
     public void registerPlacementModifier(PlacementModifier type, ModifierProvider provider) {
         ConfigurationSerialization.registerClass(provider.serializationClass());
@@ -102,31 +72,16 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         placementModifier.computeIfAbsent(type, key -> new ArrayList<>()).add(provider);
     }
 
-    /**
-     * Get the default selector. This selector will be the first registered selector.
-     *
-     * @return selector instance
-     */
     @Override
     public Selector defaultSelector() {
         return selector.get(0).defaultSetting();
     }
 
-    /**
-     * Get the default schematic modifier
-     *
-     * @return map containing all registered modifier types with one instance.
-     */
     @Override
     public Map<SchematicModifier, Mutator<?>> defaultSchematicModifier() {
         return getDefaultMap(schematicModifier);
     }
 
-    /**
-     * Get the default placement modifier
-     *
-     * @return map containing all registered modifier types with one instance.
-     */
     @Override
     public Map<PlacementModifier, Mutator<?>> defaultPlacementModifier() {
         return getDefaultMap(placementModifier);
@@ -144,13 +99,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     // Parsing
 
-    /**
-     * Parse a selector from arguments
-     *
-     * @param args arguments to parse
-     * @return the parsed selector
-     * @throws CommandException if the arguments could not be parsed
-     */
     @Override
     public Selector parseSelector(Arguments args) throws CommandException {
         var provider = getSettingProvider(args, selector);
@@ -158,13 +106,13 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         return provider.parse(args.subArguments());
     }
 
-    /**
-     * Parse a schematic modifier from arguments
-     *
-     * @param args arguments to parse
-     * @return a pair containing the type and the parsed modifier
-     * @throws CommandException if the arguments could not be parsed
-     */
+    @Override
+    public SchematicSelection parseSchematicSelection(Arguments args) throws CommandException {
+        var provider = getSettingProvider(args, schematicSelection);
+        CommandAssertions.invalidArguments(args.subArguments(), provider.arguments());
+        return provider.parse(args.subArguments());
+    }
+
     @Override
     public Pair<SchematicModifier, Mutator<?>> parseSchematicModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, schematicModifier);
@@ -173,13 +121,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         return Pair.of(provider.first, provider.second.parse(subArguments));
     }
 
-    /**
-     * Parse a placement modifier from arguments
-     *
-     * @param args arguments to parse
-     * @return a pair containing the type and the parsed modifier
-     * @throws CommandException if the arguments could not be parsed
-     */
     @Override
     public Pair<PlacementModifier, Mutator<?>> parsePlacementModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, placementModifier);
@@ -188,31 +129,21 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         return Pair.of(provider.first, provider.second.parse(subArguments));
     }
 
-    /**
-     * Get registered selectors.
-     *
-     * @return unmodifiable list of selectors
-     */
     @Override
     public List<SelectorProvider> selector() {
         return Collections.unmodifiableList(selector);
     }
 
-    /**
-     * Get registered schematic modifier
-     *
-     * @return unmodifiable map of all registered schematic modifier
-     */
+    @Override
+    public List<SchematicSelectionProvider> schematicSelections() {
+        return Collections.unmodifiableList(schematicSelection);
+    }
+
     @Override
     public Map<SchematicModifier, List<ModifierProvider>> schematicModifier() {
         return Collections.unmodifiableMap(schematicModifier);
     }
 
-    /**
-     * Get registered placement modifier
-     *
-     * @return unmodifiable map of all registered placement modifier
-     */
     @Override
     public Map<PlacementModifier, List<ModifierProvider>> placementModifier() {
         return Collections.unmodifiableMap(placementModifier);
@@ -232,14 +163,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     // Tab completion
 
-    /**
-     * Complete selectors
-     *
-     * @param args   arguments to complete
-     * @param player player which requested completion
-     * @return list of possible values
-     * @throws CommandException if the arguments are invalid
-     */
     @Override
     public List<String> completeSelector(Arguments args, Player player) throws CommandException {
         if (args.size() == 1) {
@@ -248,25 +171,19 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         return getSettingProvider(args, selector).complete(args.subArguments(), player);
     }
 
-    /**
-     * Complete placement modifier
-     *
-     * @param args arguments to complete
-     * @return list of possible values
-     * @throws CommandException if the arguments are invalid
-     */
+    @Override
+    public List<String> completeSchematicSelection(Arguments args, Player player) throws CommandException {
+        if (args.size() == 1) {
+            return TabCompleteUtil.complete(args.asString(0), schematicSelection.stream().map(SettingProvider::name));
+        }
+        return getSettingProvider(args, schematicSelection).complete(args.subArguments(), player);
+    }
+
     @Override
     public List<String> completePlacementModifier(Arguments args) throws CommandException {
         return completeModifier(args, placementModifier);
     }
 
-    /**
-     * Complete schematic modifier
-     *
-     * @param args arguments to complete
-     * @return list of possible values
-     * @throws CommandException if the arguments are invalid
-     */
     @Override
     public List<String> completeSchematicModifier(Arguments args) throws CommandException {
         return completeModifier(args, schematicModifier);
@@ -354,5 +271,11 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
         registerPlacementModifier(PlacementModifier.REPLACE_ALL, ReplaceAllProvider.FIXED);
 
         registerPlacementModifier(PlacementModifier.FILTER, FilterProvider.BLOCK_FILTER);
+
+        // Schematic selection
+        registerSchematicSelection(SchematicSelectionProviderImpl.RANDOM_SELECTION);
+        registerSchematicSelection(SchematicSelectionProviderImpl.ORDERED_SELECTION);
+        registerSchematicSelection(SchematicSelectionProviderImpl.LOCKED_RANDOM_SELECTION);
+        registerSchematicSelection(SchematicSelectionProviderImpl.LOCKED_ORDERED_SELECTION);
     }
 }

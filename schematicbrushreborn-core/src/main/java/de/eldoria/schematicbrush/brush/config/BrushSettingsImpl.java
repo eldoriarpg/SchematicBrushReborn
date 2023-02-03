@@ -6,24 +6,30 @@
 
 package de.eldoria.schematicbrush.brush.config;
 
+import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.PasteMutationImpl;
+import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
+import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
+import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A brush configuration represents the settings of a single brush. A brush consists of one or more brushes represented
  * by a {@link SchematicSetImpl} object. If more than one {@link SchematicSetImpl} is present, a random {@link SchematicSetImpl}
- * will be returned via the {@link #getRandomSchematicSet()} based on the {@link SchematicSetImpl#weight()} of the
+ * will be returned via the {@link #nextSchematic(SchematicBrush)}} based on the {@link SchematicSetImpl#weight()} of the
  * brushes. The brush settings contains some general brush settings, which apply to the whole brush and not only to
  * specific sub brushes.
  */
@@ -38,8 +44,10 @@ public final class BrushSettingsImpl implements BrushSettings {
      * The total weight of all brushes in the {@link #schematicSets} list
      */
     private int totalWeight;
+    private  SchematicSelection schematicSelection;
 
-    public BrushSettingsImpl(List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
+    public BrushSettingsImpl(SchematicSelection schematicSelection, List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
+        this.schematicSelection = schematicSelection;
         this.schematicSets = schematicSets;
         this.placementModifier = placementModifier;
 
@@ -69,23 +77,14 @@ public final class BrushSettingsImpl implements BrushSettings {
     }
 
     /**
-     * Get a random brush from the {@link #schematicSets} list based on their {@link SchematicSetImpl#weight()}.
+     * Get a random schematic from the {@link #schematicSets} list based on their {@link SchematicSetImpl#weight()}.
      *
      * @return a random brush
      */
     @Override
-    public SchematicSet getRandomSchematicSet() {
+    public Optional<Pair<SchematicSet, Schematic>> nextSchematic(SchematicBrush brush) {
         cleanUp();
-        var random = randomInt(totalWeight);
-
-        var count = 0;
-        for (var brush : schematicSets) {
-            if (count + brush.weight() > random) {
-                return brush;
-            }
-            count += brush.weight();
-        }
-        return schematicSets.get(schematicSets.size() - 1);
+        return schematicSelection.nextSchematic(brush, true);
     }
 
     /**
@@ -149,7 +148,7 @@ public final class BrushSettingsImpl implements BrushSettings {
      */
     @Override
     public BrushBuilder toBuilder(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
-        var brushBuilder = new BrushBuilderImpl(player, settingsRegistry, schematicRegistry);
+        var brushBuilder = new BrushBuilderImpl(player, schematicSelection, settingsRegistry, schematicRegistry);
         placementModifier.forEach(brushBuilder::setPlacementModifier);
         schematicSets.stream().map(SchematicSet::toBuilder).forEach(brushBuilder::addSchematicSet);
         return brushBuilder;
@@ -158,5 +157,15 @@ public final class BrushSettingsImpl implements BrushSettings {
     @Override
     public void refreshMutator() {
         placementModifier.values().forEach(ValueProvider::refresh);
+    }
+
+    @Override
+    public SchematicSelection schematicSelection() {
+        return schematicSelection;
+    }
+
+    @Override
+    public void schematicSelection(SchematicSelection schematicSelection) {
+        this.schematicSelection = schematicSelection;
     }
 }
