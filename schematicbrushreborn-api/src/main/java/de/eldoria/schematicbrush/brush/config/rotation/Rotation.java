@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush.config.rotation;
 
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.util.Shiftable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a rotation.
@@ -121,11 +122,11 @@ public interface Rotation extends Shiftable<Rotation> {
     int degree();
 
     @Override
-    default void value(Rotation value) {
+    default void value(@NotNull Rotation value) {
     }
 
     @Override
-    default Rotation value() {
+    default @NotNull Rotation value() {
         return this;
     }
 

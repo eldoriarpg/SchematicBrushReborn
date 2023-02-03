@@ -13,7 +13,9 @@ import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.SchematicSelectionProvider;
 import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
+import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
@@ -37,6 +39,15 @@ public interface BrushSettingsRegistry {
      * @throws AlreadyRegisteredException when a selector with this name is already registered
      */
     void registerSelector(SelectorProvider provider);
+    /**
+     * Registers a new schematic selection.
+     * <p>
+     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
+     *
+     * @param provider provider of the schematic selection
+     * @throws AlreadyRegisteredException when a schematic selection with this name is already registered
+     */
+    void registerSchematicSelection(SchematicSelectionProvider provider);
 
     /**
      * Register a new schematic modifier.
@@ -91,6 +102,15 @@ public interface BrushSettingsRegistry {
     Selector parseSelector(Arguments args) throws CommandException;
 
     /**
+     * Parse a schematic selection from arguments
+     *
+     * @param args arguments to parse
+     * @return the parsed selector
+     * @throws CommandException if the arguments could not be parsed
+     */
+    SchematicSelection parseSchematicSelection(Arguments args) throws CommandException;
+
+    /**
      * Parse a schematic modifier from arguments
      *
      * @param args arguments to parse
@@ -114,6 +134,13 @@ public interface BrushSettingsRegistry {
      * @return unmodifiable list of selectors
      */
     List<SelectorProvider> selector();
+
+    /**
+     * Get registered schematic selections.
+     *
+     * @return unmodifiable list of selectors
+     */
+    List<SchematicSelectionProvider> schematicSelections();
 
     /**
      * Get registered schematic modifier
@@ -154,6 +181,16 @@ public interface BrushSettingsRegistry {
      * @throws CommandException if the arguments are invalid
      */
     List<String> completeSelector(Arguments args, Player player) throws CommandException;
+
+    /**
+     * Complete schematic selection
+     *
+     * @param args   arguments to complete
+     * @param player player which requested completion
+     * @return list of possible values
+     * @throws CommandException if the arguments are invalid
+     */
+    List<String> completeSchematicSelection(Arguments args, Player player) throws CommandException;
 
     /**
      * Complete placement modifier

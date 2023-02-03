@@ -48,11 +48,11 @@ public class BlockFilter implements Mutator<String> {
     }
 
     @Override
-    public void value(String value) {
+    public void value(@NotNull String value) {
     }
 
     @Override
-    public String value() {
+    public @NotNull String value() {
         return maskString;
     }
 

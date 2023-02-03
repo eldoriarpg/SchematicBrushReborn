@@ -29,6 +29,7 @@ public class OffsetRange extends AOffset {
         var map = SerializationUtil.mapOf(objectMap);
         min = map.getValueOrDefault("min", -1);
         max = map.getValueOrDefault("max", 1);
+        value(valueProvider());
     }
 
     @Override

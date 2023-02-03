@@ -11,17 +11,14 @@ import de.eldoria.schematicbrush.brush.SchematicBrushImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
+import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class BrushBuilderImpl implements BrushBuilder {
@@ -30,6 +27,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
     private final BrushSettingsRegistry settingsRegistry;
     private final SchematicRegistry schematicRegistry;
     private final Map<Nameable, Mutator<?>> placementModifier;
+    private final SchematicSelection schematicSelection;
 
     BrushBuilderImpl(List<SchematicSetBuilder> schematicSets, Player owner, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry, Map<Nameable, Mutator<?>> placementModifier) {
         this.schematicSets = schematicSets;
@@ -37,14 +35,16 @@ public final class BrushBuilderImpl implements BrushBuilder {
         this.settingsRegistry = settingsRegistry;
         this.schematicRegistry = schematicRegistry;
         this.placementModifier = placementModifier;
+        this.schematicSelection = new RandomSelection();
     }
 
-    public BrushBuilderImpl(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
+    public BrushBuilderImpl(Player player, SchematicSelection schematicSelection, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         owner = player;
         schematicSets = new ArrayList<>();
         placementModifier = new HashMap<>();
         this.settingsRegistry = settingsRegistry;
         this.schematicRegistry = schematicRegistry;
+        this.schematicSelection = schematicSelection;
         for (var entry : settingsRegistry.defaultPlacementModifier().entrySet()) {
             setPlacementModifier(entry.getKey(), entry.getValue());
         }
@@ -116,7 +116,7 @@ public final class BrushBuilderImpl implements BrushBuilder {
     @Override
     public SchematicBrush build(Plugin plugin, Player owner) {
         var sets = schematicSets.stream().map(SchematicSetBuilder::build).collect(Collectors.toList());
-        var settings = new BrushSettingsImpl(sets, placementModifier);
+        var settings = new BrushSettingsImpl(schematicSelection, sets, placementModifier);
         return new SchematicBrushImpl(plugin, owner, settings);
     }
 

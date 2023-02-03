@@ -14,8 +14,8 @@ dependencies {
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation("org.jetbrains", "annotations", "24.0.0")
-    testImplementation("org.mockito", "mockito-core", "5.0.0")
-    testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.14.1")
+    testImplementation("org.mockito", "mockito-core", "5.1.1")
+    testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.14.2")
 }
 
 publishData {
@@ -118,6 +118,11 @@ bukkit {
             description = "List or edit brush presets"
             aliases = listOf("sbrbp", "schbrbp")
             permission = "schematicbrush.brushpreset.use"
+        }
+        register("schematicbrushbrushmodify") {
+            description = "Edit settings of the current brush"
+            aliases = listOf("sbrm", "schbrm")
+            permission = "schematicbrush.brush.use"
         }
     }
 

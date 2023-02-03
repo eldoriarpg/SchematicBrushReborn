@@ -6,26 +6,31 @@
 
 package de.eldoria.schematicbrush.brush.config;
 
+import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.schematicbrush.brush.PasteMutation;
+import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.util.Randomable;
+import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Setting of a {@link de.eldoria.schematicbrush.brush.SchematicBrush}
  */
 public interface BrushSettings extends Randomable {
     /**
-     * Get a random schematic set from the {@link #schematicSets} list based on their {@link SchematicSet#weight()}.
+     * Get the next schematic and the set containing it from the {@link #schematicSets} list based on their {@link SchematicSet#weight()}.
      *
      * @return a random brush
      */
-    SchematicSet getRandomSchematicSet();
+    Optional<Pair<SchematicSet, Schematic>> nextSchematic(SchematicBrush brush);
 
     /**
      * Counts all schematics in all brushes. No deduplication.
@@ -77,4 +82,12 @@ public interface BrushSettings extends Randomable {
      * Refresehs the underlying mutators.
      */
     void refreshMutator();
+
+    /**
+     * Get the current schematic selection mode
+     * @return schematic selection mode
+     */
+    SchematicSelection schematicSelection();
+
+    void schematicSelection(SchematicSelection schematicSelection);
 }

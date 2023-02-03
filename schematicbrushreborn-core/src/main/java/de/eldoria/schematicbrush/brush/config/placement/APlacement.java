@@ -59,11 +59,11 @@ public abstract class APlacement implements Mutator<APlacement> {
     }
 
     @Override
-    public void value(APlacement value) {
+    public void value(@NotNull APlacement value) {
     }
 
     @Override
-    public APlacement value() {
+    public @NotNull APlacement value() {
         return this;
     }
 

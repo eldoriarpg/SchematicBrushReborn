@@ -28,6 +28,7 @@ public class OffsetList extends AOffset {
     public OffsetList(Map<String, Object> objectMap) {
         var map = SerializationUtil.mapOf(objectMap);
         values = map.getValue("values");
+        value(valueProvider());
     }
 
     @Override
@@ -50,9 +51,6 @@ public class OffsetList extends AOffset {
 
     @Override
     public void shift() {
-        if (value() == null) {
-            value(values.get(ThreadLocalRandom.current().nextInt(values.size())));
-        }
         var index = values.indexOf(value());
         if (index + 1 == values.size()) {
             value(values.get(0));

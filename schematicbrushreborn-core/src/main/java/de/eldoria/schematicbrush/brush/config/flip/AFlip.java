@@ -52,12 +52,12 @@ public abstract class AFlip implements Mutator<Flip> {
     }
 
     @Override
-    public void value(Flip value) {
+    public void value(@NotNull Flip value) {
         flip = value;
     }
 
     @Override
-    public Flip value() {
+    public @NotNull Flip value() {
         return flip;
     }
 

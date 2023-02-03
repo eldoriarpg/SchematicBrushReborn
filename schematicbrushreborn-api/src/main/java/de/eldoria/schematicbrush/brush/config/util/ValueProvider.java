@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.util;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a value provider.
  *
@@ -17,13 +19,14 @@ public interface ValueProvider<T> {
      *
      * @param value value to set
      */
-    void value(T value);
+    void value(@NotNull T value);
 
     /**
      * Get the current value
      *
      * @return the value
      */
+    @NotNull
     T value();
 
     /**
