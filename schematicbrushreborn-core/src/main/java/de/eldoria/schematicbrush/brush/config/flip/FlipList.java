@@ -22,6 +22,7 @@ public class FlipList extends AFlip {
 
     public FlipList(List<Flip> values) {
         this.values = values;
+        value(valueProvider());
     }
 
     public FlipList(Map<String, Object> objectMap) {
@@ -51,9 +52,6 @@ public class FlipList extends AFlip {
 
     @Override
     public void shift() {
-        if (value() == null) {
-            value(values.get(ThreadLocalRandom.current().nextInt(values.size())));
-        }
         var index = values.indexOf(value());
         Flip newValue;
         if (index + 1 == values.size()) {

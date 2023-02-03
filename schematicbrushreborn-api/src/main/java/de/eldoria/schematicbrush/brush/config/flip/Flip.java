@@ -10,6 +10,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.util.Shiftable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a flip of a schematic.
@@ -183,11 +184,11 @@ public interface Flip extends Shiftable<Flip> {
     Vector3 direction();
 
     @Override
-    default void value(Flip value) {
+    default void value(@NotNull Flip value) {
     }
 
     @Override
-    default Flip value() {
+    default @NotNull Flip value() {
         return this;
     }
 

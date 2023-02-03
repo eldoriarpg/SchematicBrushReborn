@@ -47,12 +47,12 @@ public class IncludeAir implements Mutator<Boolean> {
     }
 
     @Override
-    public void value(Boolean value) {
+    public void value(@NotNull Boolean value) {
         this.value = value;
     }
 
     @Override
-    public Boolean value() {
+    public @NotNull Boolean value() {
         return value;
     }
 

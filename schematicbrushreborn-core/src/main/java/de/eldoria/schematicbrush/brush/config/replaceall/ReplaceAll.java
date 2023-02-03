@@ -62,11 +62,11 @@ public class ReplaceAll implements Mutator<Boolean> {
     }
 
     @Override
-    public void value(Boolean value) {
+    public void value(@NotNull Boolean value) {
     }
 
     @Override
-    public Boolean value() {
+    public @NotNull Boolean value() {
         return value;
     }
 

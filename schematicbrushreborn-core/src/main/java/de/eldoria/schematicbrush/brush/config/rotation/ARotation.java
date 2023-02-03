@@ -50,12 +50,12 @@ public abstract class ARotation implements Mutator<Rotation> {
     }
 
     @Override
-    public void value(Rotation value) {
+    public void value(@NotNull Rotation value) {
         rotation = value;
     }
 
     @Override
-    public Rotation value() {
+    public @NotNull Rotation value() {
         return rotation;
     }
 

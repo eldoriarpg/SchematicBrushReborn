@@ -50,12 +50,12 @@ public abstract class AOffset implements Mutator<Integer> {
     }
 
     @Override
-    public Integer value() {
+    public @NotNull Integer value() {
         return offset;
     }
 
     @Override
-    public void value(Integer value) {
+    public void value(@NotNull Integer value) {
         offset = value;
     }
 
