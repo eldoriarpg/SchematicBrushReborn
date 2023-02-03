@@ -32,7 +32,7 @@ public class BrushHistoryImpl implements BrushHistory {
     @Override
     public void push(SchematicSet set, Schematic schematic) {
         // Only push if the new item is different to the head of the stack
-        if (history.peek().equals(Pair.of(set, schematic))) return;
+        if (!history.empty() && history.peek().equals(Pair.of(set, schematic))) return;
         history.push(Pair.of(set, schematic));
         // keep size
         if (history.size() >= size) history.removeElementAt(history.size() - 1);

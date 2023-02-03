@@ -296,4 +296,12 @@ public class Schematic implements Comparable<Schematic> {
         }
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "Schematic{" +
+                "file=" + file +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

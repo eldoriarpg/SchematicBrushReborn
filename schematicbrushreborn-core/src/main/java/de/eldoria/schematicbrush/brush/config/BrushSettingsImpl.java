@@ -44,9 +44,10 @@ public final class BrushSettingsImpl implements BrushSettings {
      * The total weight of all brushes in the {@link #schematicSets} list
      */
     private int totalWeight;
-    private SchematicSelection schematicSelection = new RandomSelection();
+    private  SchematicSelection schematicSelection;
 
-    public BrushSettingsImpl(List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
+    public BrushSettingsImpl(SchematicSelection schematicSelection, List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
+        this.schematicSelection = schematicSelection;
         this.schematicSets = schematicSets;
         this.placementModifier = placementModifier;
 
@@ -147,7 +148,7 @@ public final class BrushSettingsImpl implements BrushSettings {
      */
     @Override
     public BrushBuilder toBuilder(Player player, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
-        var brushBuilder = new BrushBuilderImpl(player, settingsRegistry, schematicRegistry);
+        var brushBuilder = new BrushBuilderImpl(player, schematicSelection, settingsRegistry, schematicRegistry);
         placementModifier.forEach(brushBuilder::setPlacementModifier);
         schematicSets.stream().map(SchematicSet::toBuilder).forEach(brushBuilder::addSchematicSet);
         return brushBuilder;

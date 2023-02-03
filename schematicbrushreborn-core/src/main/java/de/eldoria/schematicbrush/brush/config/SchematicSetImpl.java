@@ -6,8 +6,6 @@
 
 package de.eldoria.schematicbrush.brush.config;
 
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
@@ -17,13 +15,7 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
+import java.util.*;
 
 /**
  * The schematic set represents a part of a brush, which will be combined to a brush by the {@link BrushSettingsImpl} A
@@ -39,6 +31,7 @@ public class SchematicSetImpl implements SchematicSet {
 
     public SchematicSetImpl(Set<Schematic> schematics, Selector selector, Map<? extends Nameable, Mutator<?>> schematicModifier, int weight) {
         this.schematics = new ArrayList<>(schematics);
+        Collections.sort(this.schematics);
         this.selector = selector;
         this.schematicModifier = schematicModifier;
         this.weight = weight;
@@ -133,5 +126,27 @@ public class SchematicSetImpl implements SchematicSet {
     @Override
     public void refreshMutator() {
         schematicModifier.values().forEach(ValueProvider::refresh);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SchematicSetImpl that = (SchematicSetImpl) o;
+
+        if (weight != that.weight) return false;
+        if (!schematics.equals(that.schematics)) return false;
+        if (!selector.equals(that.selector)) return false;
+        return schematicModifier.equals(that.schematicModifier);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = schematics.hashCode();
+        result = 31 * result + selector.hashCode();
+        result = 31 * result + schematicModifier.hashCode();
+        result = 31 * result + weight;
+        return result;
     }
 }

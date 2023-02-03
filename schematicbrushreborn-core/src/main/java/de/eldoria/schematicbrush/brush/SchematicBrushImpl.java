@@ -48,6 +48,7 @@ public class SchematicBrushImpl implements SchematicBrush {
     private final Plugin plugin;
     private final BrushSettings settings;
     private final UUID brushOwner;
+    @Nullable
     private BrushPaste nextPaste;
     @Nullable
     private BrushBuilder builder;
@@ -142,21 +143,20 @@ public class SchematicBrushImpl implements SchematicBrush {
     @Override
     public Optional<Location> getBrushLocation() {
         var brushTool = getBrushTool();
-        if (brushTool.isEmpty()) return Optional.empty();
-        return Optional.ofNullable(actor().getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask()));
+        return brushTool.map(tool -> actor().getBlockTrace(tool.getRange(), true, tool.getTraceMask()));
     }
 
     private void buildNextPaste() {
-        var nextSchematic = settings.schematicSelection().nextSchematic(this, true);
-        if (nextSchematic.isEmpty()) {
+        var next = settings.schematicSelection().nextSchematic(this, false);
+        if (next.isEmpty()) {
             MessageSender.getPluginMessageSender(plugin).sendError(brushOwner(),
                     "No valid schematic was found for brush");
             return;
         }
-        nextSchematic.ifPresent(pair -> {
-            history.push(pair);
-            nextPaste = new BrushPasteImpl(this, settings, pair.first, pair.second);
-        });
+        if (nextPaste != null && !nextPaste.schematic().equals(next.get().second)) {
+            history.push(nextPaste.schematicSet(), nextPaste.schematic());
+        }
+        next.ifPresent(pair -> nextPaste = new BrushPasteImpl(this, settings, pair.first, pair.second));
     }
 
     /**

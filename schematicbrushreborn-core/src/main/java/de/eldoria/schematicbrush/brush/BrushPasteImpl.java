@@ -161,12 +161,12 @@ public class BrushPasteImpl implements BrushPaste {
      */
     @Override
     public boolean nextSchematic() {
+        brush.history().push(schematicSet, schematic);
         var next = settings.nextSchematic(brush);
         if (schematicSet.schematics().isEmpty() || next.isEmpty()) return false;
         next.ifPresent(pair -> {
             schematicSet = pair.first;
             schematic = pair.second;
-            brush.history().push(pair);
         });
         reloadSchematic();
         return true;

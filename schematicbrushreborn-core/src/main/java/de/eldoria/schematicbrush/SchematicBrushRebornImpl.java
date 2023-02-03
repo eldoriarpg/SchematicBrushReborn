@@ -22,10 +22,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
-import de.eldoria.schematicbrush.commands.Admin;
-import de.eldoria.schematicbrush.commands.Brush;
-import de.eldoria.schematicbrush.commands.BrushPresets;
-import de.eldoria.schematicbrush.commands.Settings;
+import de.eldoria.schematicbrush.commands.*;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
@@ -115,6 +112,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var adminCommand = new Admin(this, schematics, storageRegistry);
         var settingsCommand = new Settings(this, configuration, renderService, notifyListener, messageBlocker);
         var brushPresetsCommand = new BrushPresets(this, storage, messageBlocker, settingsRegistry);
+        var modifyCommand = new Modify(this, settingsRegistry);
 
         enableMetrics();
 
@@ -126,6 +124,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand(adminCommand);
         registerCommand(settingsCommand);
         registerCommand(brushPresetsCommand);
+        registerCommand(modifyCommand);
 
         if (configuration.general().isCheckUpdates() && UserData.get(this).isSpigotPremium()) {
             Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, configuration.general()
