@@ -86,7 +86,7 @@ bukkit {
     apiVersion = "1.13"
     main = "de.eldoria.schematicbrush.SchematicBrushRebornImpl"
     authors = listOf("RainbowDashLabs", "SirYwell", "LuftigerLuca")
-    website = "https://www.spigotmc.org/resources/79441/"
+    website = "https://www.spigotmc.org/resources/98499/"
     depend = listOf("WorldEdit")
     softDepend = listOf("ProtocolLib")
 
@@ -119,7 +119,7 @@ bukkit {
             aliases = listOf("sbrbp", "schbrbp")
             permission = "schematicbrush.brushpreset.use"
         }
-        register("schematicbrushbrushmodify") {
+        register("schematicbrushmodify") {
             description = "Edit settings of the current brush"
             aliases = listOf("sbrm", "schbrm")
             permission = "schematicbrush.brush.use"
