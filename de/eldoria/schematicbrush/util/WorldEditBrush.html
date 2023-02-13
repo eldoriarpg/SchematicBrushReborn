@@ -144,9 +144,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Set the brush for a player and the item in its main hand.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.sk89q.worldedit.world.item.ItemType</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toItemType(org.bukkit.inventory.ItemStack)" class="member-name-link">toItemType</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBrush(org.bukkit.entity.Player,org.bukkit.inventory.ItemStack,com.sk89q.worldedit.command.tool.brush.Brush,java.lang.String)" class="member-name-link">setBrush</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack,
+ com.sk89q.worldedit.command.tool.brush.Brush&nbsp;brush,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;permission)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Set the brush for a player and the item in its main hand.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.sk89q.worldedit.world.item.ItemType</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toItemType(org.bukkit.inventory.ItemStack)" class="member-name-link">toItemType</a><wbr>(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -248,6 +256,26 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>player</code> - player to set</dd>
 <dd><code>brush</code> - brush to set</dd>
+<dd><code>permission</code> - the permission required to use the brush</dd>
+<dt>Returns:</dt>
+<dd>true if the brush was set.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setBrush(org.bukkit.entity.Player,org.bukkit.inventory.ItemStack,com.sk89q.worldedit.command.tool.brush.Brush,java.lang.String)">
+<h3>setBrush</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">setBrush</span><wbr><span class="parameters">(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
+ <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;stack,
+ com.sk89q.worldedit.command.tool.brush.Brush&nbsp;brush,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;permission)</span></div>
+<div class="block">Set the brush for a player and the item in its main hand.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - player to set</dd>
+<dd><code>stack</code> - the stack to bind the brush to</dd>
+<dd><code>brush</code> - brush to set</dd>
+<dd><code>permission</code> - the permission required to use the brush</dd>
 <dt>Returns:</dt>
 <dd>true if the brush was set.</dd>
 </dl>
