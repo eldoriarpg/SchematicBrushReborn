@@ -114,6 +114,17 @@ public final class WorldEditBrush {
      */
     public static boolean setBrush(Player player, Brush brush, String permission) {
         var stack = player.getInventory().getItemInMainHand();
+        return setBrush(player, stack, brush, permission);
+    }
+
+    /**
+     * Set the brush for a player and the item in its main hand.
+     *
+     * @param player player to set
+     * @param brush  brush to set
+     * @return true if the brush was set.
+     */
+    public static boolean setBrush(Player player, ItemStack stack, Brush brush, String permission) {
         try {
             var brushTool = new BrushTool(permission);
             brushTool.setBrush(brush, permission);
