@@ -33,7 +33,6 @@ public class TestBrush {
             server = MockBukkit.mock();
             MockBukkit.createMockPlugin("WorldEdit");
             load = MockBukkit.load(SchematicBrushRebornImpl.class);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
