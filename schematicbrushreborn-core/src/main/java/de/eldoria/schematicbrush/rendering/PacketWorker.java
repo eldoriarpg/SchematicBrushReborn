@@ -14,16 +14,14 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class PaketWorker implements Runnable {
+public class PacketWorker implements Runnable {
     private final Queue<RenderSink> queue = new ArrayDeque<>();
-    private final Plugin plugin;
+    private final RenderService renderService;
     private boolean active;
     private final AtomicInteger tickChanges = new AtomicInteger();
     private final RollingQueue<Integer> tickUpdates = new RollingQueue<>(200);
@@ -31,16 +29,17 @@ public class PaketWorker implements Runnable {
         Thread thread = new Thread(r);
         thread.setDaemon(true);
         thread.setName("SBR-Packet worker");
-    })
+        return thread;
+    });
 
-    public static PaketWorker create(SchematicBrushReborn plugin) {
-        PaketWorker paketWorker = new PaketWorker(plugin);
-        plugin.scheduleRepeatingTask(paketWorker::flushTickMetrics, 1, 1);
-        return paketWorker;
+    public static PacketWorker create(RenderService renderService,SchematicBrushReborn plugin) {
+        PacketWorker packetWorker = new PacketWorker(renderService);
+        plugin.scheduleRepeatingTask(packetWorker::flushTickMetrics, 1, 1);
+        return packetWorker;
     }
 
-    private PaketWorker(SchematicBrushReborn plugin) {
-        this.plugin = plugin;
+    private PacketWorker(RenderService renderService) {
+        this.renderService = renderService;
     }
 
     public void flushTickMetrics() {
@@ -71,7 +70,7 @@ public class PaketWorker implements Runnable {
      */
     public void queue(RenderSink renderSink) {
         queue.add(renderSink);
-        if (!active) plugin.getServer().getScheduler().runTaskAsynchronously(plugin, this);
+        if (!active) worker.submit(this);
     }
 
 
@@ -99,6 +98,7 @@ public class PaketWorker implements Runnable {
 
     public String info() {
         return """
+                Total Sinks Count: %s
                 Active Sinks Count: %s
                 Active Sinks:
                 %s
@@ -107,10 +107,11 @@ public class PaketWorker implements Runnable {
                 Updates per tick:
                 %s
                 """.stripIndent()
-                .formatted(queue.stream()
+                .formatted(renderService.sinks().size(),
+                        renderService.sinks().stream()
                                 .filter(RenderSink::isActive)
                                 .count(),
-                        queue.stream()
+                        renderService.sinks().stream()
                                 .filter(RenderSink::isActive)
                                 .map(RenderSink::info)
                                 .map(t -> t.indent(2))
