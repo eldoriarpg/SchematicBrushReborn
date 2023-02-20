@@ -116,7 +116,7 @@ public class RenderService implements Runnable, Listener {
         count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
         while (count > 0 && !players.isEmpty()
-               && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
+                && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
             var player = nextPlayer();
             // No need to render dirty sinks or sinks without subscribers.
@@ -148,9 +148,9 @@ public class RenderService implements Runnable, Listener {
         var general = configuration.general();
 
         var outOfRange = brush.getBrushLocation()
-                              .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation()
-                                                                         .toVector()) > Math.pow(general.renderDistance(), 2))
-                              .orElse(true);
+                .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation()
+                        .toVector()) > Math.pow(general.renderDistance(), 2))
+                .orElse(true);
         if (outOfRange) {
             resolveChanges(player);
             return;
@@ -209,6 +209,14 @@ public class RenderService implements Runnable, Listener {
             players.remove(player);
             resolveChanges(player);
         }
+    }
+    /**
+     * @param player
+     * Returns true if preview is active.
+     * Returns false if preview is not active.
+     */
+    public boolean getState(Player player) {
+        return players.contains(player);
     }
 
     private Optional<RenderSink> getSubscription(Player player) {
