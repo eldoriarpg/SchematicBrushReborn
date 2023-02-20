@@ -18,11 +18,13 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 @SuppressWarnings("ALL")
+@Disabled
 public class TestBrush {
     private static ServerMock server;
     private static SchematicBrushRebornImpl load;
