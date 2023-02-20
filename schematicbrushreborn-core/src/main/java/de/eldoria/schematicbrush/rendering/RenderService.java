@@ -6,11 +6,13 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.util.RollingQueue;
+import de.eldoria.schematicbrush.util.Text;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,9 +20,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,7 +43,7 @@ public class RenderService implements Runnable, Listener {
     /**
      * The paket worker which will process packet sending to players
      */
-    private final PaketWorker worker;
+    private PacketWorker worker;
     /**
      * The players which should receive render preview packets
      */
@@ -50,15 +52,15 @@ public class RenderService implements Runnable, Listener {
      * Players which should be excluded from receiving render packets.
      */
     private final Set<UUID> skip = new HashSet<>();
-    private final Plugin plugin;
+    private final SchematicBrushReborn plugin;
     private final Configuration configuration;
-    private final RollingQueue<Long> timings = new RollingQueue<>(100);
+    private final RollingQueue<Long> timings = new RollingQueue<>(200);
     private double count = 1;
 
-    public RenderService(Plugin plugin, Configuration configuration) {
+    public RenderService(SchematicBrushReborn plugin, Configuration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
-        worker = new PaketWorker(plugin);
+        worker = PacketWorker.create(this, plugin);
     }
 
     @EventHandler
@@ -243,15 +245,32 @@ public class RenderService implements Runnable, Listener {
         subscribe(player, player);
     }
 
-    public int paketQueueSize() {
-        return worker.size();
-    }
-
-    public int paketQueuePaketCount() {
-        return worker.packetQueuePacketCount();
-    }
-
     public double renderTimeAverage() {
-        return Math.ceil(timings.values().stream().mapToLong(value -> value).average().orElse(0));
+        return timings.values().stream().mapToLong(value -> value).average().orElse(0);
+    }
+
+    public String renderInfo() {
+        return """
+                Average Tick Render Time: %s
+                Last Tick Render Times:
+                %s
+                Render Worker:
+                %s
+                """.stripIndent()
+                .formatted(renderTimeAverage(),
+                        Text.inlineEntries(timings.values(), 20).indent(2),
+                        worker.info().indent(2));
+    }
+
+    public void restart() {
+        sinks.clear();
+        subscription.clear();
+        worker.shutdown();
+        worker = PacketWorker.create(this, plugin);
+        timings.clear();
+    }
+
+    public Collection<RenderSink> sinks() {
+        return sinks.values();
     }
 }
