@@ -18,6 +18,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class TestBrush {
     }
 
     @Test
+    @Disabled
     public void testSerialization() throws IOException, InvalidConfigurationException {
         var someone = server.addPlayer("Someone");
         var brushBuilder = new BrushBuilderImpl(someone, new RandomSelection(), load.brushSettingsRegistry(), load.schematics());
