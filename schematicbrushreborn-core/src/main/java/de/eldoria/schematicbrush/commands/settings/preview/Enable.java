@@ -25,20 +25,17 @@ public class Enable extends AdvancedCommand implements IPlayerTabExecutor {
 
     public Enable(Plugin plugin, RenderService renderService) {
         super(plugin, CommandMeta.builder("enable")
-                .addUnlocalizedArgument("state", true)
+                .addUnlocalizedArgument("state", false)
                 .build());
         this.renderService = renderService;
     }
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var state = args.asBoolean(0);
+
+        boolean state = args.isEmpty() ? !renderService.getState(player) : args.asBoolean(0);
         renderService.setState(player, state);
-        if (state) {
-            messageSender().sendMessage(player, "Preview active.");
-        } else {
-            messageSender().sendMessage(player, "Preview disabled.");
-        }
+        messageSender().sendMessage(player, state ? "Preview active." : "Preview disabled.");
     }
 
     @Override
