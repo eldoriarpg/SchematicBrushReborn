@@ -95,10 +95,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, configuration));
         storage = storageRegistry.activeStorage();
 
-        reload();
-
         var notifyListener = new NotifyListener(this, configuration);
         renderService = new RenderService(this, configuration);
+
+        reload();
 
         MessageBlocker messageBlocker;
         if (!ServerVersion.between(ServerVersion.MC_1_19, ServerVersion.MC_1_20, ServerVersion.CURRENT_VERSION)) {
@@ -136,6 +136,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     public void reload() {
         schematics.reload();
         configuration.reload();
+        renderService.restart();
     }
 
     @Override
@@ -148,8 +149,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public @NotNull EntryData[] getDebugInformations() {
         return new EntryData[]{new EntryData("Customer Data", UserData.get(this).asString()),
-                new EntryData("Performance", String.format("Render Time: %s ms%nRender Operation Queue: %s%nOperation Paket Count: %s",
-                        renderService.renderTimeAverage(), renderService.paketQueueSize(), renderService.paketQueuePaketCount()))};
+                new EntryData("Performance", renderService.renderInfo())};
     }
 
     private void enableMetrics() {

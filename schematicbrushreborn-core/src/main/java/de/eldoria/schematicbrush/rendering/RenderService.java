@@ -41,7 +41,7 @@ public class RenderService implements Runnable, Listener {
     /**
      * The paket worker which will process packet sending to players
      */
-    private final PaketWorker worker;
+    private PacketWorker worker;
     /**
      * The players which should receive render preview packets
      */
@@ -50,15 +50,15 @@ public class RenderService implements Runnable, Listener {
      * Players which should be excluded from receiving render packets.
      */
     private final Set<UUID> skip = new HashSet<>();
-    private final Plugin plugin;
+    private final SchematicBrushReborn plugin;
     private final Configuration configuration;
-    private final RollingQueue<Long> timings = new RollingQueue<>(100);
+    private final RollingQueue<Long> timings = new RollingQueue<>(200);
     private double count = 1;
 
-    public RenderService(Plugin plugin, Configuration configuration) {
+    public RenderService(SchematicBrushReborn plugin, Configuration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
-        worker = new PaketWorker(plugin);
+        worker = PacketWorker.create(this, plugin);
     }
 
     @EventHandler
@@ -116,7 +116,7 @@ public class RenderService implements Runnable, Listener {
         count += players.size() / (double) configuration.general().previewRefreshInterval();
         var start = System.currentTimeMillis();
         while (count > 0 && !players.isEmpty()
-               && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
+                && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
             var player = nextPlayer();
             // No need to render dirty sinks or sinks without subscribers.
@@ -148,9 +148,9 @@ public class RenderService implements Runnable, Listener {
         var general = configuration.general();
 
         var outOfRange = brush.getBrushLocation()
-                              .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation()
-                                                                         .toVector()) > Math.pow(general.renderDistance(), 2))
-                              .orElse(true);
+                .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation()
+                        .toVector()) > Math.pow(general.renderDistance(), 2))
+                .orElse(true);
         if (outOfRange) {
             resolveChanges(player);
             return;
@@ -235,15 +235,31 @@ public class RenderService implements Runnable, Listener {
         subscribe(player, player);
     }
 
-    public int paketQueueSize() {
-        return worker.size();
-    }
-
-    public int paketQueuePaketCount() {
-        return worker.packetQueuePacketCount();
-    }
-
     public double renderTimeAverage() {
-        return Math.ceil(timings.values().stream().mapToLong(value -> value).average().orElse(0));
+        return timings.values().stream().mapToLong(value -> value).average().orElse(0);
+    }
+
+    public String renderInfo() {
+        return """
+                Average Tick Render Time: %s
+                Last Tick Render Times:
+                %s
+                Render Worker:
+                %s
+                """.stripIndent()
+                .formatted(renderTimeAverage(),
+                        Text.inlineEntries(timings.values(), 20).indent(2),
+                        worker.info().indent(2));
+    }
+
+    public void restart() {
+        sinks.clear();
+        subscription.clear();
+        worker = PacketWorker.create(this, plugin);
+        timings.clear();
+    }
+
+    public Collection<RenderSink> sinks() {
+        return sinks.values();
     }
 }
