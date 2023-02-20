@@ -10,7 +10,6 @@ import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.util.RollingQueue;
 import de.eldoria.schematicbrush.util.Text;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 
 public class PacketWorker implements Runnable {
     private final Queue<RenderSink> queue = new ArrayDeque<>();
+    private final SchematicBrushReborn plugin;
     private final RenderService renderService;
     private boolean active;
     private final AtomicInteger tickChanges = new AtomicInteger();
@@ -31,14 +31,16 @@ public class PacketWorker implements Runnable {
         thread.setName("SBR-Packet worker");
         return thread;
     });
+    private int flushTask;
 
-    public static PacketWorker create(RenderService renderService,SchematicBrushReborn plugin) {
-        PacketWorker packetWorker = new PacketWorker(renderService);
-        plugin.scheduleRepeatingTask(packetWorker::flushTickMetrics, 1, 1);
+    public static PacketWorker create(RenderService renderService, SchematicBrushReborn plugin) {
+        PacketWorker packetWorker = new PacketWorker(plugin, renderService);
+        packetWorker.flushTask = plugin.scheduleRepeatingTask(packetWorker::flushTickMetrics, 1, 1);
         return packetWorker;
     }
 
-    private PacketWorker(RenderService renderService) {
+    private PacketWorker(SchematicBrushReborn plugin, RenderService renderService) {
+        this.plugin = plugin;
         this.renderService = renderService;
     }
 
@@ -121,5 +123,10 @@ public class PacketWorker implements Runnable {
                                 .mapToInt(Integer::intValue)
                                 .average().orElse(0),
                         Text.inlineEntries(tickUpdates.values(), 20).indent(2));
+    }
+
+    public void shutdown() {
+        worker.shutdown();
+        plugin.getScheduler().cancelTask(flushTask);
     }
 }

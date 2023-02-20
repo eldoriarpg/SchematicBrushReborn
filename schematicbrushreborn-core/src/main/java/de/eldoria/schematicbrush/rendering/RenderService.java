@@ -257,6 +257,7 @@ public class RenderService implements Runnable, Listener {
     public void restart() {
         sinks.clear();
         subscription.clear();
+        worker.shutdown();
         worker = PacketWorker.create(this, plugin);
         timings.clear();
     }

@@ -22,7 +22,7 @@ public interface Changes {
      * Show changes to the player
      *
      * @param player player
-     * @return
+     * @return the amount of send packets
      */
     int show(Player player);
 
@@ -30,7 +30,7 @@ public interface Changes {
      * Hide changes from the player
      *
      * @param player player
-     * @return
+     * @return the amount of send packets
      */
     int hide(Player player);
 
@@ -46,7 +46,7 @@ public interface Changes {
      *
      * @param player     player
      * @param newChanges new changes
-     * @return
+     * @return the amount of send packets
      */
     int hide(Player player, Changes newChanges);
 
@@ -69,7 +69,7 @@ public interface Changes {
      *
      * @param player     player
      * @param oldChanges old changes
-     * @return
+     * @return the amount of send packets
      */
     int show(Player player, Changes oldChanges);
 }
