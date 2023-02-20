@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.4.0"
+version = "2.4.1"
 
 subprojects {
     apply {
@@ -44,26 +44,26 @@ allprojects {
         compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.13") {
             exclude("org.yaml")
         }
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.0") {
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2") {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
         }
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.1") {
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") {
             isTransitive = false
             exclude("org.yaml")
         }
 
         testImplementation(platform("org.junit:junit-bom:5.9.2"))
         testImplementation("org.junit.jupiter", "junit-jupiter")
-        testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.144.3")
+        testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.145.0")
         testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.13") {
             exclude("org.yaml")
         }
-        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.0") {
+        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2") {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
         }
-        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.1") {
+        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") {
             isTransitive = false
             exclude("org.yaml")
         }
