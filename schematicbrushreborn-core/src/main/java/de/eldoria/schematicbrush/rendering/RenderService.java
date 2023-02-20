@@ -211,6 +211,15 @@ public class RenderService implements Runnable, Listener {
         }
     }
 
+    /**
+     * @param player
+     * Returns true if preview is active.
+     * Returns false if preview is not active.
+     */
+    public boolean getState(Player player) {
+        return players.contains(player);
+    }
+
     private Optional<RenderSink> getSubscription(Player player) {
         return Optional.ofNullable(subscription.get(player.getUniqueId()));
     }
