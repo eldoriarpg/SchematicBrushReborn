@@ -228,4 +228,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         return configuration;
     }
 
+    public RenderService renderService() {
+        return renderService;
+    }
 }
