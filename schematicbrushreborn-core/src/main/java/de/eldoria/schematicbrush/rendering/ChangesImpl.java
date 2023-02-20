@@ -38,13 +38,13 @@ public class ChangesImpl implements Changes {
     }
 
     @Override
-    public void show(Player player) {
-        sendChanges(player, changed);
+    public int show(Player player) {
+        return sendChanges(player, changed);
     }
 
     @Override
-    public void hide(Player player) {
-        sendChanges(player, original);
+    public int hide(Player player) {
+        return sendChanges(player, original);
     }
 
     @Override
@@ -52,12 +52,12 @@ public class ChangesImpl implements Changes {
         return changed.size();
     }
 
-    private void sendChanges(Player player, Map<Location, BlockData> data) {
+    private int sendChanges(Player player, Map<Location, BlockData> data) {
         if (FAWE.isFawe()) {
             // in an ideal world would be some cool FAWE stuff here. Sadly it isn't.
-            sendBlocks(player, data);
+            return sendBlocks(player, data);
         } else {
-            sendBlocks(player, data);
+            return sendBlocks(player, data);
         }
     }
 
@@ -72,28 +72,29 @@ public class ChangesImpl implements Changes {
         }
     }
 
-    private void sendBlocks(Player player, Map<Location, BlockData> data) {
+    private int sendBlocks(Player player, Map<Location, BlockData> data) {
         for (var entry : data.entrySet()) {
             player.sendBlockChange(entry.getKey(), entry.getValue());
         }
+        return data.size();
     }
 
     @Override
-    public void show(Player player, Changes oldChanges) {
+    public int show(Player player, Changes oldChanges) {
         var filter = new HashMap<>(changed);
         for (var entry : oldChanges.changed().entrySet()) {
             filter.remove(entry.getKey(), entry.getValue());
         }
-        sendChanges(player, filter);
+        return sendChanges(player, filter);
     }
 
     @Override
-    public void hide(Player player, Changes newChanges) {
+    public int hide(Player player, Changes newChanges) {
         var filter = new HashMap<>(original);
         for (var location : newChanges.changed().keySet()) {
             filter.remove(location);
         }
-        sendChanges(player, filter);
+        return sendChanges(player, filter);
     }
 
     @Override

@@ -44,4 +44,8 @@ public class RollingQueue<T> {
     public Collection<T> values() {
         return queue.stream().toList();
     }
+
+    public void clear() {
+        queue.clear();
+    }
 }
