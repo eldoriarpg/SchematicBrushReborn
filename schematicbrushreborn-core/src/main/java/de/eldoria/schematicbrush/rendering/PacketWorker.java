@@ -24,7 +24,8 @@ public class PacketWorker implements Runnable {
     private final RenderService renderService;
     private boolean active;
     private final AtomicInteger tickChanges = new AtomicInteger();
-    private final RollingQueue<Integer> tickUpdates = new RollingQueue<>(200);
+    private final RollingQueue<Integer> tickUpdates = new RollingQueue<>(1200);
+    private final RollingQueue<Integer> queueSize = new RollingQueue<>(1200);
     private final ExecutorService worker = Executors.newSingleThreadExecutor(r -> {
         Thread thread = new Thread(r);
         thread.setDaemon(true);
@@ -46,6 +47,7 @@ public class PacketWorker implements Runnable {
 
     public void flushTickMetrics() {
         tickUpdates.add(tickChanges.getAndSet(0));
+        queueSize.add(packetQueueCount());
     }
 
     @Override
@@ -90,8 +92,10 @@ public class PacketWorker implements Runnable {
         });
     }
 
-    public int packetQueuePacketCount() {
-        return queue.stream().mapToInt(RenderSink::size).sum();
+    public int packetQueueCount() {
+        synchronized (queue) {
+            return queue.stream().mapToInt(RenderSink::size).sum();
+        }
     }
 
     public int size() {
@@ -104,7 +108,9 @@ public class PacketWorker implements Runnable {
                 Active Sinks Count: %s
                 Active Sinks:
                 %s
-                Packets queued: %s
+                Packets Queued: %s
+                Packets Queued History:
+                %s
                 Average updates last %s ticks: %s
                 Updates per tick:
                 %s
@@ -118,7 +124,8 @@ public class PacketWorker implements Runnable {
                                 .map(RenderSink::info)
                                 .map(t -> t.indent(2))
                                 .collect(Collectors.joining("\n======")),
-                        packetQueuePacketCount(),
+                        packetQueueCount(),
+                        Text.inlineEntries(queueSize.values(), 20).indent(2),
                         tickUpdates.values().size(), tickUpdates.values().stream()
                                 .mapToInt(Integer::intValue)
                                 .average().orElse(0),

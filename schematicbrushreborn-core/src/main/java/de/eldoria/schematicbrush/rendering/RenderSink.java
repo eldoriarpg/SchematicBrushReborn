@@ -6,7 +6,11 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.util.RollingQueue;
+import de.eldoria.schematicbrush.util.Text;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +36,7 @@ public class RenderSink {
     private final PacketWorker worker;
     private final Configuration configuration;
     private long flushed = System.currentTimeMillis();
+    private final RollingQueue<Integer> batchSize = new RollingQueue<>(1200);
 
     public RenderSink(Player sinkOwner, PacketWorker worker, Configuration configuration) {
         this.sinkOwner = sinkOwner.getUniqueId();
@@ -41,6 +46,15 @@ public class RenderSink {
     }
 
     public int sendChanges() {
+        int changed = dispatchSend();
+        if (changed != 0) {
+            flushed = System.currentTimeMillis();
+        }
+        batchSize.add(changed);
+        return changed;
+    }
+
+    private int dispatchSend() {
         int changed = 0;
         var general = configuration.general();
         // Check if new changes are present to be sent.
@@ -55,12 +69,10 @@ public class RenderSink {
 
         if (!dirty) {
             applySubscriberChange();
-            if (changed != 0) flushed = System.currentTimeMillis();
             return changed;
         }
         if (oldChanges != null && newChanges != null) {
-            if ((changed += update()) != 0) flushed = System.currentTimeMillis();
-            return changed;
+            return changed + update();
         }
 
         var lastReceived = new HashSet<>(this.received);
@@ -83,7 +95,6 @@ public class RenderSink {
 
         dirty = false;
         applySubscriberChange();
-        if (changed != 0) flushed = System.currentTimeMillis();
         return changed;
     }
 
@@ -199,14 +210,21 @@ public class RenderSink {
     }
 
     public String info() {
+        Optional<Player> player = Optional.of(Bukkit.getPlayer(sinkOwner));
         return """
                 Owner: %s
                 Size: %s
                 Subscriber:
                 %s
+                Brush:
+                %s
+                Batch Size:
+                %s
                 """.stripIndent()
-                .formatted(Bukkit.getPlayer(sinkOwner).getName(),
+                .formatted(player.map(Player::getName).orElse("none"),
                         size(),
-                        subscribers.stream().map(Player::getName).map("  %s"::formatted).collect(Collectors.joining("\n")));
+                        subscribers.stream().map(Player::getName).map("  %s"::formatted).collect(Collectors.joining("\n")),
+                        player.flatMap(WorldEditBrush::getSchematicBrush).map(SchematicBrush::info).orElse("non").indent(2),
+                        Text.inlineEntries(batchSize.values(), 20).indent(2));
     }
 }
