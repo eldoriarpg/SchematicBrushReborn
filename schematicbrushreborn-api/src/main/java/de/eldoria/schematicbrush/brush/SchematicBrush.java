@@ -82,4 +82,6 @@ public interface SchematicBrush extends Brush {
     BrushBuilder toBuilder(BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry);
 
     BrushHistory history();
+
+    String info();
 }

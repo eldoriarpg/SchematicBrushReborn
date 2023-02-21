@@ -149,7 +149,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public @NotNull EntryData[] getDebugInformations() {
         return new EntryData[]{new EntryData("Customer Data", UserData.get(this).asString()),
-                new EntryData("Performance", renderService.renderInfo())};
+                new EntryData("Rendering", renderService.renderInfo())};
     }
 
     private void enableMetrics() {
