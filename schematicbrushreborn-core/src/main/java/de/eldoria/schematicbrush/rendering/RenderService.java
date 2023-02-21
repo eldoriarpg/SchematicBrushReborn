@@ -46,10 +46,6 @@ public class RenderService implements Runnable, Listener {
     private final Map<UUID, RenderSink> subscription = new HashMap<>();
     private final MessageSender messageSender;
     /**
-     * The paket worker which will process packet sending to players
-     */
-    private PacketWorker worker;
-    /**
      * The players which should receive render preview packets
      */
     private final Queue<Player> players = new ArrayDeque<>();
@@ -60,6 +56,10 @@ public class RenderService implements Runnable, Listener {
     private final SchematicBrushReborn plugin;
     private final Configuration configuration;
     private final RollingQueue<Long> timings = new RollingQueue<>(1200);
+    /**
+     * The paket worker which will process packet sending to players
+     */
+    private PacketWorker worker;
     private double count = 1;
 
     public RenderService(SchematicBrushReborn plugin, Configuration configuration) {
@@ -225,10 +225,12 @@ public class RenderService implements Runnable, Listener {
             resolveChanges(player);
         }
     }
+
     /**
-     * @param player
-     * Returns true if preview is active.
-     * Returns false if preview is not active.
+     * Returns the state of the player
+     *
+     * @param player player to check
+     * @return true if preview is active
      */
     public boolean getState(Player player) {
         return players.contains(player);
