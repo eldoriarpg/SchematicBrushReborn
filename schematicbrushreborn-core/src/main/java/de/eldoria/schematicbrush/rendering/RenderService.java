@@ -6,6 +6,9 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import de.eldoria.eldoutilities.messages.MessageChannel;
+import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.messages.MessageType;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.config.Configuration;
@@ -30,6 +33,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class RenderService implements Runnable, Listener {
     /**
@@ -40,6 +44,7 @@ public class RenderService implements Runnable, Listener {
      * The sink a player is subscribed to.
      */
     private final Map<UUID, RenderSink> subscription = new HashMap<>();
+    private final MessageSender messageSender;
     /**
      * The paket worker which will process packet sending to players
      */
@@ -54,13 +59,15 @@ public class RenderService implements Runnable, Listener {
     private final Set<UUID> skip = new HashSet<>();
     private final SchematicBrushReborn plugin;
     private final Configuration configuration;
-    private final RollingQueue<Long> timings = new RollingQueue<>(200);
+    private final RollingQueue<Long> timings = new RollingQueue<>(1200);
     private double count = 1;
 
     public RenderService(SchematicBrushReborn plugin, Configuration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
         worker = PacketWorker.create(this, plugin);
+        messageSender = MessageSender.getPluginMessageSender(plugin);
+
     }
 
     @EventHandler
@@ -162,16 +169,22 @@ public class RenderService implements Runnable, Listener {
         var replaceAll = (boolean) brush.settings().getMutator(PlacementModifier.REPLACE_ALL).value();
 
         if (includeAir && replaceAll && brush.nextPaste().schematic().size() > general.maxRenderSize()) {
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
+                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().size(), general.maxRenderSize()));
             resolveChanges(player);
             return;
         }
 
         if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxRenderSize()) {
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
+                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().effectiveSize(), general.maxRenderSize()));
             resolveChanges(player);
             return;
         }
 
         if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxEffectiveRenderSize()) {
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
+                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().effectiveSize(), general.maxEffectiveRenderSize()));
             resolveChanges(player);
             return;
         }
@@ -256,10 +269,13 @@ public class RenderService implements Runnable, Listener {
                 %s
                 Render Worker:
                 %s
+                Active previews:
+                %s
                 """.stripIndent()
                 .formatted(renderTimeAverage(),
                         Text.inlineEntries(timings.values(), 20).indent(2),
-                        worker.info().indent(2));
+                        worker.info().indent(2),
+                        players.stream().map(Player::getName).collect(Collectors.joining("\n")).indent(2));
     }
 
     public void restart() {
