@@ -20,7 +20,7 @@ public class RestartRendering extends AdvancedCommand implements ITabExecutor {
 
     public RestartRendering(SchematicBrushRebornImpl plugin) {
         super(plugin, CommandMeta.builder("restartRendering")
-                .withPermission(Permissions.Admin.RELOAD)
+                .withPermission(Permissions.Admin.RESTART_RENDERING)
                 .build());
         instance = plugin;
     }
