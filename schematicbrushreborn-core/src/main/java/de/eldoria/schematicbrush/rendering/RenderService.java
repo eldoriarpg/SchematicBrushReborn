@@ -6,11 +6,16 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import de.eldoria.eldoutilities.messages.MessageChannel;
+import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.messages.MessageType;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.util.RollingQueue;
+import de.eldoria.schematicbrush.util.Text;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,9 +23,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,6 +33,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class RenderService implements Runnable, Listener {
     /**
@@ -38,10 +45,7 @@ public class RenderService implements Runnable, Listener {
      * The sink a player is subscribed to.
      */
     private final Map<UUID, RenderSink> subscription = new HashMap<>();
-    /**
-     * The paket worker which will process packet sending to players
-     */
-    private final PaketWorker worker;
+    private final MessageSender messageSender;
     /**
      * The players which should receive render preview packets
      */
@@ -50,15 +54,21 @@ public class RenderService implements Runnable, Listener {
      * Players which should be excluded from receiving render packets.
      */
     private final Set<UUID> skip = new HashSet<>();
-    private final Plugin plugin;
+    private final SchematicBrushReborn plugin;
     private final Configuration configuration;
-    private final RollingQueue<Long> timings = new RollingQueue<>(100);
+    private final RollingQueue<Long> timings = new RollingQueue<>(1200);
+    /**
+     * The paket worker which will process packet sending to players
+     */
+    private PacketWorker worker;
     private double count = 1;
 
-    public RenderService(Plugin plugin, Configuration configuration) {
+    public RenderService(SchematicBrushReborn plugin, Configuration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
-        worker = new PaketWorker(plugin);
+        worker = PacketWorker.create(this, plugin);
+        messageSender = MessageSender.getPluginMessageSender(plugin);
+
     }
 
     @EventHandler
@@ -113,23 +123,39 @@ public class RenderService implements Runnable, Listener {
     @Override
     public void run() {
         if (players.isEmpty()) return;
-        count += players.size() / (double) configuration.general().previewRefreshInterval();
+        try {
+            tick();
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "An error occured during rendering", e);
+        }
+
+    }
+
+    private void tick() {
         var start = System.currentTimeMillis();
+        count += players.size() / (double) configuration.general().previewRefreshInterval();
         while (count > 0 && !players.isEmpty()
-               && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
+                && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
-            var player = nextPlayer();
-            // No need to render dirty sinks or sinks without subscribers.
-            if (getSink(player).isDirty() || !getSink(player).isSubscribed()) {
-                continue;
-            }
-            if (!skip.contains(player.getUniqueId())) {
-                render(player);
-            } else if (sinks.containsKey(player.getUniqueId())) {
-                resolveBlocked(player);
+            try {
+                handlePlayerTick(nextPlayer());
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.SEVERE, "An error occured during player rendering", e);
             }
         }
         timings.add(System.currentTimeMillis() - start);
+    }
+
+    private void handlePlayerTick(Player player) {
+        // No need to render dirty sinks or sinks without subscribers.
+        if (getSink(player).isDirty() || !getSink(player).isSubscribed()) {
+            return;
+        }
+        if (!skip.contains(player.getUniqueId())) {
+            render(player);
+        } else if (sinks.containsKey(player.getUniqueId())) {
+            resolveBlocked(player);
+        }
     }
 
     private Player nextPlayer() {
@@ -148,9 +174,9 @@ public class RenderService implements Runnable, Listener {
         var general = configuration.general();
 
         var outOfRange = brush.getBrushLocation()
-                              .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation()
-                                                                         .toVector()) > Math.pow(general.renderDistance(), 2))
-                              .orElse(true);
+                .map(loc -> loc.toVector().distanceSq(brush.actor().getLocation()
+                        .toVector()) > Math.pow(general.renderDistance(), 2))
+                .orElse(true);
         if (outOfRange) {
             resolveChanges(player);
             return;
@@ -160,16 +186,22 @@ public class RenderService implements Runnable, Listener {
         var replaceAll = (boolean) brush.settings().getMutator(PlacementModifier.REPLACE_ALL).value();
 
         if (includeAir && replaceAll && brush.nextPaste().schematic().size() > general.maxRenderSize()) {
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
+                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().size(), general.maxRenderSize()));
             resolveChanges(player);
             return;
         }
 
         if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxRenderSize()) {
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
+                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().effectiveSize(), general.maxRenderSize()));
             resolveChanges(player);
             return;
         }
 
         if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxEffectiveRenderSize()) {
+            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
+                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().effectiveSize(), general.maxEffectiveRenderSize()));
             resolveChanges(player);
             return;
         }
@@ -211,6 +243,16 @@ public class RenderService implements Runnable, Listener {
         }
     }
 
+    /**
+     * Returns the state of the player
+     *
+     * @param player player to check
+     * @return true if preview is active
+     */
+    public boolean getState(Player player) {
+        return players.contains(player);
+    }
+
     private Optional<RenderSink> getSubscription(Player player) {
         return Optional.ofNullable(subscription.get(player.getUniqueId()));
     }
@@ -235,15 +277,35 @@ public class RenderService implements Runnable, Listener {
         subscribe(player, player);
     }
 
-    public int paketQueueSize() {
-        return worker.size();
-    }
-
-    public int paketQueuePaketCount() {
-        return worker.packetQueuePacketCount();
-    }
-
     public double renderTimeAverage() {
-        return Math.ceil(timings.values().stream().mapToLong(value -> value).average().orElse(0));
+        return timings.values().stream().mapToLong(value -> value).average().orElse(0);
+    }
+
+    public String renderInfo() {
+        return """
+                Average Tick Render Time: %s
+                Last Tick Render Times:
+                %s
+                Render Worker:
+                %s
+                Active previews:
+                %s
+                """.stripIndent()
+                .formatted(renderTimeAverage(),
+                        Text.inlineEntries(timings.values(), 20).indent(2),
+                        worker.info().indent(2),
+                        players.stream().map(Player::getName).collect(Collectors.joining("\n")).indent(2));
+    }
+
+    public void restart() {
+        sinks.clear();
+        subscription.clear();
+        worker.shutdown();
+        worker = PacketWorker.create(this, plugin);
+        timings.clear();
+    }
+
+    public Collection<RenderSink> sinks() {
+        return sinks.values();
     }
 }

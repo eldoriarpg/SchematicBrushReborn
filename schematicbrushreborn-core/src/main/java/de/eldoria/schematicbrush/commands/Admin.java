@@ -14,6 +14,7 @@ import de.eldoria.schematicbrush.commands.admin.Info;
 import de.eldoria.schematicbrush.commands.admin.Migrate;
 import de.eldoria.schematicbrush.commands.admin.Reload;
 import de.eldoria.schematicbrush.commands.admin.ReloadCache;
+import de.eldoria.schematicbrush.commands.admin.RestartRendering;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 
@@ -29,6 +30,7 @@ public class Admin extends AdvancedCommand {
                     cmds.add(new Debug(instance));
                     cmds.add(new Reload(instance));
                     cmds.add(new ReloadCache(instance, cache));
+                    cmds.add(new RestartRendering(instance));
                     cmds.add(new Migrate(instance, storageRegistry));
                 })
                 .build());

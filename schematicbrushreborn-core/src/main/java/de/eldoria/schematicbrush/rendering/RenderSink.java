@@ -6,7 +6,12 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.util.RollingQueue;
+import de.eldoria.schematicbrush.util.Text;
+import de.eldoria.schematicbrush.util.WorldEditBrush;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +19,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class RenderSink {
     private final UUID sinkOwner;
@@ -27,35 +33,46 @@ public class RenderSink {
     private Changes oldChanges;
     // Defines if the sink has changes yet to be sent.
     private boolean dirty;
-    private final PaketWorker worker;
+    private final PacketWorker worker;
     private final Configuration configuration;
+    private long flushed = System.currentTimeMillis();
+    private final RollingQueue<Integer> batchSize = new RollingQueue<>(1200);
 
-    public RenderSink(Player sinkOwner, PaketWorker worker, Configuration configuration) {
+    public RenderSink(Player sinkOwner, PacketWorker worker, Configuration configuration) {
         this.sinkOwner = sinkOwner.getUniqueId();
         this.worker = worker;
         this.configuration = configuration;
         this.subscribers.add(sinkOwner);
     }
 
-    public void sendChanges() {
+    public int sendChanges() {
+        int changed = dispatchSend();
+        if (changed != 0) {
+            flushed = System.currentTimeMillis();
+        }
+        batchSize.add(changed);
+        return changed;
+    }
+
+    private int dispatchSend() {
+        int changed = 0;
         var general = configuration.general();
         // Check if new changes are present to be sent.
         for (Player player : add) {
             if (newChanges == null || general.isOutOfRenderRange(player.getLocation(), newChanges.location())) continue;
-            newChanges.show(player);
+            changed += newChanges.show(player);
         }
 
         for (Player player : remove) {
-            if (oldChanges != null) oldChanges.hide(player);
+            if (oldChanges != null) changed += oldChanges.hide(player);
         }
 
         if (!dirty) {
             applySubscriberChange();
-            return;
+            return changed;
         }
         if (oldChanges != null && newChanges != null) {
-            update();
-            return;
+            return changed + update();
         }
 
         var lastReceived = new HashSet<>(this.received);
@@ -64,20 +81,21 @@ public class RenderSink {
         for (Player player : subscribers) {
             if (newChanges == null || general.isOutOfRenderRange(player.getLocation(), newChanges.location())) {
                 if (lastReceived.contains(player)) {
-                    if (oldChanges != null) oldChanges.hide(player);
+                    if (oldChanges != null) changed += oldChanges.hide(player);
                     continue;
                 }
             }
 
-            if (oldChanges != null) oldChanges.hide(player);
+            if (oldChanges != null) changed += oldChanges.hide(player);
             if (newChanges != null && !general.isOutOfRenderRange(player.getLocation(), newChanges.location())) {
-                newChanges.show(player);
+                changed += newChanges.show(player);
                 received.add(player);
             }
         }
 
         dirty = false;
         applySubscriberChange();
+        return changed;
     }
 
     private void applySubscriberChange() {
@@ -90,9 +108,12 @@ public class RenderSink {
 
     /**
      * Update the preview. Only send changed blocks and reuse already sent blocks.
+     *
+     * @return amount of send packets
      */
     @SuppressWarnings("ConstantConditions")
-    private void update() {
+    private int update() {
+        int changed = 0;
         var lastReceived = new HashSet<>(this.received);
         this.received.clear();
 
@@ -100,24 +121,29 @@ public class RenderSink {
             // Check if player is outside of render distance
             if (configuration.general().isOutOfRenderRange(player.getLocation(), newChanges.location())) {
                 if (lastReceived.contains(player)) {
-                    oldChanges.hide(player);
+                    changed += oldChanges.hide(player);
                     continue;
                 }
                 continue;
             }
 
             if (lastReceived.contains(player)) {
-                oldChanges.hide(player, newChanges);
+                changed += oldChanges.hide(player, newChanges);
             }
-            newChanges.show(player, oldChanges);
+            changed += newChanges.show(player, oldChanges);
             received.add(player);
         }
         dirty = false;
+        return changed;
     }
 
     public int size() {
         return Optional.ofNullable(oldChanges).map(Changes::size).orElse(0)
-               + Optional.ofNullable(newChanges).map(Changes::size).orElse(0);
+                + Optional.ofNullable(newChanges).map(Changes::size).orElse(0);
+    }
+
+    public boolean isActive() {
+        return isSubscribed() && System.currentTimeMillis() - flushed < 60000;
     }
 
     public void push(Changes newChanges) {
@@ -126,9 +152,9 @@ public class RenderSink {
         dirty = true;
     }
 
-    public void pushAndSend(Changes newChanges) {
+    public int pushAndSend(Changes newChanges) {
         push(newChanges);
-        sendChanges();
+        return sendChanges();
     }
 
     public void pushAndQueue(Changes newChanges) {
@@ -181,5 +207,24 @@ public class RenderSink {
 
     public void remove(Player player) {
         subscribers.remove(player);
+    }
+
+    public String info() {
+        Optional<Player> player = Optional.of(Bukkit.getPlayer(sinkOwner));
+        return """
+                Owner: %s
+                Size: %s
+                Subscriber:
+                %s
+                Brush:
+                %s
+                Batch Size:
+                %s
+                """.stripIndent()
+                .formatted(player.map(Player::getName).orElse("none"),
+                        size(),
+                        subscribers.stream().map(Player::getName).map("  %s"::formatted).collect(Collectors.joining("\n")),
+                        player.flatMap(WorldEditBrush::getSchematicBrush).map(SchematicBrush::info).orElse("non").indent(2),
+                        Text.inlineEntries(batchSize.values(), 20).indent(2));
     }
 }

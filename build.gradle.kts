@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.4.1"
+version = "2.4.2"
 
 subprojects {
     apply {
@@ -55,7 +55,7 @@ allprojects {
 
         testImplementation(platform("org.junit:junit-bom:5.9.2"))
         testImplementation("org.junit.jupiter", "junit-jupiter")
-        testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.144.3")
+        testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.145.0")
         testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.13") {
             exclude("org.yaml")
         }

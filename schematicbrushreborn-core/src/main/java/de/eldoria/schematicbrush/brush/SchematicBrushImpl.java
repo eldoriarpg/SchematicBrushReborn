@@ -31,6 +31,7 @@ import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
 import de.eldoria.schematicbrush.rendering.CapturingExtentImpl;
 import de.eldoria.schematicbrush.rendering.FakeWorldImpl;
+import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.entity.Player;
@@ -197,5 +198,22 @@ public class SchematicBrushImpl implements SchematicBrush {
     @Override
     public BrushHistory history() {
         return history;
+    }
+
+    @Override
+    public String info() {
+        Schematic schematic = nextPaste.schematic();
+        return """
+                Schematic Name: %s
+                Schematic Path: %s
+                Schematic Size: %,d
+                Effective Schematic Size: %,d
+                Schematic Format: %s
+                """.stripIndent()
+                .formatted(schematic.getFile().getName(),
+                        schematic.getFile().getPath(),
+                        schematic.size(),
+                        schematic.effectiveSize(),
+                        schematic.format().getName());
     }
 }

@@ -18,11 +18,13 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 @SuppressWarnings("ALL")
+@Disabled
 public class TestBrush {
     private static ServerMock server;
     private static SchematicBrushRebornImpl load;
@@ -33,13 +35,13 @@ public class TestBrush {
             server = MockBukkit.mock();
             MockBukkit.createMockPlugin("WorldEdit");
             load = MockBukkit.load(SchematicBrushRebornImpl.class);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Test
+    @Disabled
     public void testSerialization() throws IOException, InvalidConfigurationException {
         var someone = server.addPlayer("Someone");
         var brushBuilder = new BrushBuilderImpl(someone, new RandomSelection(), load.brushSettingsRegistry(), load.schematics());

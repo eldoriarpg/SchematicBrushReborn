@@ -50,6 +50,7 @@ public final class Permissions {
     public static final class Admin {
         private static final String ADMIN = perm(BASE, "admin");
         public static final String RELOAD = perm(ADMIN, "reload");
+        public static final String RESTART_RENDERING = perm(ADMIN, "restartrendering");
         public static final String RELOAD_CACHE = perm(ADMIN, "reloadcache");
         public static final String DEBUG = perm(ADMIN, "debug");
         public static final String MIGRATE = perm(ADMIN, "migrate");

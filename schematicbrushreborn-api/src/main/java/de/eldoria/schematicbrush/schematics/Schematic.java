@@ -151,7 +151,7 @@ public class Schematic implements Comparable<Schematic> {
      */
     @SuppressWarnings("OverlyBroadThrowsClause")
     public Clipboard loadSchematic() throws IOException {
-        try (var reader = format.getReader(new FileInputStream(file))) {
+        try (var in = new FileInputStream(file); var reader = format.getReader(in)) {
             return reader.read();
         }
     }
@@ -295,6 +295,10 @@ public class Schematic implements Comparable<Schematic> {
             return Long.compare(number, other.number);
         }
         return name;
+    }
+
+    public ClipboardFormat format() {
+        return format;
     }
 
     @Override
