@@ -91,6 +91,7 @@ public interface GeneralConfig extends ConfigurationSerializable {
     int maxRenderSize();
 
     default boolean isOutOfRenderRange(Location origin, Location other) {
+        if (origin.getWorld() != other.getWorld()) return false;
         return origin.distanceSquared(other) > renderDistanceSquared();
     }
 
