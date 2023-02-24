@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class RenderService implements Runnable, Listener {
@@ -46,10 +47,6 @@ public class RenderService implements Runnable, Listener {
     private final Map<UUID, RenderSink> subscription = new HashMap<>();
     private final MessageSender messageSender;
     /**
-     * The paket worker which will process packet sending to players
-     */
-    private PacketWorker worker;
-    /**
      * The players which should receive render preview packets
      */
     private final Queue<Player> players = new ArrayDeque<>();
@@ -60,6 +57,10 @@ public class RenderService implements Runnable, Listener {
     private final SchematicBrushReborn plugin;
     private final Configuration configuration;
     private final RollingQueue<Long> timings = new RollingQueue<>(1200);
+    /**
+     * The paket worker which will process packet sending to players
+     */
+    private PacketWorker worker;
     private double count = 1;
 
     public RenderService(SchematicBrushReborn plugin, Configuration configuration) {
@@ -122,23 +123,39 @@ public class RenderService implements Runnable, Listener {
     @Override
     public void run() {
         if (players.isEmpty()) return;
-        count += players.size() / (double) configuration.general().previewRefreshInterval();
+        try {
+            tick();
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "An error occured during rendering", e);
+        }
+
+    }
+
+    private void tick() {
         var start = System.currentTimeMillis();
+        count += players.size() / (double) configuration.general().previewRefreshInterval();
         while (count > 0 && !players.isEmpty()
                 && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
-            var player = nextPlayer();
-            // No need to render dirty sinks or sinks without subscribers.
-            if (getSink(player).isDirty() || !getSink(player).isSubscribed()) {
-                continue;
-            }
-            if (!skip.contains(player.getUniqueId())) {
-                render(player);
-            } else if (sinks.containsKey(player.getUniqueId())) {
-                resolveBlocked(player);
+            try {
+                handlePlayerTick(nextPlayer());
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.SEVERE, "An error occured during player rendering", e);
             }
         }
         timings.add(System.currentTimeMillis() - start);
+    }
+
+    private void handlePlayerTick(Player player) {
+        // No need to render dirty sinks or sinks without subscribers.
+        if (getSink(player).isDirty() || !getSink(player).isSubscribed()) {
+            return;
+        }
+        if (!skip.contains(player.getUniqueId())) {
+            render(player);
+        } else if (sinks.containsKey(player.getUniqueId())) {
+            resolveBlocked(player);
+        }
     }
 
     private Player nextPlayer() {
@@ -225,10 +242,12 @@ public class RenderService implements Runnable, Listener {
             resolveChanges(player);
         }
     }
+
     /**
-     * @param player
-     * Returns true if preview is active.
-     * Returns false if preview is not active.
+     * Returns the state of the player
+     *
+     * @param player player to check
+     * @return true if preview is active
      */
     public boolean getState(Player player) {
         return players.contains(player);
