@@ -93,9 +93,9 @@ public class PacketWorker implements Runnable {
     }
 
     public int packetQueueCount() {
-        synchronized (queue) {
-            return queue.stream().mapToInt(RenderSink::size).sum();
-        }
+        // We copy the queue to avoid modification during counting.
+        // Synchronizing the queue would stop the worker from working properly
+        return new ArrayDeque<>(queue).stream().mapToInt(RenderSink::size).sum();
     }
 
     public int size() {
