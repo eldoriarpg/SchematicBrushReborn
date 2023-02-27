@@ -19,6 +19,7 @@ import de.eldoria.schematicbrush.brush.history.BrushHistory;
 import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -69,6 +70,7 @@ public interface SchematicBrush extends Brush {
      *
      * @return next paste
      */
+    @Nullable
     BrushPaste nextPaste();
 
     /**

@@ -10,6 +10,7 @@ import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
+import de.eldoria.schematicbrush.brush.BrushPaste;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
@@ -18,7 +19,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +38,10 @@ public class RandomSelection implements SchematicSelection {
 
     @Override
     public Optional<Pair<SchematicSet, Schematic>> nextSchematic(SchematicBrush brush, boolean force) {
+        BrushPaste next = brush.nextPaste();
+        if (next == null) {
+            return getDefaultSchem(brush);
+        }
         var set = getRandomSchematicSet(brush.settings());
         var schematic = getRandomSchematic(set);
         if (schematic == null) {

@@ -7,6 +7,7 @@ package de.eldoria.schematicbrush.brush.config.schematics;
 
 import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
+import de.eldoria.schematicbrush.brush.BrushPaste;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
@@ -38,8 +39,12 @@ public class LockedOrderedSelection extends OrderedSelection {
 
     @Override
     public Optional<Pair<SchematicSet, Schematic>> nextSchematic(SchematicBrush brush, boolean force) {
-        Schematic currSchematic = brush.nextPaste().schematic();
-        SchematicSet currSet = brush.nextPaste().schematicSet();
+        BrushPaste next = brush.nextPaste();
+        if (next == null) {
+            return getDefaultSchem(brush);
+        }
+        Schematic currSchematic = next.schematic();
+        SchematicSet currSet = next.schematicSet();
         if (!force) {
             return Optional.of(Pair.of(currSet, currSchematic));
         }
