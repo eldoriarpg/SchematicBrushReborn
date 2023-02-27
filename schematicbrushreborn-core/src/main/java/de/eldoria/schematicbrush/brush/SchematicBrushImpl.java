@@ -175,6 +175,7 @@ public class SchematicBrushImpl implements SchematicBrush {
      * @return next paste
      */
     @Override
+    @Nullable
     public BrushPaste nextPaste() {
         return nextPaste;
     }
