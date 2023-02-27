@@ -30,8 +30,6 @@ allprojects {
             licenseHeaderFile(rootProject.file("HEADER.txt"))
             target("**/*.java")
         }
-
-        ratchetFrom = "origin/master"
     }
 
     java {
