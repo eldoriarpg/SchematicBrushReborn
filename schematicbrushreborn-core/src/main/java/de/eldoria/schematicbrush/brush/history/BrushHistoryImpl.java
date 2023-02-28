@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.brush.history;
 
 import de.eldoria.eldoutilities.container.Pair;

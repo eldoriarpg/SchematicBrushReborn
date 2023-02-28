@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.event;
 
 import de.eldoria.schematicbrush.brush.BrushPaste;

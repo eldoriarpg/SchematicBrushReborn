@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.brush.config.flip;
 
 import com.sk89q.worldedit.math.Vector3;

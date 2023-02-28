@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.config.sections.brushes;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;

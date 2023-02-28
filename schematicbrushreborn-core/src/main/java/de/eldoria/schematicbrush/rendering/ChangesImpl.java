@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.rendering;
 
 import com.fastasyncworldedit.core.queue.implementation.packet.ChunkPacket;

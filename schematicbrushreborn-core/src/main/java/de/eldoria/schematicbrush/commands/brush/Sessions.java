@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.localization.MessageComposer;

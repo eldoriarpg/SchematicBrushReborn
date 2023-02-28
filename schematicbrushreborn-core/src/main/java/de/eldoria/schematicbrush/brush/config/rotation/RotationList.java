@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.brush.config.rotation;
 
 import de.eldoria.eldoutilities.serialization.SerializationUtil;

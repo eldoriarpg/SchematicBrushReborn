@@ -3,6 +3,7 @@
  *
  *     Copyright (C EldoriaRPG Team and Contributor
  */
+
 package de.eldoria.schematicbrush.config;
 
 import de.eldoria.eldoutilities.configuration.EldoConfig;
