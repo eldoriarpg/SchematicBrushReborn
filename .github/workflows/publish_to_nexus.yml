@@ -27,5 +27,6 @@ jobs:
       - name: Publish to eldonexus
         run: ./gradlew publishMavenPublicationToEldoNexusRepository
         env:
+          PUBLIC: TRUE
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
