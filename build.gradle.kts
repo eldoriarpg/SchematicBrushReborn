@@ -4,7 +4,7 @@ import de.chojo.PublishData
 plugins {
     java
     id("com.diffplug.spotless") version "6.16.0"
-    id("de.chojo.publishdata") version "1.2.0"
+    id("de.chojo.publishdata") version "1.2.1"
 }
 
 group = "de.eldoria"
