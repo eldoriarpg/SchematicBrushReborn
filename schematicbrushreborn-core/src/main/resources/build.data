@@ -1,4 +1,0 @@
-time=${time}
-type=${type}
-branch=${branch}
-commit=${commit}
