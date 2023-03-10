@@ -20,6 +20,7 @@ dependencies {
 }
 
 publishData {
+    addBuildData()
     useInternalEldoNexusRepos()
     publishTask("shadowJar")
 }
