@@ -3,8 +3,9 @@ import java.time.format.DateTimeFormatter
 
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("com.github.johnrengelman.shadow") version "8.1.0"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    `maven-publish`
 }
 
 val shadebase = "de.eldoria.schematicbrush.libs."
@@ -13,24 +14,63 @@ dependencies {
     implementation(project(":schematicbrushreborn-api"))
 
     testImplementation(project(":schematicbrushreborn-api"))
-    testImplementation("org.jetbrains", "annotations", "24.0.0")
+    testImplementation("org.jetbrains", "annotations", "24.0.1")
     testImplementation("org.mockito", "mockito-core", "5.1.1")
     testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.14.2")
 }
 
 publishData {
-    useEldoNexusRepos()
+    useInternalEldoNexusRepos()
+    publishTask("shadowJar")
 }
 
 fun getBuildType(): String {
     return when {
-        System.getenv("PATREON")?.equals("true", true) == true ->{
+        System.getenv("PATREON")?.equals("true", true) == true -> {
             "PATREON"
         }
+
         publishData.isPublicBuild() -> {
             "PUBLIC";
         }
+
         else -> "LOCAL"
+    }
+}
+
+publishing {
+    publications.create<MavenPublication>("maven") {
+        publishData.configurePublication(this)
+        pom {
+            url.set("https://github.com/eldoriarpg/schematicbrushreborn")
+            developers {
+                developer {
+                    name.set("Florian Fülling")
+                    organization.set("EldoriaRPG")
+                    organizationUrl.set("https://github.com/eldoriarpg")
+                }
+            }
+            licenses {
+                license {
+                    name.set("GNU Affero General Public License v3.0")
+                    url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            authentication {
+                credentials(PasswordCredentials::class) {
+                    username = System.getenv("NEXUS_USERNAME")
+                    password = System.getenv("NEXUS_PASSWORD")
+                }
+            }
+
+            setUrl(publishData.getRepository())
+            name = "EldoNexus"
+        }
     }
 }
 
@@ -39,10 +79,10 @@ tasks {
         from(sourceSets.main.get().resources.srcDirs) {
             filesMatching("build.data") {
                 expand(
-                    "type" to getBuildType(),
-                    "time" to DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-                    "branch" to publishData.getBranch(),
-                    "commit" to publishData.getCommitHash()
+                        "type" to getBuildType(),
+                        "time" to DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+                        "branch" to publishData.getBranch(),
+                        "commit" to publishData.getCommitHash()
                 )
             }
         }

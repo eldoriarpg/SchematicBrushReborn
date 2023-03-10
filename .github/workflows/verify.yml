@@ -16,9 +16,7 @@ jobs:
         with:
           distribution: adopt
           java-version: 17
-      - name: Check licence
-        run: ./gradlew licenseCheck
-      - name: Build with Gradle
-        run: ./gradlew --build-cache build
       - name: Test with Gradle
         run: ./gradlew test
+      - name: Build with Gradle
+        run: ./gradlew --build-cache build

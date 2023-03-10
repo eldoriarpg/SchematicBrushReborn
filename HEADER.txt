@@ -1,3 +1,6 @@
-    SPDX-License-Identifier: AGPL-3.0-only
+/*
+ *     SPDX-License-Identifier: AGPL-3.0-only
+ *
+ *     Copyright (C) EldoriaRPG Team and Contributor
+ */
 
-    Copyright (C) 2021 EldoriaRPG Team and Contributor
