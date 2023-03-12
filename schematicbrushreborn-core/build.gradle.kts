@@ -1,6 +1,3 @@
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "8.1.0"
@@ -20,23 +17,9 @@ dependencies {
 }
 
 publishData {
-    addBuildData()
+    addBuildData(mapOf("unix" to "1677316225"))
     useInternalEldoNexusRepos()
     publishTask("shadowJar")
-}
-
-fun getBuildType(): String {
-    return when {
-        System.getenv("PATREON")?.equals("true", true) == true -> {
-            "PATREON"
-        }
-
-        publishData.isPublicBuild() -> {
-            "PUBLIC";
-        }
-
-        else -> "LOCAL"
-    }
 }
 
 publishing {
@@ -76,29 +59,16 @@ publishing {
 }
 
 tasks {
-    processResources {
-        from(sourceSets.main.get().resources.srcDirs) {
-            filesMatching("build.data") {
-                expand(
-                        "type" to getBuildType(),
-                        "time" to DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-                        "branch" to publishData.getBranch(),
-                        "commit" to publishData.getCommitHash()
-                )
-            }
-        }
-
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    }
-
     compileJava {
         options.encoding = "UTF-8"
     }
 
     shadowJar {
-        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
-        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-        relocate("net.kyori", shadebase + "kyori")
+        if (publishData.isPublicBuild()) {
+            relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+            relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
+            relocate("net.kyori", shadebase + "kyori")
+        }
         mergeServiceFiles()
         archiveClassifier.set("")
         archiveVersion.set(rootProject.version as String)

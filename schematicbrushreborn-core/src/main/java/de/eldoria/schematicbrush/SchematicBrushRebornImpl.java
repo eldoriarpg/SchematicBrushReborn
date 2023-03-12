@@ -10,11 +10,12 @@ import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.AdvancedPie;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
 import de.eldoria.eldoutilities.crossversion.ServerVersion;
+import de.eldoria.eldoutilities.debug.UserData;
 import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
-import de.eldoria.eldoutilities.updater.spigotupdater.SpigotUpdateData;
+import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateData;
 import de.eldoria.messageblocker.MessageBlockerAPI;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -22,7 +23,11 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
-import de.eldoria.schematicbrush.commands.*;
+import de.eldoria.schematicbrush.commands.Admin;
+import de.eldoria.schematicbrush.commands.Brush;
+import de.eldoria.schematicbrush.commands.BrushPresets;
+import de.eldoria.schematicbrush.commands.Modify;
+import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.ConfigurationImpl;
 import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
@@ -45,7 +50,6 @@ import de.eldoria.schematicbrush.storage.StorageRegistryImpl;
 import de.eldoria.schematicbrush.storage.YamlStorage;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.Permissions;
-import de.eldoria.schematicbrush.util.UserData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -125,11 +129,17 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand(settingsCommand);
         registerCommand(brushPresetsCommand);
         registerCommand(modifyCommand);
+    }
 
-        if (configuration.general().isCheckUpdates() && UserData.get(this).isSpigotPremium()) {
-            Updater.spigot(new SpigotUpdateData(this, Permissions.Admin.RELOAD, configuration.general()
-                                                                                             .isCheckUpdates(),
-                    UserData.get(this).resourceId())).start();
+    @Override
+    public void onPostStart() throws Throwable {
+        if (configuration.general().isCheckUpdates() && UserData.get(this).isPremium()) {
+            Updater.lyna(LynaUpdateData.builder(this, 1)
+                            .updateUrl("https://discord.gg/zRW9Vpu")
+                            .notifyPermission(Permissions.Admin.RELOAD)
+                            .notifyUpdate(true)
+                            .build())
+                    .start();
         }
     }
 
@@ -148,8 +158,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public @NotNull EntryData[] getDebugInformations() {
-        return new EntryData[]{new EntryData("Customer Data", UserData.get(this).asString()),
-                new EntryData("Rendering", renderService.renderInfo())};
+        return new EntryData[]{new EntryData("Rendering", renderService.renderInfo())};
     }
 
     private void enableMetrics() {
@@ -178,11 +187,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         metrics.addCustomChart(new AdvancedPie("installed_add_ons",
                 () -> Arrays.stream(getServer().getPluginManager().getPlugins())
-                            .filter(plugin -> {
-                                var descr = plugin.getDescription();
-                                return descr.getSoftDepend().contains("SchematicBrushReborn") || descr.getDepend()
-                                                                                                      .contains("SchematicBrushReborn");
-                            }).collect(Collectors.toMap(e -> e.getDescription().getName(), e -> 1))));
+                        .filter(plugin -> {
+                            var descr = plugin.getDescription();
+                            return descr.getSoftDepend().contains("SchematicBrushReborn") || descr.getDepend()
+                                    .contains("SchematicBrushReborn");
+                        }).collect(Collectors.toMap(e -> e.getDescription().getName(), e -> 1))));
 
         metrics.addCustomChart(new SimplePie("used_storage_type",
                 () -> configuration.general().storageType().name()));
