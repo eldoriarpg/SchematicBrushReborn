@@ -41,18 +41,15 @@ allprojects {
     dependencies{
         compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains", "annotations", "24.0.1")
-        // Due to incompatibility by the yaml versions defined by world edit, fawe and bukkit we need to exclude it everywhere and add our own version...
-        compileOnly("org.yaml", "snakeyaml", "1.33")
         compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.13") {
-            exclude("org.yaml")
+            exclude("net.kyori")
         }
         compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2") {
             exclude("com.intellectualsites.paster")
-            exclude("org.yaml")
+            exclude("net.kyori")
         }
         compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") {
             isTransitive = false
-            exclude("org.yaml")
         }
 
         testImplementation(platform("org.junit:junit-bom:5.9.2"))

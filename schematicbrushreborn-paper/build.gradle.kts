@@ -1,19 +1,22 @@
 plugins {
     java
-    `java-library`
+    id("com.github.johnrengelman.shadow") version "8.1.0"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     `maven-publish`
 }
 
+val shadebase = "de.eldoria.schematicbrush.libs."
+
 dependencies {
-    api("de.eldoria", "eldo-util", "1.14.2")
-    api("de.eldoria", "messageblocker", "1.1.1")
-    api("net.kyori", "adventure-platform-bukkit", "4.2.0")
-    api("net.kyori", "adventure-text-minimessage", "4.13.0")
+    implementation(project(":schematicbrushreborn-core")){
+        exclude("net.kyori")
+    }
+    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
 }
 
 publishData {
-    useEldoNexusRepos()
-    publishComponent("java")
+    useInternalEldoNexusRepos()
+    publishTask("shadowJar")
 }
 
 publishing {
@@ -52,20 +55,30 @@ publishing {
     }
 }
 
+
 tasks {
-    test {
-        dependsOn(spotlessCheck)
-        useJUnitPlatform()
-        testLogging {
-            events("passed", "skipped", "failed")
+
+    shadowJar {
+        if (publishData.isPublicBuild()) {
+            relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+            relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         }
+        mergeServiceFiles()
+        archiveClassifier.set("")
+        archiveVersion.set(rootProject.version as String)
     }
 
-    withType<Javadoc> {
-        val options = options as StandardJavadocDocletOptions
-        options.links(
-            "https://hub.spigotmc.org/javadocs/spigot/",
-            "https://eldoriarpg.github.io/eldo-util/"
-        )
+    register<Copy>("copyToServer") {
+        val path = project.property("targetDir") ?: ""
+        if (path.toString().isEmpty()) {
+            println("targetDir is not set in gradle properties")
+            return@register
+        }
+        from(shadowJar)
+        destinationDir = File(path.toString())
+    }
+
+    build {
+        dependsOn(shadowJar)
     }
 }

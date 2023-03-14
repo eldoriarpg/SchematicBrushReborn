@@ -1,123 +1,18 @@
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-
 plugins {
-    java
+    `java-library`
     id("com.github.johnrengelman.shadow") version "8.1.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
-    `maven-publish`
 }
 
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-api"))
+    api(project(":schematicbrushreborn-api"))
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation("org.jetbrains", "annotations", "24.0.1")
     testImplementation("org.mockito", "mockito-core", "5.2.0")
     testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.14.2")
-}
-
-publishData {
-    addBuildData()
-    useInternalEldoNexusRepos()
-    publishTask("shadowJar")
-}
-
-fun getBuildType(): String {
-    return when {
-        System.getenv("PATREON")?.equals("true", true) == true -> {
-            "PATREON"
-        }
-
-        publishData.isPublicBuild() -> {
-            "PUBLIC";
-        }
-
-        else -> "LOCAL"
-    }
-}
-
-publishing {
-    publications.create<MavenPublication>("maven") {
-        publishData.configurePublication(this)
-        pom {
-            url.set("https://github.com/eldoriarpg/schematicbrushreborn")
-            developers {
-                developer {
-                    name.set("Florian Fülling")
-                    organization.set("EldoriaRPG")
-                    organizationUrl.set("https://github.com/eldoriarpg")
-                }
-            }
-            licenses {
-                license {
-                    name.set("GNU Affero General Public License v3.0")
-                    url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            authentication {
-                credentials(PasswordCredentials::class) {
-                    username = System.getenv("NEXUS_USERNAME")
-                    password = System.getenv("NEXUS_PASSWORD")
-                }
-            }
-
-            setUrl(publishData.getRepository())
-            name = "EldoNexus"
-        }
-    }
-}
-
-tasks {
-    processResources {
-        from(sourceSets.main.get().resources.srcDirs) {
-            filesMatching("build.data") {
-                expand(
-                        "type" to getBuildType(),
-                        "time" to DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-                        "branch" to publishData.getBranch(),
-                        "commit" to publishData.getCommitHash()
-                )
-            }
-        }
-
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    }
-
-    compileJava {
-        options.encoding = "UTF-8"
-    }
-
-    shadowJar {
-        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
-        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-        relocate("net.kyori", shadebase + "kyori")
-        mergeServiceFiles()
-        archiveClassifier.set("")
-        archiveVersion.set(rootProject.version as String)
-        archiveBaseName.set("SchematicBrushReborn")
-    }
-
-    register<Copy>("copyToServer") {
-        val path = project.property("targetDir") ?: ""
-        if (path.toString().isEmpty()) {
-            println("targetDir is not set in gradle properties")
-            return@register
-        }
-        from(shadowJar)
-        destinationDir = File(path.toString())
-    }
-
-    build {
-        dependsOn(shadowJar)
-    }
 }
 
 bukkit {
