@@ -11,7 +11,6 @@ pluginManagement{
         maven{
             name = "EldoNexus"
             url = uri("https://eldonexus.de/repository/maven-public/")
-
         }
     }
 }

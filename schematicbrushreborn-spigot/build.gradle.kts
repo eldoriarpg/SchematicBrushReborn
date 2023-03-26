@@ -1,7 +1,6 @@
 plugins {
-    java
     id("com.github.johnrengelman.shadow") version "8.1.0"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    //id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     `maven-publish`
 }
 
@@ -56,11 +55,9 @@ publishing {
 
 tasks {
     shadowJar {
-        if (publishData.isPublicBuild()) {
-            relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
-            relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-            relocate("net.kyori", shadebase + "kyori")
-        }
+        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
+        relocate("net.kyori", shadebase + "kyori")
         mergeServiceFiles()
         archiveClassifier.set("")
         archiveVersion.set(rootProject.version as String)

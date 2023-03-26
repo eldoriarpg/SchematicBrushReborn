@@ -1,14 +1,13 @@
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "8.1.0"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     `maven-publish`
 }
 
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-core")){
+    implementation(project(":schematicbrushreborn-core")) {
         exclude("net.kyori")
     }
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
@@ -57,7 +56,6 @@ publishing {
 
 
 tasks {
-
     shadowJar {
         if (publishData.isPublicBuild()) {
             relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
