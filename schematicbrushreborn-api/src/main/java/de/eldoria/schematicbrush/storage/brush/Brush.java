@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.storage.brush;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -39,7 +41,10 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
      * @param name     name of brush
      * @param snapshot snapshot of brush
      */
-    public Brush(String name, String description, BrushBuilderSnapshot snapshot) {
+    @JsonCreator
+    public Brush(@JsonProperty("name") String name,
+                 @JsonProperty("description") String description,
+                 @JsonProperty("snapshot") BrushBuilderSnapshot snapshot) {
         this.name = name;
         this.description = description;
         this.snapshot = snapshot;
@@ -67,6 +72,7 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
 
     /**
      * Constructor required by {@link ConfigurationSerializable} in order to deserialize the object.
+     *
      * @param objectMap map of the already deserialized object
      */
     @SuppressWarnings("unused")

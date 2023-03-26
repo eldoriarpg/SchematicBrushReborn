@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.config.sections.presets;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
@@ -29,6 +31,13 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
         var map = SerializationUtil.mapOf(objectMap);
         playerPresets = map.getMap("playerPresets", (key, v) -> UUID.fromString(key));
         globalPresets = map.getValueOrDefault("globalPresets", new YamlPresetContainer(Container.GLOBAL));
+    }
+
+    @JsonCreator
+    public YamlPresets(@JsonProperty("playerPresets") Map<UUID, YamlPresetContainer> playerPresets,
+                       @JsonProperty("globalPresets") YamlPresetContainer globalPresets) {
+        this.playerPresets = playerPresets;
+        this.globalPresets = globalPresets;
     }
 
     public YamlPresets() {

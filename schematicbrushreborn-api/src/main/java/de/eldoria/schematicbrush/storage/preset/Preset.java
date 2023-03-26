@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.storage.preset;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
@@ -31,7 +33,10 @@ public class Preset implements ConfigurationSerializable, Comparable<Preset> {
         this(name, "none", schematicSets);
     }
 
-    public Preset(String name, String description, List<SchematicSetBuilder> schematicSets) {
+    @JsonCreator
+    public Preset(@JsonProperty("name") String name,
+                  @JsonProperty("description") String description,
+                  @JsonProperty("schematicSets") List<SchematicSetBuilder> schematicSets) {
         this.name = name;
         this.schematicSets = schematicSets;
         this.description = description == null ? "none" : description;

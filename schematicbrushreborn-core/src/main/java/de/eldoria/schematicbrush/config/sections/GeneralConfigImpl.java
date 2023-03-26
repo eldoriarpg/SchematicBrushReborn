@@ -6,7 +6,6 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
-import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
@@ -22,7 +21,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private boolean checkUpdates = true;
     private boolean previewDefault = true;
     private boolean showNameDefault = false;
-    private MessageChannel<?> defaultNameChannel = MessageChannel.ACTION_BAR;
+    private MessageChannel defaultNameChannel = MessageChannel.ACTION_BAR;
     private int previewRefreshInterval = 1;
     private int maxRenderMs = 25;
     private int maxRenderSize = 2500;
@@ -37,7 +36,7 @@ public class GeneralConfigImpl implements GeneralConfig {
         checkUpdates = map.getValueOrDefault("checkUpdates", true);
         previewDefault = map.getValueOrDefault("previewDefault", true);
         showNameDefault = map.getValueOrDefault("showNameDefault", false);
-        defaultNameChannel = map.getValueOrDefault("defaultNameChannel", MessageChannel.CHAT, MessageChannel::getChannelByNameOrDefault);
+        defaultNameChannel = map.getValueOrDefault("defaultNameChannel", MessageChannel.CHAT, MessageChannel.class);
         previewRefreshInterval = map.getValueOrDefault("previewRefreshInterval", 1);
         maxRenderMs = map.getValueOrDefault("maxRenderMs", 25);
         maxRenderSize = map.getValueOrDefault("maxRenderSize", 2500);
@@ -83,7 +82,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     }
 
     @Override
-    public MessageChannel<?> defaultNameChannel() {
+    public MessageChannel defaultNameChannel() {
         return defaultNameChannel;
     }
 
@@ -116,4 +115,5 @@ public class GeneralConfigImpl implements GeneralConfig {
     public int maxEffectiveRenderSize() {
         return maxEffectiveRenderSize;
     }
+
 }

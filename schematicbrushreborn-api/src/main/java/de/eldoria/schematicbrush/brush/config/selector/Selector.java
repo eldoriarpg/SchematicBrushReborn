@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.selector;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.eldoria.schematicbrush.brush.config.util.ComponentProvider;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
@@ -17,6 +18,8 @@ import java.util.Set;
 /**
  * Represents a selector.
  */
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 public interface Selector extends ConfigurationSerializable, ComponentProvider {
     /**
      * Select matching schematics from a cache in the registry

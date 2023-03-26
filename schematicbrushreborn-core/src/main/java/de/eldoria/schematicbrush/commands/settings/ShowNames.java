@@ -9,12 +9,11 @@ package de.eldoria.schematicbrush.commands.settings;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
-import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.config.sections.MessageChannel;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -43,8 +42,7 @@ public class ShowNames extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var messageChannel = configuration.general().defaultNameChannel();
         if (args.sizeIs(2)) {
-            CommandAssertions.isTrue(MessageChannel.getChannelByName(args.asString(1)).isPresent(), "Invalid message channel.");
-            messageChannel = MessageChannel.getChannelByName(args.asString(1)).get();
+            messageChannel = args.asEnum(1, MessageChannel.class);
         }
         listener.setState(player, args.asBoolean(0), messageChannel);
         if (args.asBoolean(0)) {

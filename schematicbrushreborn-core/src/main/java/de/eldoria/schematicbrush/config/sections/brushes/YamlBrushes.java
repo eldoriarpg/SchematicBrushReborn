@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.config.sections.brushes;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.brush.BrushContainer;
@@ -29,6 +31,13 @@ public class YamlBrushes implements Brushes, ConfigurationSerializable {
         var map = SerializationUtil.mapOf(objectMap);
         playerBrushes = map.getMap("playerBrushes", (key, v) -> UUID.fromString(key));
         globalBrushes = map.getValueOrDefault("globalBrushes", new YamlBrushContainer(Container.GLOBAL));
+    }
+
+    @JsonCreator
+    public YamlBrushes(@JsonProperty("playerBrushes") Map<UUID, YamlBrushContainer> playerBrushes,
+                       @JsonProperty("globalBrushes") YamlBrushContainer globalBrushes) {
+        this.playerBrushes = playerBrushes;
+        this.globalBrushes = globalBrushes;
     }
 
     public YamlBrushes() {
