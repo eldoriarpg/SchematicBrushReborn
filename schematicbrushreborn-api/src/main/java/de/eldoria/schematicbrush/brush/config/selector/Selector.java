@@ -19,7 +19,7 @@ import java.util.Set;
  * Represents a selector.
  */
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
 public interface Selector extends ConfigurationSerializable, ComponentProvider {
     /**
      * Select matching schematics from a cache in the registry

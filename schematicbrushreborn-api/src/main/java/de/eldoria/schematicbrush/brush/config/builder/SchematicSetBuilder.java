@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.builder;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -24,6 +25,7 @@ import java.util.Set;
 /**
  * Builder to build schematic sets.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
 public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable {
     @Override
     @NotNull Map<String, Object> serialize();

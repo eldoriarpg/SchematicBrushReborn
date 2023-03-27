@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.selector;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
@@ -23,7 +25,9 @@ import java.util.Set;
 public class DirectorySelector extends BaseSelector {
     private final String directory;
 
-    public DirectorySelector(String directory, @Nullable String term) {
+    @JsonCreator
+    public DirectorySelector(@JsonProperty("directory") String directory,
+                             @JsonProperty("term") @Nullable String term) {
         super(term);
         this.directory = directory;
     }

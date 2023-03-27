@@ -18,7 +18,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
  *
  * @param <T> value type of mutator
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
 public interface Mutator<T> extends Shiftable<T>, ConfigurationSerializable, ComponentProvider, Copyable {
     /**
      * Invoke the mutator on a paste mutation. The mutation will be applied on the brush.

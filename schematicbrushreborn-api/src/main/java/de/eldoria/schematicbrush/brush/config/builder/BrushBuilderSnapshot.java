@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Represents a snapshot of a {@link BrushBuilder}.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
 public interface BrushBuilderSnapshot extends ConfigurationSerializable {
     @Override
     @NotNull Map<String, Object> serialize();

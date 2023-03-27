@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.storage.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
@@ -95,6 +96,7 @@ public interface Container<T> {
      *
      * @return true if this container has the global UUID
      */
+    @JsonIgnore
     default boolean isGlobalcontainer() {
         return GLOBAL.equals(owner());
     }

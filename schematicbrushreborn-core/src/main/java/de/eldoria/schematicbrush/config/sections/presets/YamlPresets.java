@@ -36,8 +36,8 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
     @JsonCreator
     public YamlPresets(@JsonProperty("playerPresets") Map<UUID, YamlPresetContainer> playerPresets,
                        @JsonProperty("globalPresets") YamlPresetContainer globalPresets) {
-        this.playerPresets = playerPresets;
-        this.globalPresets = globalPresets;
+        this.playerPresets = playerPresets == null ? new HashMap<>() : playerPresets;
+        this.globalPresets = globalPresets == null ? new YamlPresetContainer(Container.GLOBAL) : globalPresets;
     }
 
     public YamlPresets() {

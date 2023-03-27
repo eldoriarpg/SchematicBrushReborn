@@ -88,10 +88,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         settingsRegistry.registerDefaults(schematics);
 
-        legacyConfiguration = new LegacyConfiguration(this);
         configuration = new JacksonConfiguration(this);
         PluginBaseConfiguration base = configuration.secondary(PluginBaseConfiguration.KEY);
         if (base.version() == 0) {
+            legacyConfiguration = new LegacyConfiguration(this);
             getLogger().log(Level.INFO, "Migrating configuration to jackson.");
             configuration.main().generalConfig((GeneralConfigImpl) legacyConfiguration.general());
             configuration.main().schematicConfig((SchematicConfigImpl) legacyConfiguration.schematicConfig());
