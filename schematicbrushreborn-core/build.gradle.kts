@@ -8,7 +8,21 @@ plugins {
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-api"))
+    implementation(project(":schematicbrushreborn-api")){
+        exclude("com.fasterxml.jackson.dataformat")
+        exclude("com.fasterxml.jackson.core")
+        exclude("com.fasterxml.jackson")
+        exclude("net.kyori")
+        exclude("org.jetbrains")
+        exclude("org.intellij")
+    }
+    compileOnly("org.jetbrains", "annotations", "24.0.1")
+
+    bukkitLibrary("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
+    bukkitLibrary("com.fasterxml.jackson.core:jackson-core:2.14.2")
+    bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    bukkitLibrary("net.kyori:adventure-platform-bukkit:4.3.0")
+    bukkitLibrary("net.kyori:adventure-text-minimessage:4.13.0")
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation("org.jetbrains", "annotations", "24.0.1")
@@ -17,7 +31,6 @@ dependencies {
 }
 
 publishData {
-    addBuildData(mapOf("unix" to "1677316225"))
     useInternalEldoNexusRepos()
     publishTask("shadowJar")
 }
@@ -67,7 +80,6 @@ tasks {
         if (publishData.isPublicBuild()) {
             relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
             relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-            relocate("net.kyori", shadebase + "kyori")
         }
         mergeServiceFiles()
         archiveClassifier.set("")
@@ -94,7 +106,7 @@ bukkit {
     name = "SchematicBrushReborn"
     version = publishData.getVersion(true)
     description = "Use your world edit schematics as a brush!"
-    apiVersion = "1.13"
+    apiVersion = "1.16"
     main = "de.eldoria.schematicbrush.SchematicBrushRebornImpl"
     authors = listOf("RainbowDashLabs", "SirYwell", "LuftigerLuca")
     website = "https://www.spigotmc.org/resources/98499/"
