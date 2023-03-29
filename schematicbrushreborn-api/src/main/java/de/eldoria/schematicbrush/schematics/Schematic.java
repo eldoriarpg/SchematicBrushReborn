@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.schematics;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
@@ -41,7 +42,7 @@ public class Schematic implements Comparable<Schematic> {
      * Regex which matches the end of a filename.
      */
     private static final String EXTENSION = "\\..+$";
-    private final Map<Material, Integer> materialMap = new EnumMap<>(Material.class);
+    private  final Map<Material, Integer> materialMap = new EnumMap<>(Material.class);
     /**
      * Format of the schematic.
      */

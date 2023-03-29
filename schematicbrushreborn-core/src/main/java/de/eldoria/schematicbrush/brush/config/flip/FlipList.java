@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.flip;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -20,7 +22,8 @@ import java.util.stream.Collectors;
 public class FlipList extends AFlip {
     private final List<Flip> values;
 
-    public FlipList(List<Flip> values) {
+    @JsonCreator
+    public FlipList(@JsonProperty("values") List<Flip> values) {
         this.values = values;
         value(valueProvider());
     }

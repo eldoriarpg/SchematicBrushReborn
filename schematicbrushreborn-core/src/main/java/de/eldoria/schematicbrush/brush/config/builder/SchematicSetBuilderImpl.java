@@ -6,6 +6,9 @@
 
 package de.eldoria.schematicbrush.brush.config.builder;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -40,6 +43,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     private static final String WEIGHT_DESCRIPTION = "The weight of the schematic set when multiple sets are used.\nHigher numbers will result in more schematics from this set.";
     private Selector selector;
     private Map<Nameable, Mutator<?>> schematicModifier = new HashMap<>();
+    @JsonIgnore
     private Set<Schematic> schematics = Collections.emptySet();
     private int weight = -1;
 
@@ -59,6 +63,16 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         this.selector = selector;
         this.schematicModifier = schematicModifier;
         this.schematics = schematics;
+        this.weight = weight;
+        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
+    }
+
+    @JsonCreator
+    public SchematicSetBuilderImpl(@JsonProperty("selector") Selector selector,
+                                   @JsonProperty("schematicModifier") Map<Nameable, Mutator<?>> schematicModifier,
+                                   @JsonProperty("weight") int weight) {
+        this.selector = selector;
+        this.schematicModifier = schematicModifier;
         this.weight = weight;
         schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
     }

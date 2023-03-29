@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +32,11 @@ public class SchematicSourceImpl implements SchematicSource {
         excludedPath = map.getValue("excludedPath");
     }
 
-    public SchematicSourceImpl(String path, String prefix, boolean relative, List<String> excludedPath) {
+    @JsonCreator
+    public SchematicSourceImpl(@JsonProperty("path") String path,
+                               @JsonProperty("prefix") String prefix,
+                               @JsonProperty("relative") boolean relative,
+                               @JsonProperty("excludedPath") List<String> excludedPath) {
         this.path = path;
         this.prefix = prefix;
         this.relative = relative;

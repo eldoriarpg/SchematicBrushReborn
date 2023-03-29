@@ -29,7 +29,7 @@ public interface SchematicConfig extends ConfigurationSerializable {
      *
      * @return list of sources
      */
-    List<SchematicSource> sources();
+    List<? extends SchematicSource> sources();
 
     /**
      * The path separator which should be used when showing pathes.
@@ -50,5 +50,5 @@ public interface SchematicConfig extends ConfigurationSerializable {
      * @param path path
      * @return optional holding a source
      */
-    Optional<SchematicSource> getSourceForPath(Path path);
+    Optional<? extends SchematicSource> getSourceForPath(Path path);
 }

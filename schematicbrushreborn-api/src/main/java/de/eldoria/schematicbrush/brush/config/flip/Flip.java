@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.flip;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.Direction;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;

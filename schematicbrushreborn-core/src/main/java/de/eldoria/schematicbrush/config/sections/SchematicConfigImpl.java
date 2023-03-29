@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -18,17 +20,16 @@ import java.util.Optional;
 
 @SerializableAs("sbrSchematicConfig")
 public class SchematicConfigImpl implements SchematicConfig {
-    private final List<SchematicSource> sources;
-    private final String pathSeparator;
-    private final boolean pathSourceAsPrefix;
+    @JsonDeserialize(contentAs = SchematicSourceImpl.class)
+    private List<SchematicSource> sources = new ArrayList<>(List.of(
+            new SchematicSourceImpl("SchematicBrushReborn/schematics", "sbr", true, new ArrayList<>()),
+            new SchematicSourceImpl("FastAsyncWorldEdit/schematics", "fawe", true, new ArrayList<>()),
+            new SchematicSourceImpl("WorldEdit/schematics", "we", true, new ArrayList<>())
+    ));
+    private String pathSeparator = "/";
+    private boolean pathSourceAsPrefix = false;
 
     public SchematicConfigImpl() {
-        sources = new ArrayList<>();
-        sources.add(new SchematicSourceImpl("SchematicBrushReborn/schematics", "sbr", true, new ArrayList<>()));
-        sources.add(new SchematicSourceImpl("FastAsyncWorldEdit/schematics", "fawe", true, new ArrayList<>()));
-        sources.add(new SchematicSourceImpl("WorldEdit/schematics", "we", true, new ArrayList<>()));
-        pathSeparator = "/";
-        pathSourceAsPrefix = false;
     }
 
     public SchematicConfigImpl(List<SchematicSource> sources, String pathSeparator, boolean pathSourceAsPrefix) {
@@ -59,7 +60,7 @@ public class SchematicConfigImpl implements SchematicConfig {
     }
 
     @Override
-    public List<SchematicSource> sources() {
+    public List<? extends SchematicSource> sources() {
         return sources;
     }
 
@@ -74,7 +75,7 @@ public class SchematicConfigImpl implements SchematicConfig {
     }
 
     @Override
-    public Optional<SchematicSource> getSourceForPath(Path path) {
+    public Optional<? extends SchematicSource> getSourceForPath(Path path) {
         return sources.stream().filter(source -> source.isSource(path)).findFirst();
     }
 }

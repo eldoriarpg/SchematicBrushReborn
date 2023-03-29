@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush;
 import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.AdvancedPie;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
+import de.eldoria.eldoutilities.config.template.PluginBaseConfiguration;
 import de.eldoria.eldoutilities.crossversion.ServerVersion;
 import de.eldoria.eldoutilities.debug.UserData;
 import de.eldoria.eldoutilities.debug.data.EntryData;
@@ -29,7 +30,8 @@ import de.eldoria.schematicbrush.commands.BrushPresets;
 import de.eldoria.schematicbrush.commands.Modify;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Configuration;
-import de.eldoria.schematicbrush.config.ConfigurationImpl;
+import de.eldoria.schematicbrush.config.JacksonConfiguration;
+import de.eldoria.schematicbrush.config.LegacyConfiguration;
 import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
 import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
@@ -58,6 +60,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -65,7 +68,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistryImpl settingsRegistry;
     private SchematicRegistryImpl schematics;
-    private ConfigurationImpl configuration;
+    private LegacyConfiguration legacyConfiguration;
+    private JacksonConfiguration configuration;
     private RenderService renderService;
     private StorageRegistryImpl storageRegistry;
     private Storage storage;
@@ -84,7 +88,19 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         settingsRegistry.registerDefaults(schematics);
 
-        configuration = new ConfigurationImpl(this);
+        configuration = new JacksonConfiguration(this);
+        PluginBaseConfiguration base = configuration.secondary(PluginBaseConfiguration.KEY);
+        if (base.version() == 0) {
+            legacyConfiguration = new LegacyConfiguration(this);
+            getLogger().log(Level.INFO, "Migrating configuration to jackson.");
+            configuration.main().generalConfig((GeneralConfigImpl) legacyConfiguration.general());
+            configuration.main().schematicConfig((SchematicConfigImpl) legacyConfiguration.schematicConfig());
+            configuration.replace(JacksonConfiguration.BRUSHES, (YamlBrushes) legacyConfiguration.brushes());
+            configuration.replace(JacksonConfiguration.PRESETS, (YamlPresets) legacyConfiguration.presets());
+            base.version(1);
+            base.lastInstalledVersion(this);
+            configuration.save();
+        }
 
         var yamlStorage = new YamlStorage(configuration);
         storageRegistry = new StorageRegistryImpl(yamlStorage, configuration);

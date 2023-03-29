@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.flip;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -13,7 +15,8 @@ import java.util.Map;
 
 @SerializableAs("sbrFlipFixed")
 public class FlipFixed extends AFlip {
-    public FlipFixed(Flip flip) {
+    @JsonCreator
+    public FlipFixed(@JsonProperty("flip") Flip flip) {
         super(flip);
     }
 

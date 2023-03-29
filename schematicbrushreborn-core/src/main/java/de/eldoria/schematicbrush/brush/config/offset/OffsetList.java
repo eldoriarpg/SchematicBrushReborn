@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.offset;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -21,7 +23,8 @@ public class OffsetList extends AOffset {
 
     private final List<Integer> values;
 
-    public OffsetList(List<Integer> values) {
+    @JsonCreator
+    public OffsetList(@JsonProperty("values") List<Integer> values) {
         this.values = values;
     }
 
