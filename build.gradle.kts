@@ -42,7 +42,7 @@ allprojects {
         compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains", "annotations", "24.0.1")
         // Due to incompatibility by the yaml versions defined by world edit, fawe and bukkit we need to exclude it everywhere and add our own version...
-        compileOnly("org.yaml", "snakeyaml", "1.33")
+        compileOnly("org.yaml", "snakeyaml", "2.0")
         compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.14") {
             exclude("org.yaml")
         }
