@@ -6,6 +6,15 @@
 
 package de.eldoria.schematicbrush;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.AdvancedPie;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
@@ -17,12 +26,18 @@ import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateData;
+import de.eldoria.jacksonbukkit.JacksonBukkit;
+import de.eldoria.jacksonbukkit.JacksonPaper;
 import de.eldoria.messageblocker.MessageBlockerAPI;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
+import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
+import de.eldoria.schematicbrush.brush.config.flip.Flip;
+import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
@@ -39,6 +54,10 @@ import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushContainer;
 import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
+import de.eldoria.schematicbrush.config.serialization.deserilizer.FlipDeserializer;
+import de.eldoria.schematicbrush.config.serialization.deserilizer.RotationDeserializer;
+import de.eldoria.schematicbrush.config.serialization.serializer.FlipSerializer;
+import de.eldoria.schematicbrush.config.serialization.serializer.RotationSerializer;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
@@ -60,6 +79,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -73,6 +93,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private RenderService renderService;
     private StorageRegistryImpl storageRegistry;
     private Storage storage;
+    private SimpleModule sbrModule;
 
     public SchematicBrushRebornImpl() {
     }
@@ -145,6 +166,62 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         registerCommand(settingsCommand);
         registerCommand(brushPresetsCommand);
         registerCommand(modifyCommand);
+    }
+
+    /**
+     * Get the module for the current platform. Either a {@link JacksonBukkit} or {@link JacksonPaper} module.
+     *
+     * @return new module
+     */
+    @Override
+    public Module platformModule() {
+        if (!getServer().getName().toLowerCase(Locale.ROOT).contains("spigot")) {
+            return JacksonPaper.builder()
+                    .colorAsHex()
+                    .build();
+        }
+        return JacksonBukkit.builder()
+                .colorAsHex()
+                .build();
+    }
+
+    /**
+     * Returns the module used by schematic brush to de/serialize objects related to SBR.
+     * <p>
+     * This module is a mutable instance and can be used to register own serializer and deserializer.
+     *
+     * @return module.
+     */
+    @Override
+    public SimpleModule schematicBrushModule() {
+        if (sbrModule == null) {
+            sbrModule = new SimpleModule();
+            sbrModule.addSerializer(Flip.class, new FlipSerializer());
+            sbrModule.addSerializer(Rotation.class, new RotationSerializer());
+            sbrModule.addDeserializer(Flip.class, new FlipDeserializer());
+            sbrModule.addDeserializer(Rotation.class, new RotationDeserializer());
+            sbrModule.addAbstractTypeMapping(SchematicSetBuilder.class, SchematicSetBuilderImpl.class);
+            sbrModule.addAbstractTypeMapping(BrushBuilderSnapshot.class, BrushBuilderSnapshotImpl.class);
+        }
+        return sbrModule;
+    }
+
+    /**
+     * Configure an {@link ObjectMapper} to work with schematic brush and bukkit objects.
+     *
+     * @param builder builder
+     * @return same builder instance
+     */
+    @Override
+    public ObjectMapper configureMapper(MapperBuilder<?, ?> builder) {
+        return builder.addModule(platformModule())
+                .addModule(sbrModule)
+                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+                .build()
+                .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+                .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
     }
 
     @Override

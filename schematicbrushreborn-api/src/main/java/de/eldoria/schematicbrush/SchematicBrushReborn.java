@@ -6,6 +6,10 @@
 
 package de.eldoria.schematicbrush;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.eldoria.eldoutilities.core.EldoUtilities;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -41,6 +45,12 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
     public static SchematicBrushReborn instance() {
         return (SchematicBrushReborn) getInstance();
     }
+
+    public abstract Module platformModule();
+
+    public abstract SimpleModule schematicBrushModule();
+
+    public abstract ObjectMapper configureMapper(MapperBuilder<?, ?> builder);
 
     /**
      * Get schematic registry
