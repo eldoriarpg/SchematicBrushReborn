@@ -123,7 +123,6 @@ public interface ContainerHolder<V, T extends Container<V>> {
      * This will not remove already existing entries.
      *
      * @param container container to merge
-     * @return A future which completes when all underlying futures are completed.
      */
     default void migrate(ContainerHolder<V, T> container) {
         globalContainer().migrate(container.globalContainer());
