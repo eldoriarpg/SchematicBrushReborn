@@ -25,7 +25,6 @@ import java.nio.file.Path;
 public class JacksonConfiguration extends JacksonConfig<MainConfiguration> implements Configuration {
     public static final ConfigKey<YamlPresets> PRESETS = ConfigKey.of("Presets", Path.of("presets.yml"), YamlPresets.class, YamlPresets::new);
     public static final ConfigKey<YamlBrushes> BRUSHES = ConfigKey.of("Brushes", Path.of("brushes.yml"), YamlBrushes.class, YamlBrushes::new);
-    private final SchematicBrushReborn plugin;
 
     /**
      * Creates a new Jackson Configuration
@@ -34,7 +33,6 @@ public class JacksonConfiguration extends JacksonConfig<MainConfiguration> imple
      */
     public JacksonConfiguration(@NotNull SchematicBrushReborn plugin) {
         super(plugin, ConfigKey.defaultConfig(MainConfiguration.class, MainConfiguration::new));
-        this.plugin = plugin;
     }
 
     @Override
@@ -59,9 +57,7 @@ public class JacksonConfiguration extends JacksonConfig<MainConfiguration> imple
 
     @Override
     protected ObjectMapper createMapper() {
-        YAMLMapper.Builder builder = YAMLMapper.builder();
-        plugin.configureMapper(builder);
-        return builder.build();
+        return ((SchematicBrushReborn) plugin()).configureMapper(YAMLMapper.builder());
     }
 
     @Override

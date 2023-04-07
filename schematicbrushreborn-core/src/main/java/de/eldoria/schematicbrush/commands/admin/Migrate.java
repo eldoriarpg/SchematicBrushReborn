@@ -46,9 +46,9 @@ public class Migrate extends AdvancedCommand implements ITabExecutor {
         var source = storageRegistry.get(sourceNameable);
         var target = storageRegistry.get(targetNameable);
 
-        CommandAssertions.isFalse(source == null, "Source type %TYPE% is unvalid.",
+        CommandAssertions.isFalse(source == null, "Source type %TYPE% is invalid.",
                 Replacement.create("TYPE", sourceNameable.name()));
-        CommandAssertions.isFalse(target == null, "Target type %TYPE% is unvalid.",
+        CommandAssertions.isFalse(target == null, "Target type %TYPE% is invalid.",
                 Replacement.create("TYPE", targetNameable.name()));
 
 

@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.selector;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

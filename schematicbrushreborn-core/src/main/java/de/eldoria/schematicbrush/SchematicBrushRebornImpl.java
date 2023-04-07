@@ -15,6 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import de.eldoria.eldoutilities.bstats.EldoMetrics;
 import de.eldoria.eldoutilities.bstats.charts.AdvancedPie;
 import de.eldoria.eldoutilities.bstats.charts.SimplePie;
@@ -54,8 +57,10 @@ import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushContainer;
 import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
+import de.eldoria.schematicbrush.config.serialization.deserilizer.BrushBuilderSnapshotDeserializer;
 import de.eldoria.schematicbrush.config.serialization.deserilizer.FlipDeserializer;
 import de.eldoria.schematicbrush.config.serialization.deserilizer.RotationDeserializer;
+import de.eldoria.schematicbrush.config.serialization.deserilizer.SchematicSetBuilderDeserializer;
 import de.eldoria.schematicbrush.config.serialization.serializer.FlipSerializer;
 import de.eldoria.schematicbrush.config.serialization.serializer.RotationSerializer;
 import de.eldoria.schematicbrush.listener.BrushModifier;
@@ -88,7 +93,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     private BrushSettingsRegistryImpl settingsRegistry;
     private SchematicRegistryImpl schematics;
-    private LegacyConfiguration legacyConfiguration;
     private JacksonConfiguration configuration;
     private RenderService renderService;
     private StorageRegistryImpl storageRegistry;
@@ -112,7 +116,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         configuration = new JacksonConfiguration(this);
         PluginBaseConfiguration base = configuration.secondary(PluginBaseConfiguration.KEY);
         if (base.version() == 0) {
-            legacyConfiguration = new LegacyConfiguration(this);
+            var legacyConfiguration = new LegacyConfiguration(this);
             getLogger().log(Level.INFO, "Migrating configuration to jackson.");
             configuration.main().generalConfig((GeneralConfigImpl) legacyConfiguration.general());
             configuration.main().schematicConfig((SchematicConfigImpl) legacyConfiguration.schematicConfig());
@@ -200,8 +204,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
             sbrModule.addSerializer(Rotation.class, new RotationSerializer());
             sbrModule.addDeserializer(Flip.class, new FlipDeserializer());
             sbrModule.addDeserializer(Rotation.class, new RotationDeserializer());
-            sbrModule.addAbstractTypeMapping(SchematicSetBuilder.class, SchematicSetBuilderImpl.class);
-            sbrModule.addAbstractTypeMapping(BrushBuilderSnapshot.class, BrushBuilderSnapshotImpl.class);
+            sbrModule.addDeserializer(SchematicSetBuilder.class, new SchematicSetBuilderDeserializer());
+            sbrModule.addDeserializer(BrushBuilderSnapshot.class, new BrushBuilderSnapshotDeserializer());
         }
         return sbrModule;
     }
@@ -214,11 +218,16 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
      */
     @Override
     public ObjectMapper configureMapper(MapperBuilder<?, ?> builder) {
-        return builder.addModule(platformModule())
-                .addModule(sbrModule)
+        builder.addModule(platformModule())
+                .typeFactory(TypeFactory.defaultInstance().withClassLoader(getClassLoader()))
+                .addModule(schematicBrushModule())
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+        if(builder instanceof YAMLMapper.Builder b){
+            b.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID);
+        }
+        return builder
                 .build()
                 .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
                 .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);

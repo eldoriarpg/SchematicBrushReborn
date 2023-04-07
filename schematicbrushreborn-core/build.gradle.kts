@@ -8,7 +8,7 @@ plugins {
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-api")){
+    implementation(project(":schematicbrushreborn-api")) {
         exclude("com.fasterxml.jackson.dataformat")
         exclude("com.fasterxml.jackson.core")
         exclude("com.fasterxml.jackson")
@@ -77,10 +77,8 @@ tasks {
     }
 
     shadowJar {
-        if (publishData.isPublicBuild()) {
-            relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
-            relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-        }
+        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         mergeServiceFiles()
         archiveClassifier.set("")
         archiveVersion.set(rootProject.version as String)
