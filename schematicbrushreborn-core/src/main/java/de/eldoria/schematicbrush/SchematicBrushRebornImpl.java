@@ -28,6 +28,7 @@ import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.updater.Updater;
+import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateChecker;
 import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateData;
 import de.eldoria.jacksonbukkit.JacksonBukkit;
 import de.eldoria.jacksonbukkit.JacksonPaper;
@@ -161,6 +162,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         enableMetrics();
 
+        if (configuration.main().generalConfig().isCheckUpdates()) {
+            LynaUpdateChecker.lyna(LynaUpdateData.builder(this, 1).build()).start();
+        }
+
         getServer().getScheduler().runTaskTimer(this, renderService, 0, 1);
         registerListener(new BrushModifier(), renderService, notifyListener);
 
@@ -224,8 +229,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-        if(builder instanceof YAMLMapper.Builder b){
-            b.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID);
+        if (builder instanceof YAMLMapper.Builder b) {
+            b.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID)
+                    .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         }
         return builder
                 .build()

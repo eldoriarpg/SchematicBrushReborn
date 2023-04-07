@@ -78,6 +78,7 @@ tasks {
 
     shadowJar {
         relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         mergeServiceFiles()
         archiveClassifier.set("")
