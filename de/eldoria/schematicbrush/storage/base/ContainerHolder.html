@@ -135,10 +135,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get global container</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#migrate(de.eldoria.schematicbrush.storage.base.ContainerHolder)" class="member-name-link">migrate</a><wbr>(<a href="ContainerHolder.html" title="interface in de.eldoria.schematicbrush.storage.base">ContainerHolder</a>&lt;<a href="ContainerHolder.html" title="type parameter in ContainerHolder">V</a>,<wbr><a href="ContainerHolder.html" title="type parameter in ContainerHolder">T</a>&gt;&nbsp;container)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Methdod to merge a container into this container.</div>
+<div class="block">Method to merge a container into this container.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ContainerHolder.html" title="type parameter in ContainerHolder">T</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#playerContainer(java.util.UUID)" class="member-name-link">playerContainer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;player)</code></div>
@@ -289,16 +289,14 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="migrate(de.eldoria.schematicbrush.storage.base.ContainerHolder)">
 <h3>migrate</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</span>&nbsp;<span class="element-name">migrate</span><wbr><span class="parameters">(<a href="ContainerHolder.html" title="interface in de.eldoria.schematicbrush.storage.base">ContainerHolder</a>&lt;<a href="ContainerHolder.html" title="type parameter in ContainerHolder">V</a>,<wbr><a href="ContainerHolder.html" title="type parameter in ContainerHolder">T</a>&gt;&nbsp;container)</span></div>
-<div class="block">Methdod to merge a container into this container.
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">migrate</span><wbr><span class="parameters">(<a href="ContainerHolder.html" title="interface in de.eldoria.schematicbrush.storage.base">ContainerHolder</a>&lt;<a href="ContainerHolder.html" title="type parameter in ContainerHolder">V</a>,<wbr><a href="ContainerHolder.html" title="type parameter in ContainerHolder">T</a>&gt;&nbsp;container)</span></div>
+<div class="block">Method to merge a container into this container.
  <p>
- This will override entries if they already exist whith the same name.
+ This will override entries if they already exist with the same name.
  This will not remove already existing entries.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>container</code> - container to merge</dd>
-<dt>Returns:</dt>
-<dd>A future which completes when all underlying futures are completed.</dd>
 </dl>
 </section>
 </li>

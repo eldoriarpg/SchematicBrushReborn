@@ -128,11 +128,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Get a entry by name</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isGlobalcontainer()" class="member-name-link">isGlobalcontainer</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isGlobalContainer()" class="member-name-link">isGlobalContainer</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Checks if the <a href="#owner()"><code>owner()</code></a> is equal to <a href="#GLOBAL"><code>GLOBAL</code></a></div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#migrate(de.eldoria.schematicbrush.storage.base.Container)" class="member-name-link">migrate</a><wbr>(<a href="Container.html" title="interface in de.eldoria.schematicbrush.storage.base">Container</a>&lt;<a href="Container.html" title="type parameter in Container">T</a>&gt;&nbsp;container)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Migrate the container into this container.</div>
@@ -288,9 +288,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="isGlobalcontainer()">
-<h3>isGlobalcontainer</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isGlobalcontainer</span>()</div>
+<section class="detail" id="isGlobalContainer()">
+<h3>isGlobalContainer</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isGlobalContainer</span>()</div>
 <div class="block">Checks if the <a href="#owner()"><code>owner()</code></a> is equal to <a href="#GLOBAL"><code>GLOBAL</code></a></div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -301,15 +301,13 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="migrate(de.eldoria.schematicbrush.storage.base.Container)">
 <h3>migrate</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</span>&nbsp;<span class="element-name">migrate</span><wbr><span class="parameters">(<a href="Container.html" title="interface in de.eldoria.schematicbrush.storage.base">Container</a>&lt;<a href="Container.html" title="type parameter in Container">T</a>&gt;&nbsp;container)</span></div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">migrate</span><wbr><span class="parameters">(<a href="Container.html" title="interface in de.eldoria.schematicbrush.storage.base">Container</a>&lt;<a href="Container.html" title="type parameter in Container">T</a>&gt;&nbsp;container)</span></div>
 <div class="block">Migrate the container into this container.
- This will override entries if they already exist whith the same name.
+ This will override entries if they already exist with the same name.
  This will not remove already existing entries.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>container</code> - container with entries to add.</dd>
-<dt>Returns:</dt>
-<dd>A future which completes when all underlying processes are completed.</dd>
 </dl>
 </section>
 </li>

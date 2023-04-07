@@ -131,19 +131,28 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get the plugin config</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="SchematicBrushReborn.html" title="class in de.eldoria.schematicbrush">SchematicBrushReborn</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#instance()" class="member-name-link">instance</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract com.fasterxml.jackson.databind.ObjectMapper</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#configureMapper(com.fasterxml.jackson.databind.cfg.MapperBuilder)" class="member-name-link">configureMapper</a><wbr>(com.fasterxml.jackson.databind.cfg.MapperBuilder&lt;?,<wbr>?&gt;&nbsp;builder)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="SchematicBrushReborn.html" title="class in de.eldoria.schematicbrush">SchematicBrushReborn</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#instance()" class="member-name-link">instance</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Get the instance of the plugin.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="schematics/SchematicRegistry.html" title="interface in de.eldoria.schematicbrush.schematics">SchematicRegistry</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#schematics()" class="member-name-link">schematics</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract com.fasterxml.jackson.databind.Module</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#platformModule()" class="member-name-link">platformModule</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract com.fasterxml.jackson.databind.module.SimpleModule</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#schematicBrushModule()" class="member-name-link">schematicBrushModule</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="schematics/SchematicRegistry.html" title="interface in de.eldoria.schematicbrush.schematics">SchematicRegistry</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#schematics()" class="member-name-link">schematics</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get schematic registry</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="storage/StorageRegistry.html" title="interface in de.eldoria.schematicbrush.storage">StorageRegistry</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#storageRegistry()" class="member-name-link">storageRegistry</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="storage/StorageRegistry.html" title="interface in de.eldoria.schematicbrush.storage">StorageRegistry</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#storageRegistry()" class="member-name-link">storageRegistry</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get the storage registry</div>
 </div>
 </div>
@@ -211,6 +220,24 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the current plugin instance.</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="platformModule()">
+<h3>platformModule</h3>
+<div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">com.fasterxml.jackson.databind.Module</span>&nbsp;<span class="element-name">platformModule</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="schematicBrushModule()">
+<h3>schematicBrushModule</h3>
+<div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">com.fasterxml.jackson.databind.module.SimpleModule</span>&nbsp;<span class="element-name">schematicBrushModule</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="configureMapper(com.fasterxml.jackson.databind.cfg.MapperBuilder)">
+<h3>configureMapper</h3>
+<div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">com.fasterxml.jackson.databind.ObjectMapper</span>&nbsp;<span class="element-name">configureMapper</span><wbr><span class="parameters">(com.fasterxml.jackson.databind.cfg.MapperBuilder&lt;?,<wbr>?&gt;&nbsp;builder)</span></div>
 </section>
 </li>
 <li>
