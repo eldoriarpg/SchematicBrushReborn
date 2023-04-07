@@ -6,14 +6,15 @@
 
 package de.eldoria.schematicbrush.storage;
 
-import de.eldoria.schematicbrush.config.ConfigurationImpl;
+import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.config.LegacyConfiguration;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import de.eldoria.schematicbrush.storage.preset.Presets;
 
 public class YamlStorage implements Storage {
-    private final ConfigurationImpl configuration;
+    private final Configuration configuration;
 
-    public YamlStorage(ConfigurationImpl configuration) {
+    public YamlStorage(Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -29,6 +30,6 @@ public class YamlStorage implements Storage {
 
     @Override
     public void save() {
-        configuration.save();
+        configuration.saveConfigs();
     }
 }

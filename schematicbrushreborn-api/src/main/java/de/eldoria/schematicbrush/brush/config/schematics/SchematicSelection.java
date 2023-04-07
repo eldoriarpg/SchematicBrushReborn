@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.schematics;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
@@ -16,6 +17,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.Optional;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
 public interface SchematicSelection extends Randomable, ConfigurationSerializable {
     Optional<Pair<SchematicSet, Schematic>> nextSchematic(SchematicBrush brush, boolean force);
 

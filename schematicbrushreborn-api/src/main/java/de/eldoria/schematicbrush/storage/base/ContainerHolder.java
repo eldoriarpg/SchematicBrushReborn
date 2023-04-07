@@ -7,8 +7,6 @@
 package de.eldoria.schematicbrush.storage.base;
 
 import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
-import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.SchematicBrushReborn;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -16,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -120,25 +117,18 @@ public interface ContainerHolder<V, T extends Container<V>> {
     CompletableFuture<Integer> count();
 
     /**
-     * Methdod to merge a container into this container.
+     * Method to merge a container into this container.
      * <p>
-     * This will override entries if they already exist whith the same name.
+     * This will override entries if they already exist with the same name.
      * This will not remove already existing entries.
      *
      * @param container container to merge
-     * @return A future which completes when all underlying futures are completed.
      */
-    default CompletableFuture<Void> migrate(ContainerHolder<V, T> container) {
-        List<CompletableFuture<?>> migrations = new ArrayList<>();
-        var global = globalContainer().migrate(container.globalContainer());
-        var playerMigration = container.playerContainers().whenComplete(Futures.whenComplete(map -> {
-            for (Map.Entry<UUID, ? extends T> entry : map.entrySet()) {
-                var migrate = playerContainer(entry.getKey()).migrate(entry.getValue());
-                migrations.add(migrate);
-            }
-        }, err -> SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load player containers", err)));
-        migrations.add(global);
-        migrations.add(playerMigration);
-        return CompletableFuture.allOf(migrations.toArray(CompletableFuture[]::new));
+    default void migrate(ContainerHolder<V, T> container) {
+        globalContainer().migrate(container.globalContainer());
+        Map<UUID, ? extends T> map = container.playerContainers().join();
+        for (Map.Entry<UUID, ? extends T> entry : map.entrySet()) {
+            playerContainer(entry.getKey()).migrate(entry.getValue());
+        }
     }
 }

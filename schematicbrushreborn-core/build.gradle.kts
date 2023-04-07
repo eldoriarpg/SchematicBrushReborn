@@ -1,9 +1,6 @@
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "8.1.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     `maven-publish`
 }
@@ -11,31 +8,31 @@ plugins {
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-api"))
+    implementation(project(":schematicbrushreborn-api")) {
+        exclude("com.fasterxml.jackson.dataformat")
+        exclude("com.fasterxml.jackson.core")
+        exclude("com.fasterxml.jackson")
+        exclude("net.kyori")
+        exclude("org.jetbrains")
+        exclude("org.intellij")
+    }
+    compileOnly("org.jetbrains", "annotations", "24.0.1")
+
+    bukkitLibrary("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
+    bukkitLibrary("com.fasterxml.jackson.core:jackson-core:2.14.2")
+    bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    bukkitLibrary("net.kyori:adventure-platform-bukkit:4.3.0")
+    bukkitLibrary("net.kyori:adventure-text-minimessage:4.13.0")
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation("org.jetbrains", "annotations", "24.0.1")
-    testImplementation("org.mockito", "mockito-core", "5.1.1")
+    testImplementation("org.mockito", "mockito-core", "5.2.0")
     testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.14.2")
 }
 
 publishData {
     useInternalEldoNexusRepos()
     publishTask("shadowJar")
-}
-
-fun getBuildType(): String {
-    return when {
-        System.getenv("PATREON")?.equals("true", true) == true -> {
-            "PATREON"
-        }
-
-        publishData.isPublicBuild() -> {
-            "PUBLIC";
-        }
-
-        else -> "LOCAL"
-    }
 }
 
 publishing {
@@ -75,29 +72,14 @@ publishing {
 }
 
 tasks {
-    processResources {
-        from(sourceSets.main.get().resources.srcDirs) {
-            filesMatching("build.data") {
-                expand(
-                        "type" to getBuildType(),
-                        "time" to DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-                        "branch" to publishData.getBranch(),
-                        "commit" to publishData.getCommitHash()
-                )
-            }
-        }
-
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    }
-
     compileJava {
         options.encoding = "UTF-8"
     }
 
     shadowJar {
         relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-        relocate("net.kyori", shadebase + "kyori")
         mergeServiceFiles()
         archiveClassifier.set("")
         archiveVersion.set(rootProject.version as String)
@@ -123,7 +105,7 @@ bukkit {
     name = "SchematicBrushReborn"
     version = publishData.getVersion(true)
     description = "Use your world edit schematics as a brush!"
-    apiVersion = "1.13"
+    apiVersion = "1.16"
     main = "de.eldoria.schematicbrush.SchematicBrushRebornImpl"
     authors = listOf("RainbowDashLabs", "SirYwell", "LuftigerLuca")
     website = "https://www.spigotmc.org/resources/98499/"

@@ -44,7 +44,7 @@ public class StorageRegistryImpl extends BaseRegistry<Nameable, Storage> impleme
         if (sourceStorage == null) throw new IllegalArgumentException("Storage " + source + " does not exist.");
         if (targetStorage == null) throw new IllegalArgumentException("Storage " + target + " does not exist.");
 
-        return targetStorage.migrate(sourceStorage);
+        return CompletableFuture.runAsync(() -> targetStorage.migrate(sourceStorage));
     }
 
     public void shutdown() {

@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.replaceall;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
 import com.sk89q.worldedit.function.mask.Masks;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -21,7 +23,8 @@ import java.util.Map;
 public class ReplaceAll implements Mutator<Boolean> {
     private final boolean value;
 
-    public ReplaceAll(boolean value) {
+    @JsonCreator
+    public ReplaceAll(@JsonProperty("value") boolean value) {
         this.value = value;
     }
 

@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.offset;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -20,7 +22,8 @@ public class OffsetRange extends AOffset {
     private final int min;
     private final int max;
 
-    public OffsetRange(int min, int max) {
+    @JsonCreator
+    public OffsetRange(@JsonProperty("min") int min, @JsonProperty("max") int max) {
         this.min = Math.min(min, max);
         this.max = Math.max(min, max);
     }

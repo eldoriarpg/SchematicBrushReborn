@@ -6,6 +6,8 @@
 
 package de.eldoria.schematicbrush.brush.config.offset;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -15,7 +17,8 @@ import java.util.Map;
 
 @SerializableAs("sbrOffsetFixed")
 public class OffsetFixed extends AOffset {
-    public OffsetFixed(int offset) {
+    @JsonCreator
+    public OffsetFixed(@JsonProperty("offset") int offset) {
         super(offset);
     }
 

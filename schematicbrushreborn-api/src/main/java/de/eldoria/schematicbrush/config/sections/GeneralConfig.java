@@ -51,7 +51,7 @@ public interface GeneralConfig extends ConfigurationSerializable {
      *
      * @return the message channel implementation
      */
-    MessageChannel<?> defaultNameChannel();
+    de.eldoria.schematicbrush.config.sections.MessageChannel defaultNameChannel();
 
     /**
      * The refresh interval for each player of the rendering preview.

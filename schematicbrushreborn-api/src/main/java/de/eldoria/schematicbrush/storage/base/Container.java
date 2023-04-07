@@ -6,19 +6,15 @@
 
 package de.eldoria.schematicbrush.storage.base;
 
-import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.SchematicBrushReborn;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
 
 /**
  * An interface which represents a container which holds named entries of any type.
@@ -95,31 +91,22 @@ public interface Container<T> {
      *
      * @return true if this container has the global UUID
      */
-    default boolean isGlobalcontainer() {
+    @JsonIgnore
+    default boolean isGlobalContainer() {
         return GLOBAL.equals(owner());
     }
 
     /**
      * Migrate the container into this container.
-     * This will override entries if they already exist whith the same name.
+     * This will override entries if they already exist with the same name.
      * This will not remove already existing entries.
      *
      * @param container container with entries to add.
-     * @return A future which completes when all underlying processes are completed.
      */
-    default CompletableFuture<Void> migrate(Container<T> container) {
-        List<CompletableFuture<?>> migrations = new ArrayList<>();
-        var migrate = container.all()
-                .whenComplete(Futures.whenComplete(entries -> {
-                    for (var entry : entries) {
-                        var migration = add(entry);
-                        migrations.add(migration);
-                        add(entry).whenComplete(Futures.whenComplete(
-                                res -> {
-                                }, err -> SchematicBrushReborn.logger().log(Level.SEVERE, "Could not save player container", err)));
-                    }
-                }, err -> SchematicBrushReborn.logger().log(Level.SEVERE, "Could not load player container", err)));
-        migrations.add(migrate);
-        return CompletableFuture.allOf(migrations.toArray(CompletableFuture[]::new));
+    default void migrate(Container<T> container) {
+        var entries = container.all().join();
+        for (var entry : entries) {
+            add(entry).join();
+        }
     }
 }
