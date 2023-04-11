@@ -9,7 +9,7 @@ dependencies {
     api("de.eldoria.util", "jackson-configuration", "2.0.0-SNAPSHOT")
     api("de.eldoria", "messageblocker", "1.1.1")
     api("net.kyori", "adventure-platform-bukkit", "4.3.0")
-    api("net.kyori", "adventure-text-minimessage", "4.13.0")
+    api("net.kyori", "adventure-text-minimessage", "4.13.1")
 }
 
 publishData {

@@ -22,7 +22,7 @@ dependencies {
     bukkitLibrary("com.fasterxml.jackson.core:jackson-core:2.14.2")
     bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     bukkitLibrary("net.kyori:adventure-platform-bukkit:4.3.0")
-    bukkitLibrary("net.kyori:adventure-text-minimessage:4.13.0")
+    bukkitLibrary("net.kyori:adventure-text-minimessage:4.13.1")
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation("org.jetbrains", "annotations", "24.0.1")
