@@ -11,6 +11,12 @@ dependencies {
 
 }
 
+publishData {
+    addBuildData()
+    useInternalEldoNexusRepos()
+    publishComponent("java")
+}
+
 tasks {
     register<Copy>("copyToServer") {
         val path = project.property("targetDir") ?: ""
