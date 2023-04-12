@@ -1,12 +1,10 @@
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import de.chojo.PublishData
-import net.minecrell.pluginyml.bukkit.BukkitPlugin
 
 plugins {
     java
     id("com.diffplug.spotless") version "6.18.0"
     id("de.chojo.publishdata") version "1.2.4"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     `maven-publish`
 }
 
@@ -18,7 +16,6 @@ subprojects {
         plugin<SpotlessPlugin>()
         plugin<JavaPlugin>()
         plugin<PublishData>()
-        plugin<BukkitPlugin>()
         plugin<MavenPublishPlugin>()
     }
 }

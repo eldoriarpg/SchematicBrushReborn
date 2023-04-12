@@ -7,7 +7,7 @@ plugins {
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-core")) {
+    implementation(project(":schematicbrushreborn-api")) {
         exclude("com.fasterxml.*")
         exclude("net.kyori")
         exclude("org.jetbrains")
