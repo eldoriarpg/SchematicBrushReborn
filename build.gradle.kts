@@ -11,20 +11,25 @@ plugins {
 group = "de.eldoria"
 version = "2.5.0"
 
-subprojects {
-    apply {
-        plugin<SpotlessPlugin>()
-        plugin<JavaPlugin>()
-        plugin<PublishData>()
-        plugin<MavenPublishPlugin>()
-    }
-}
+var publishModules = setOf("schematicbrushreborn-api",
+        "schematicbrushreborn-paper",
+        "schematicbrushreborn-paper-legacy",
+        "schematicbrushreborn-spigot")
 
 allprojects {
     repositories {
         mavenCentral()
         maven("https://eldonexus.de/repository/maven-public/")
         maven("https://eldonexus.de/repository/maven-proxies/")
+    }
+
+    apply {
+        plugin<SpotlessPlugin>()
+        plugin<JavaPlugin>()
+        plugin<PublishData>()
+        if (publishModules.contains(project.name)) {
+            plugin<MavenPublishPlugin>()
+        }
     }
 
     spotless {
@@ -75,44 +80,6 @@ allprojects {
         }
     }
 
-    if (project.name.contains("paper") || project.name.contains("spigot")) {
-        publishing {
-            publications.create<MavenPublication>("maven") {
-                publishData.configurePublication(this)
-                pom {
-                    url.set("https://github.com/eldoriarpg/schematicbrushreborn")
-                    developers {
-                        developer {
-                            name.set("Florian Fülling")
-                            organization.set("EldoriaRPG")
-                            organizationUrl.set("https://github.com/eldoriarpg")
-                        }
-                    }
-                    licenses {
-                        license {
-                            name.set("GNU Affero General Public License v3.0")
-                            url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
-                        }
-                    }
-                }
-            }
-
-            repositories {
-                maven {
-                    authentication {
-                        credentials(PasswordCredentials::class) {
-                            username = System.getenv("NEXUS_USERNAME")
-                            password = System.getenv("NEXUS_PASSWORD")
-                        }
-                    }
-
-                    setUrl(publishData.getRepository())
-                    name = "EldoNexus"
-                }
-            }
-        }
-    }
-
     tasks {
         compileJava {
             options.encoding = "UTF-8"
@@ -122,8 +89,8 @@ allprojects {
             options.encoding = "UTF-8"
         }
 
-
         test {
+            dependsOn(spotlessCheck)
             useJUnitPlatform()
             testLogging {
                 events("passed", "skipped", "failed")
