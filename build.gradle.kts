@@ -5,18 +5,16 @@ plugins {
     java
     id("com.diffplug.spotless") version "6.18.0"
     id("de.chojo.publishdata") version "1.2.4"
+    `maven-publish`
 }
 
 group = "de.eldoria"
 version = "2.5.0"
 
-subprojects {
-    apply {
-        plugin<SpotlessPlugin>()
-        plugin<JavaPlugin>()
-        plugin<PublishData>()
-    }
-}
+var publishModules = setOf("schematicbrushreborn-api",
+        "schematicbrushreborn-paper",
+        "schematicbrushreborn-paper-legacy",
+        "schematicbrushreborn-spigot")
 
 allprojects {
     repositories {
@@ -25,8 +23,17 @@ allprojects {
         maven("https://eldonexus.de/repository/maven-proxies/")
     }
 
-    spotless{
-        java{
+    apply {
+        plugin<SpotlessPlugin>()
+        plugin<JavaPlugin>()
+        plugin<PublishData>()
+        if (publishModules.contains(project.name)) {
+            plugin<MavenPublishPlugin>()
+        }
+    }
+
+    spotless {
+        java {
             licenseHeaderFile(rootProject.file("HEADER.txt"))
             target("**/*.java")
         }
@@ -38,7 +45,8 @@ allprojects {
         withJavadocJar()
     }
 
-    dependencies{
+    dependencies {
+        compileOnly("io.papermc.paper", "paper-api", "1.17.1-R0.1-SNAPSHOT")
         compileOnly("org.spigotmc", "spigot-api", "1.16.5-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains", "annotations", "24.0.1")
         // Due to incompatibility by the yaml versions defined by world edit, fawe and bukkit we need to exclude it everywhere and add our own version...
@@ -49,6 +57,7 @@ allprojects {
         compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.0") {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
+            exclude("net.kyori")
         }
         compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.0") {
             isTransitive = false
@@ -80,8 +89,8 @@ allprojects {
             options.encoding = "UTF-8"
         }
 
-
         test {
+            dependsOn(spotlessCheck)
             useJUnitPlatform()
             testLogging {
                 events("passed", "skipped", "failed")

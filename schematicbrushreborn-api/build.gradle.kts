@@ -1,7 +1,6 @@
 plugins {
     java
     `java-library`
-    `maven-publish`
 }
 
 dependencies {
@@ -54,19 +53,11 @@ publishing {
 }
 
 tasks {
-    test {
-        dependsOn(spotlessCheck)
-        useJUnitPlatform()
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
-    }
-
     withType<Javadoc> {
         val options = options as StandardJavadocDocletOptions
         options.links(
-            "https://hub.spigotmc.org/javadocs/spigot/",
-            "https://eldoriarpg.github.io/eldo-util/"
+                "https://hub.spigotmc.org/javadocs/spigot/",
+                "https://eldoriarpg.github.io/eldo-util/"
         )
     }
 }
