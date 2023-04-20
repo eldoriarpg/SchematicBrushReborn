@@ -1,66 +1,80 @@
 plugins {
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
+val shadebase = "de.eldoria.schematicbrush.libs."
+
 dependencies {
+    implementation(project(":schematicbrushreborn-core"))
     bukkitLibrary("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
     bukkitLibrary("com.fasterxml.jackson.core:jackson-core:2.14.2")
     bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-
-    implementation(project(":schematicbrushreborn-core"))
 
 }
 
 publishData {
     addBuildData()
     useInternalEldoNexusRepos()
-    publishComponent("java")
+    publishTask("shadowJar")
 }
-        publishing {
-            publications.create<MavenPublication>("maven") {
-                publishData.configurePublication(this)
-                pom {
-                    url.set("https://github.com/eldoriarpg/schematicbrushreborn")
-                    developers {
-                        developer {
-                            name.set("Florian Fülling")
-                            organization.set("EldoriaRPG")
-                            organizationUrl.set("https://github.com/eldoriarpg")
-                        }
-                    }
-                    licenses {
-                        license {
-                            name.set("GNU Affero General Public License v3.0")
-                            url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
-                        }
-                    }
+publishing {
+    publications.create<MavenPublication>("maven") {
+        publishData.configurePublication(this)
+        pom {
+            url.set("https://github.com/eldoriarpg/schematicbrushreborn")
+            developers {
+                developer {
+                    name.set("Florian Fülling")
+                    organization.set("EldoriaRPG")
+                    organizationUrl.set("https://github.com/eldoriarpg")
                 }
             }
-
-            repositories {
-                maven {
-                    authentication {
-                        credentials(PasswordCredentials::class) {
-                            username = System.getenv("NEXUS_USERNAME")
-                            password = System.getenv("NEXUS_PASSWORD")
-                        }
-                    }
-
-                    setUrl(publishData.getRepository())
-                    name = "EldoNexus"
+            licenses {
+                license {
+                    name.set("GNU Affero General Public License v3.0")
+                    url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
                 }
             }
         }
+    }
+
+    repositories {
+        maven {
+            authentication {
+                credentials(PasswordCredentials::class) {
+                    username = System.getenv("NEXUS_USERNAME")
+                    password = System.getenv("NEXUS_PASSWORD")
+                }
+            }
+
+            setUrl(publishData.getRepository())
+            name = "EldoNexus"
+        }
+    }
+}
 
 
 tasks {
+    shadowJar {
+                relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
+        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
+        mergeServiceFiles()
+        archiveVersion.set(rootProject.version as String)
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
     register<Copy>("copyToServer") {
         val path = project.property("targetDir") ?: ""
         if (path.toString().isEmpty()) {
             println("targetDir is not set in gradle properties")
             return@register
         }
-        from(compileJava)
+        from(shadowJar)
         destinationDir = File(path.toString())
     }
 }

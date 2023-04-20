@@ -6,9 +6,10 @@ plugins {
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    bukkitLibrary("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
-    bukkitLibrary("com.fasterxml.jackson.core:jackson-core:2.14.2")
-    bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation(project(":schematicbrushreborn-core"))
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.13.1")
 }
@@ -19,44 +20,49 @@ publishData {
     publishTask("shadowJar")
 }
 
-        publishing {
-            publications.create<MavenPublication>("maven") {
-                publishData.configurePublication(this)
-                pom {
-                    url.set("https://github.com/eldoriarpg/schematicbrushreborn")
-                    developers {
-                        developer {
-                            name.set("Florian Fülling")
-                            organization.set("EldoriaRPG")
-                            organizationUrl.set("https://github.com/eldoriarpg")
-                        }
-                    }
-                    licenses {
-                        license {
-                            name.set("GNU Affero General Public License v3.0")
-                            url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
-                        }
-                    }
+publishing {
+    publications.create<MavenPublication>("maven") {
+        publishData.configurePublication(this)
+        pom {
+            url.set("https://github.com/eldoriarpg/schematicbrushreborn")
+            developers {
+                developer {
+                    name.set("Florian Fülling")
+                    organization.set("EldoriaRPG")
+                    organizationUrl.set("https://github.com/eldoriarpg")
                 }
             }
-
-            repositories {
-                maven {
-                    authentication {
-                        credentials(PasswordCredentials::class) {
-                            username = System.getenv("NEXUS_USERNAME")
-                            password = System.getenv("NEXUS_PASSWORD")
-                        }
-                    }
-
-                    setUrl(publishData.getRepository())
-                    name = "EldoNexus"
+            licenses {
+                license {
+                    name.set("GNU Affero General Public License v3.0")
+                    url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
                 }
             }
         }
+    }
+
+    repositories {
+        maven {
+            authentication {
+                credentials(PasswordCredentials::class) {
+                    username = System.getenv("NEXUS_USERNAME")
+                    password = System.getenv("NEXUS_PASSWORD")
+                }
+            }
+
+            setUrl(publishData.getRepository())
+            name = "EldoNexus"
+        }
+    }
+}
 
 tasks {
     shadowJar {
+        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
+        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
+        relocate("com.fasterxml", shadebase + "fasterxml")
+        relocate("org.yaml", shadebase + "fasterxml")
         relocate("net.kyori", shadebase + "kyori")
         mergeServiceFiles()
         archiveVersion.set(rootProject.version as String)
@@ -66,7 +72,6 @@ tasks {
         dependsOn(shadowJar)
     }
 }
-
 
 bukkit {
     name = "SchematicBrushReborn"
