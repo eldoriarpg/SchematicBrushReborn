@@ -13,3 +13,6 @@ pluginManagement{
         }
     }
 }
+include("schematicbrushreborn-paper")
+include("schematicbrushreborn-paper-legacy")
+include("schematicbrushreborn-spigot")
