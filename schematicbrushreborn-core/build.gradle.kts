@@ -1,13 +1,13 @@
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    `java-library`
 }
 
-val shadebase = "de.eldoria.schematicbrush.libs."
-
 dependencies {
-    implementation(project(":schematicbrushreborn-api")) {
-        exclude("com.fasterxml.*")
+    api(project(":schematicbrushreborn-api")) {
+        exclude("com.fasterxml.jackson.core")
+        exclude("com.fasterxml.jackson")
+        exclude("com.fasterxml.jackson.dataformat")
         exclude("net.kyori")
         exclude("org.jetbrains")
         exclude("org.intellij")
@@ -25,21 +25,50 @@ dependencies {
     testImplementation("com.fasterxml.jackson.core", "jackson-databind", "2.14.2")
 }
 
+publishData {
+    addBuildData()
+    useInternalEldoNexusRepos()
+    publishComponent("java")
+}
+publishing {
+    publications.create<MavenPublication>("maven") {
+        publishData.configurePublication(this)
+        pom {
+            url.set("https://github.com/eldoriarpg/schematicbrushreborn")
+            developers {
+                developer {
+                    name.set("Florian Fülling")
+                    organization.set("EldoriaRPG")
+                    organizationUrl.set("https://github.com/eldoriarpg")
+                }
+            }
+            licenses {
+                license {
+                    name.set("GNU Affero General Public License v3.0")
+                    url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            authentication {
+                credentials(PasswordCredentials::class) {
+                    username = System.getenv("NEXUS_USERNAME")
+                    password = System.getenv("NEXUS_PASSWORD")
+                }
+            }
+
+            setUrl(publishData.getRepository())
+            name = "EldoNexus"
+        }
+    }
+}
+
 tasks {
     compileJava {
         options.encoding = "UTF-8"
-    }
-
-    shadowJar {
-        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
-        relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
-        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-        mergeServiceFiles()
-        archiveVersion.set(rootProject.version as String)
-    }
-
-    build {
-        dependsOn(shadowJar)
     }
 }
 

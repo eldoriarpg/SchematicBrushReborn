@@ -12,6 +12,7 @@ group = "de.eldoria"
 version = "2.5.1"
 
 var publishModules = setOf("schematicbrushreborn-api",
+        "schematicbrushreborn-core",
         "schematicbrushreborn-paper",
         "schematicbrushreborn-paper-legacy",
         "schematicbrushreborn-spigot")
