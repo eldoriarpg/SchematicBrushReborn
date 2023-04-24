@@ -60,7 +60,7 @@ allprojects {
             exclude("org.yaml")
             exclude("net.kyori")
         }
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.0") {
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.1") {
             isTransitive = false
             exclude("org.yaml")
         }
@@ -75,7 +75,7 @@ allprojects {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
         }
-        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.0") {
+        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.1") {
             isTransitive = false
             exclude("org.yaml")
         }
