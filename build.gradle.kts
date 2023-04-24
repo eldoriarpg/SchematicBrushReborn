@@ -55,7 +55,7 @@ allprojects {
         compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.14") {
             exclude("org.yaml")
         }
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.0") {
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.1") {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
             exclude("net.kyori")
@@ -71,7 +71,7 @@ allprojects {
         testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.14") {
             exclude("org.yaml")
         }
-        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.0") {
+        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.1") {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
         }
