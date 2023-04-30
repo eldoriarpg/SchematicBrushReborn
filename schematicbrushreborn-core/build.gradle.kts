@@ -26,7 +26,6 @@ dependencies {
 }
 
 publishData {
-    addBuildData()
     useInternalEldoNexusRepos()
     publishComponent("java")
 }

@@ -10,7 +10,7 @@ dependencies {
     bukkitLibrary("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
     bukkitLibrary("com.fasterxml.jackson.core:jackson-core:2.14.2")
     bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-
+    bukkitLibrary("net.kyori", "adventure-platform-bukkit", "4.3.0")
 }
 
 publishData {
@@ -57,7 +57,7 @@ publishing {
 
 tasks {
     shadowJar {
-                relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
+        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
         relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         mergeServiceFiles()

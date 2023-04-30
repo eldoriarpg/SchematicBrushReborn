@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.5.1"
+version = "2.5.2"
 
 var publishModules = setOf("schematicbrushreborn-api",
         "schematicbrushreborn-core",
@@ -19,6 +19,11 @@ var publishModules = setOf("schematicbrushreborn-api",
 
 allprojects {
     repositories {
+//        mavenLocal {
+//            content {
+//                includeGroup("de.eldoria.util")
+//            }
+//        }
         mavenCentral()
         maven("https://eldonexus.de/repository/maven-public/")
         maven("https://eldonexus.de/repository/maven-proxies/")
