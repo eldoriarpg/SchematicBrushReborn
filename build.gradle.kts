@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.5.1"
+version = "2.5.2"
 
 var publishModules = setOf("schematicbrushreborn-api",
         "schematicbrushreborn-core",
@@ -19,6 +19,11 @@ var publishModules = setOf("schematicbrushreborn-api",
 
 allprojects {
     repositories {
+//        mavenLocal {
+//            content {
+//                includeGroup("de.eldoria.util")
+//            }
+//        }
         mavenCentral()
         maven("https://eldonexus.de/repository/maven-public/")
         maven("https://eldonexus.de/repository/maven-proxies/")
@@ -55,27 +60,27 @@ allprojects {
         compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.14") {
             exclude("org.yaml")
         }
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.0") {
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.1") {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
             exclude("net.kyori")
         }
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.0") {
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.1") {
             isTransitive = false
             exclude("org.yaml")
         }
 
         testImplementation(platform("org.junit:junit-bom:5.9.2"))
         testImplementation("org.junit.jupiter", "junit-jupiter")
-        testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.145.0")
+        testImplementation("com.github.seeseemelk", "MockBukkit-v1.19", "2.147.1")
         testImplementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.14") {
             exclude("org.yaml")
         }
-        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.0") {
+        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.1") {
             exclude("com.intellectualsites.paster")
             exclude("org.yaml")
         }
-        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.0") {
+        testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.1") {
             isTransitive = false
             exclude("org.yaml")
         }
