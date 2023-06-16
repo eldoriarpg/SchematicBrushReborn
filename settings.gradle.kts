@@ -32,7 +32,7 @@ dependencyResolutionManagement {
             // utilities
             library("eldoutil-legacy", "de.eldoria:eldo-util:1.14.4")
             library("eldoutil-jackson", "de.eldoria.util:jackson-configuration:2.0.0-DEV")
-            library("messageblocker", "de.eldoria:messageblocker:1.1.1")
+            library("messageblocker", "de.eldoria:messageblocker:1.1.2")
             // misc
             library("jetbrains-annotations", "org.jetbrains:annotations:24.0.1")
             // minecraft
