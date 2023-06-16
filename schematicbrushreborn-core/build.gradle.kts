@@ -22,7 +22,6 @@ dependencies {
     testImplementation("org.mockito", "mockito-core", "5.3.1")
     testImplementation(libs.jackson.databind)
 }
-
 publishData {
     useInternalEldoNexusRepos()
     publishComponent("java")
