@@ -23,8 +23,8 @@ dependencyResolutionManagement {
         create("libs") {
             // jackson & serialization
             version("jackson", "2.14.2")
-            library("jackson-databind", "com.fasterxml.jackson.core","jackson-databind").version("jackson")
-            library("jackson-yaml", "com.fasterxml.jackson.dataformat","jackson-dataformat-yaml").version("jackson")
+            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.14.2")
+            library("jackson-yaml", "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
             library("snakeyaml", "org.yaml:snakeyaml:2.0.1")
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.0")
