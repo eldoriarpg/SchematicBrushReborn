@@ -43,7 +43,7 @@ dependencyResolutionManagement {
             library("paper-v17", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             library("spigot-v16", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             // world edit
-            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.2.14")
+            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.2.15")
             library("fawe-core", "com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.3")
             library("fawe-bukkit", "com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.3")
 
