@@ -1,6 +1,6 @@
 plugins {
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.pluginyml.bukkit)
+    alias(libs.plugins.shadow)
 }
 
 val shadebase = "de.eldoria.schematicbrush.libs."
