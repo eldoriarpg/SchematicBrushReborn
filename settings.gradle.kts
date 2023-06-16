@@ -56,7 +56,7 @@ dependencyResolutionManagement {
 
         }
         create("testlibs") {
-            library("mockbukkit", "com.github.seeseemelk:MockBukkit-v1.19:2.147.1")
+            library("mockbukkit", "com.github.seeseemelk:MockBukkit-v1.19:2.147.2")
         }
     }
 }
