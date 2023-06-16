@@ -24,8 +24,11 @@ dependencyResolutionManagement {
             // jackson & serialization
             version("jackson", "2.14.2")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.15.2")
+            library("jackson-annotations", "com.fasterxml.jackson.core:jackson-annotations:2.15.2")
             library("jackson-yaml", "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
             library("snakeyaml", "org.yaml:snakeyaml:2.0")
+            bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
+
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.0")
             library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.14.0")

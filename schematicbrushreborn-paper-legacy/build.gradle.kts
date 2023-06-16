@@ -7,7 +7,7 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
     implementation(project(":schematicbrushreborn-core"))
-    implementation(libs.jackson.yaml)
+    implementation(libs.bundles.jackson)
     implementation(libs.adventure.bukkit)
     implementation(libs.adventure.minimessage)
 }

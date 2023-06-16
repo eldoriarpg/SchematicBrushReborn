@@ -7,7 +7,7 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
     implementation(project(":schematicbrushreborn-core"))
-    bukkitLibrary(libs.jackson.yaml)
+    bukkitLibrary(libs.bundles.jackson)
     bukkitLibrary(libs.adventure.bukkit)
 }
 
