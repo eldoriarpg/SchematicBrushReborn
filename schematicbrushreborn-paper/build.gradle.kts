@@ -7,10 +7,8 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
     implementation(project(":schematicbrushreborn-core"))
-    bukkitLibrary("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
-    bukkitLibrary("com.fasterxml.jackson.core:jackson-core:2.14.2")
-    bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    bukkitLibrary("net.kyori", "adventure-platform-bukkit", "4.3.0")
+    bukkitLibrary(libs.jackson.yaml)
+    bukkitLibrary(libs.adventure.bukkit)
 }
 
 publishData {

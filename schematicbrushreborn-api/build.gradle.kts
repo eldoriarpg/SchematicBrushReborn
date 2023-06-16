@@ -4,11 +4,11 @@ plugins {
 }
 
 dependencies {
-    api("de.eldoria", "eldo-util", "1.14.4")
-    api("de.eldoria.util", "jackson-configuration", "2.0.0-DEV")
-    api("de.eldoria", "messageblocker", "1.1.2")
-    api("net.kyori", "adventure-platform-bukkit", "4.3.0")
-    api("net.kyori", "adventure-text-minimessage", "4.13.1")
+    api(libs.eldoutil.legacy)
+    api(libs.eldoutil.jackson)
+    api(libs.messageblocker)
+    api(libs.adventure.bukkit)
+    api(libs.adventure.minimessage)
 }
 
 publishData {
