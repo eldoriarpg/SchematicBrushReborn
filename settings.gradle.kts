@@ -28,7 +28,7 @@ dependencyResolutionManagement {
             library("snakeyaml", "org.yaml:snakeyaml:2.0")
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.0")
-            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.13.1")
+            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.14.0")
             // utilities
             library("eldoutil-legacy", "de.eldoria:eldo-util:1.14.4")
             library("eldoutil-jackson", "de.eldoria.util:jackson-configuration:2.0.0-DEV")
