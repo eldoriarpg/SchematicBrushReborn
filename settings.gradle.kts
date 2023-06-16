@@ -25,7 +25,7 @@ dependencyResolutionManagement {
             version("jackson", "2.14.2")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.14.2")
             library("jackson-yaml", "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
-            library("snakeyaml", "org.yaml:snakeyaml:2.0.1")
+            library("snakeyaml", "org.yaml:snakeyaml:2.0")
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.0")
             library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.13.1")
@@ -51,8 +51,8 @@ dependencyResolutionManagement {
             plugin("publishdata", "de.chojo.publishdata").version("1.2.4")
             plugin("spotless", "com.diffplug.spotless").version("6.18.0")
             plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
-            plugin("pluginyml-bukkit", "net.minecrell.plugin-yml.paper").version("0.5.3")
-            //plugin("pluginyml-paper""net.minecrell.plugin-yml.paper").version( "0.5.3")
+            plugin("pluginyml-bukkit", "net.minecrell.plugin-yml.bukkit").version("0.5.3")
+            //plugin("pluginyml-paper","net.minecrell.plugin-yml.paper").version( "0.5.3")
 
         }
         create("testlibs") {
