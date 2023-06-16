@@ -14,7 +14,7 @@ dependencies {
     }
     compileOnly("org.jetbrains", "annotations", "24.0.1")
     compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
-    compileOnly("com.fasterxml.jackson.core:jackson-core:2.14.2")
+    compileOnly("com.fasterxml.jackson.core:jackson-core:2.15.2")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.0")
     compileOnly("net.kyori:adventure-text-minimessage:4.13.1")
