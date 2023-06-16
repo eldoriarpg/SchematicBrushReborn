@@ -1,17 +1,15 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    alias(libs.plugins.pluginyml.bukkit)
+    alias(libs.plugins.shadow)
 }
 
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
     implementation(project(":schematicbrushreborn-core"))
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
-    implementation("net.kyori:adventure-text-minimessage:4.13.1")
+    implementation(libs.jackson.yaml)
+    implementation(libs.adventure.bukkit)
+    implementation(libs.adventure.minimessage)
 }
 
 publishData {
