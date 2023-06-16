@@ -23,7 +23,7 @@ dependencyResolutionManagement {
         create("libs") {
             // jackson & serialization
             version("jackson", "2.14.2")
-            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.14.2")
+            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.15.2")
             library("jackson-yaml", "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
             library("snakeyaml", "org.yaml:snakeyaml:2.0")
             // adventure
