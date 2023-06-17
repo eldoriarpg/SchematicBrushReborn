@@ -86,6 +86,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -266,7 +267,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public @NotNull EntryData[] getDebugInformations() {
-        return new EntryData[]{new EntryData("Rendering", renderService.renderInfo())};
+        return new EntryData[]{new EntryData("Rendering", Optional.ofNullable(renderService).map(RenderService::renderInfo).orElse("Not running"))};
     }
 
     private void enableMetrics() {
