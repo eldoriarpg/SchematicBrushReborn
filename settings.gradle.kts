@@ -48,7 +48,7 @@ dependencyResolutionManagement {
             // world edit
             library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.2.15")
             library("fawe-core", "com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.6.3")
-            library("fawe-bukkit", "com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.3")
+            library("fawe-bukkit", "com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.6.4")
 
             // plugins
             plugin("publishdata", "de.chojo.publishdata").version("1.2.4")
