@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config;
 
 import de.eldoria.eldoutilities.container.Pair;
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.PasteMutationImpl;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
@@ -14,7 +15,6 @@ import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
 import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
 
 /**
  * A brush configuration represents the settings of a single brush. A brush consists of one or more brushes represented
@@ -44,7 +45,7 @@ public final class BrushSettingsImpl implements BrushSettings {
      * The total weight of all brushes in the {@link #schematicSets} list
      */
     private int totalWeight;
-    private  SchematicSelection schematicSelection;
+    private SchematicSelection schematicSelection;
 
     public BrushSettingsImpl(SchematicSelection schematicSelection, List<SchematicSet> schematicSets, Map<Nameable, Mutator<?>> placementModifier) {
         this.schematicSelection = schematicSelection;
@@ -135,7 +136,14 @@ public final class BrushSettingsImpl implements BrushSettings {
      */
     @Override
     public void mutate(PasteMutation mutation) {
-        placementModifier.values().forEach(mod -> mod.invoke(mutation));
+        for (Mutator<?> mod : placementModifier.values()) {
+            try {
+                mod.invoke(mutation);
+            } catch (Throwable e) {
+                SchematicBrushReborn.logger().log(Level.WARNING, "Could not apply brush setting " + mod.name(), e);
+                if (mod.shiftable()) mod.shift();
+            }
+        }
     }
 
     /**
