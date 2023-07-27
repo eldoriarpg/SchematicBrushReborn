@@ -127,7 +127,7 @@ public class BrushPasteImpl implements BrushPaste {
      * Build a paste operation
      *
      * @param editSession     edit session
-     * @param capturingExtent extend to caputure changes
+     * @param capturingExtent extend to capture changes
      * @param owner           owner of brush
      * @param position        position to paste
      * @return operation
