@@ -32,6 +32,7 @@ public class FlipList extends AFlip {
         var map = SerializationUtil.mapOf(objectMap);
         List<String> flips = map.getValue("values");
         values = flips.stream().map(Flip::valueOf).collect(Collectors.toList());
+        value(valueProvider());
     }
 
     @Override
