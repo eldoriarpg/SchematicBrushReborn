@@ -1,5 +1,4 @@
 rootProject.name = "schematic-brush-reborn"
-include(":")
 include(":schematicbrushreborn-api")
 include(":schematicbrushreborn-core")
 include("schematicbrushreborn-paper")
