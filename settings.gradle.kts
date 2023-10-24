@@ -21,10 +21,10 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             // jackson & serialization
-            version("jackson", "2.14.2")
-            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.15.3")
-            library("jackson-annotations", "com.fasterxml.jackson.core:jackson-annotations:2.15.3")
-            library("jackson-yaml", "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.3")
+            version("jackson", "2.15.3")
+            library("jackson-databind", "com.fasterxml.jackson.core","jackson-databind").versionRef("jackson")
+            library("jackson-annotations", "com.fasterxml.jackson.core","jackson-annotations").versionRef("jackson")
+            library("jackson-yaml", "com.fasterxml.jackson.dataformat","jackson-dataformat-yaml").versionRef("jackson")
             library("snakeyaml", "org.yaml:snakeyaml:2.2")
             bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
 
@@ -46,8 +46,9 @@ dependencyResolutionManagement {
             library("spigot-v16", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             // world edit
             library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.2.17")
-            library("fawe-core", "com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.8.1")
-            library("fawe-bukkit", "com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.8.1")
+            version("fawe", "2.8.1")
+            library("fawe-core", "com.fastasyncworldedit","FastAsyncWorldEdit-Core").versionRef("fawe")
+            library("fawe-bukkit", "com.fastasyncworldedit","FastAsyncWorldEdit-Bukkit").versionRef("fawe")
 
             // plugins
             plugin("publishdata", "de.chojo.publishdata").version("1.2.5")
