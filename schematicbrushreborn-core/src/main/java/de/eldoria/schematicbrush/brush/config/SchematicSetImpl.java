@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config;
 
+import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
@@ -15,7 +16,12 @@ import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.config.util.ValueProvider;
 import de.eldoria.schematicbrush.schematics.Schematic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * The schematic set represents a part of a brush, which will be combined to a brush by the {@link BrushSettingsImpl} A
@@ -95,7 +101,14 @@ public class SchematicSetImpl implements SchematicSet {
      */
     @Override
     public void mutate(PasteMutation mutation) {
-        schematicModifier.values().forEach(mod -> mod.invoke(mutation));
+        for (Mutator<?> mod : schematicModifier.values()) {
+            try {
+                mod.invoke(mutation);
+            } catch (Throwable e) {
+                SchematicBrushReborn.logger().log(Level.WARNING, "Could not apply schematic modifier " + mod.name(), e);
+                if (mod.shiftable()) mod.shift();
+            }
+        }
     }
 
     /**

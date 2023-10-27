@@ -25,6 +25,7 @@ public class RotationList extends ARotation {
     @JsonCreator
     public RotationList(@JsonProperty("values") List<Rotation> values) {
         this.values = values;
+        value(values.get(0));
     }
 
     public RotationList(Map<String, Object> objectMap) {
