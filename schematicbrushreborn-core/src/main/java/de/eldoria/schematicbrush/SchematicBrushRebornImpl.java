@@ -115,6 +115,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public void onPluginLoad() throws Throwable {
         InternalLogger.init(this);
+        getLogger().config("Test");
 
         settingsRegistry = new BrushSettingsRegistryImpl();
         schematics = new SchematicRegistryImpl();
