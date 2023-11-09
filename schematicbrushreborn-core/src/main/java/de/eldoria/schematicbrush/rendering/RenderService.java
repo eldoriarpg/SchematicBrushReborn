@@ -116,8 +116,8 @@ public class RenderService implements Runnable, Listener {
     public void onPostPaste(PostPasteEvent event) {
         if (!players.contains(event.player())) return;
 
-        // Remove the player from the block after a second aka 20 ticks
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> skip.remove(event.player().getUniqueId()), 20);
+        // Remove the player from the block after a second aka 20 ticks by default
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> skip.remove(event.player().getUniqueId()), configuration.general().pasteBreak());
     }
 
     @Override
@@ -155,6 +155,8 @@ public class RenderService implements Runnable, Listener {
             render(player);
         } else if (sinks.containsKey(player.getUniqueId())) {
             resolveBlocked(player);
+        }else {
+            getSink(player).skipped();
         }
     }
 

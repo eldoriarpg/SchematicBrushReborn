@@ -85,7 +85,7 @@ bukkit {
     apiVersion = "1.16"
     main = "de.eldoria.schematicbrush.SchematicBrushRebornImpl"
     authors = listOf("RainbowDashLabs", "SirYwell", "LuftigerLuca")
-    website = "https://www.spigotmc.org/resources/98499/"
+    website = "https://sbr.discord.eldoria.de"
     depend = listOf("WorldEdit")
     softDepend = listOf("ProtocolLib")
 

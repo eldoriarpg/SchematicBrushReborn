@@ -37,6 +37,7 @@ public class RenderSink {
     private final Configuration configuration;
     private long flushed = System.currentTimeMillis();
     private final RollingQueue<Integer> batchSize = new RollingQueue<>(1200);
+    private final RollingQueue<Integer> skipped = new RollingQueue<>(1200);
 
     public RenderSink(Player sinkOwner, PacketWorker worker, Configuration configuration) {
         this.sinkOwner = sinkOwner.getUniqueId();
@@ -150,6 +151,7 @@ public class RenderSink {
         oldChanges = this.newChanges;
         this.newChanges = newChanges;
         dirty = true;
+        skipped.add(0);
     }
 
     public int pushAndSend(Changes newChanges) {
@@ -226,5 +228,9 @@ public class RenderSink {
                         subscribers.stream().map(Player::getName).map("  %s"::formatted).collect(Collectors.joining("\n")),
                         player.flatMap(WorldEditBrush::getSchematicBrush).map(SchematicBrush::info).orElse("non").indent(2),
                         Text.inlineEntries(batchSize.values(), 20).indent(2));
+    }
+
+    public void skipped() {
+        skipped.add(1);
     }
 }
