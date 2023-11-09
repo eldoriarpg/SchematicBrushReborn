@@ -222,12 +222,15 @@ public class RenderSink {
                 %s
                 Batch Size:
                 %s
+                Skipped ticks:
+                %s
                 """.stripIndent()
                 .formatted(player.map(Player::getName).orElse("none"),
                         size(),
                         subscribers.stream().map(Player::getName).map("  %s"::formatted).collect(Collectors.joining("\n")),
                         player.flatMap(WorldEditBrush::getSchematicBrush).map(SchematicBrush::info).orElse("non").indent(2),
-                        Text.inlineEntries(batchSize.values(), 20).indent(2));
+                        Text.inlineEntries(batchSize.values(), 20).indent(2),
+                        Text.inlineEntries(skipped.values(), 20).indent(2));
     }
 
     public void skipped() {
