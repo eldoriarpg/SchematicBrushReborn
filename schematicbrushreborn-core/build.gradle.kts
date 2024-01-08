@@ -16,8 +16,8 @@ dependencies {
     compileOnly(libs.jackson.yaml)
     compileOnly(libs.adventure.bukkit)
     compileOnly(libs.adventure.minimessage)
-    compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.21.1")
-    compileOnly("org.apache.logging.log4j", "log4j-core", "2.21.1")
+    compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.22.1")
+    compileOnly("org.apache.logging.log4j", "log4j-core", "2.22.1")
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation(libs.jetbrains.annotations)
