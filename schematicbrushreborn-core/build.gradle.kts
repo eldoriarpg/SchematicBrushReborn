@@ -16,10 +16,12 @@ dependencies {
     compileOnly(libs.jackson.yaml)
     compileOnly(libs.adventure.bukkit)
     compileOnly(libs.adventure.minimessage)
+    compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.22.1")
+    compileOnly("org.apache.logging.log4j", "log4j-core", "2.22.1")
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation(libs.jetbrains.annotations)
-    testImplementation("org.mockito", "mockito-core", "5.6.0")
+    testImplementation("org.mockito", "mockito-core", "5.8.0")
     testImplementation(libs.jackson.databind)
 }
 publishData {

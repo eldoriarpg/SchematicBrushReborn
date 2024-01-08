@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.5.5"
+version = "2.5.6"
 
 var publishModules = setOf("schematicbrushreborn-api",
         "schematicbrushreborn-core",
@@ -67,7 +67,7 @@ allprojects {
         }
         compileOnly(libs.fawe.bukkit)
 
-        testImplementation(platform("org.junit:junit-bom:5.10.0"))
+        testImplementation(platform("org.junit:junit-bom:5.10.1"))
         testImplementation("org.junit.jupiter", "junit-jupiter")
         testImplementation(testlibs.mockbukkit)
         testImplementation(libs.worldedit) {

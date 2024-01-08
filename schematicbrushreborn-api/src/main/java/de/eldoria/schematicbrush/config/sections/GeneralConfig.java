@@ -101,4 +101,6 @@ public interface GeneralConfig extends ConfigurationSerializable {
      * @return the effective render size in blocks
      */
     int maxEffectiveRenderSize();
+
+    int pasteBreak();
 }

@@ -27,6 +27,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private int maxRenderSize = 2500;
     private int maxEffectiveRenderSize = maxRenderSize;
     private int renderDistance = 100;
+    private int pasteBreak = 20;
 
     public GeneralConfigImpl() {
     }
@@ -43,6 +44,7 @@ public class GeneralConfigImpl implements GeneralConfig {
         maxEffectiveRenderSize = map.getValueOrDefault("maxEffectiveRenderSize", maxRenderSize);
         renderDistance = map.getValueOrDefault("renderDistance", 100);
         storageType = map.getValueOrDefault("storageType", StorageRegistry.YAML.name());
+        pasteBreak = map.getValueOrDefault("pasteBreak", pasteBreak);
     }
 
     @Override
@@ -58,6 +60,7 @@ public class GeneralConfigImpl implements GeneralConfig {
                 .add("maxEffectiveRenderSize", maxEffectiveRenderSize)
                 .add("renderDistance", renderDistance)
                 .add("storageType", storageType)
+                .add("pasteBreak", pasteBreak)
                 .build();
     }
 
@@ -114,6 +117,11 @@ public class GeneralConfigImpl implements GeneralConfig {
     @Override
     public int maxEffectiveRenderSize() {
         return maxEffectiveRenderSize;
+    }
+
+    @Override
+    public int pasteBreak() {
+        return pasteBreak;
     }
 
 }

@@ -76,11 +76,15 @@ import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistryImpl;
 import de.eldoria.schematicbrush.storage.YamlStorage;
 import de.eldoria.schematicbrush.storage.preset.Preset;
+import de.eldoria.schematicbrush.util.InternalLogger;
 import de.eldoria.schematicbrush.util.Permissions;
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.*;
 
 import java.io.File;
 import java.util.Arrays;
@@ -110,6 +114,9 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginLoad() throws Throwable {
+        InternalLogger.init(this);
+        getLogger().config("Test");
+
         settingsRegistry = new BrushSettingsRegistryImpl();
         schematics = new SchematicRegistryImpl();
 
