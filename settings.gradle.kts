@@ -51,7 +51,7 @@ dependencyResolutionManagement {
             library("fawe-bukkit", "com.fastasyncworldedit","FastAsyncWorldEdit-Bukkit").versionRef("fawe")
 
             // plugins
-            plugin("publishdata", "de.chojo.publishdata").version("1.3.0")
+            plugin("publishdata", "de.chojo.publishdata").version("1.4.0")
             plugin("spotless", "com.diffplug.spotless").version("6.24.0")
             plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
             plugin("pluginyml-bukkit", "net.minecrell.plugin-yml.bukkit").version("0.6.0")
