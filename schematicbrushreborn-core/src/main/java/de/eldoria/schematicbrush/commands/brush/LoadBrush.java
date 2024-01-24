@@ -17,6 +17,7 @@ import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -27,11 +28,11 @@ import java.util.List;
 
 public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
-    private final Storage storage;
+    private final StorageRegistry storage;
     private final BrushSettingsRegistry settingsRegistry;
     private final SchematicRegistry schematicRegistry;
 
-    public LoadBrush(Plugin plugin, Sessions sessions, Storage storage, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
+    public LoadBrush(Plugin plugin, Sessions sessions, StorageRegistry storage, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
         super(plugin, CommandMeta.builder("loadbrush")
                 .addUnlocalizedArgument("name", true)
                 .build());
@@ -45,7 +46,7 @@ public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
         var strippedName = name.replaceAll("^g:", "");
-        storage.brushes().containerByName(player, name)
+        storage.activeStorage().brushes().containerByName(player, name)
                 .get(strippedName)
                 .whenComplete(Futures.whenComplete(brush -> {
                     CommandAssertions.isTrue(brush.isPresent(), "Unkown brush.");
@@ -59,7 +60,7 @@ public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return storage.brushes().complete(player, args.asString(0));
+            return storage.activeStorage().brushes().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }

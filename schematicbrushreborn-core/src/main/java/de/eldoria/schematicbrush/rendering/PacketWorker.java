@@ -12,6 +12,8 @@ import de.eldoria.schematicbrush.util.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -95,7 +97,7 @@ public class PacketWorker implements Runnable {
     public int packetQueueCount() {
         // We copy the queue to avoid modification during counting.
         // Synchronizing the queue would stop the worker from working properly
-        return new ArrayDeque<>(queue).stream().mapToInt(RenderSink::size).sum();
+        return new ArrayList<>(queue).stream().filter(Objects::nonNull).mapToInt(RenderSink::size).sum();
     }
 
     public int size() {

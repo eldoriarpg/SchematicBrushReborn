@@ -54,6 +54,11 @@ public interface Storage {
      * Called when the plugin shuts down and the storages get unregistered.
      */
     default void shutdown() {
+    }
 
+    /**
+     * Reload the data for that storage from disk
+     */
+    default void reload(){
     }
 }

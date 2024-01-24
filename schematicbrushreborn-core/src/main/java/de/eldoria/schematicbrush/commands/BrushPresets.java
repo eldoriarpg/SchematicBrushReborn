@@ -15,6 +15,7 @@ import de.eldoria.schematicbrush.commands.brushpresets.Info;
 import de.eldoria.schematicbrush.commands.brushpresets.List;
 import de.eldoria.schematicbrush.commands.brushpresets.Remove;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.plugin.Plugin;
 
@@ -23,17 +24,17 @@ import org.bukkit.plugin.Plugin;
  * Brush to create and modify brush presets.
  */
 public class BrushPresets extends AdvancedCommand {
-    public BrushPresets(Plugin plugin, Storage config, MessageBlocker messageBlocker, BrushSettingsRegistry registry) {
+    public BrushPresets(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker, BrushSettingsRegistry registry) {
         super(plugin);
         meta(CommandMeta.builder("sbrbp")
                 .withPermission(Permissions.BrushPreset.USE)
                 .buildSubCommands((cmds, builder) -> {
-                    var list = new List(plugin, config, messageBlocker, registry);
+                    var list = new List(plugin, storage, messageBlocker, registry);
                     builder.withDefaultCommand(list);
-                    cmds.add(new Descr(plugin, config));
-                    cmds.add(new Info(plugin, config, messageBlocker, registry));
+                    cmds.add(new Descr(plugin, storage));
+                    cmds.add(new Info(plugin, storage, messageBlocker, registry));
                     cmds.add(list);
-                    cmds.add(new Remove(plugin, config));
+                    cmds.add(new Remove(plugin, storage));
                 }).build());
     }
 }
