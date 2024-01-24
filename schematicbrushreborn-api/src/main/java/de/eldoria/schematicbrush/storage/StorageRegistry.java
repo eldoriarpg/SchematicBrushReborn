@@ -37,6 +37,4 @@ public interface StorageRegistry extends Registry<Nameable, Storage> {
      * @return Returns a future which completes once all underlying processes complete
      */
     CompletableFuture<Void> migrate(Nameable source, Nameable target);
-
-    void reload();
 }
