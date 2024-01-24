@@ -18,6 +18,7 @@ import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -30,12 +31,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Storage storage;
+    private final StorageRegistry storage;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
     private final MessageBlocker messageBlocker;
 
-    public Info(Plugin plugin, Storage storage, MessageBlocker messageBlocker) {
+    public Info(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("info")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
@@ -49,7 +50,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
         var strippedName = name.replaceAll("^g:", "");
-        storage.presets().containerByName(player, name).get(strippedName)
+        storage.activeStorage().presets().containerByName(player, name).get(strippedName)
                 .whenComplete(Futures.whenComplete(res -> {
                     CommandAssertions.isTrue(res.isPresent(), "error.unkownPreset", Replacement.create("name", strippedName).addFormatting('b'));
                     var preset = res.get();
@@ -70,7 +71,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return storage.presets().complete(player, args.asString(0));
+            return storage.activeStorage().presets().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }

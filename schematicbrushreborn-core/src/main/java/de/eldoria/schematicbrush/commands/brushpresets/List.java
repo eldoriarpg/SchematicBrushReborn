@@ -12,12 +12,12 @@ import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.commands.brushpresets.info.Global;
 import de.eldoria.schematicbrush.commands.brushpresets.info.Private;
-import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.plugin.Plugin;
 
 public class List extends AdvancedCommand {
 
-    public List(Plugin plugin, Storage storage, MessageBlocker messageBlocker, BrushSettingsRegistry registry) {
+    public List(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker, BrushSettingsRegistry registry) {
         super(plugin, CommandMeta.builder("list")
                 .buildSubCommands((cmds, builder) ->{
                     var privateList = new Private(plugin, storage, messageBlocker, registry);

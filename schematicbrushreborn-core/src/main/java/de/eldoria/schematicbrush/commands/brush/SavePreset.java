@@ -15,6 +15,7 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -29,10 +30,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
-    private final Storage storage;
+    private final StorageRegistry storage;
     private final Sessions sessions;
 
-    public SavePreset(Plugin plugin, Sessions sessions, Storage storage) {
+    public SavePreset(Plugin plugin, Sessions sessions, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("savePreset")
                 .addUnlocalizedArgument("name", true)
                 .withPermission(Permissions.Preset.USE)
@@ -52,25 +53,25 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         CompletableFuture<Optional<Preset>> addition;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            addition = storage.presets().globalContainer().get(preset.name())
+            addition = storage.activeStorage().presets().globalContainer().get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
                             CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
                         }
-                        storage.presets().globalContainer().add(preset).join();
+                        storage.activeStorage().presets().globalContainer().add(preset).join();
                     }, err -> handleCommandError(player, err)));
         } else {
-            addition = storage.presets().playerContainer(player).get(preset.name())
+            addition = storage.activeStorage().presets().playerContainer(player).get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
                             CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
                         }
-                        storage.presets().playerContainer(player).add(preset).join();
+                        storage.activeStorage().presets().playerContainer(player).add(preset).join();
                     }, err -> handleCommandError(player, err)));
         }
         addition.whenComplete(Futures.whenComplete(res -> {
             //TODO: Think about storage saving
-            storage.save();
+            storage.activeStorage().save();
             messageSender().sendMessage(player, "Preset saved.");
         }, err -> handleCommandError(player, err)));
     }
