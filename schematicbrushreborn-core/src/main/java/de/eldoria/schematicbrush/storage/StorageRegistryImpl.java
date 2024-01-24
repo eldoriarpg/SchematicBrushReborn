@@ -59,5 +59,4 @@ public class StorageRegistryImpl extends BaseRegistry<Nameable, Storage> impleme
     protected String name() {
         return "Storage Registry";
     }
-
 }
