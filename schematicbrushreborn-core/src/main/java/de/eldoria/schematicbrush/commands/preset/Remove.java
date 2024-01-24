@@ -15,6 +15,7 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.Replacement;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -26,9 +27,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
-    private final Storage storage;
+    private final StorageRegistry storage;
 
-    public Remove(Plugin plugin, Storage storage) {
+    public Remove(Plugin plugin, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("remove")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
@@ -42,12 +43,12 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
         CompletableFuture<Boolean> removal;
         if (args.flags().has("g")) {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            removal = storage.presets().globalContainer().remove(name)
+            removal = storage.activeStorage().presets().globalContainer().remove(name)
                     .whenComplete(Futures.whenComplete(
                             success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
                             err -> handleCommandError(player, err)));
         } else {
-            removal = storage.presets().playerContainer(player).remove(name)
+            removal = storage.activeStorage().presets().playerContainer(player).remove(name)
                     .whenComplete(Futures.whenComplete(
                             success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
                             err -> handleCommandError(player, err)));
@@ -60,7 +61,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return storage.presets().complete(player, args.asString(0));
+            return storage.activeStorage().presets().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }

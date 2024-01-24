@@ -15,6 +15,7 @@ import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.commands.util.BasePageCommand;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -22,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class Global extends BasePageCommand implements IPlayerTabExecutor {
 
-    private final Storage storage;
+    private final StorageRegistry storage;
 
-    public Global(Plugin plugin, Storage storage, MessageBlocker messageBlocker) {
+    public Global(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("global")
                 .addUnlocalizedArgument("page", false)
                 .build(), messageBlocker);
@@ -34,7 +35,7 @@ public class Global extends BasePageCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         int index = args.asInt(0, 0);
-        storage.presets().globalContainer().paged().whenComplete(Futures.whenComplete(paged -> {
+        storage.activeStorage().presets().globalContainer().paged().whenComplete(Futures.whenComplete(paged -> {
             paged.page(index, PAGE_SIZE).whenComplete(Futures.whenComplete(entries -> {
                 var delete = player.hasPermission(Permissions.Preset.GLOBAL);
                 var composer = MessageComposer.create();

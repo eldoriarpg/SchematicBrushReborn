@@ -15,6 +15,7 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.storage.Storage;
+import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +26,9 @@ import java.util.List;
 
 public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
-    private final Storage storage;
+    private final StorageRegistry storage;
 
-    public AddPreset(Plugin plugin, Sessions sessions, Storage storage) {
+    public AddPreset(Plugin plugin, Sessions sessions, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("addpreset")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
@@ -41,10 +42,10 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
         var session = sessions.getOrCreateSession(player);
         var name = args.asString(0);
         var strippedName = name.replaceAll("^g:", "");
-        storage.presets().containerByName(player, name)
+        storage.activeStorage().presets().containerByName(player, name)
                 .get(strippedName)
                 .whenComplete(Futures.whenComplete(preset -> {
-                    CommandAssertions.isTrue(preset.isPresent(), "Unkown preset.");
+                    CommandAssertions.isTrue(preset.isPresent(), "Unknown preset.");
 
                     for (var builder : preset.get().schematicSetsCopy()) {
                         session.addSchematicSet(builder.copy());
@@ -57,7 +58,7 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.size() == 1) {
-            return storage.presets().complete(player, args.asString(0));
+            return storage.activeStorage().presets().complete(player, args.asString(0));
         }
         return Collections.emptyList();
     }
