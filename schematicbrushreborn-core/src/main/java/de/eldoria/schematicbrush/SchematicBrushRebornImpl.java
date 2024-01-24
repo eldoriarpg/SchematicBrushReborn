@@ -259,6 +259,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     public void reload() {
         schematics.reload();
+        storageRegistry.reload();
         configuration.reload();
         renderService.restart();
     }
