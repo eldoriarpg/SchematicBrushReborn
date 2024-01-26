@@ -105,8 +105,8 @@ public class RenderService implements Runnable, Listener {
      * @param player player to resolve
      */
     private void resolveBlocked(Player player) {
-        worker.process(player);
         RenderSink playerSink = getSink(player);
+        worker.remove(player);
         // We push and send empty changes
         playerSink.pushAndSend(null);
         //getChanges(player).ifPresent(change -> new PaketWorker.ChangeEntry(player, change, null).sendChanges());
