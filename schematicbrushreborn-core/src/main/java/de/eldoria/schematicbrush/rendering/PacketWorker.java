@@ -81,17 +81,7 @@ public class PacketWorker implements Runnable {
 
 
     public void remove(Player player) {
-        queue.removeIf(e -> e.sinkOwner().equals(player.getUniqueId()));
-    }
-
-    public void process(Player player) {
-        queue.removeIf(e -> {
-            if (e.sinkOwner().equals(player.getUniqueId())) {
-                e.sendChanges();
-                return true;
-            }
-            return false;
-        });
+        queue.removeIf(e -> e == null || e.sinkOwner().equals(player.getUniqueId()));
     }
 
     public int packetQueueCount() {
