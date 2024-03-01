@@ -21,7 +21,7 @@ dependencies {
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation(libs.jetbrains.annotations)
-    testImplementation("org.mockito", "mockito-core", "5.8.0")
+    testImplementation("org.mockito", "mockito-core", "5.11.0")
     testImplementation(libs.jackson.databind)
 }
 publishData {
