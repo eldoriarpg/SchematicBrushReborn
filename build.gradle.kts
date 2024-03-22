@@ -79,6 +79,10 @@ allprojects {
         testImplementation(libs.fawe.bukkit)
     }
 
+    publishData {
+        useInternalEldoNexusRepos()
+    }
+
     tasks {
         compileJava {
             options.encoding = "UTF-8"
