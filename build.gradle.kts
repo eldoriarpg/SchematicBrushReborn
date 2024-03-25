@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.6.1"
+version = "2.6.2"
 
 var publishModules = setOf("schematicbrushreborn-api",
         "schematicbrushreborn-core",
@@ -67,7 +67,7 @@ allprojects {
         }
         compileOnly(libs.fawe.bukkit)
 
-        testImplementation(platform("org.junit:junit-bom:5.10.1"))
+        testImplementation(platform("org.junit:junit-bom:5.10.2"))
         testImplementation("org.junit.jupiter", "junit-jupiter")
         testImplementation(testlibs.mockbukkit)
         testImplementation(libs.worldedit) {
@@ -77,6 +77,10 @@ allprojects {
             exclude("com.intellectualsites.paster")
         }
         testImplementation(libs.fawe.bukkit)
+    }
+
+    publishData {
+        useInternalEldoNexusRepos()
     }
 
     tasks {

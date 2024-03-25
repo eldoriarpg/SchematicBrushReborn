@@ -98,7 +98,7 @@ bukkit {
         register("schematicbrush") {
             description = "Create and use schematic brushes"
             aliases = listOf("sbr", "schbr", "schembrush")
-            permission = "schematicbrush.use"
+            permission = "schematicbrush.brush.use"
         }
 
         register("schematicbrushsettings") {

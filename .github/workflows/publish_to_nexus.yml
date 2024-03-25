@@ -9,6 +9,7 @@ on:
       - feature/*
       - release/*
       - fix/*
+      - deps/*
 
 jobs:
   build:
