@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.schematics;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.config.Configuration;
+import de.eldoria.schematicbrush.config.sections.SchematicSource;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -77,14 +78,14 @@ public class SchematicBrushCache implements SchematicCache {
             path = path.replace("\\", "/");
 
             var load = source.isRelative() ? Paths.get(root, path) : Paths.get(path);
-            loadSchematics(load);
+            loadSchematics(load, source);
         }
     }
 
-    private void loadSchematics(Path schematicFolder) {
+    private void loadSchematics(Path schematicFolder, SchematicSource source) {
         // fail silently if this folder does not exist.
         if (!schematicFolder.toFile().exists()) {
-            logger.config(schematicFolder.toString() + " does not exist. Skipping.");
+            logger.config(schematicFolder + " does not exist. Skipping.");
             return;
         }
 
@@ -115,7 +116,7 @@ public class SchematicBrushCache implements SchematicCache {
 
             // Build schematic references
             for (var file : directoryData.get().files()) {
-                addSchematic(file.toPath());
+                addSchematic(file.toPath(), source);
             }
             logger.log(Level.CONFIG, "Loaded " + directoryData.get().files().size() + "schematics from " + path.toString());
         }
@@ -132,17 +133,30 @@ public class SchematicBrushCache implements SchematicCache {
         }
     }
 
-    public void addSchematic(Path file) {
-        var directory = file.getParent();
-
-        var sourceForPath = configuration.schematicConfig().getSourceForPath(directory);
-
-        if (sourceForPath.isEmpty()) {
-            logger.log(Level.CONFIG, "File " + directory + " is not part of a source");
-            return;
+    public void addSchematic(Path path, SchematicSource source) {
+        try {
+            importSchematic(path, source);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Could not load schematic " + path.toString() + ".", e);
         }
+    }
 
-        var source = sourceForPath.get();
+    public void addSchematic(Path path) {
+        try {
+            var sourceForPath = configuration.schematicConfig().getSourceForPath(path.getParent());
+
+            if (sourceForPath.isEmpty()) {
+                logger.log(Level.CONFIG, "File " + path.getParent() + " is not part of a source");
+                return;
+            }
+            importSchematic(path, sourceForPath.get());
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Could not load schematic " + path.toString() + ".", e);
+        }
+    }
+
+    private void importSchematic(Path path, SchematicSource source) {
+        var directory = path.getParent();
 
         if (source.isExcluded(directory)) {
             logger.log(Level.CONFIG, "Directory " + directory + "is excluded.");
@@ -175,9 +189,9 @@ public class SchematicBrushCache implements SchematicCache {
 
         Schematic schematic;
         try {
-            schematic = Schematic.of(file);
+            schematic = Schematic.of(path);
         } catch (InvalidClipboardFormatException e) {
-            logger.log(Level.WARNING, "Format of " + file + " is invalid.");
+            logger.log(Level.WARNING, "Format of " + path + " is invalid.");
             return;
         }
 
