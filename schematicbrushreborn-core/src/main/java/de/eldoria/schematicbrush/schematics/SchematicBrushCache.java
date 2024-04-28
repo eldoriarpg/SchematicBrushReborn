@@ -77,6 +77,8 @@ public class SchematicBrushCache implements SchematicCache {
 
             path = path.replace("\\", "/");
 
+            logger.info("Loading Schematics from " + path);
+
             var load = source.isRelative() ? Paths.get(root, path) : Paths.get(path);
             loadSchematics(load, source);
         }
