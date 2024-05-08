@@ -30,10 +30,10 @@ dependencyResolutionManagement {
 
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.2")
-            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.15.0")
+            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.17.0")
             // utilities
             library("eldoutil-legacy", "de.eldoria:eldo-util:1.14.4")
-            library("eldoutil-jackson", "de.eldoria.util:jackson-configuration:2.0.3")
+            library("eldoutil-jackson", "de.eldoria.util:jackson-configuration:2.0.6")
             library("messageblocker", "de.eldoria:messageblocker:1.1.2")
             // misc
             library("jetbrains-annotations", "org.jetbrains:annotations:24.1.0")
@@ -45,14 +45,14 @@ dependencyResolutionManagement {
             library("paper-v17", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             library("spigot-v16", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             // world edit
-            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.2.18")
-            version("fawe", "2.8.4")
+            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.3.0")
+            version("fawe", "2.9.2")
             library("fawe-core", "com.fastasyncworldedit","FastAsyncWorldEdit-Core").versionRef("fawe")
             library("fawe-bukkit", "com.fastasyncworldedit","FastAsyncWorldEdit-Bukkit").versionRef("fawe")
 
             // plugins
-            plugin("publishdata", "de.chojo.publishdata").version("1.3.0")
-            plugin("spotless", "com.diffplug.spotless").version("6.24.0")
+            plugin("publishdata", "de.chojo.publishdata").version("1.4.0")
+            plugin("spotless", "com.diffplug.spotless").version("6.25.0")
             plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
             plugin("pluginyml-bukkit", "net.minecrell.plugin-yml.bukkit").version("0.6.0")
             //plugin("pluginyml-paper","net.minecrell.plugin-yml.paper").version( "0.5.3")
