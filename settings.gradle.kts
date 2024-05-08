@@ -30,7 +30,7 @@ dependencyResolutionManagement {
 
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.2")
-            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.16.0")
+            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.17.0")
             // utilities
             library("eldoutil-legacy", "de.eldoria:eldo-util:1.14.4")
             library("eldoutil-jackson", "de.eldoria.util:jackson-configuration:2.0.6")
