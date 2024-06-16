@@ -29,7 +29,7 @@ dependencyResolutionManagement {
             bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
 
             // adventure
-            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.2")
+            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.3")
             library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.17.0")
             // utilities
             library("eldoutil-legacy", "de.eldoria:eldo-util:1.14.4")
