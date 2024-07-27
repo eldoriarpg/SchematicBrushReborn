@@ -18,18 +18,17 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import de.eldoria.eldoutilities.bstats.EldoMetrics;
-import de.eldoria.eldoutilities.bstats.charts.AdvancedPie;
-import de.eldoria.eldoutilities.bstats.charts.SimplePie;
 import de.eldoria.eldoutilities.config.template.PluginBaseConfiguration;
 import de.eldoria.eldoutilities.crossversion.ServerVersion;
 import de.eldoria.eldoutilities.debug.UserData;
 import de.eldoria.eldoutilities.debug.data.EntryData;
-import de.eldoria.eldoutilities.localization.ILocalizer;
+import de.eldoria.eldoutilities.localization.Localizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.metrics.EldoMetrics;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateChecker;
 import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateData;
+import de.eldoria.eldoutilities.utils.Version;
 import de.eldoria.jacksonbukkit.JacksonBukkit;
 import de.eldoria.jacksonbukkit.JacksonPaper;
 import de.eldoria.messageblocker.MessageBlockerAPI;
@@ -71,20 +70,21 @@ import de.eldoria.schematicbrush.schematics.SchematicBrushCache;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistryImpl;
 import de.eldoria.schematicbrush.storage.YamlStorage;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.InternalLogger;
 import de.eldoria.schematicbrush.util.Permissions;
-import org.apache.logging.log4j.LogManager;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.*;
 
 import java.io.File;
 import java.util.Arrays;
@@ -105,10 +105,17 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private SimpleModule sbrModule;
 
     public SchematicBrushRebornImpl() {
+        configuration = new JacksonConfiguration(this);
     }
 
     public SchematicBrushRebornImpl(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description, @NotNull File dataFolder, @NotNull File file) {
         super(loader, description, dataFolder, file);
+        configuration = new JacksonConfiguration(this);
+    }
+
+    @Override
+    public Level getLogLevel() {
+        return configuration.secondary(PluginBaseConfiguration.KEY).logLevel();
     }
 
     @Override
@@ -121,7 +128,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         settingsRegistry.registerDefaults(schematics);
 
-        configuration = new JacksonConfiguration(this);
         PluginBaseConfiguration base = configuration.secondary(PluginBaseConfiguration.KEY);
         if (base.version() == 0) {
             var legacyConfiguration = new LegacyConfiguration(this);
@@ -142,8 +148,27 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginEnable() {
-        MessageSender.create(this, "§6[SB]");
-        ILocalizer.create(this, "en_US").setLocale("en_US");
+        var localizer = Localizer.builder(this, configuration.general().language())
+                .setIncludedLocales("de_DE", "en_US", "zh_TW")
+                .build();
+        MessageSender.builder(this)
+                .prefix("<gold>[SB]")
+                .messageColor(NamedTextColor.AQUA)
+                .addTag(tags -> tags
+                        .tag("heading", Tag.styling(NamedTextColor.GOLD))
+                        .tag("name", Tag.styling(NamedTextColor.AQUA))
+                        .tag("value", Tag.styling(NamedTextColor.DARK_GREEN))
+                        .tag("change", Tag.styling(NamedTextColor.YELLOW))
+                        .tag("remove", Tag.styling(NamedTextColor.RED))
+                        .tag("add", Tag.styling(NamedTextColor.GREEN))
+                        .tag("warn", Tag.styling(NamedTextColor.RED))
+                        .tag("neutral", Tag.styling(NamedTextColor.AQUA))
+                        .tag("confirm", Tag.styling(NamedTextColor.GREEN))
+                        .tag("delete", Tag.styling(NamedTextColor.RED))
+                        .tag("inactive", Tag.styling(NamedTextColor.GRAY))
+                )
+                .localizer(localizer)
+                .register();
 
         schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, configuration));
 
@@ -153,7 +178,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         reload();
 
         MessageBlocker messageBlocker;
-        if (!ServerVersion.between(ServerVersion.MC_1_19, ServerVersion.MC_1_20, ServerVersion.CURRENT_VERSION)) {
+        if (ServerVersion.CURRENT_VERSION.isOlder(Version.of(1, 19))) {
             messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
         } else {
             messageBlocker = MessageBlocker.dummy(this);
@@ -277,8 +302,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     private void enableMetrics() {
-        var metrics = new EldoMetrics(this, 7683);
-        if (metrics.isEnabled()) {
+        var metrics = new Metrics(this, 7683);
+        if (EldoMetrics.isEnabled(this)) {
             logger().info("§2Metrics enabled. Thank you <3");
         }
 

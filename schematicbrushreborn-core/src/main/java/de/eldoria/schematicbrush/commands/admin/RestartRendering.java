@@ -28,6 +28,6 @@ public class RestartRendering extends AdvancedCommand implements ITabExecutor {
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String alias, @NotNull Arguments args) {
         instance.renderService().restart();
-        messageSender().sendMessage(sender, "Rendering restarted");
+        messageSender().sendMessage(sender, "commands.admin.restartRendering.done");
     }
 }

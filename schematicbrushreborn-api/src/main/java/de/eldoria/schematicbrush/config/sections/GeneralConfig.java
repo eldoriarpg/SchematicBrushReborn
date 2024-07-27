@@ -6,7 +6,6 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
-import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -103,4 +102,6 @@ public interface GeneralConfig extends ConfigurationSerializable {
     int maxEffectiveRenderSize();
 
     int pasteBreak();
+
+    String language();
 }

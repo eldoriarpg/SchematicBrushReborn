@@ -14,7 +14,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -45,7 +44,7 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
         storage.activeStorage().presets().containerByName(player, name)
                 .get(strippedName)
                 .whenComplete(Futures.whenComplete(preset -> {
-                    CommandAssertions.isTrue(preset.isPresent(), "Unknown preset.");
+                    CommandAssertions.isTrue(preset.isPresent(), "error.unknownPreset");
 
                     for (var builder : preset.get().schematicSetsCopy()) {
                         session.addSchematicSet(builder.copy());

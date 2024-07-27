@@ -6,10 +6,10 @@
 
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.replaceall.ReplaceAll;
@@ -21,7 +21,10 @@ import java.util.List;
 
 public abstract class ReplaceAllProvider extends ModifierProvider {
 
-    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class, "Fixed") {
+    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class,
+            "Fixed",
+            "components.provider.replaceAll.fixed.name",
+            "components.provider.replaceAll.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
 
         @Override
@@ -35,14 +38,9 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A fixed value to allow replacing existing non air blocks.";
-        }
-
-        @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
-                return TabCompleteUtil.completeBoolean(args.asString(0));
+                return Completion.completeBoolean(args.asString(0));
             }
             return Collections.emptyList();
         }
@@ -53,7 +51,7 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         }
     };
 
-    public ReplaceAllProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
-        super(clazz, name);
+    public ReplaceAllProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
+        super(clazz, name, localizedName, description);
     }
 }

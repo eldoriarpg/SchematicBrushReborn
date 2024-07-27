@@ -6,7 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.selector;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +49,11 @@ public abstract class BaseSelector implements Selector {
         if (!(o instanceof BaseSelector baseSelector)) return false;
 
         return Objects.equals(term, baseSelector.term);
+    }
+
+    @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.selector.%s.name".formatted(name().toLowerCase()));
     }
 
     @Override

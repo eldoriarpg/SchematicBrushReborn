@@ -7,12 +7,14 @@
 package de.eldoria.schematicbrush.brush.config.flip;
 
 import com.sk89q.worldedit.math.Vector3;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -66,6 +68,11 @@ public abstract class AFlip implements Mutator<Flip> {
         if (value().direction() != Vector3.ZERO) {
             mutation.transform(mutation.transform().scale(value().direction().abs().multiply(-2.0).add(1.0, 1.0, 1.0)));
         }
+    }
+
+    @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.modifier.flip.%s.name".formatted(name().toLowerCase()));
     }
 
     @Override

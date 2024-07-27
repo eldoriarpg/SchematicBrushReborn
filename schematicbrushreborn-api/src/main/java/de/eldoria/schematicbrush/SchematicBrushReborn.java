@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import de.eldoria.eldoutilities.core.EldoUtilities;
+import de.eldoria.EldoUtilities;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.config.Configuration;

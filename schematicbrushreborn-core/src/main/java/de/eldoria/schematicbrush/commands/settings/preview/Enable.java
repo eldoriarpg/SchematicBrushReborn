@@ -6,12 +6,12 @@
 
 package de.eldoria.schematicbrush.commands.settings.preview;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.rendering.RenderService;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -35,11 +35,11 @@ public class Enable extends AdvancedCommand implements IPlayerTabExecutor {
 
         boolean state = args.isEmpty() ? !renderService.getState(player) : args.asBoolean(0);
         renderService.setState(player, state);
-        messageSender().sendMessage(player, state ? "Preview active." : "Preview disabled.");
+        messageSender().sendMessage(player, state ? "commands.settings.preview.enable.true" : "commands.settings.preview.enable.false");
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
-        return TabCompleteUtil.completeBoolean(args.asString(0));
+        return Completion.completeBoolean(args.asString(0));
     }
 }

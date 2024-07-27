@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(libs.eldoutil.legacy)
+    api(libs.bundles.utilities)
     api(libs.eldoutil.jackson)
     api(libs.messageblocker)
     api(libs.adventure.bukkit)

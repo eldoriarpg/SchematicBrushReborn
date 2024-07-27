@@ -14,7 +14,6 @@ import de.eldoria.schematicbrush.commands.brushpresets.Descr;
 import de.eldoria.schematicbrush.commands.brushpresets.Info;
 import de.eldoria.schematicbrush.commands.brushpresets.List;
 import de.eldoria.schematicbrush.commands.brushpresets.Remove;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.plugin.Plugin;

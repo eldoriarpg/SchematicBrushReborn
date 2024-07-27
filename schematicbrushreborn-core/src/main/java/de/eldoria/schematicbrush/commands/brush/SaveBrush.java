@@ -13,7 +13,6 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.storage.brush.Brush;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -53,7 +52,7 @@ public class SaveBrush extends AdvancedCommand implements IPlayerTabExecutor {
             addition = storage.activeStorage().brushes().globalContainer().get(brush.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "Brush already exists. Use -f to override");
+                            CommandAssertions.isTrue(args.flags().has("f"), "error.brushExists");
                         }
                         storage.activeStorage().brushes().globalContainer().add(brush).join();
                     }, err -> handleCommandError(player, err)));
@@ -61,14 +60,14 @@ public class SaveBrush extends AdvancedCommand implements IPlayerTabExecutor {
             addition = storage.activeStorage().brushes().playerContainer(player).get(brush.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "Brush already exists. Use -f to override");
+                            CommandAssertions.isTrue(args.flags().has("f"), "error.brushExists");
                         }
                         storage.activeStorage().brushes().playerContainer(player).add(brush).join();
                     }, err -> handleCommandError(player, err)));
         }
         addition.whenComplete(Futures.whenComplete(res -> {
             storage.activeStorage().save();
-            messageSender().sendMessage(player, "Brush saved.");
+            messageSender().sendMessage(player, "commands.brush.saveBrush.saved");
         }, err -> handleCommandError(player, err)));
     }
 

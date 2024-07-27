@@ -6,14 +6,14 @@
 
 package de.eldoria.schematicbrush.rendering;
 
-import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.eldoutilities.messages.MessageType;
+import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
+import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.RollingQueue;
 import de.eldoria.schematicbrush.util.Text;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
@@ -73,7 +73,7 @@ public class RenderService implements Runnable, Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (event.getPlayer().hasPermission("schematicbrush.brush.preview")) {
+        if (event.getPlayer().hasPermission(Permissions.Brush.PREVIEW)) {
             if (configuration.general().isPreviewDefault()) {
                 setState(event.getPlayer(), true);
             }
@@ -126,7 +126,7 @@ public class RenderService implements Runnable, Listener {
         try {
             tick();
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "An error occured during rendering", e);
+            plugin.getLogger().log(Level.SEVERE, "An error occurred during rendering", e);
         }
 
     }
@@ -135,12 +135,12 @@ public class RenderService implements Runnable, Listener {
         var start = System.currentTimeMillis();
         count += players.size() / (double) configuration.general().previewRefreshInterval();
         while (count > 0 && !players.isEmpty()
-                && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
+               && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
             count--;
             try {
                 handlePlayerTick(nextPlayer());
             } catch (Exception e) {
-                plugin.getLogger().log(Level.SEVERE, "An error occured during player rendering", e);
+                plugin.getLogger().log(Level.SEVERE, "An error occurred during player rendering", e);
             }
         }
         timings.add(System.currentTimeMillis() - start);
@@ -155,7 +155,7 @@ public class RenderService implements Runnable, Listener {
             render(player);
         } else if (sinks.containsKey(player.getUniqueId())) {
             resolveBlocked(player);
-        }else {
+        } else {
             getSink(player).skipped();
         }
     }
@@ -188,22 +188,25 @@ public class RenderService implements Runnable, Listener {
         var replaceAll = (boolean) brush.settings().getMutator(PlacementModifier.REPLACE_ALL).value();
 
         if (includeAir && replaceAll && brush.nextPaste().schematic().size() > general.maxRenderSize()) {
-            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
-                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().size(), general.maxRenderSize()));
+            messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
+                    Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().size())),
+                    Replacement.create("max", "%,d".formatted(general.maxRenderSize())));
             resolveChanges(player);
             return;
         }
 
         if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxRenderSize()) {
-            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
-                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().effectiveSize(), general.maxRenderSize()));
+            messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
+                    Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().effectiveSize())),
+                    Replacement.create("max", "%,d".formatted(general.maxRenderSize())));
             resolveChanges(player);
             return;
         }
 
         if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxEffectiveRenderSize()) {
-            messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, brush.brushOwner(),
-                    "Schematic exceeds the maximum render size. %,d of %,d".formatted(brush.nextPaste().schematic().effectiveSize(), general.maxEffectiveRenderSize()));
+            messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
+                    Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().effectiveSize())),
+                    Replacement.create("max", "%,d".formatted(general.maxEffectiveRenderSize())));
             resolveChanges(player);
             return;
         }

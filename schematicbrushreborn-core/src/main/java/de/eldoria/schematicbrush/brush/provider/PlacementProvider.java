@@ -24,32 +24,27 @@ import java.util.List;
 
 public abstract class PlacementProvider extends ModifierProvider {
     private static final APlacement bottom = new Bottom();
-    public static final PlacementProvider BOTTOM = of("Bottom", bottom, "Lower bound");
+    public static final PlacementProvider BOTTOM = of("Bottom", bottom, "components.provider.placement.bottom.name", "components.provider.placement.bottom.description");
     private static final APlacement drop = new Drop();
-    public static final PlacementProvider DROP = of("Drop", drop, "Lowest non air block");
+    public static final PlacementProvider DROP = of("Drop", drop, "components.provider.placement.drop.name", "components.provider.placement.drop.description");
     private static final APlacement middle = new Middle();
-    public static final PlacementProvider MIDDLE = of("Middle", middle, "Center of the schematic");
+    public static final PlacementProvider MIDDLE = of("Middle", middle, "components.provider.placement.middle.name", "components.provider.placement.middle.description");
     private static final APlacement original = new Original();
-    public static final PlacementProvider ORIGINAL = of("Original", original, "Original position when copied");
+    public static final PlacementProvider ORIGINAL = of("Original", original, "components.provider.placement.original.name", "components.provider.placement.original.description");
     private static final APlacement raise = new Raise();
-    public static final PlacementProvider RAISE = of("Raise", raise, "Highest non air block");
+    public static final PlacementProvider RAISE = of("Raise", raise, "components.provider.placement.raise.name", "components.provider.placement.raise.description");
     private static final APlacement top = new Top();
-    public static final PlacementProvider TOP = of("Top", top, "Upper bound");
+    public static final PlacementProvider TOP = of("Top", top, "components.provider.placement.top.name", "components.provider.placement.top.description");
 
-    public PlacementProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
-        super(clazz, name);
+    public PlacementProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
+        super(clazz, name, localizedName, description);
     }
 
-    private static PlacementProvider of(String name, APlacement placement, String description) {
-        return new PlacementProvider(placement.getClass(), name) {
+    private static PlacementProvider of(String name, APlacement placement, String localizedName, String description) {
+        return new PlacementProvider(placement.getClass(), name, localizedName, description) {
             @Override
             public Mutator<?> parse(Arguments args) {
                 return placement;
-            }
-
-            @Override
-            public String description() {
-                return description;
             }
         };
     }

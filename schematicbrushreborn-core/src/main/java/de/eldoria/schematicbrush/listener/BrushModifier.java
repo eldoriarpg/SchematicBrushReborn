@@ -6,9 +6,7 @@
 
 package de.eldoria.schematicbrush.listener;
 
-import de.eldoria.eldoutilities.messages.MessageChannel;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.eldoutilities.messages.MessageType;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.event.EventHandler;
@@ -32,15 +30,15 @@ public class BrushModifier implements Listener {
         var brush = schematicBrush.get();
         if (event.getPlayer().isSneaking()) {
             if (brush.nextPaste().shiftFlip()) {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed flip.");
+                messageSender.sendActionBar(event.getPlayer(), "§2Changed flip.");
             } else {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "Flip is not shiftable.");
+                messageSender.sendErrorActionBar(event.getPlayer(), "Flip is not shiftable.");
             }
         } else {
             if (brush.nextPaste().shiftRotation()) {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed rotation.");
+                messageSender.sendActionBar(event.getPlayer(), "§2Changed rotation.");
             } else {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "Rotation is not shiftable.");
+                messageSender.sendErrorActionBar(event.getPlayer(), "Rotation is not shiftable.");
             }
         }
         event.setCancelled(true);
@@ -54,15 +52,15 @@ public class BrushModifier implements Listener {
         if (schematicBrush.isEmpty()) return;
         if (event.getPlayer().isSneaking()) {
             if (schematicBrush.get().nextPaste().shiftOffset()) {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Changed Offset.");
+                messageSender.sendActionBar(event.getPlayer(), "§2Changed Offset.");
             } else {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "Offset is not shiftable.");
+                messageSender.sendErrorActionBar(event.getPlayer(), "Offset is not shiftable.");
             }
         } else {
             if (schematicBrush.get().nextPaste().nextSchematic()) {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.NORMAL, event.getPlayer(), "§2Skipped Schematic.");
+                messageSender.sendActionBar(event.getPlayer(), "§2Skipped Schematic.");
             } else {
-                messageSender.send(MessageChannel.ACTION_BAR, MessageType.ERROR, event.getPlayer(), "The set only contains 1 schematic");
+                messageSender.sendErrorActionBar(event.getPlayer(), "The set only contains 1 schematic");
             }
         }
         event.setCancelled(true);

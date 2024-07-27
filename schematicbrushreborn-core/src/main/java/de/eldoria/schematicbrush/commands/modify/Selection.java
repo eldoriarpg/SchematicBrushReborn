@@ -12,8 +12,6 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.messages.MessageChannel;
-import de.eldoria.eldoutilities.messages.MessageType;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
@@ -39,10 +37,10 @@ public class Selection extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         Optional<SchematicBrush> schematicBrush = WorldEditBrush.getSchematicBrush(player);
-        CommandAssertions.isTrue(schematicBrush.isPresent(), "You are not holding a schematic brush");
+        CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
         SchematicSelection schematicSelection = registry.parseSchematicSelection(args);
         schematicBrush.get().settings().schematicSelection(schematicSelection);
-        messageSender().send(MessageChannel.CHAT, MessageType.NORMAL, player, "Schematic selection changed.");
+        messageSender().sendMessage(player, "commands.modify.selection.changed");
     }
 
     @Override

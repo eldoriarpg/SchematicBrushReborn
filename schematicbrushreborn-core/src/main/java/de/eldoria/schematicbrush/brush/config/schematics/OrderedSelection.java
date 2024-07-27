@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
+/**
+ * A selection that returns the next schematic in the current set or the first schematic of the next set.
+ */
 public class OrderedSelection implements SchematicSelection {
 
     public OrderedSelection() {

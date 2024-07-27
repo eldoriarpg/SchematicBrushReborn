@@ -21,17 +21,17 @@ public class SchematicModifier extends BaseModifier {
     /**
      * Rotation modifier key
      */
-    public static final SchematicModifier ROTATION = of("Rotation", "Rotate a schematic", false);
+    public static final SchematicModifier ROTATION = of("Rotation", "components.modifier.type.rotation.name","components.modifier.type.rotation.description", false);
 
     /**
      * Flip modifier key
      */
-    public static final SchematicModifier FLIP = of("Flip", "Flip a schematic", false);
+    public static final SchematicModifier FLIP = of("Flip", "components.modifier.type.flip.name","components.modifier.type.flip.description", false);
 
     /**
      * Offset modifier key
      */
-    public static final SchematicModifier OFFSET = of("Offset", "The schematic offset when placed.", false);
+    public static final SchematicModifier OFFSET = of("Offset", "components.modifier.type.offset.name","components.modifier.type.offset.description", false);
 
     /**
      * Creates a new schematic modifier
@@ -40,8 +40,8 @@ public class SchematicModifier extends BaseModifier {
      * @param description description of the modifier
      * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
      */
-    public SchematicModifier(String name, String description, boolean required) {
-        super(name, description, required);
+    public SchematicModifier(String name, String localizedName, String description, boolean required) {
+        super(name, description, localizedName, required);
     }
 
     /**
@@ -52,8 +52,8 @@ public class SchematicModifier extends BaseModifier {
      * @param required    true if this modifier is required to be set. This will enforce a default value for the modifier.
      * @return new PlacementModifier
      */
-    public static SchematicModifier of(String name, String description, boolean required) {
-        return new SchematicModifier(name, description, required) {
+    public static SchematicModifier of(String name, String localizedName, String description, boolean required) {
+        return new SchematicModifier(name, localizedName, description, required) {
         };
     }
 }

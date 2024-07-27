@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush.config.includeair;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -72,6 +73,11 @@ public class IncludeAir implements Mutator<Boolean> {
     @Override
     public String name() {
         return "Fixed";
+    }
+
+    @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.modifier.includeAir.fixed.name");
     }
 
     @Override
