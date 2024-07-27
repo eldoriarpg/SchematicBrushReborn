@@ -34,7 +34,7 @@ public class Info extends AdvancedCommand implements ITabExecutor {
                    + "<name>Version:<value> " + descr.getVersion() + "\n"
                    + "<name>Spigot:<value> https://www.spigotmc.org/resources/98499\n"
                    + "<name>Patreon:<value> https://www.patreon.com/eldoriaplugins\n"
-                   + "<name>Support:<value> https://discord.gg/zRW9Vpu";
+                   + "<name>Support:<value> https://sbr.discord.eldoria.de";
         messageSender().sendMessage(sender, info);
     }
 }

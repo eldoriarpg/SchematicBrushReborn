@@ -9,13 +9,15 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.7.0"
+version = "2.7.1"
 
-var publishModules = setOf("schematicbrushreborn-api",
-        "schematicbrushreborn-core",
-        "schematicbrushreborn-paper",
-        "schematicbrushreborn-paper-legacy",
-        "schematicbrushreborn-spigot")
+var publishModules = setOf(
+    "schematicbrushreborn-api",
+    "schematicbrushreborn-core",
+    "schematicbrushreborn-paper",
+    "schematicbrushreborn-paper-legacy",
+    "schematicbrushreborn-spigot"
+)
 
 allprojects {
     repositories {
@@ -41,7 +43,7 @@ allprojects {
     }
 
     java {
-        toolchain{
+        toolchain {
             languageVersion = JavaLanguageVersion.of(21)
         }
         withSourcesJar()
@@ -77,7 +79,11 @@ allprojects {
     }
 
     publishData {
-        useInternalEldoNexusRepos()
+        if (project.name.contains("api")) {
+            useEldoNexusRepos()
+        } else {
+            useInternalEldoNexusRepos()
+        }
     }
 
     tasks {
