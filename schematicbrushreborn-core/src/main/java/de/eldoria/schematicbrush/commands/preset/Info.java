@@ -13,13 +13,11 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.eldoutilities.localization.Replacement;
+import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
-import de.eldoria.schematicbrush.util.Colors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
@@ -52,16 +50,16 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
         var strippedName = name.replaceAll("^g:", "");
         storage.activeStorage().presets().containerByName(player, name).get(strippedName)
                 .whenComplete(Futures.whenComplete(res -> {
-                    CommandAssertions.isTrue(res.isPresent(), "error.unkownPreset", Replacement.create("name", strippedName).addFormatting('b'));
+                    CommandAssertions.isTrue(res.isPresent(), "error.unknownPreset", Replacement.create("name", strippedName));
                     var preset = res.get();
 
                     var global = name.startsWith("g:");
                     var composer = MessageComposer.create()
                             .text(preset.detailComponent(global))
                             .newLine()
-                            .text("<click:run_command:'/sbrp list %s'><%s>[Back]</click>", global ? "global" : "private", Colors.CHANGE)
+                            .text("<click:run_command:'/sbrp list %s'><change>[<i18n:words.back>]</click>", global ? "global" : "private")
                             .prependLines(20);
-                    messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+                    messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
                     messageBlocker.announce(player, "[x]");
                     audiences.player(player).sendMessage(miniMessage.deserialize(composer.build()));
                 }, err -> handleCommandError(player, err)))

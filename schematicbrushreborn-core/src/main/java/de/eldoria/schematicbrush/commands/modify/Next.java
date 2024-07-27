@@ -12,8 +12,6 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.messages.MessageChannel;
-import de.eldoria.eldoutilities.messages.MessageType;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
@@ -31,11 +29,11 @@ public class Next extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         Optional<SchematicBrush> schematicBrush = WorldEditBrush.getSchematicBrush(player);
-        CommandAssertions.isTrue(schematicBrush.isPresent(), "You are not holding a schematic brush");
+        CommandAssertions.isTrue(schematicBrush.isPresent(), "error.notABrush");
         if (schematicBrush.get().nextPaste().nextSchematic()) {
-            messageSender().send(MessageChannel.ACTION_BAR, MessageType.NORMAL, player, "§2Skipped Schematic.");
+            messageSender().sendActionBar(player, "commands.modify.next.skip");
         } else {
-            messageSender().send(MessageChannel.ACTION_BAR, MessageType.ERROR, player, "The brush contains only 1 schematic");
+            messageSender().sendErrorActionBar(player, "error.oneschematic");
         }
     }
 }

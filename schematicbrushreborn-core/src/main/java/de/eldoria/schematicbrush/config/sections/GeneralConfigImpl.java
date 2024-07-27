@@ -28,6 +28,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private int maxEffectiveRenderSize = maxRenderSize;
     private int renderDistance = 100;
     private int pasteBreak = 20;
+    private String language = "en_US";
 
     public GeneralConfigImpl() {
     }
@@ -124,4 +125,8 @@ public class GeneralConfigImpl implements GeneralConfig {
         return pasteBreak;
     }
 
+    @Override
+    public String language() {
+        return language;
+    }
 }

@@ -15,7 +15,6 @@ import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.commands.util.BasePageCommand;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -40,7 +39,7 @@ public class Private extends BasePageCommand implements IPlayerTabExecutor {
         storage.activeStorage().brushes().playerContainer(player).paged().whenComplete(Futures.whenComplete(paged -> {
             paged.page(index, PAGE_SIZE).whenComplete(Futures.whenComplete(entries -> {
                 var composer = MessageComposer.create();
-                addPageHeader(composer, "Brush Presets", false);
+                addPageHeader(composer, "words.brushPreset", false);
                 addEntries(composer, entries, e -> e.infoComponent(false, true, registry));
                 addPageFooter(composer, index, paged);
                 send(composer, player);

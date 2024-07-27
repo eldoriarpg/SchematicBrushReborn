@@ -6,12 +6,12 @@
 
 package de.eldoria.schematicbrush.commands.settings.preview;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.rendering.RenderService;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -34,14 +34,14 @@ public class Subscribe extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var target = args.asPlayer(0);
         if (renderService.subscribe(target, player)) {
-            messageSender().sendMessage(player, "Subscribed to preview.");
+            messageSender().sendMessage(player, "commands.settings.preview.subscribe.subscribed");
         } else {
-            messageSender().sendMessage(player, "Player has not preview enabled");
+            messageSender().sendMessage(player, "commands.settings.preview.subscribe.notEnabled");
         }
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
-        return TabCompleteUtil.completeOnlinePlayers(args.asString(0));
+        return Completion.completeOnlinePlayers(args.asString(0));
     }
 }

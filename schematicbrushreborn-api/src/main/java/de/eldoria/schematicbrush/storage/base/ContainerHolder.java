@@ -6,7 +6,7 @@
 
 package de.eldoria.schematicbrush.storage.base;
 
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
+import de.eldoria.eldoutilities.commands.Completion;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public interface ContainerHolder<V, T extends Container<V>> {
      * @return list of matching values
      */
     default List<String> completeGlobal(String arg) {
-        return TabCompleteUtil.complete(arg, globalContainer().names());
+        return Completion.complete(arg, globalContainer().names());
     }
 
     /**
@@ -106,7 +106,7 @@ public interface ContainerHolder<V, T extends Container<V>> {
      */
     default List<String> completePlayer(Player player, String arg) {
         var names = playerContainer(player).names();
-        return TabCompleteUtil.complete(arg, names);
+        return Completion.complete(arg, names);
     }
 
     /**

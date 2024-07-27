@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
 import com.sk89q.worldedit.function.mask.Masks;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -82,6 +83,12 @@ public class ReplaceAll implements Mutator<Boolean> {
     public String name() {
         return "Fixed";
     }
+
+    @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.modifier.replaceAll.fixed.name");
+    }
+
 
     @Override
     public String descriptor() {

@@ -37,14 +37,18 @@ public class BasePageCommand extends AdvancedCommand {
 
     protected void addPageHeader(MessageComposer composer, String title, boolean global) {
         var baseCommand = "/" + meta().parent().meta().createCommandCall();
-        composer.text("<%s>", Colors.HEADING).text(global ? "Global" : "Private").space().text(title).newLine()
+        composer.text("<heading>").localeCode(global ? "words.global" : "words.private").space().localeCode(title).newLine()
                 .text(runCommand(baseCommand, !global))
                 .newLine();
     }
 
     private String runCommand(String baseCommand, boolean global) {
-        var type = global ? "Global" : "Private";
-        return String.format("<%s><click:run_command:'%s %s'>[%s]</click>", Colors.CHANGE, baseCommand, type.toLowerCase(), type);
+        var type = global ? "words.global" : "words.private";
+        return MessageComposer.create()
+                .text("<change><click:run_command:'%s %s'>[", baseCommand, global ? "global" : "private")
+                .localeCode(type)
+                .text("]</click>")
+                .build();
     }
 
     protected <T> void addEntries(MessageComposer composer, List<T> entries, Function<T, String> map) {
@@ -53,25 +57,25 @@ public class BasePageCommand extends AdvancedCommand {
     }
 
     protected void addPageFooter(MessageComposer composer, int index, ContainerPagedAccess<?> paged) {
-        var baseCommand = "/" +meta().createCommandCall();
+        var baseCommand = "/" + meta().createCommandCall();
         if (index == 0) {
-            composer.text("<%s>%s", Colors.INACTIVE, LEFT_ARROW);
+            composer.text("<inactive>%s", Colors.INACTIVE, LEFT_ARROW);
         } else {
-            composer.text("<click:run_command:'%s %s'><%s>%s</click>", baseCommand, index - 1, Colors.CHANGE, LEFT_ARROW);
+            composer.text("<click:run_command:'%s %s'><change>%s</click>", baseCommand, index - 1, LEFT_ARROW);
         }
         composer.text(" <%s>%s / %s ", Colors.NEUTRAL, index + 1, Math.max(1, paged.pages(PAGE_SIZE)));
 
         if (index + 1 >= paged.pages(PAGE_SIZE)) {
-            composer.text("<%s>%s", Colors.INACTIVE, RIGHT_ARROW);
+            composer.text("<inactive>%s", Colors.INACTIVE, RIGHT_ARROW);
         } else {
-            composer.text("<click:run_command:'%s %s'><%s>%s</click>", baseCommand, index + 1, Colors.CHANGE, RIGHT_ARROW);
+            composer.text("<click:run_command:'%s %s'><change>%s</click>", baseCommand, index + 1, RIGHT_ARROW);
         }
     }
 
     protected void send(MessageComposer composer, Player player) {
         composer.prependLines(20);
         messageBlocker.blockPlayer(player);
-        messageBlocker.ifEnabled(() -> composer.newLine().text("<click:run_command:'/sbrs chatblock false'><%s>[x]</click>", Colors.REMOVE));
+        messageBlocker.ifEnabled(() -> composer.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
         messageBlocker.announce(player, "[x]");
         audiences.sender(player).sendMessage(miniMessage.deserialize(composer.build()));
     }

@@ -16,7 +16,6 @@ import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -49,7 +48,7 @@ public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
         storage.activeStorage().brushes().containerByName(player, name)
                 .get(strippedName)
                 .whenComplete(Futures.whenComplete(brush -> {
-                    CommandAssertions.isTrue(brush.isPresent(), "Unkown brush.");
+                    CommandAssertions.isTrue(brush.isPresent(), "error.unknownBrush");
 
                     sessions.setSession(player, brush.get().snapshot().load(player, settingsRegistry, schematicRegistry));
                     sessions.showBrush(player);

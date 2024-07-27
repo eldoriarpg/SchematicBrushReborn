@@ -18,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Returns the same schematic unless it is prompted by force to draw a new one. In that case it will act like {@link OrderedSelection}.
+ */
 public class LockedOrderedSelection extends OrderedSelection {
 
     public LockedOrderedSelection() {

@@ -6,11 +6,11 @@
 
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.offset.AOffset;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetFixed;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetList;
@@ -26,7 +26,10 @@ import java.util.List;
 
 public abstract class OffsetProvider extends ModifierProvider {
 
-    public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class, "Fixed") {
+    public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class,
+            "Fixed",
+            "components.provider.offset.fixed.name",
+            "components.provider.offset.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset", true)};
 
         @Override
@@ -41,14 +44,9 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A fixed offset value";
-        }
-
-        @Override
         public List<String> complete(Arguments args, Player player) throws CommandException {
             if (args.size() == 1) {
-                return TabCompleteUtil.completeInt(args.asString(0), -100, 100);
+                return Completion.completeInt(args.asString(0), -100, 100);
             }
             return Collections.emptyList();
         }
@@ -59,7 +57,10 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class, "List") {
+    public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class,
+            "List",
+            "components.provider.offset.list.name",
+            "components.provider.offset.list.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offsets...", true)};
 
         @Override
@@ -73,18 +74,13 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A list of possible offset values which will be choosen by random.";
-        }
-
-        @Override
         public Argument[] arguments() {
             return arguments;
         }
 
         @Override
         public List<String> complete(Arguments args, Player player) throws CommandException {
-            return TabCompleteUtil.completeInt(args.asString(-1), -100, 100);
+            return Completion.completeInt(args.asString(-1), -100, 100);
         }
 
         @Override
@@ -93,7 +89,10 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class, "Range") {
+    public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class,
+            "Range",
+            "components.provider.offset.range.name",
+            "components.provider.offset.range.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset_min", true), Argument.unlocalizedInput("offset_max", true)};
 
         @Override
@@ -104,11 +103,6 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A offset range where the values will be between the min and max value (both inclusive)";
-        }
-
-        @Override
         public Argument[] arguments() {
             return arguments;
         }
@@ -116,7 +110,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         @Override
         public List<String> complete(Arguments args, Player player) throws CommandException {
             if (!args.isEmpty() && args.size() < 3) {
-                return TabCompleteUtil.completeInt(args.asString(-1), -100, 100);
+                return Completion.completeInt(args.asString(-1), -100, 100);
             }
             return Collections.emptyList();
         }
@@ -127,7 +121,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public OffsetProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
-        super(clazz, name);
+    public OffsetProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
+        super(clazz, name, localizedName, description);
     }
 }

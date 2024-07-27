@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.rotation;
 
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -64,6 +65,11 @@ public abstract class ARotation implements Mutator<Rotation> {
         if (rotation.value().degree() != 0) {
             mutation.transform(mutation.transform().rotateY(rotation.value().degree()));
         }
+    }
+
+        @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.modifier.rotation.%s.name".formatted(name().toLowerCase()));
     }
 
     @Override

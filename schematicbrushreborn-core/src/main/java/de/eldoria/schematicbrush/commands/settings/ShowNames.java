@@ -6,12 +6,12 @@
 
 package de.eldoria.schematicbrush.commands.settings;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.sections.MessageChannel;
 import de.eldoria.schematicbrush.listener.NotifyListener;
@@ -46,19 +46,19 @@ public class ShowNames extends AdvancedCommand implements IPlayerTabExecutor {
         }
         listener.setState(player, args.asBoolean(0), messageChannel);
         if (args.asBoolean(0)) {
-            messageSender().sendMessage(player, "Names will be pasted.");
+            messageSender().sendMessage(player, "commands.settings.showNames.pasted");
         } else {
-            messageSender().sendMessage(player, "Names will be hidden.");
+            messageSender().sendMessage(player, "commands.settings.showNames.hidden");
         }
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
         if (args.sizeIs(1)) {
-            return TabCompleteUtil.completeBoolean(args.asString(0));
+            return Completion.completeBoolean(args.asString(0));
         }
         if (args.sizeIs(2)) {
-            return TabCompleteUtil.complete(args.asString(1), "CHAT", "TITLE", "SUB_TITLE", "ACTION_BAR");
+            return Completion.complete(args.asString(1), "CHAT", "TITLE", "SUB_TITLE", "ACTION_BAR");
         }
         return Collections.emptyList();
     }

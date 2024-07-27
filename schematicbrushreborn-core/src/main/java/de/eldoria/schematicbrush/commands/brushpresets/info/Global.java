@@ -15,7 +15,6 @@ import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.commands.util.BasePageCommand;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -42,7 +41,7 @@ public class Global extends BasePageCommand implements IPlayerTabExecutor {
             paged.page(index, PAGE_SIZE).whenComplete(Futures.whenComplete(entries -> {
                 boolean delete = player.hasPermission(Permissions.Preset.GLOBAL);
                 var composer = MessageComposer.create();
-                addPageHeader(composer, "Brush Presets", true);
+                addPageHeader(composer, "words.brushPreset", true);
                 addEntries(composer, entries, e -> e.infoComponent(true, delete, registry));
                 addPageFooter(composer, index, paged);
                 send(composer, player);

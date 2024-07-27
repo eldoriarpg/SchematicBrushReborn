@@ -19,6 +19,8 @@ dependencies {
     compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.23.1")
     compileOnly("org.apache.logging.log4j", "log4j-core", "2.23.1")
 
+    implementation(libs.bstats)
+
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation(libs.jetbrains.annotations)
     testImplementation("org.mockito", "mockito-core", "5.12.0")

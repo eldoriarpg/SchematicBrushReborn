@@ -41,9 +41,9 @@ public class RemoveBrushModifier extends AdvancedCommand implements IPlayerTabEx
         var modifier = args.get(0).asString();
 
         var registration = registry.getPlacementModifier(modifier);
-        CommandAssertions.isTrue(registration.isPresent(), "Unknown modifier.");
+        CommandAssertions.isTrue(registration.isPresent(), "error.unknownModifier");
 
-        CommandAssertions.isFalse(registration.get().modifier().required(), "This modifier is required.");
+        CommandAssertions.isFalse(registration.get().modifier().required(), "error.modifierRequired");
 
         session.removePlacementModifier(registration.get().modifier());
         sessions.showBrush(player);

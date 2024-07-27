@@ -41,13 +41,13 @@ public class RemoveSetModifier extends AdvancedCommand implements IPlayerTabExec
 
 
         var registration = registry.getSchematicModifier(args.get(1).asString());
-        CommandAssertions.isTrue(registration.isPresent(), "Unknown modifier.");
+        CommandAssertions.isTrue(registration.isPresent(), "error.unknownModifier");
 
         var setId = args.get(0).asInt();
         var schematicSet = session.getSchematicSet(setId);
 
-        CommandAssertions.isTrue(schematicSet.isPresent(), "Invalid set id");
-        CommandAssertions.isFalse(registration.get().modifier().required(), "This modifier is required.");
+        CommandAssertions.isTrue(schematicSet.isPresent(), "error.invalidSetId");
+        CommandAssertions.isFalse(registration.get().modifier().required(), "error.modifierRequired");
 
         schematicSet.get().removeModifier(registration.get().modifier());
         sessions.showSet(player, setId);

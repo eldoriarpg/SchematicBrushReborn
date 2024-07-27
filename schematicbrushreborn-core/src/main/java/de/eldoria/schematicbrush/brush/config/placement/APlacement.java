@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.brush.config.placement;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -75,6 +76,16 @@ public abstract class APlacement implements Mutator<APlacement> {
     @Override
     public String descriptor() {
         return name();
+    }
+
+    @Override
+    public String localizedDescriptor() {
+        return localizedName();
+    }
+
+    @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.modifier.placement.%s.name".formatted(name().toLowerCase()));
     }
 
     @Override

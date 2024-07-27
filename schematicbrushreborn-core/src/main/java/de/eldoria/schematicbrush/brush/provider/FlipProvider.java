@@ -6,10 +6,10 @@
 
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.flip.AFlip;
 import de.eldoria.schematicbrush.brush.config.flip.Flip;
 import de.eldoria.schematicbrush.brush.config.flip.FlipFixed;
@@ -27,7 +27,10 @@ import java.util.List;
 
 public abstract class FlipProvider extends ModifierProvider {
 
-    public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class, "Fixed") {
+    public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class,
+            "Fixed",
+            "components.provider.flip.fixed.name",
+            "components.provider.flip.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("flip", true)};
 
         @Override
@@ -41,14 +44,9 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A fixed flip value";
-        }
-
-        @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
-                return TabCompleteUtil.complete(args.asString(0), Arrays.stream(Flip.values()).map(Flip::name));
+                return Completion.complete(args.asString(0), Arrays.stream(Flip.values()).map(Flip::name));
             }
             return Collections.emptyList();
         }
@@ -59,7 +57,10 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider LIST = new FlipProvider(FlipList.class, "List") {
+    public static final FlipProvider LIST = new FlipProvider(FlipList.class,
+            "List",
+            "components.provider.flip.list.name",
+            "components.provider.flip.list.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("flip...", true)};
 
         @Override
@@ -72,18 +73,13 @@ public abstract class FlipProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A list of possible flip values which will be choosen by random";
-        }
-
-        @Override
         public Argument[] arguments() {
             return arguments;
         }
 
         @Override
         public List<String> complete(Arguments args, Player player) {
-            return TabCompleteUtil.complete(args.asString(-1), Arrays.stream(Flip.values()).map(Flip::name));
+            return Completion.complete(args.asString(-1), Arrays.stream(Flip.values()).map(Flip::name));
         }
 
         @Override
@@ -92,7 +88,12 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class, "Random") {
+    public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class,
+            "Random",
+            "components.provider.flip.random.name",
+            "components.provider.flip.random.description") {
+
+
         @Override
         public Mutator<?> parse(Arguments args) {
             return AFlip.random();
@@ -101,11 +102,6 @@ public abstract class FlipProvider extends ModifierProvider {
         @Override
         public List<String> complete(Arguments args, Player player) {
             return Collections.emptyList();
-        }
-
-        @Override
-        public String description() {
-            return "A random flip falue of all flip values except \"up\"";
         }
 
         @Override
@@ -119,7 +115,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public FlipProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
-        super(clazz, name);
+    public FlipProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
+        super(clazz, name, localizedName, description);
     }
 }

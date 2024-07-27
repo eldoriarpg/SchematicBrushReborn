@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.brush.config.builder;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
@@ -40,7 +41,6 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
  */
 @SerializableAs("sbrSchematicSetBuilder")
 public class SchematicSetBuilderImpl implements SchematicSetBuilder {
-    private static final String WEIGHT_DESCRIPTION = "The weight of the schematic set when multiple sets are used.\nHigher numbers will result in more schematics from this set.";
     private Selector selector;
     private Map<Nameable, Mutator<?>> schematicModifier = new HashMap<>();
     @JsonIgnore
@@ -214,9 +214,10 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     @Override
     public String interactComponent(Player player, BrushSettingsRegistry registry, int id) {
         var composer = MessageComposer.create();
-        composer.text("<%s>Selector: <%s>", Colors.HEADING, Colors.CHANGE)
+        composer.text("<heading><i18n:words.selector>: <change>")
                 .text(registry.selector().stream()
-                        .map(sel -> String.format("<click:%s:'/sbr modifyset %s selector %s '><hover:show_text:'<%s>%s'>[%s]</click>", sel.commandType(), id, sel.name(), Colors.NEUTRAL, sel.description(), sel.name()))
+                        .map(sel -> String.format("<click:%s:'/sbr modifyset %s selector %s '><hover:show_text:'<neutral>%s'>[%s]</click>",
+                                sel.commandType(), id, sel.name(), sel.localizedDescription(), sel.localizedName()))
                         .collect(Collectors.joining(" ")))
                 .newLine()
                 .space(2)
@@ -236,19 +237,21 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         }
 
         var missing = registry.schematicModifier().keySet().stream().filter(providers -> !mutatorMap.containsKey(providers))
-                .map(provider -> String.format("<click:run_command:'/sbr addsetmodifier %s %s'><hover:show_text:'<%s>%s'><%s>[%s]</click>",
-                        id, provider.name(), Colors.NEUTRAL, provider.description(), Colors.ADD, provider.name()))
+                .map(provider -> String.format("<click:run_command:'/sbr addsetmodifier %s %s'><hover:show_text:'<neutral>%s'><add>[%s]</click>",
+                        id, provider.name(), provider.description(), provider.getLocalizedName()))
                 .toList();
 
         if (!missing.isEmpty()) {
             composer.newLine()
-                    .text("<%s>Add Modifiers: ", Colors.HEADING)
+                    .text("<heading>")
+                    .localeCode("commands.brush.sessions.addModifiers")
+                    .text(": ")
                     .text(missing, " ");
         }
 
         composer.newLine()
-                .text("<%s><hover:show_text:'<%s>%s'>Weight:</hover> <%s>%s <click:suggest_command:'/sbr modifyset %s weight '><%s>[change]</click>",
-                        Colors.HEADING, Colors.NEUTRAL, WEIGHT_DESCRIPTION, Colors.VALUE, weight(), id, Colors.CHANGE);
+                .text("<heading><hover:show_text:'<neutral>%s'><i18n:words.weight>:</hover> <value>%s <click:suggest_command:'/sbr modifyset %s weight '><change>[<i18n:words.change>]</click>",
+                        ILocalizer.escape("commands.brush.sessions.weight"), weight(), id);
         return composer.build();
     }
 
@@ -267,18 +270,18 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
 
             var modifierStrings = new ArrayList<String>();
             for (var entry : mutatorMap.entrySet()) {
-                modifierStrings.add(String.format("<%s>%s%n  %s", Colors.HEADING, entry.getKey().name(), BuildUtil.renderProvider(entry.getValue())));
+                modifierStrings.add(String.format("<heading>%s%n  %s", entry.getKey().name(), BuildUtil.renderProvider(entry.getValue())));
             }
             composer.newLine()
                     .text(modifierStrings);
         }
         composer.newLine()
-                .text("<%s>Weight: <%s>%s ", Colors.HEADING, Colors.VALUE, weight());
+                .text("<heading><i18n:words.weight>: <value>%s ", weight());
         return composer.build();
     }
 
     private String schematicInfo() {
-        var result = String.format("<%s>%s<%s> Schematics%n", Colors.NAME, schematics.size(), Colors.HEADING);
+        var result = String.format("<name>%s<heading> <i18n:words.schematics>%n", schematics.size());
 
         var showSchematics = schematics.stream()
                 .sorted()
@@ -292,11 +295,11 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
             showSchematics = schematics;
         }
         result += showSchematics.stream()
-                .map(schem -> String.format("<%s>%s", Colors.VALUE, schem))
+                .map(schem -> String.format("<value>%s", schem))
                 .collect(Collectors.joining("\n"));
 
         if (schematicCount() > 10) {
-            result += String.format("%n<%s>... and %s more.", Colors.NEUTRAL, schematics.size() - 10);
+            result += String.format("%n<neutral>... <i18n:words.and> %s <i18n:words.more>.", schematics.size() - 10);
         }
         return result;
     }

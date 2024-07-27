@@ -9,11 +9,13 @@ package de.eldoria.schematicbrush.brush.config.provider;
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Base class for the provider classes.
@@ -29,6 +31,8 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      * Name of the provider
      */
     protected final String name;
+    protected final String description;
+    private final String localizedName;
     private final Class<? extends ConfigurationSerializable> clazz;
 
     /**
@@ -36,9 +40,38 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      *
      * @param clazz which is returned by the provider
      * @param name  name. Must be unique inside the provider.
+     * @deprecated Use {@link #SettingProvider(Class, String, String, String)} and provide a localized name and description
      */
+    @Deprecated(forRemoval = true)
     public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
+        this(clazz, name, null, null);
+    }
+
+    /**
+     * Create a new settings provider
+     *
+     * @param clazz which is returned by the provider
+     * @param name  name. Must be unique inside the provider.
+     * @param description   A description. Might be a string or a property key
+     * @deprecated Use {@link #SettingProvider(Class, String, String, String)} and provide a localized name and description
+     */
+    @Deprecated(forRemoval = true)
+    public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name, String description) {
+        this(clazz, name, null, description);
+    }
+
+    /**
+     * Create a new settings provider
+     *
+     * @param clazz         which is returned by the provider
+     * @param name          name. Must be unique inside the provider.
+     * @param localizedName The property key for the name
+     * @param description   A description. Might be a string or a property key
+     */
+    public SettingProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
         this.clazz = clazz;
+        this.description = description;
+        this.localizedName = Objects.requireNonNullElse(localizedName, name);
         if (name.isBlank()) {
             throw new IllegalArgumentException("Name of provider can not be blank");
         }
@@ -118,6 +151,13 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
         return name;
     }
 
+    public String localizedName() {
+        if (ILocalizer.isLocaleCode(localizedName)) {
+            return ILocalizer.escape(localizedName);
+        }
+        return localizedName;
+    }
+
     /**
      * Provides a default instance for this type
      *
@@ -161,7 +201,9 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
      *
      * @return the setting description
      */
-    public abstract String description();
+    public String description() {
+        return description;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -174,5 +216,12 @@ public abstract class SettingProvider<T extends ConfigurationSerializable> {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    public String localizedDescription() {
+        if (ILocalizer.isLocaleCode(description())) {
+            return ILocalizer.escape(description());
+        }
+        return description();
     }
 }

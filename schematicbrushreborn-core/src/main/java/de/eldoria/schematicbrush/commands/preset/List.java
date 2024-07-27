@@ -18,7 +18,7 @@ public class List extends AdvancedCommand {
 
     public List(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("list")
-                .buildSubCommands((cmds, builder) ->{
+                .buildSubCommands((cmds, builder) -> {
                     var privateList = new Private(plugin, storage, messageBlocker);
                     var globalList = new Global(plugin, storage, messageBlocker);
                     builder.withDefaultCommand(privateList);

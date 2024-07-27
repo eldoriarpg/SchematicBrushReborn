@@ -32,8 +32,18 @@ dependencyResolutionManagement {
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.3")
             library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.17.0")
             // utilities
-            library("eldoutil-legacy", "de.eldoria:eldo-util:1.14.4")
-            library("eldoutil-jackson", "de.eldoria.util:jackson-configuration:2.0.11")
+            version("utilities", "2.1.1")
+            library("eldoutil-plugin", "de.eldoria.util","plugin").versionRef("utilities")
+            library("eldoutil-jackson", "de.eldoria.util","jackson-configuration").versionRef("utilities")
+            library("eldoutil-serialization", "de.eldoria.util","legacy-serialization").versionRef("utilities")
+            library("eldoutil-metrics", "de.eldoria.util","metrics").versionRef("utilities")
+            library("eldoutil-updater", "de.eldoria.util","updater").versionRef("utilities")
+            library("eldoutil-crossversion", "de.eldoria.util","crossversion").versionRef("utilities")
+            bundle("utilities", listOf("eldoutil-jackson", "eldoutil-plugin", "eldoutil-serialization", "eldoutil-metrics",
+                "eldoutil-updater", "eldoutil-crossversion"))
+
+            library("bstats", "org.bstats:bstats-bukkit:3.0.2")
+
             library("messageblocker", "de.eldoria:messageblocker:1.1.3")
             // misc
             library("jetbrains-annotations", "org.jetbrains:annotations:24.1.0")
@@ -53,7 +63,7 @@ dependencyResolutionManagement {
             // plugins
             plugin("publishdata", "de.chojo.publishdata").version("1.4.0")
             plugin("spotless", "com.diffplug.spotless").version("6.25.0")
-            plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
+            plugin("shadow", "io.github.goooler.shadow").version("8.1.8")
             plugin("pluginyml-bukkit", "net.minecrell.plugin-yml.bukkit").version("0.6.0")
             //plugin("pluginyml-paper","net.minecrell.plugin-yml.paper").version( "0.5.3")
 

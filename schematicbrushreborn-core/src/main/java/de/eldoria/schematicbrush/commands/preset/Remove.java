@@ -12,9 +12,8 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.localization.Replacement;
+import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -45,16 +44,16 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
             removal = storage.activeStorage().presets().globalContainer().remove(name)
                     .whenComplete(Futures.whenComplete(
-                            success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
+                            success -> CommandAssertions.isTrue(success, "error.unknownPreset", Replacement.create("name", name)),
                             err -> handleCommandError(player, err)));
         } else {
             removal = storage.activeStorage().presets().playerContainer(player).remove(name)
                     .whenComplete(Futures.whenComplete(
-                            success -> CommandAssertions.isTrue(success, "error.unkownPreset", Replacement.create("name", name).addFormatting('b')),
+                            success -> CommandAssertions.isTrue(success, "error.unknownPreset", Replacement.create("name", name)),
                             err -> handleCommandError(player, err)));
         }
         removal.whenComplete(Futures.whenComplete(
-                succ -> messageSender().sendMessage(player, "Preset §b" + name + "§r deleted!"),
+                succ -> messageSender().sendMessage(player, "commands.preset.remove.removed", Replacement.create("name", name)),
                 err -> handleCommandError(player, err)));
     }
 

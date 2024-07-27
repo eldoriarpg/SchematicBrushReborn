@@ -23,4 +23,12 @@ public interface ComponentProvider {
      * @return value as string
      */
     String descriptor();
+
+    default String localizedName() {
+        return name();
+    }
+
+    default String localizedDescriptor() {
+        return descriptor();
+    }
 }

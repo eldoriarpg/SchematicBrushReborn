@@ -31,7 +31,6 @@ import de.eldoria.schematicbrush.commands.brush.Show;
 import de.eldoria.schematicbrush.commands.brush.ShowSet;
 import de.eldoria.schematicbrush.commands.brush.ShowSets;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.plugin.Plugin;
