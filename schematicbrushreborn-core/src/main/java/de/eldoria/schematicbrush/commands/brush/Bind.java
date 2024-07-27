@@ -12,8 +12,9 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
+import de.eldoria.eldoutilities.localization.MessageComposer;
+import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
-import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -41,8 +42,7 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         var session = sessions.getOrCreateSession(player);
 
 
-
-        CommandAssertions.isFalse(session.getSchematicCount() == 0, "Brush is empty.");
+        CommandAssertions.isFalse(session.getSchematicCount() == 0, "error.emptyBrush");
         var brush = session.build(plugin(), player);
 
         if (!WorldEditBrush.setBrush(player, brush)) {
@@ -51,8 +51,10 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
 
         var schematicCount = brush.settings().getSchematicCount();
         var setcount = brush.settings().schematicSets().size();
-        var message = String.format("<%s>Brush bound. Using <%s>%s<%s> Schematics in <%s>%s<%s> Sets. <%s><click:run_command:'/sbr'>[Edit]</click>",
-                Colors.NEUTRAL, Colors.VALUE, schematicCount, Colors.NEUTRAL, Colors.VALUE, setcount, Colors.NEUTRAL, Colors.CHANGE);
+        var message = MessageComposer.create()
+                .localeCode("commands.brush.bind.bound", Replacement.create("schematics", schematicCount), Replacement.create("sets", setcount))
+                .text("<change><click:run_command:'/sbr'>[<i18m:words.edit>]</click>")
+                .build();
         messageBlocker.unblockPlayer(player).thenRun(() -> audiences.sender(player).sendMessage(miniMessage.deserialize(message)));
     }
 }

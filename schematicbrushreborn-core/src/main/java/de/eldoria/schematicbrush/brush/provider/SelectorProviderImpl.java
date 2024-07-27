@@ -15,6 +15,7 @@ import de.eldoria.schematicbrush.brush.config.selector.RegexSelector;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -24,7 +25,11 @@ import java.util.function.Function;
 public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
-            new SelectorProviderImpl(DirectorySelector.class, "Directory", registry) {
+            new SelectorProviderImpl(DirectorySelector.class,
+                    "Directory",
+                    "components.provider.selector.directory.name",
+                    "components.provider.selector.directory.description",
+                    registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("Directory", true),
                         Argument.unlocalizedInput("name_filter", false)};
 
@@ -36,11 +41,6 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 @Override
                 public Argument[] arguments() {
                     return arguments;
-                }
-
-                @Override
-                public String description() {
-                    return "Select schematics in a directory.\nUse dirname/* to select subdirectories as well.\nUse the second argument name filter to filter schematics in these directories";
                 }
 
                 @Override
@@ -58,7 +58,10 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
             };
 
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
-            new SelectorProviderImpl(NameSelector.class, "Name", registry) {
+            new SelectorProviderImpl(NameSelector.class, "Name",
+                    "components.provider.selector.name.name",
+                    "components.provider.selector.name.description",
+                    registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("Name", true)};
 
                 @Override
@@ -72,11 +75,6 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 }
 
                 @Override
-                public String description() {
-                    return "Select schematics by name.\nUse a * as a wildcard.";
-                }
-
-                @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
                         return registry().get(SchematicCache.STORAGE).getMatchingSchematics(player, args.asString(0), 50);
@@ -86,7 +84,10 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
             };
 
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
-            new SelectorProviderImpl(RegexSelector.class, "Regex", registry) {
+            new SelectorProviderImpl(RegexSelector.class, "Regex",
+                    "components.provider.selector.regex.name",
+                    "components.provider.selector.regex.description",
+                    registry) {
                 private final Argument[] arguments = {Argument.unlocalizedInput("Regex", true)};
 
                 @Override
@@ -100,11 +101,6 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 }
 
                 @Override
-                public String description() {
-                    return "Select schematics with a regex.\nWanna try it out first? Use regex101.com";
-                }
-
-                @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
                         return Collections.singletonList("<regex>");
@@ -113,8 +109,8 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 }
             };
 
-    public SelectorProviderImpl(Class<? extends Selector> clazz, String name, SchematicRegistry registry) {
-        super(clazz, name, registry);
+    public SelectorProviderImpl(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description, SchematicRegistry registry) {
+        super(clazz, name, localizedName, description, registry);
     }
 
     @Override

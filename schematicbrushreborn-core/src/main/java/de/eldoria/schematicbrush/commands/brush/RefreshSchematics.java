@@ -53,9 +53,9 @@ public class RefreshSchematics extends AdvancedCommand implements IPlayerTabExec
         var brushBuilder = brush.toBuilder(settingsRegistry, schematicRegistry);
         brushBuilder.refresh();
         if (WorldEditBrush.setBrush(player, brushBuilder.build(plugin(), player))) {
-            messageSender().sendMessage(player, "Brush schematics refreshed.");
+            messageSender().sendMessage(player, "commands.brush.refresh.refreshed");
         } else {
-            messageSender().sendError(player, "Could not refresh schematics.");
+            messageSender().sendError(player, "commands.brush.refresh.refreshFailed");
         }
     }
 
@@ -63,6 +63,6 @@ public class RefreshSchematics extends AdvancedCommand implements IPlayerTabExec
         var builder = sessions.getOrCreateSession(player);
         builder.refresh();
         sessions.showSets(player);
-        messageSender().sendMessage(player, "Schematics refreshed.");
+        messageSender().sendMessage(player, "commands.brush.refresh.refreshSession");
     }
 }

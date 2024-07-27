@@ -15,8 +15,14 @@ public abstract class SchematicSelectionProvider extends SettingProvider<Schemat
      *
      * @param clazz which is returned by the provider
      * @param name  name. Must be unique inside the provider.
+     * @deprecated Use {@link #SchematicSelectionProvider(Class, String, String, String)} and provide a localized name and description
      */
+    @SuppressWarnings("removal")
     public SchematicSelectionProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
         super(clazz, name);
+    }
+
+    public SchematicSelectionProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
+        super(clazz, name, localizedName, description);
     }
 }

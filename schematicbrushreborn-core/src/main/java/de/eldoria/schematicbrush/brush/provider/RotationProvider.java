@@ -6,10 +6,10 @@
 
 package de.eldoria.schematicbrush.brush.provider;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.rotation.ARotation;
@@ -25,7 +25,10 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class RotationProvider extends ModifierProvider {
-    public static final RotationProvider RANDOM = new RotationProvider(RotationRandom.class, "Random") {
+    public static final RotationProvider RANDOM = new RotationProvider(RotationRandom.class,
+            "Random",
+            "components.provider.rotation.random.name",
+            "components.provider.rotation.random.description") {
         @Override
         public Mutator<?> parse(Arguments args) {
             return ARotation.random();
@@ -37,27 +40,20 @@ public abstract class RotationProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A random rotation containing all allowed 90° rotations.";
-        }
-
-        @Override
         public boolean hasArguments() {
             return false;
         }
     };
     private static final String[] ROTATIONS = {"0", "90", "180", "270"};
-    public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class, "Fixed") {
+    public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class,
+            "Fixed",
+            "components.provider.rotation.fixed.name",
+            "components.provider.rotation.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("rotation", true)};
 
         @Override
         public Mutator<?> parse(Arguments args) throws CommandException {
             return ARotation.fixed(Rotation.parse(args.asString(0)));
-        }
-
-        @Override
-        public String description() {
-            return "A fixed rotation.";
         }
 
         @Override
@@ -68,13 +64,16 @@ public abstract class RotationProvider extends ModifierProvider {
         @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
-                return TabCompleteUtil.complete(args.asString(0), ROTATIONS);
+                return Completion.complete(args.asString(0), ROTATIONS);
             }
             return Collections.emptyList();
         }
     };
 
-    public static final RotationProvider LIST = new RotationProvider(RotationList.class, "List") {
+    public static final RotationProvider LIST = new RotationProvider(RotationList.class,
+            "List",
+            "components.provider.rotation.list.name",
+            "components.provider.rotation.list.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("rotations...", true)};
 
         @Override
@@ -92,18 +91,13 @@ public abstract class RotationProvider extends ModifierProvider {
         }
 
         @Override
-        public String description() {
-            return "A list of rotations which will be choosen by random";
-        }
-
-        @Override
         public List<String> complete(Arguments args, Player player) {
-            return TabCompleteUtil.complete(args.asString(-1), ROTATIONS);
+            return Completion.complete(args.asString(-1), ROTATIONS);
         }
     };
 
-    public RotationProvider(Class<? extends ConfigurationSerializable> clazz, String name) {
-        super(clazz, name);
+    public RotationProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
+        super(clazz, name, localizedName, description);
     }
 
     @Override

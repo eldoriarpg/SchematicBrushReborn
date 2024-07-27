@@ -13,7 +13,6 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -43,11 +42,11 @@ public class AddSetModifier extends AdvancedCommand implements IPlayerTabExecuto
         var modifier = args.get(1).asString();
 
         var registration = registry.getSchematicModifier(modifier);
-        CommandAssertions.isTrue(registration.isPresent(), "Unknown modifier.");
+        CommandAssertions.isTrue(registration.isPresent(), "error.unknownModifier");
         var setId = args.get(0).asInt();
         var schematicSet = session.getSchematicSet(setId);
 
-        CommandAssertions.isTrue(schematicSet.isPresent(), "Invalid set id");
+        CommandAssertions.isTrue(schematicSet.isPresent(), "error.invalidSetId");
 
         schematicSet.get().setModifier(registration.get().modifier(), registration.get().mutators().get(0).defaultSetting());
         sessions.showSet(player, setId);

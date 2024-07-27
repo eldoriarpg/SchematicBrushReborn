@@ -8,6 +8,7 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 dependencies {
     implementation(project(":schematicbrushreborn-core"))
     implementation(libs.bundles.jackson)
+    implementation(libs.bundles.utilities)
     implementation(libs.adventure.bukkit)
     implementation(libs.adventure.minimessage)
 }
@@ -56,6 +57,7 @@ publishing {
 
 tasks {
     shadowJar {
+        relocate("org.bstats", shadebase + "bstats")
         relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
         relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")

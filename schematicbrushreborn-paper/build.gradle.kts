@@ -7,7 +7,7 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
     implementation(project(":schematicbrushreborn-core"))
-    bukkitLibrary(libs.bundles.jackson)
+    bukkitLibrary(libs.bundles.utilities)
     bukkitLibrary(libs.adventure.bukkit)
 }
 
@@ -55,8 +55,7 @@ publishing {
 
 tasks {
     shadowJar {
-        relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
-        relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
+        relocate("org.bstats", shadebase + "bstats")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         mergeServiceFiles()
         archiveVersion.set(rootProject.version as String)

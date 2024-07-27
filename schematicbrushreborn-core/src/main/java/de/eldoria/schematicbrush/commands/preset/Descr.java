@@ -12,9 +12,8 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.localization.Replacement;
+import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -47,11 +46,11 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
         var container = storage.activeStorage().presets().containerByName(player, name);
         container.get(strippedName)
                 .whenComplete(Futures.whenComplete(preset -> {
-                    CommandAssertions.isTrue(preset.isPresent(), "error.unkownPreset", Replacement.create("name", name).addFormatting('b'));
+                    CommandAssertions.isTrue(preset.isPresent(), "error.unknownPreset", Replacement.create("name", name));
 
                     preset.get().description(args.join(1));
                     container.add(preset.get());
-                    messageSender().sendMessage(player, "Changed description of preset §b" + name + "§r!");
+                    messageSender().sendMessage(player, "commands.preset.descr.changed");
                 }, err -> handleCommandError(player, err)));
     }
 

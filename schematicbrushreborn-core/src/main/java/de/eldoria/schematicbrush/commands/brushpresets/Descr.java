@@ -12,9 +12,8 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
-import de.eldoria.eldoutilities.localization.Replacement;
+import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
@@ -47,11 +46,11 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
         var container = storage.activeStorage().brushes().containerByName(player, name);
         container.get(strippedName)
                 .whenComplete(Futures.whenComplete(brush -> {
-                    CommandAssertions.isTrue(brush.isPresent(), "error.unkownBrush", Replacement.create("name", name).addFormatting('b'));
+                    CommandAssertions.isTrue(brush.isPresent(), "error.unknownBrush", Replacement.create("name", name));
 
                     brush.get().description(args.join(1));
                     container.add(brush.get());
-                    messageSender().sendMessage(player, "Changed description of brush §b" + name + "§r!");
+                    messageSender().sendMessage(player, "commands.brushPresets.descr.changed", Replacement.create("name", name));
                 }, err -> handleCommandError(player, err)));
     }
 

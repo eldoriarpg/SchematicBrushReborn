@@ -28,6 +28,6 @@ public class Reload extends AdvancedCommand implements ITabExecutor {
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String alias, @NotNull Arguments args) {
         instance.reload();
-        messageSender().sendMessage(sender, "Schematic Brush Reborn reloaded.");
+        messageSender().sendMessage(sender, "commands.admin.reload.done");
     }
 }

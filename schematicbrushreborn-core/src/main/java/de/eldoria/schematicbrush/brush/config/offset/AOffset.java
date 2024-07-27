@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.brush.config.offset;
 
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -47,6 +48,11 @@ public abstract class AOffset implements Mutator<Integer> {
         return SerializationUtil.newBuilder()
                 .add("value", offset)
                 .build();
+    }
+
+    @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.modifier.offset.%s.name".formatted(name().toLowerCase()));
     }
 
     @Override

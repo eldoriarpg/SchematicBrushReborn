@@ -12,6 +12,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.mask.Masks;
+import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
@@ -47,11 +48,16 @@ public class BlockFilter implements Mutator<String> {
 
     @Override
     public String descriptor() {
-        return maskString.isBlank() ? "None" : maskString;
+        return maskString.isBlank() ? "<i18n:words.none>" : maskString;
     }
 
     @Override
     public void value(@NotNull String value) {
+    }
+
+    @Override
+    public String localizedName() {
+        return ILocalizer.escape("components.modifier.blockfilter.name");
     }
 
     @Override

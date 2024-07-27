@@ -30,32 +30,32 @@ public final class BuildUtil {
         var filteredProvider = provider.stream().filter(set -> set.hasPermission(permissible)).toList();
         if (filteredProvider.size() > 1) {
             types = filteredProvider.stream()
-                    .map(p -> String.format("<click:%s:'%s %s %s '><hover:show_text:'<%s>%s'>[%s]</hover></click>",
-                            p.commandType(), baseCommand, type.name(), p.name(), Colors.NEUTRAL, p.description(), p.name()))
+                    .map(p -> String.format("<click:%s:'%s %s %s '><hover:show_text:'<neutral>%s'>[%s]</hover></click>",
+                            p.commandType(), baseCommand, type.name(), p.name(), p.localizedDescription(), p.localizedName()))
                     .collect(Collectors.joining(" "));
         } else {
-            types = String.format("<click:%s:'%s %s %s '>[Change]</click>",
+            types = String.format("<click:%s:'%s %s %s '>[<i18n:words.change>]</click>",
                     filteredProvider.get(0).commandType(), baseCommand, type.name(), filteredProvider.get(0).name());
         }
 
         var remove = "";
 
         if (!type.required()) {
-            remove = String.format("<%s><click:run_command:'%s %s'>[Remove]</click>", Colors.REMOVE, removeBaseCommand, type.name());
+            remove = String.format("<remove><click:run_command:'%s %s'>[<i18n:words.remove>]</click>", removeBaseCommand, type.name());
         }
 
-        return String.format("<hover:show_text:'<%s>%s'><%s>%s:</hover> <%s>%s %s\n  %s",
-                Colors.NEUTRAL, type.description(), Colors.HEADING, type.name(), Colors.CHANGE, types, remove,
+        return String.format("<hover:show_text:'<neutral>%s'><heading>%s:</hover> <change>%s %s\n  %s",
+                type.description(), type.getLocalizedName(), types, remove,
                 filteredProvider.size() > 1 ? renderProvider(current) : renderSingleProvider(current));
     }
 
     public static String renderProvider(ComponentProvider provider) {
-        return String.format("<%s>%s%s<%s>%s", Colors.NAME, provider.name(),
-                provider.descriptor() == null || provider.descriptor().isBlank() ? "" : ": ", Colors.VALUE,
-                provider.descriptor() == null || provider.descriptor().isBlank() ? "" : provider.descriptor());
+        return String.format("<name>%s%s<value>%s", provider.localizedName(),
+                provider.localizedDescriptor() == null || provider.localizedDescriptor().isBlank() ? "" : ": ",
+                provider.localizedDescriptor() == null || provider.localizedDescriptor().isBlank() ? "" : provider.localizedDescriptor());
     }
 
     public static String renderSingleProvider(ComponentProvider provider) {
-        return String.format("<%s>%s", Colors.VALUE, provider.descriptor());
+        return String.format("<value>%s", provider.localizedDescriptor());
     }
 }

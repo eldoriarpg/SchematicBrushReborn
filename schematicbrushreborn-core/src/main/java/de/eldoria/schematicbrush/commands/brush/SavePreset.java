@@ -14,7 +14,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
-import de.eldoria.schematicbrush.storage.Storage;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -56,7 +55,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
             addition = storage.activeStorage().presets().globalContainer().get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                            CommandAssertions.isTrue(args.flags().has("f"), "error.presetExists");
                         }
                         storage.activeStorage().presets().globalContainer().add(preset).join();
                     }, err -> handleCommandError(player, err)));
@@ -64,7 +63,7 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
             addition = storage.activeStorage().presets().playerContainer(player).get(preset.name())
                     .whenComplete(Futures.whenComplete(succ -> {
                         if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "Preset already exists. Use -f to override");
+                            CommandAssertions.isTrue(args.flags().has("f"), "error.presetExists");
                         }
                         storage.activeStorage().presets().playerContainer(player).add(preset).join();
                     }, err -> handleCommandError(player, err)));

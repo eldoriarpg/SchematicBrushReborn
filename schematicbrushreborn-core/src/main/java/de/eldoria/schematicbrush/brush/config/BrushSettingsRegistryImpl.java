@@ -6,25 +6,42 @@
 
 package de.eldoria.schematicbrush.brush.config;
 
+import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.container.Pair;
-import de.eldoria.eldoutilities.simplecommands.TabCompleteUtil;
 import de.eldoria.schematicbrush.brush.config.modifier.BaseModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.brush.config.modifier.SchematicModifier;
-import de.eldoria.schematicbrush.brush.config.provider.*;
+import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
+import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.SchematicSelectionProvider;
+import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
+import de.eldoria.schematicbrush.brush.config.provider.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
-import de.eldoria.schematicbrush.brush.provider.*;
+import de.eldoria.schematicbrush.brush.provider.FilterProvider;
+import de.eldoria.schematicbrush.brush.provider.FlipProvider;
+import de.eldoria.schematicbrush.brush.provider.IncludeAirProvider;
+import de.eldoria.schematicbrush.brush.provider.OffsetProvider;
+import de.eldoria.schematicbrush.brush.provider.PlacementProvider;
+import de.eldoria.schematicbrush.brush.provider.ReplaceAllProvider;
+import de.eldoria.schematicbrush.brush.provider.RotationProvider;
+import de.eldoria.schematicbrush.brush.provider.SchematicSelectionProviderImpl;
+import de.eldoria.schematicbrush.brush.provider.SelectorProviderImpl;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -166,7 +183,7 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     @Override
     public List<String> completeSelector(Arguments args, Player player) throws CommandException {
         if (args.size() == 1) {
-            return TabCompleteUtil.complete(args.asString(0), selector.stream().map(SettingProvider::name));
+            return Completion.complete(args.asString(0), selector.stream().map(SettingProvider::name));
         }
         return getSettingProvider(args, selector).complete(args.subArguments(), player);
     }
@@ -174,7 +191,7 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     @Override
     public List<String> completeSchematicSelection(Arguments args, Player player) throws CommandException {
         if (args.size() == 1) {
-            return TabCompleteUtil.complete(args.asString(0), schematicSelection.stream().map(SettingProvider::name));
+            return Completion.complete(args.asString(0), schematicSelection.stream().map(SettingProvider::name));
         }
         return getSettingProvider(args, schematicSelection).complete(args.subArguments(), player);
     }
@@ -191,7 +208,7 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     private <T extends Nameable> List<String> completeModifier(Arguments args, Map<T, List<ModifierProvider>> map) throws CommandException {
         if (args.size() == 1) {
-            return TabCompleteUtil.complete(args.asString(0), map.keySet().stream().map(Nameable::name));
+            return Completion.complete(args.asString(0), map.keySet().stream().map(Nameable::name));
         }
         if (args.size() == 2) {
             return completeProvider(args, getProviders(args, map).second);
@@ -213,18 +230,18 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
                 .filter(e -> e.getKey().name().equals(args.asString(0)))
                 .map(e -> Pair.of(e.getKey(), e.getValue()))
                 .findFirst()
-                .orElseThrow(() -> CommandException.message("Unkown modifier type"));
+                .orElseThrow(() -> CommandException.message("error.unknownModifierType"));
     }
 
     private <T extends SettingProvider<?>> T getSettingProvider(Arguments args, List<T> provider) throws CommandException {
         return provider.stream()
                 .filter(p -> p.isMatch(args))
                 .findFirst()
-                .orElseThrow(() -> CommandException.message("Unkown modifier"));
+                .orElseThrow(() -> CommandException.message("error.unknownModifier"));
     }
 
     private <T extends SettingProvider<?>> List<String> completeProvider(Arguments args, List<T> provider) {
-        return TabCompleteUtil.complete(args.asString(0), provider.stream().map(p -> p.name()));
+        return Completion.complete(args.asString(0), provider.stream().map(p -> p.name()));
     }
 
     public void registerDefaults(SchematicRegistry schematics) {

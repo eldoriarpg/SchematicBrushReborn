@@ -6,6 +6,7 @@ plugins {
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
+    bukkitLibrary(libs.bundles.utilities)
     bukkitLibrary(libs.jackson.yaml)
     bukkitLibrary(libs.bundles.jackson)
     bukkitLibrary(libs.adventure.bukkit)
@@ -57,6 +58,7 @@ publishing {
 
 tasks {
     shadowJar {
+        relocate("org.bstats", shadebase + "bstats")
         relocate("de.eldoria.eldoutilities", shadebase + "eldoutilities")
         relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
