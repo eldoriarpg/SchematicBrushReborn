@@ -19,7 +19,6 @@ var publishModules = setOf("schematicbrushreborn-api",
 
 allprojects {
     repositories {
-        mavenLocal()
         mavenCentral()
         maven("https://eldonexus.de/repository/maven-public/")
         maven("https://eldonexus.de/repository/maven-proxies/")
