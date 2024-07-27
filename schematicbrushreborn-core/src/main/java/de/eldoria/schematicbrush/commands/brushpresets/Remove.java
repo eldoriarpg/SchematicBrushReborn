@@ -53,7 +53,7 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
                             err -> handleCommandError(player, err)));
         }
         removal.whenComplete(Futures.whenComplete(
-                succ -> messageSender().sendMessage(player, "command.brushpresets.remove.removed", Replacement.create("name", name)),
+                succ -> messageSender().sendMessage(player, "commands.brushPresets.remove.removed", Replacement.create("name", name)),
                 err -> handleCommandError(player, err)));
     }
 
