@@ -189,6 +189,10 @@ public class SchematicBrushCache implements SchematicCache {
             cleanKey = source.prefix() + configuration.schematicConfig().pathSeparator() + cleanKey;
         }
 
+        // The assets directory in a user directory is used to store some fawe internal schematics
+        // For the sake of simplicity we ignore any directory named "assets" in the player directory
+        if (playerUid != null && directory.endsWith(Path.of(playerUid.toString(), "assets"))) return;
+
         Schematic schematic;
         try {
             schematic = Schematic.of(path);
