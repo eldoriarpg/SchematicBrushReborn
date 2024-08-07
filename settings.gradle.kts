@@ -29,7 +29,7 @@ dependencyResolutionManagement {
             bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
 
             // adventure
-            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.3")
+            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.4")
             library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.17.0")
             // utilities
             version("utilities", "2.1.2")
