@@ -29,10 +29,10 @@ dependencyResolutionManagement {
             bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
 
             // adventure
-            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.3")
+            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.4")
             library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.17.0")
             // utilities
-            version("utilities", "2.1.2")
+            version("utilities", "2.1.4")
             library("eldoutil-plugin", "de.eldoria.util","plugin").versionRef("utilities")
             library("eldoutil-jackson", "de.eldoria.util","jackson-configuration").versionRef("utilities")
             library("eldoutil-serialization", "de.eldoria.util","legacy-serialization").versionRef("utilities")
@@ -55,8 +55,8 @@ dependencyResolutionManagement {
             library("paper-v17", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             library("spigot-v16", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             // world edit
-            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.3.5")
-            version("fawe", "2.11.0")
+            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.3.6")
+            version("fawe", "2.11.1")
             library("fawe-core", "com.fastasyncworldedit","FastAsyncWorldEdit-Core").versionRef("fawe")
             library("fawe-bukkit", "com.fastasyncworldedit","FastAsyncWorldEdit-Bukkit").versionRef("fawe")
 
