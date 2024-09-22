@@ -42,7 +42,7 @@ dependencyResolutionManagement {
             bundle("utilities", listOf("eldoutil-jackson", "eldoutil-plugin", "eldoutil-serialization", "eldoutil-metrics",
                 "eldoutil-updater", "eldoutil-crossversion"))
 
-            library("bstats", "org.bstats:bstats-bukkit:3.0.2")
+            library("bstats", "org.bstats:bstats-bukkit:3.1.0")
 
             library("messageblocker", "de.eldoria:messageblocker:1.1.3")
             // misc
