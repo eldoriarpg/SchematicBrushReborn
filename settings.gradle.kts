@@ -25,7 +25,7 @@ dependencyResolutionManagement {
             library("jackson-databind", "com.fasterxml.jackson.core","jackson-databind").versionRef("jackson")
             library("jackson-annotations", "com.fasterxml.jackson.core","jackson-annotations").versionRef("jackson")
             library("jackson-yaml", "com.fasterxml.jackson.dataformat","jackson-dataformat-yaml").versionRef("jackson")
-            library("snakeyaml", "org.yaml:snakeyaml:2.2")
+            library("snakeyaml", "org.yaml:snakeyaml:2.3")
             bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
 
             // adventure
