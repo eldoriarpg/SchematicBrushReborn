@@ -46,7 +46,7 @@ dependencyResolutionManagement {
 
             library("messageblocker", "de.eldoria:messageblocker:1.1.3")
             // misc
-            library("jetbrains-annotations", "org.jetbrains:annotations:24.1.0")
+            library("jetbrains-annotations", "org.jetbrains:annotations:26.0.1")
             // minecraft
             version("minecraft-latest", "1.20.1-R0.1-SNAPSHOT")
             library("paper-latest", "io.papermc.paper", "paper-api").version("minecraft-latest")
