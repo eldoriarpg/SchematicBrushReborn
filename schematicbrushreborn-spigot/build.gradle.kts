@@ -12,7 +12,9 @@ dependencies {
     bukkitLibrary(libs.adventure.bukkit)
     bukkitLibrary(libs.adventure.minimessage)
 
-    implementation(project(":schematicbrushreborn-core"))
+    implementation(project(":schematicbrushreborn-core")) {
+        exclude("org.yaml", "snakeyaml")
+    }
 }
 
 publishData {

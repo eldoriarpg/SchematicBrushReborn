@@ -1,14 +1,17 @@
 plugins {
     alias(libs.plugins.pluginyml.bukkit)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.runserver)
 }
 
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-core"))
-    bukkitLibrary(libs.bundles.utilities)
-    bukkitLibrary(libs.bundles.jackson)
+    implementation(project(":schematicbrushreborn-core")) {
+        exclude("org.yaml", "snakeyaml")
+    }
+    implementation(libs.bundles.utilities)
+    implementation(libs.bundles.jackson)
     bukkitLibrary(libs.adventure.bukkit)
 }
 
@@ -58,6 +61,8 @@ tasks {
     shadowJar {
         relocate("org.bstats", shadebase + "bstats")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
+        relocate("com.jackson", shadebase + "jackson")
+        relocate("de.eldoria.eldoutilities", shadebase + "utilities")
         mergeServiceFiles()
         archiveVersion.set(rootProject.version as String)
     }
@@ -74,6 +79,15 @@ tasks {
         }
         from(shadowJar)
         destinationDir = File(path.toString())
+    }
+
+    runServer {
+        minecraftVersion("1.21.4")
+        downloadPlugins {
+            url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/FastAsyncWorldEdit-Paper-2.12.4-SNAPSHOT-1013.jar")
+        }
+
+      jvmArgs("-Dcom.mojang.eula.agree=true")
     }
 }
 

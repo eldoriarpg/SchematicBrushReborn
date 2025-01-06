@@ -7,6 +7,7 @@ dependencies {
     api(project(":schematicbrushreborn-api")) {
         exclude("com.fasterxml.jackson.core")
         exclude("com.fasterxml.jackson")
+        exclude("org.yaml")
         exclude("com.fasterxml.jackson.dataformat")
         exclude("net.kyori")
         exclude("org.jetbrains")

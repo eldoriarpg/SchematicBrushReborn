@@ -58,7 +58,6 @@ allprojects {
         compileOnly(libs.spigot.v16)
         compileOnly(libs.jetbrains.annotations)
         // Due to incompatibility by the yaml versions defined by world edit, fawe and bukkit we need to exclude it everywhere and add our own version...
-        compileOnly(libs.snakeyaml)
         compileOnly(libs.worldedit)
         compileOnly(libs.fawe.core) {
             exclude("com.intellectualsites.paster")

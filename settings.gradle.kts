@@ -21,11 +21,10 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             // jackson & serialization
-            version("jackson", "2.17.2")
+            version("jackson", "2.13.4")
             library("jackson-databind", "com.fasterxml.jackson.core","jackson-databind").versionRef("jackson")
             library("jackson-annotations", "com.fasterxml.jackson.core","jackson-annotations").versionRef("jackson")
             library("jackson-yaml", "com.fasterxml.jackson.dataformat","jackson-dataformat-yaml").versionRef("jackson")
-            library("snakeyaml", "org.yaml:snakeyaml:2.3")
             bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
 
             // adventure
@@ -64,8 +63,8 @@ dependencyResolutionManagement {
             plugin("publishdata", "de.chojo.publishdata").version("1.4.0")
             plugin("spotless", "com.diffplug.spotless").version("6.25.0")
             plugin("shadow", "io.github.goooler.shadow").version("8.1.8")
-            plugin("pluginyml-bukkit", "net.minecrell.plugin-yml.bukkit").version("0.6.0")
-            //plugin("pluginyml-paper","net.minecrell.plugin-yml.paper").version( "0.5.3")
+            plugin("pluginyml-bukkit", "de.eldoria.plugin-yml.bukkit").version("0.6.0")
+            plugin("runserver", "xyz.jpenilla.run-paper").version("2.3.1")
 
         }
         create("testlibs") {
