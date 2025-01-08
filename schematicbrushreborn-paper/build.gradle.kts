@@ -82,9 +82,10 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.1")
         downloadPlugins {
             url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/FastAsyncWorldEdit-Paper-2.12.4-SNAPSHOT-1013.jar")
+            url("https://download.luckperms.net/1569/bukkit/loader/LuckPerms-Bukkit-5.4.152.jar")
         }
 
       jvmArgs("-Dcom.mojang.eula.agree=true")

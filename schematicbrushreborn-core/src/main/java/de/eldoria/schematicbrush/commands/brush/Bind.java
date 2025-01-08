@@ -13,6 +13,7 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.MessageComposer;
+import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
@@ -25,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
     private final MessageBlocker messageBlocker;
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
-    private final BukkitAudiences audiences;
 
     public Bind(Plugin plugin, Sessions sessions, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("bind")
@@ -34,7 +33,6 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
                 .build());
         this.sessions = sessions;
         this.messageBlocker = messageBlocker;
-        audiences = BukkitAudiences.builder(plugin).build();
     }
 
     @Override
@@ -53,8 +51,10 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         var setcount = brush.settings().schematicSets().size();
         var message = MessageComposer.create()
                 .localeCode("commands.brush.bind.bound", Replacement.create("schematics", schematicCount), Replacement.create("sets", setcount))
-                .text("<change><click:run_command:'/sbr'>[<i18m:words.edit>]</click>")
+                .text("<change><click:run_command:'/sbr'>[")
+                .localeCode("words.edit")
+                .text("]</click>")
                 .build();
-        messageBlocker.unblockPlayer(player).thenRun(() -> audiences.sender(player).sendMessage(miniMessage.deserialize(message)));
+        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, message));
     }
 }
