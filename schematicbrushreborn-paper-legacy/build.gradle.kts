@@ -6,9 +6,15 @@ plugins {
 val shadebase = "de.eldoria.schematicbrush.libs."
 
 dependencies {
-    implementation(project(":schematicbrushreborn-core"))
-    implementation(libs.bundles.jackson)
-    implementation(libs.bundles.utilities)
+    implementation(project(":schematicbrushreborn-core")) {
+        exclude("org.yaml", "snakeyaml")
+    }
+    implementation(libs.bundles.jackson){
+        exclude("org.yaml")
+    }
+    implementation(libs.bundles.utilities){
+        exclude("org.yaml")
+    }
     implementation(libs.adventure.bukkit)
     implementation(libs.adventure.minimessage)
 }
@@ -26,7 +32,7 @@ publishing {
             url.set("https://github.com/eldoriarpg/schematicbrushreborn")
             developers {
                 developer {
-                    name.set("Florian Fülling")
+                    name.set("Lilly Fülling")
                     organization.set("EldoriaRPG")
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }

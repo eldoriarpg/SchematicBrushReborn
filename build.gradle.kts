@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.7.2"
+version = "2.7.3"
 
 var publishModules = setOf(
     "schematicbrushreborn-api",
@@ -58,7 +58,6 @@ allprojects {
         compileOnly(libs.spigot.v16)
         compileOnly(libs.jetbrains.annotations)
         // Due to incompatibility by the yaml versions defined by world edit, fawe and bukkit we need to exclude it everywhere and add our own version...
-        compileOnly(libs.snakeyaml)
         compileOnly(libs.worldedit)
         compileOnly(libs.fawe.core) {
             exclude("com.intellectualsites.paster")
@@ -66,7 +65,7 @@ allprojects {
         }
         compileOnly(libs.fawe.bukkit)
 
-        testImplementation(platform("org.junit:junit-bom:5.11.0"))
+        testImplementation(platform("org.junit:junit-bom:5.11.3"))
         testImplementation("org.junit.jupiter", "junit-jupiter")
         testImplementation(testlibs.mockbukkit)
         testImplementation(libs.worldedit) {

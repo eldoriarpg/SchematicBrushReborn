@@ -12,7 +12,9 @@ dependencies {
     bukkitLibrary(libs.adventure.bukkit)
     bukkitLibrary(libs.adventure.minimessage)
 
-    implementation(project(":schematicbrushreborn-core"))
+    implementation(project(":schematicbrushreborn-core")) {
+        exclude("org.yaml", "snakeyaml")
+    }
 }
 
 publishData {
@@ -27,7 +29,7 @@ publishing {
             url.set("https://github.com/eldoriarpg/schematicbrushreborn")
             developers {
                 developer {
-                    name.set("Florian Fülling")
+                    name.set("Lilly Fülling")
                     organization.set("EldoriaRPG")
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }
