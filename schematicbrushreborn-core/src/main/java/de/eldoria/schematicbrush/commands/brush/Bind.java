@@ -13,12 +13,9 @@ import de.eldoria.eldoutilities.commands.command.util.CommandAssertions;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +26,8 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
 
     public Bind(Plugin plugin, Sessions sessions, MessageBlocker messageBlocker) {
         super(plugin, CommandMeta.builder("bind")
-                .hidden()
-                .build());
+                                 .hidden()
+                                 .build());
         this.sessions = sessions;
         this.messageBlocker = messageBlocker;
     }
@@ -50,11 +47,11 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         var schematicCount = brush.settings().getSchematicCount();
         var setcount = brush.settings().schematicSets().size();
         var message = MessageComposer.create()
-                .localeCode("commands.brush.bind.bound", Replacement.create("schematics", schematicCount), Replacement.create("sets", setcount))
-                .text("<change><click:run_command:'/sbr'>[")
-                .localeCode("words.edit")
-                .text("]</click>")
-                .build();
+                                     .localeCode("commands.brush.bind.bound", Replacement.create("schematics", schematicCount), Replacement.create("sets", setcount))
+                                     .text("<change><click:run_command:'/sbr'>[")
+                                     .localeCode("words.edit")
+                                     .text("]</click>")
+                                     .build();
         messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, message));
     }
 }

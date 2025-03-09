@@ -11,9 +11,6 @@ import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
-import de.eldoria.schematicbrush.util.Colors;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -25,14 +22,10 @@ public class BasePageCommand extends AdvancedCommand {
     public final String RIGHT_ARROW = "»»»";
     public final String LEFT_ARROW = "«««";
     private final MessageBlocker messageBlocker;
-    private final MiniMessage miniMessage;
-    private final BukkitAudiences audiences;
 
     public BasePageCommand(Plugin plugin, CommandMeta meta, MessageBlocker messageBlocker) {
         super(plugin, meta);
         this.messageBlocker = messageBlocker;
-        miniMessage = MiniMessage.miniMessage();
-        audiences = BukkitAudiences.create(plugin);
     }
 
     protected void addPageHeader(MessageComposer composer, String title, boolean global) {
@@ -45,10 +38,10 @@ public class BasePageCommand extends AdvancedCommand {
     private String runCommand(String baseCommand, boolean global) {
         var type = global ? "words.global" : "words.private";
         return MessageComposer.create()
-                .text("<change><click:run_command:'%s %s'>[", baseCommand, global ? "global" : "private")
-                .localeCode(type)
-                .text("]</click>")
-                .build();
+                              .text("<change><click:run_command:'%s %s'>[", baseCommand, global ? "global" : "private")
+                              .localeCode(type)
+                              .text("]</click>")
+                              .build();
     }
 
     protected <T> void addEntries(MessageComposer composer, List<T> entries, Function<T, String> map) {
@@ -59,14 +52,14 @@ public class BasePageCommand extends AdvancedCommand {
     protected void addPageFooter(MessageComposer composer, int index, ContainerPagedAccess<?> paged) {
         var baseCommand = "/" + meta().createCommandCall();
         if (index == 0) {
-            composer.text("<inactive>%s", Colors.INACTIVE, LEFT_ARROW);
+            composer.text("<inactive>%s", LEFT_ARROW);
         } else {
             composer.text("<click:run_command:'%s %s'><change>%s</click>", baseCommand, index - 1, LEFT_ARROW);
         }
-        composer.text(" <%s>%s / %s ", Colors.NEUTRAL, index + 1, Math.max(1, paged.pages(PAGE_SIZE)));
+        composer.text(" <neutral>%s / %s ", index + 1, Math.max(1, paged.pages(PAGE_SIZE)));
 
         if (index + 1 >= paged.pages(PAGE_SIZE)) {
-            composer.text("<inactive>%s", Colors.INACTIVE, RIGHT_ARROW);
+            composer.text("<inactive>%s", RIGHT_ARROW);
         } else {
             composer.text("<click:run_command:'%s %s'><change>%s</click>", baseCommand, index + 1, RIGHT_ARROW);
         }
@@ -77,6 +70,6 @@ public class BasePageCommand extends AdvancedCommand {
         messageBlocker.blockPlayer(player);
         messageBlocker.ifEnabled(() -> composer.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
         messageBlocker.announce(player, "[x]");
-        audiences.sender(player).sendMessage(miniMessage.deserialize(composer.build()));
+        messageSender().sendMessage(player, composer.build());
     }
 }

@@ -10,7 +10,6 @@ import de.eldoria.schematicbrush.brush.config.modifier.BaseModifier;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.provider.SettingProvider;
 import de.eldoria.schematicbrush.brush.config.util.ComponentProvider;
-import de.eldoria.schematicbrush.util.Colors;
 import org.bukkit.permissions.Permissible;
 
 import java.util.List;
