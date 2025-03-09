@@ -87,6 +87,9 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -97,6 +100,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
+    private static final String[] LANGUAGES = new String[]{"de_DE", "en_US", "zh_TW"};
     private BrushSettingsRegistryImpl settingsRegistry;
     private SchematicRegistryImpl schematics;
     private JacksonConfiguration configuration;
@@ -141,6 +145,18 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
             configuration.save();
         }
 
+        if (base.version() == 1) {
+            // Required changes were made to language formats. reset files.
+            Path path = getDataFolder().toPath().resolve("messages");
+            for (String language : LANGUAGES) {
+                var file = path.resolve("messages_%s.properties".formatted(language));
+                Files.copy(file, path.resolve("messages_%s_old.properties".formatted(language)), StandardCopyOption.REPLACE_EXISTING);
+                Files.deleteIfExists(file);
+            }
+            base.version(2);
+            configuration.save();
+        }
+
         var yamlStorage = new YamlStorage(configuration);
         storageRegistry = new StorageRegistryImpl(yamlStorage, configuration);
         storageRegistry.register(StorageRegistry.YAML, yamlStorage);
@@ -149,26 +165,26 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public void onPluginEnable() {
         var localizer = Localizer.builder(this, configuration.general().language())
-                .setIncludedLocales("de_DE", "en_US", "zh_TW")
-                .build();
+                                 .setIncludedLocales(LANGUAGES)
+                                 .build();
         MessageSender.builder(this)
-                .prefix("<gold>[SB]")
-                .messageColor(NamedTextColor.AQUA)
-                .addTag(tags -> tags
-                        .tag("heading", Tag.styling(NamedTextColor.GOLD))
-                        .tag("name", Tag.styling(NamedTextColor.AQUA))
-                        .tag("value", Tag.styling(NamedTextColor.DARK_GREEN))
-                        .tag("change", Tag.styling(NamedTextColor.YELLOW))
-                        .tag("remove", Tag.styling(NamedTextColor.RED))
-                        .tag("add", Tag.styling(NamedTextColor.GREEN))
-                        .tag("warn", Tag.styling(NamedTextColor.RED))
-                        .tag("neutral", Tag.styling(NamedTextColor.AQUA))
-                        .tag("confirm", Tag.styling(NamedTextColor.GREEN))
-                        .tag("delete", Tag.styling(NamedTextColor.RED))
-                        .tag("inactive", Tag.styling(NamedTextColor.GRAY))
-                )
-                .localizer(localizer)
-                .register();
+                     .prefix("<gold>[SB]")
+                     .messageColor(NamedTextColor.AQUA)
+                     .addTag(tags -> tags
+                             .tag("heading", Tag.styling(NamedTextColor.GOLD))
+                             .tag("name", Tag.styling(NamedTextColor.DARK_AQUA))
+                             .tag("value", Tag.styling(NamedTextColor.DARK_GREEN))
+                             .tag("change", Tag.styling(NamedTextColor.YELLOW))
+                             .tag("remove", Tag.styling(NamedTextColor.RED))
+                             .tag("add", Tag.styling(NamedTextColor.GREEN))
+                             .tag("warn", Tag.styling(NamedTextColor.RED))
+                             .tag("neutral", Tag.styling(NamedTextColor.AQUA))
+                             .tag("confirm", Tag.styling(NamedTextColor.GREEN))
+                             .tag("delete", Tag.styling(NamedTextColor.RED))
+                             .tag("inactive", Tag.styling(NamedTextColor.GRAY))
+                     )
+                     .localizer(localizer)
+                     .register();
 
         schematics.register(SchematicCache.STORAGE, new SchematicBrushCache(this, configuration));
 
@@ -217,12 +233,12 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     public Module platformModule() {
         if (!getServer().getName().toLowerCase(Locale.ROOT).contains("spigot")) {
             return JacksonPaper.builder()
-                    .colorAsHex()
-                    .build();
+                               .colorAsHex()
+                               .build();
         }
         return JacksonBukkit.builder()
-                .colorAsHex()
-                .build();
+                            .colorAsHex()
+                            .build();
     }
 
     /**
@@ -255,14 +271,14 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public ObjectMapper configureMapper(MapperBuilder<?, ?> builder) {
         builder.addModule(platformModule())
-                .typeFactory(TypeFactory.defaultInstance().withClassLoader(getClassLoader()))
-                .addModule(schematicBrushModule())
-                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+               .typeFactory(TypeFactory.defaultInstance().withClassLoader(getClassLoader()))
+               .addModule(schematicBrushModule())
+               .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+               .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         if (builder instanceof YAMLMapper.Builder b) {
             b.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID)
-                    .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+             .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         }
         return builder
                 .build()
@@ -274,11 +290,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     public void onPostStart() throws Throwable {
         if (configuration.general().isCheckUpdates() && UserData.get(this).isPremium()) {
             Updater.lyna(LynaUpdateData.builder(this, 1)
-                            .updateUrl("https://discord.gg/zRW9Vpu")
-                            .notifyPermission(Permissions.Admin.RELOAD)
-                            .notifyUpdate(true)
-                            .build())
-                    .start();
+                                       .updateUrl("https://discord.gg/zRW9Vpu")
+                                       .notifyPermission(Permissions.Admin.RELOAD)
+                                       .notifyUpdate(true)
+                                       .build())
+                   .start();
         }
     }
 
@@ -327,11 +343,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         metrics.addCustomChart(new AdvancedPie("installed_add_ons",
                 () -> Arrays.stream(getServer().getPluginManager().getPlugins())
-                        .filter(plugin -> {
-                            var descr = plugin.getDescription();
-                            return descr.getSoftDepend().contains("SchematicBrushReborn") || descr.getDepend()
-                                    .contains("SchematicBrushReborn");
-                        }).collect(Collectors.toMap(e -> e.getDescription().getName(), e -> 1))));
+                            .filter(plugin -> {
+                                var descr = plugin.getDescription();
+                                return descr.getSoftDepend().contains("SchematicBrushReborn") || descr.getDepend()
+                                                                                                      .contains("SchematicBrushReborn");
+                            }).collect(Collectors.toMap(e -> e.getDescription().getName(), e -> 1))));
 
         metrics.addCustomChart(new SimplePie("used_storage_type",
                 () -> configuration.general().storageType().name()));

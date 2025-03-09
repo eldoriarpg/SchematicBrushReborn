@@ -15,10 +15,8 @@ import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import de.eldoria.schematicbrush.util.Colors;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -32,7 +30,6 @@ import java.util.stream.Collectors;
 import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModifier;
 
 public class Sessions {
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
     private final MessageBlocker messageBlocker;
@@ -56,8 +53,8 @@ public class Sessions {
 
     private BrushBuilder getOrCreateBuilder(Player player) {
         return WorldEditBrush.getSchematicBrush(player)
-                .map(brush -> brush.toBuilder(registry, schematicRegistry))
-                .orElse(new BrushBuilderImpl(player, new RandomSelection(), registry, schematicRegistry));
+                             .map(brush -> brush.toBuilder(registry, schematicRegistry))
+                             .orElse(new BrushBuilderImpl(player, new RandomSelection(), registry, schematicRegistry));
     }
 
     public void showBrush(Player player) {
@@ -66,15 +63,15 @@ public class Sessions {
 
         var selectors = builder.schematicSets().stream().map(set -> BuildUtil.renderProvider(set.selector())).collect(Collectors.joining("\n"));
         var composer = MessageComposer.create()
-                .text("<heading>")
-                .localeCode("commands.brush.sessions.menu")
-                .newLine()
-                .text("<heading>")
-                .localeCode("words.schematicSets")
-                .text(":")
-                .space()
-                .text("<hover:show_text:'%s'><value>%s <i18n:words.sets> </hover><change><click:run_command:'/sbr showsets'>[<i18n:words.change>]</click>",
-                        selectors, builder.schematicSets().size());
+                                      .text("<heading>")
+                                      .localeCode("commands.brush.sessions.menu")
+                                      .newLine()
+                                      .text("<heading>")
+                                      .localeCode("words.schematicSets")
+                                      .text(":")
+                                      .space()
+                                      .text("<hover:show_text:'%s'><value>%s <i18n:words.sets> </hover><change><click:run_command:'/sbr showsets'>[<i18n:words.change>]</click>",
+                                              selectors, builder.schematicSets().size());
 
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
@@ -88,9 +85,9 @@ public class Sessions {
                 .text(modifierStrings);
 
         var missing = registry.placementModifier().keySet().stream().filter(providers -> !mutatorMap.containsKey(providers))
-                .map(provider -> String.format("<click:run_command:'/sbr addbrushmodifier %s'><hover:show_text:'<neutral>%s'><change>[%s]</click>",
-                        provider.name(), provider.description(), provider.getLocalizedName()))
-                .toList();
+                              .map(provider -> String.format("<click:run_command:'/sbr addbrushmodifier %s'><hover:show_text:'<neutral>%s'><change>[%s]</click>",
+                                      provider.name(), provider.description(), provider.getLocalizedName()))
+                              .toList();
 
         if (!missing.isEmpty()) {
             composer.newLine()
@@ -133,9 +130,9 @@ public class Sessions {
         var interactComponent = set.interactComponent(player, registry, id);
 
         var composer = MessageComposer.create()
-                .text(interactComponent)
-                .newLine()
-                .text("<click:run_command:'/sbr showsets'><change>[<i18n:words.back>]</click>");
+                                      .text(interactComponent)
+                                      .newLine()
+                                      .text("<click:run_command:'/sbr showsets'><change>[<i18n:words.back>]</click>");
 
         messageBlocker.ifEnabled(() -> composer.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
         messageBlocker.announce(player, "[x]");
@@ -148,21 +145,21 @@ public class Sessions {
         var count = new AtomicInteger(0);
 
         var composer = MessageComposer.create()
-                .text("<heading>Schematic Sets: <click:run_command:'/sbr addSet'><add>[<i18n:words.add>]</click>")
-                .space().text("<click:run_command:'/sbr refreshSchematics session'><add>[")
-                .localeCode("commands.brush.sessions.refreshSchematics")
-                .text("]</click>");
+                                      .text("<heading>Schematic Sets: <click:run_command:'/sbr addSet'><add>[<i18n:words.add>]</click>")
+                                      .space().text("<click:run_command:'/sbr refreshSchematics session'><add>[")
+                                      .localeCode("commands.brush.sessions.refreshSchematics")
+                                      .text("]</click>");
 
         if (player.hasPermission(Permissions.Preset.USE)) {
             composer.space().text("<click:suggest_command:'/sbr addpreset '><add>[")
                     .localeCode("commands.brush.sessions.addPreset")
-                    .text("]</click>", Colors.ADD);
+                    .text("]</click>");
         }
 
         var sets = builder.schematicSets().stream()
-                .map(set -> String.format("  <name><hover:show_text:'%s'>%s</hover> <change><click:run_command:'/sbr showSet %s'>[<i18n:words.edit>]</click> <remove><click:run_command:'/sbr removeSet %s'>[<i18n:words.remove>]</click>",
-                        set.infoComponent(), BuildUtil.renderProvider(set.selector()), count.get(), count.getAndIncrement()))
-                .collect(Collectors.joining("\n"));
+                          .map(set -> String.format("  <name><hover:show_text:'%s'>%s</hover> <change><click:run_command:'/sbr showSet %s'>[<i18n:words.edit>]</click> <remove><click:run_command:'/sbr removeSet %s'>[<i18n:words.remove>]</click>",
+                                  set.infoComponent(), BuildUtil.renderProvider(set.selector()), count.get(), count.getAndIncrement()))
+                          .collect(Collectors.joining("\n"));
 
         composer.newLine().text(sets);
 
@@ -173,7 +170,7 @@ public class Sessions {
 
         composer.newLine().text("<click:run_command:'/sbr show'><change>[<i18n:words.back>]</click>");
 
-        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>", Colors.REMOVE));
+        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
         messageBlocker.announce(player, "[x]");
 
         messageSender.sendMessage(player, composer.prependLines(20).build());
