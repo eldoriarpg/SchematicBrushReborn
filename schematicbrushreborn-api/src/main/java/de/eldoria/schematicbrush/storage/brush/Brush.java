@@ -14,7 +14,6 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
-import de.eldoria.schematicbrush.util.Colors;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -91,9 +90,9 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
     @NotNull
     public Map<String, Object> serialize() {
         return SerializationUtil.newBuilder()
-                .add("name", name)
-                .add("snapshot", snapshot)
-                .build();
+                                .add("name", name)
+                                .add("snapshot", snapshot)
+                                .build();
     }
 
     /**
@@ -145,28 +144,30 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
 
     public String simpleComponent(BrushSettingsRegistry registry) {
         var sets = snapshot.schematicSets().stream()
-                .map(set -> "  " + BuildUtil.renderProvider(set.selector()))
-                .toList();
+                           .map(set -> "  " + BuildUtil.renderProvider(set.selector()))
+                           .toList();
         return MessageComposer.create()
-                .text("<%s>%s", Colors.VALUE, description())
-                .newLine()
-                .text("<%s>Schematic Sets:", Colors.NAME)
-                .newLine()
-                .text(sets)
-                .newLine()
-                .text(simpleModifier(registry))
-                .build();
+                              .text("<value>%s", description())
+                              .newLine()
+                              .text("<name>")
+                              .localeCode("words.schematicSets")
+                              .text(":")
+                              .newLine()
+                              .text(sets)
+                              .newLine()
+                              .text(simpleModifier(registry))
+                              .build();
     }
 
     public String infoComponent(boolean global, boolean canDelete, BrushSettingsRegistry registry) {
         var text = MessageComposer.create()
-                .text("<%s><hover:show_text:'%s'>%s</hover>", Colors.NAME, simpleComponent(registry), name())
-                .space()
-                .text("<%s><click:run_command:'/sbrbp info %s'>[Info]</click>", Colors.ADD, (global ? "g:" : "") + name())
-                .space()
-                .text("<%s><click:run_command:'/sbr loadbrush %s'>[Load]</click>", Colors.ADD, (global ? "g:" : "") + name());
+                                  .text("<name><hover:show_text:'%s'>%s</hover>", simpleComponent(registry), name())
+                                  .space()
+                                  .text("<add><click:run_command:'/sbrbp info %s'>[Info]</click>", (global ? "g:" : "") + name())
+                                  .space()
+                                  .text("<add><click:run_command:'/sbr loadbrush %s'>[Load]</click>", (global ? "g:" : "") + name());
         if (canDelete) {
-            text.space().text("<%s><click:run_command:'/sbrbp remove %s %s'>[Remove]</click>", Colors.REMOVE, name(), global ? "-g" : "");
+            text.space().text("<remove><click:run_command:'/sbrbp remove %s %s'>[Remove]</click>", name(), global ? "-g" : "");
         }
 
         return text.build();
@@ -174,32 +175,44 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
 
     private List<String> simpleModifier(BrushSettingsRegistry registry) {
         return snapshot.placementModifier().entrySet().stream()
-                .map(e -> registry.getPlacementModifier(e.getKey())
-                        .map(mod -> String.format("<%s>%s: <%s>%s",
-                                Colors.NAME, mod.modifier().name(), Colors.VALUE, e.getValue().descriptor()))
-                        .orElse(null))
-                .filter(Objects::nonNull)
-                .toList();
+                       .map(e -> registry.getPlacementModifier(e.getKey())
+                                         .map(mod -> String.format("<name>%s: <value>%s",
+                                                 mod.modifier().name(), e.getValue().descriptor()))
+                                         .orElse(null))
+                       .filter(Objects::nonNull)
+                       .toList();
     }
 
     public String detailComponent(boolean global, BrushSettingsRegistry registry) {
         var sets = snapshot.schematicSets().stream()
-                .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
-                .collect(Collectors.toList());
+                           .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
+                           .collect(Collectors.toList());
 
         var modifier = simpleModifier(registry);
 
         return MessageComposer.create()
-                .text("<%s>Information about brush <%s>%s", Colors.HEADING, Colors.NAME, name())
-                .newLine()
-                .text("<%s>Description: <%s>%s <click:suggest_command:'/sbrbp descr %s '><%s>[Change]</click>",
-                        Colors.NAME, Colors.VALUE, description(), (global ? "g:" : "") + name(), Colors.CHANGE)
-                .newLine()
-                .text("<%s>Schematic Sets:", Colors.NAME)
-                .newLine()
-                .text(sets)
-                .newLine()
-                .text(modifier)
-                .build();
+                              .text("<heading>").localeCode("components.brush.information")
+                              .space()
+                              .text(name())
+                              .newLine()
+                              .text("<name>")
+                              .localeCode("words.description")
+                              .text(": <value>")
+                              .text(description())
+                              .space()
+                              .text("<click:suggest_command:'/sbrbp descr ")
+                              .text((global ? "g:" : "") + name())
+                              .text(" '><change>[")
+                              .localeCode("words.change")
+                              .text("]</click>")
+                              .newLine()
+                              .text("<name>")
+                              .localeCode("words.schematicSets")
+                              .text(":")
+                              .newLine()
+                              .text(sets)
+                              .newLine()
+                              .text(modifier)
+                              .build();
     }
 }

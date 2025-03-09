@@ -20,7 +20,6 @@ import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -31,18 +30,15 @@ import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     private final StorageRegistry storage;
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
-    private final BukkitAudiences audiences;
     private final MessageBlocker messageBlocker;
     private final BrushSettingsRegistry registry;
 
     public Info(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker, BrushSettingsRegistry settingsRegistry) {
         super(plugin, CommandMeta.builder("info")
-                .addUnlocalizedArgument("name", true)
-                .hidden()
-                .build());
+                                 .addUnlocalizedArgument("name", true)
+                                 .hidden()
+                                 .build());
         this.storage = storage;
-        audiences = BukkitAudiences.create(plugin);
         this.messageBlocker = messageBlocker;
         this.registry = settingsRegistry;
     }
@@ -52,23 +48,23 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
         var name = args.asString(0);
         var strippedName = name.replaceAll("^g:", "");
         storage.activeStorage().brushes().containerByName(player, name).get(strippedName)
-                .whenComplete(Futures.whenComplete(res -> {
-                    CommandAssertions.isTrue(res.isPresent(), "error.unknownBrush", Replacement.create("name", strippedName));
-                    var preset = res.get();
+               .whenComplete(Futures.whenComplete(res -> {
+                   CommandAssertions.isTrue(res.isPresent(), "error.unknownBrush", Replacement.create("name", strippedName));
+                   var preset = res.get();
 
-                    var global = name.startsWith("g:");
-                    var composer = MessageComposer.create()
-                            .text(preset.detailComponent(global, registry))
-                            .newLine()
-                            .text("<click:run_command:'/sbrbp list %s'><change>[", global ? "global" : "private")
-                            .localeCode("words.back")
-                            .text("]</click>")
-                            .prependLines(20);
-                    messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-                    messageBlocker.announce(player, "[x]");
-                    audiences.player(player).sendMessage(miniMessage.deserialize(composer.build()));
-                }, err -> handleCommandError(player, err)))
-                .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
+                   var global = name.startsWith("g:");
+                   var composer = MessageComposer.create()
+                                                 .text(preset.detailComponent(global, registry))
+                                                 .newLine()
+                                                 .text("<click:run_command:'/sbrbp list %s'><change>[", global ? "global" : "private")
+                                                 .localeCode("words.back")
+                                                 .text("]</click>")
+                                                 .prependLines(20);
+                   messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
+                   messageBlocker.announce(player, "[x]");
+                   messageSender().sendMessage(player, composer.build());
+               }, err -> handleCommandError(player, err)))
+               .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
     }
 
     @Override

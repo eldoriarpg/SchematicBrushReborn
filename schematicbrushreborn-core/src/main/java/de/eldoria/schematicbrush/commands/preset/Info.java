@@ -30,7 +30,6 @@ import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     private final StorageRegistry storage;
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final BukkitAudiences audiences;
     private final MessageBlocker messageBlocker;
 
@@ -61,7 +60,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
                             .prependLines(20);
                     messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
                     messageBlocker.announce(player, "[x]");
-                    audiences.player(player).sendMessage(miniMessage.deserialize(composer.build()));
+                    messageSender().sendMessage(player, composer.build());
                 }, err -> handleCommandError(player, err)))
                 .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
     }
