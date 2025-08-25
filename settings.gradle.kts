@@ -61,7 +61,7 @@ dependencyResolutionManagement {
 
             // plugins
             plugin("publishdata", "de.chojo.publishdata").version("1.4.0")
-            plugin("spotless", "com.diffplug.spotless").version("6.25.0")
+            plugin("spotless", "com.diffplug.spotless").version("7.2.1")
             plugin("shadow", "io.github.goooler.shadow").version("8.1.8")
             plugin("pluginyml-bukkit", "de.eldoria.plugin-yml.bukkit").version("0.6.0")
             plugin("runserver", "xyz.jpenilla.run-paper").version("2.3.1")
