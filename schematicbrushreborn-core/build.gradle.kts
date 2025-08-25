@@ -17,14 +17,14 @@ dependencies {
     compileOnly(libs.jackson.yaml)
     compileOnly(libs.adventure.bukkit)
     compileOnly(libs.adventure.minimessage)
-    compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.24.1")
-    compileOnly("org.apache.logging.log4j", "log4j-core", "2.24.1")
+    compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.25.1")
+    compileOnly("org.apache.logging.log4j", "log4j-core", "2.25.1")
 
     implementation(libs.bstats)
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation(libs.jetbrains.annotations)
-    testImplementation("org.mockito", "mockito-core", "5.14.2")
+    testImplementation("org.mockito", "mockito-core", "5.19.0")
     testImplementation(libs.jackson.databind)
 }
 publishData {

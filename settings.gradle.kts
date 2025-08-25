@@ -28,10 +28,10 @@ dependencyResolutionManagement {
             bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
 
             // adventure
-            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.4")
-            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.18.0")
+            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.4.1")
+            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.24.0")
             // utilities
-            version("utilities", "2.1.9")
+            version("utilities", "2.1.11")
             library("eldoutil-plugin", "de.eldoria.util","plugin").versionRef("utilities")
             library("eldoutil-jackson", "de.eldoria.util","jackson-configuration").versionRef("utilities")
             library("eldoutil-serialization", "de.eldoria.util","legacy-serialization").versionRef("utilities")
@@ -45,7 +45,7 @@ dependencyResolutionManagement {
 
             library("messageblocker", "de.eldoria:messageblocker:1.1.3")
             // misc
-            library("jetbrains-annotations", "org.jetbrains:annotations:26.0.1")
+            library("jetbrains-annotations", "org.jetbrains:annotations:26.0.2")
             // minecraft
             version("minecraft-latest", "1.20.1-R0.1-SNAPSHOT")
             library("paper-latest", "io.papermc.paper", "paper-api").version("minecraft-latest")
@@ -54,16 +54,16 @@ dependencyResolutionManagement {
             library("paper-v17", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             library("spigot-v16", "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
             // world edit
-            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.3.8")
+            library("worldedit", "com.sk89q.worldedit:worldedit-bukkit:7.3.15")
             version("fawe", "2.11.1")
             library("fawe-core", "com.fastasyncworldedit","FastAsyncWorldEdit-Core").versionRef("fawe")
             library("fawe-bukkit", "com.fastasyncworldedit","FastAsyncWorldEdit-Bukkit").versionRef("fawe")
 
             // plugins
             plugin("publishdata", "de.chojo.publishdata").version("1.4.0")
-            plugin("spotless", "com.diffplug.spotless").version("6.25.0")
+            plugin("spotless", "com.diffplug.spotless").version("7.2.1")
             plugin("shadow", "io.github.goooler.shadow").version("8.1.8")
-            plugin("pluginyml-bukkit", "de.eldoria.plugin-yml.bukkit").version("0.6.0")
+            plugin("pluginyml-bukkit", "de.eldoria.plugin-yml.bukkit").version("0.7.1")
             plugin("runserver", "xyz.jpenilla.run-paper").version("2.3.1")
 
         }
