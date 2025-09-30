@@ -9,10 +9,11 @@ val shadebase = "de.eldoria.schematicbrush.libs."
 dependencies {
     implementation(project(":schematicbrushreborn-core")) {
         exclude("org.yaml", "snakeyaml")
+        exclude("com.fasterxml")
     }
-    implementation(libs.bundles.utilities)
-    implementation(libs.bundles.jackson)
-    bukkitLibrary(libs.adventure.bukkit)
+    bukkitLibrary(libs.bundles.utilities)
+    bukkitLibrary(libs.bundles.jackson)
+    //bukkitLibrary(libs.adventure.bukkit)
 }
 
 publishData {
@@ -27,7 +28,7 @@ publishing {
             url.set("https://github.com/eldoriarpg/schematicbrushreborn")
             developers {
                 developer {
-                    name.set("Lilly Fülling")
+                    name.set("nora Fülling")
                     organization.set("EldoriaRPG")
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }
@@ -61,8 +62,6 @@ tasks {
     shadowJar {
         relocate("org.bstats", shadebase + "bstats")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
-        relocate("com.jackson", shadebase + "jackson")
-        relocate("de.eldoria.eldoutilities", shadebase + "utilities")
         mergeServiceFiles()
         archiveVersion.set(rootProject.version as String)
     }
@@ -82,13 +81,13 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.1")
+        minecraftVersion("1.21.8")
         downloadPlugins {
-            url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/FastAsyncWorldEdit-Paper-2.13.1-SNAPSHOT-1062.jar")
-            url("https://download.luckperms.net/1569/bukkit/loader/LuckPerms-Bukkit-5.4.152.jar")
+            url("https://ci.athion.net/job/FastAsyncWorldEdit/1175/artifact/artifacts/FastAsyncWorldEdit-Paper-2.13.3-SNAPSHOT-1175.jar")
+            url("https://download.luckperms.net/1600/bukkit/loader/LuckPerms-Bukkit-5.5.14.jar")
         }
 
-      jvmArgs("-Dcom.mojang.eula.agree=true")
+        jvmArgs("-Dcom.mojang.eula.agree=true")
     }
 }
 

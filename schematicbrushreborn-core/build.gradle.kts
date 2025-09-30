@@ -4,19 +4,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":schematicbrushreborn-api")) {
-        exclude("com.fasterxml.jackson.core")
-        exclude("com.fasterxml.jackson")
-        exclude("org.yaml")
-        exclude("com.fasterxml.jackson.dataformat")
-        exclude("net.kyori")
-        exclude("org.jetbrains")
-        exclude("org.intellij")
-    }
+    api(project(":schematicbrushreborn-api"))
     compileOnly(libs.jetbrains.annotations)
-    compileOnly(libs.jackson.yaml)
-    compileOnly(libs.adventure.bukkit)
-    compileOnly(libs.adventure.minimessage)
     compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.25.1")
     compileOnly("org.apache.logging.log4j", "log4j-core", "2.25.1")
 
@@ -26,6 +15,7 @@ dependencies {
     testImplementation(libs.jetbrains.annotations)
     testImplementation("org.mockito", "mockito-core", "5.19.0")
     testImplementation(libs.jackson.databind)
+    testImplementation(libs.bundles.utilities)
 }
 publishData {
     useInternalEldoNexusRepos()
@@ -38,7 +28,7 @@ publishing {
             url.set("https://github.com/eldoriarpg/schematicbrushreborn")
             developers {
                 developer {
-                    name.set("Lilly Fülling")
+                    name.set("nora Fülling")
                     organization.set("EldoriaRPG")
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }

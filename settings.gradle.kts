@@ -2,8 +2,6 @@ rootProject.name = "schematic-brush-reborn"
 include(":schematicbrushreborn-api")
 include(":schematicbrushreborn-core")
 include("schematicbrushreborn-paper")
-include("schematicbrushreborn-paper-legacy")
-include("schematicbrushreborn-spigot")
 
 pluginManagement {
     repositories {
@@ -21,7 +19,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             // jackson & serialization
-            version("jackson", "2.13.4")
+            version("jackson", "2.13.4") // This is the internal paper jackson version. do not bump unless the paper version gets bumped
             library("jackson-databind", "com.fasterxml.jackson.core","jackson-databind").versionRef("jackson")
             library("jackson-annotations", "com.fasterxml.jackson.core","jackson-annotations").versionRef("jackson")
             library("jackson-yaml", "com.fasterxml.jackson.dataformat","jackson-dataformat-yaml").versionRef("jackson")
