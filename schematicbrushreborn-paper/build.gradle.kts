@@ -11,8 +11,10 @@ dependencies {
         exclude("org.yaml", "snakeyaml")
         exclude("com.fasterxml")
     }
-    bukkitLibrary(libs.bundles.utilities)
-    bukkitLibrary(libs.bundles.jackson)
+    implementation(libs.bundles.utilities){
+        exclude("com.fasterxml")
+    }
+    implementation(libs.bundles.jackson)
     //bukkitLibrary(libs.adventure.bukkit)
 }
 
@@ -28,7 +30,7 @@ publishing {
             url.set("https://github.com/eldoriarpg/schematicbrushreborn")
             developers {
                 developer {
-                    name.set("nora Fülling")
+                    name.set("Nora Fülling")
                     organization.set("EldoriaRPG")
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }
@@ -62,6 +64,8 @@ tasks {
     shadowJar {
         relocate("org.bstats", shadebase + "bstats")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
+        relocate("com.fasterxml", shadebase + "fasterxml")
+        relocate("de.eldoria.utilities", shadebase + "utilities")
         mergeServiceFiles()
         archiveVersion.set(rootProject.version as String)
     }

@@ -17,6 +17,7 @@ dependencies {
     testImplementation(libs.jackson.databind)
     testImplementation(libs.bundles.utilities)
 }
+
 publishData {
     useInternalEldoNexusRepos()
     publishComponent("java")
@@ -28,7 +29,7 @@ publishing {
             url.set("https://github.com/eldoriarpg/schematicbrushreborn")
             developers {
                 developer {
-                    name.set("nora Fülling")
+                    name.set("Nora Fülling")
                     organization.set("EldoriaRPG")
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }

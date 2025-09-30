@@ -19,11 +19,12 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             // jackson & serialization
-            version("jackson", "2.13.4") // This is the internal paper jackson version. do not bump unless the paper version gets bumped
+            version("jackson", "2.16.2") // This is the internal paper jackson version. do not bump unless the paper version gets bumped
+            library("jackson-core", "com.fasterxml.jackson.core","jackson-core").versionRef("jackson")
             library("jackson-databind", "com.fasterxml.jackson.core","jackson-databind").versionRef("jackson")
             library("jackson-annotations", "com.fasterxml.jackson.core","jackson-annotations").versionRef("jackson")
             library("jackson-yaml", "com.fasterxml.jackson.dataformat","jackson-dataformat-yaml").versionRef("jackson")
-            bundle("jackson", listOf("jackson-databind", "jackson-annotations", "jackson-yaml"))
+            bundle("jackson", listOf("jackson-core","jackson-databind", "jackson-annotations", "jackson-yaml"))
 
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.4.1")
