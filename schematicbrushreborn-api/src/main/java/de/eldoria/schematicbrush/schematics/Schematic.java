@@ -247,9 +247,9 @@ public class Schematic implements Comparable<Schematic> {
             var clipboard = loadSchematic();
             var min = clipboard.getMinimumPoint();
             var max = clipboard.getMaximumPoint();
-            return EMath.diff(min.getBlockX(), max.getBlockX() + 1)
-                   * EMath.diff(min.getBlockY(), max.getBlockY() + 1)
-                   * EMath.diff(min.getBlockZ(), max.getBlockZ() + 1);
+            return EMath.diff(min.x(), max.x() + 1)
+                   * EMath.diff(min.y(), max.y() + 1)
+                   * EMath.diff(min.z(), max.z() + 1);
         } catch (IOException e) {
             return -1;
         }

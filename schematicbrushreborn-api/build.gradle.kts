@@ -4,11 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(libs.bundles.utilities)
-    api(libs.eldoutil.jackson)
+    compileOnlyApi(libs.bundles.utilities)
+    compileOnlyApi(libs.bundles.jackson)
     api(libs.messageblocker)
-    api(libs.adventure.bukkit)
-    api(libs.adventure.minimessage)
 }
 
 publishData {
@@ -23,7 +21,7 @@ publishing {
             url.set("https://github.com/eldoriarpg/schematicbrushreborn")
             developers {
                 developer {
-                    name.set("Lilly Fülling")
+                    name.set("Nora Fülling")
                     organization.set("EldoriaRPG")
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }
