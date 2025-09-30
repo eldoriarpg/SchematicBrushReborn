@@ -150,8 +150,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
             Path path = getDataFolder().toPath().resolve("messages");
             for (String language : LANGUAGES) {
                 var file = path.resolve("messages_%s.properties".formatted(language));
-                Files.copy(file, path.resolve("messages_%s_old.properties".formatted(language)), StandardCopyOption.REPLACE_EXISTING);
-                Files.deleteIfExists(file);
+                if (path.toFile().exists()) {
+                    Files.copy(file, path.resolve("messages_%s_old.properties".formatted(language)), StandardCopyOption.REPLACE_EXISTING);
+                    Files.deleteIfExists(file);
+                }
             }
             base.version(2);
             configuration.save();

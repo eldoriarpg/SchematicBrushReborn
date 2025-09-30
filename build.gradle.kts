@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "de.eldoria"
-version = "2.7.7"
+version = "2.7.8"
 
 var publishModules = setOf(
     "schematicbrushreborn-api",
