@@ -22,6 +22,7 @@ publishData {
     useInternalEldoNexusRepos()
     publishComponent("java")
 }
+
 publishing {
     publications.create<MavenPublication>("maven") {
         publishData.configurePublication(this)

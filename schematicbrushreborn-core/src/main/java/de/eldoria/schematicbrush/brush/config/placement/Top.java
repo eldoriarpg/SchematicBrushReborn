@@ -23,7 +23,7 @@ public class Top extends APlacement {
 
     @Override
     public int find(Clipboard clipboard) {
-        return clipboard.getDimensions().getY();
+        return clipboard.getDimensions().y();
     }
 
     @Override

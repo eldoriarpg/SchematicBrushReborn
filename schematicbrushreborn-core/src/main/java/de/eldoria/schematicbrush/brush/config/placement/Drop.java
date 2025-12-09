@@ -25,7 +25,7 @@ public class Drop extends APlacement {
     public int find(Clipboard clipboard) {
         var dimensions = clipboard.getDimensions();
 
-        for (var y = 0; y < dimensions.getBlockY(); y++) {
+        for (var y = 0; y < dimensions.y(); y++) {
             if (levelNonAir(clipboard, dimensions, y)) return y;
         }
         return 0;

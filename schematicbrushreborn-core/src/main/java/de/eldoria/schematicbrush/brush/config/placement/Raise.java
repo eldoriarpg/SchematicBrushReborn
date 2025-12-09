@@ -24,10 +24,10 @@ public class Raise extends APlacement {
     @Override
     public int find(Clipboard clipboard) {
         var dimensions = clipboard.getDimensions();
-        for (var y = dimensions.getBlockY() - 1; y > -1; y--) {
+        for (var y = dimensions.y() - 1; y > -1; y--) {
             if (levelNonAir(clipboard, dimensions, y)) return y;
         }
-        return dimensions.getBlockY();
+        return dimensions.y();
     }
 
     @Override
