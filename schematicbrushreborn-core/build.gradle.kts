@@ -35,6 +35,7 @@ publishing {
                     organizationUrl.set("https://github.com/eldoriarpg")
                 }
             }
+
             licenses {
                 license {
                     name.set("GNU Affero General Public License v3.0")
