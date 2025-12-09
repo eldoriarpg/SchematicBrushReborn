@@ -62,7 +62,7 @@ dependencyResolutionManagement {
             plugin("publishdata", "de.chojo.publishdata").version("1.4.0")
             plugin("spotless", "com.diffplug.spotless").version("8.1.0")
             plugin("shadow", "com.gradleup.shadow").version("9.3.0")
-            plugin("pluginyml-bukkit", "de.eldoria.plugin-yml.bukkit").version("0.7.1")
+            plugin("pluginyml-bukkit", "de.eldoria.plugin-yml.bukkit").version("0.8.0")
             plugin("runserver", "xyz.jpenilla.run-paper").version("3.0.2")
 
         }
