@@ -236,9 +236,9 @@ public class BrushPasteImpl implements BrushPaste {
     public long clipboardSize() {
         var minimumPoint = clipboard.getMinimumPoint();
         var maximumPoint = clipboard.getMaximumPoint();
-        return (long) EMath.diff(minimumPoint.getBlockX(), maximumPoint.getBlockX())
-                * EMath.diff(minimumPoint.getBlockY(), maximumPoint.getBlockY())
-                * EMath.diff(minimumPoint.getBlockZ(), maximumPoint.getBlockZ());
+        return (long) EMath.diff(minimumPoint.x(), maximumPoint.x())
+                * EMath.diff(minimumPoint.y(), maximumPoint.y())
+                * EMath.diff(minimumPoint.z(), maximumPoint.z());
     }
 
     @Override

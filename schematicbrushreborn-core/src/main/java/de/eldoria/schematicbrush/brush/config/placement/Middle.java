@@ -23,7 +23,7 @@ public class Middle extends APlacement {
 
     @Override
     public int find(Clipboard clipboard) {
-        return clipboard.getDimensions().getY() / 2;
+        return clipboard.getDimensions().y() / 2;
     }
 
     @Override

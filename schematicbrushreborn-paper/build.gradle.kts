@@ -11,10 +11,17 @@ dependencies {
         exclude("org.yaml", "snakeyaml")
         exclude("com.fasterxml")
     }
-    implementation(libs.bundles.utilities){
+
+    implementation(libs.bundles.utilities) {
         exclude("com.fasterxml")
+        exclude("net.kyori")
+        exclude("org.jetbrains")
+        exclude("org.yaml")
     }
-    implementation(libs.bundles.jackson)
+
+    implementation(libs.bundles.jackson) {
+        exclude("org.yaml")
+    }
     //bukkitLibrary(libs.adventure.bukkit)
 }
 
@@ -65,7 +72,8 @@ tasks {
         relocate("org.bstats", shadebase + "bstats")
         relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         relocate("com.fasterxml", shadebase + "fasterxml")
-        relocate("de.eldoria.utilities", shadebase + "utilities")
+        relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
+        relocate("de.eldoria.eldoutilities", shadebase + "utilities")
         mergeServiceFiles()
         archiveVersion.set(rootProject.version as String)
     }
@@ -74,21 +82,16 @@ tasks {
         dependsOn(shadowJar)
     }
 
-    register<Copy>("copyToServer") {
-        val path = project.property("targetDir") ?: ""
-        if (path.toString().isEmpty()) {
-            println("targetDir is not set in gradle properties")
-            return@register
-        }
-        from(shadowJar)
-        destinationDir = File(path.toString())
-    }
-
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("1.21.10")
         downloadPlugins {
-            url("https://ci.athion.net/job/FastAsyncWorldEdit/1175/artifact/artifacts/FastAsyncWorldEdit-Paper-2.13.3-SNAPSHOT-1175.jar")
+            url("https://ci.athion.net/job/FastAsyncWorldEdit/1231/artifact/artifacts/FastAsyncWorldEdit-Paper-2.14.3-SNAPSHOT-1231.jar")
             url("https://download.luckperms.net/1600/bukkit/loader/LuckPerms-Bukkit-5.5.14.jar")
+            url("https://lyna.eldoria.de/api/v1/download/direct/8/18/latest") // Grid Selector
+            url("https://lyna.eldoria.de/api/v1/download/direct/6/2/latest") // Tools
+            url("https://lyna.eldoria.de/api/v1/download/direct/9/18/latest") // Database
+            url("https://lyna.eldoria.de/api/v1/download/direct/7/1/latest") // Survival
+
         }
 
         jvmArgs("-Dcom.mojang.eula.agree=true")

@@ -25,8 +25,8 @@ public abstract class APlacement implements Mutator<APlacement> {
     }
 
     protected static boolean levelNonAir(Clipboard clipboard, BlockVector3 dimensions, int y) {
-        for (var x = 0; x < dimensions.getBlockX(); x++) {
-            for (var z = 0; z < dimensions.getBlockZ(); z++) {
+        for (var x = 0; x < dimensions.x(); x++) {
+            for (var z = 0; z < dimensions.z(); z++) {
                 if (clipboard.getBlock(clipboard.getMinimumPoint().add(x, y, z)).getBlockType() != BlockTypes.AIR) {
                     return true;
                 }
@@ -49,9 +49,9 @@ public abstract class APlacement implements Mutator<APlacement> {
         var clipboard = mutation.clipboard();
         var dimensions = clipboard.getDimensions();
 
-        var centerZ = clipboard.getMinimumPoint().getBlockZ() + dimensions.getBlockZ() / 2;
-        var centerX = clipboard.getMinimumPoint().getBlockX() + dimensions.getBlockX() / 2;
-        var centerY = clipboard.getMinimumPoint().getBlockY() + find(clipboard);
+        var centerZ = clipboard.getMinimumPoint().z() + dimensions.z() / 2;
+        var centerX = clipboard.getMinimumPoint().x() + dimensions.x() / 2;
+        var centerY = clipboard.getMinimumPoint().y() + find(clipboard);
         clipboard.setOrigin(BlockVector3.at(centerX, centerY, centerZ));
     }
 

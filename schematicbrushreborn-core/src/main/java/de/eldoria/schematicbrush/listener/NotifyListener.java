@@ -10,9 +10,6 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.sections.MessageChannel;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -29,13 +27,10 @@ public class NotifyListener implements Listener {
     private final Map<UUID, MessageChannel> players = new HashMap<>();
     private final MessageSender messageSender;
     private final Configuration configuration;
-    BukkitAudiences audiences;
-    MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public NotifyListener(Plugin plugin, Configuration configuration) {
         messageSender = MessageSender.getPluginMessageSender(plugin);
         this.configuration = configuration;
-        audiences = BukkitAudiences.create(plugin);
     }
 
     public void setState(Player player, boolean state, MessageChannel channel) {
@@ -75,17 +70,12 @@ public class NotifyListener implements Listener {
         }
         switch (players.get(event.player().getUniqueId())) {
             case ACTION_BAR ->
-                    audiences.sender(event.player())
-                            .sendActionBar(miniMessage.deserialize(builder.append(" ").append(joiner).toString()));
-            case CHAT ->
-                    audiences.sender(event.player())
-                            .sendMessage(miniMessage.deserialize(builder.append(" ").append(joiner).toString()));
+                    messageSender.sendActionBar(event.player(), builder.append(" ").append(joiner).toString());
+            case CHAT -> messageSender.sendMessage(event.player(), builder.append(" ").append(joiner).toString());
             case TITLE ->
-                    audiences.sender(event.player())
-                            .showTitle(Title.title(miniMessage.deserialize(builder.append(" ").append(joiner).toString()), Component.empty()));
+                    messageSender.sendTitle(event.player(), builder.append(" ").append(joiner).toString(), "", Title.Times.times(Duration.ZERO, Duration.ofSeconds(15), Duration.ZERO));
             case SUB_TITLE ->
-                    audiences.sender(event.player())
-                            .showTitle(Title.title(Component.empty(), miniMessage.deserialize(builder.append(" ").append(joiner).toString())));
+                    messageSender.sendTitle(event.player(), "", builder.append(" ").append(joiner).toString(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(15), Duration.ZERO));
         }
     }
 }
