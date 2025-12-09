@@ -63,7 +63,7 @@ dependencyResolutionManagement {
             plugin("spotless", "com.diffplug.spotless").version("8.1.0")
             plugin("shadow", "com.gradleup.shadow").version("9.3.0")
             plugin("pluginyml-bukkit", "de.eldoria.plugin-yml.bukkit").version("0.7.1")
-            plugin("runserver", "xyz.jpenilla.run-paper").version("2.3.1")
+            plugin("runserver", "xyz.jpenilla.run-paper").version("3.0.2")
 
         }
         create("testlibs") {
