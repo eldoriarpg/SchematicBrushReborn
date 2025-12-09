@@ -28,7 +28,7 @@ dependencyResolutionManagement {
 
             // adventure
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.4.1")
-            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.24.0")
+            library("adventure-minimessage", "net.kyori:adventure-text-minimessage:4.25.0")
             // utilities
             version("utilities", "2.1.11")
             library("eldoutil-plugin", "de.eldoria.util","plugin").versionRef("utilities")
