@@ -6,7 +6,9 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import com.fastasyncworldedit.core.nbt.FaweCompoundTag;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.Extent;
@@ -57,9 +59,14 @@ public interface CapturingExtent extends Extent, BlockChangeCollector {
     @Override
     <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 position, T block);
 
-    // Method only exists in FAWE
-    @SuppressWarnings({"unused", "SameReturnValue"})
+    @SuppressWarnings("removal")
+    @Override
     default boolean setTile(int x, int y, int z, CompoundTag tile) {
+        return false;
+    }
+
+
+    default boolean tile(int x, int y, int z, FaweCompoundTag tile) {
         return false;
     }
 
