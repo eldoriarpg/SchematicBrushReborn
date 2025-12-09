@@ -6,8 +6,8 @@ plugins {
 dependencies {
     api(project(":schematicbrushreborn-api"))
     compileOnly(libs.jetbrains.annotations)
-    compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.25.1")
-    compileOnly("org.apache.logging.log4j", "log4j-core", "2.25.1")
+    compileOnly("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.25.2")
+    compileOnly("org.apache.logging.log4j", "log4j-core", "2.25.2")
 
     implementation(libs.bstats)
 
