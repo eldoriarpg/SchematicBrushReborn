@@ -65,7 +65,7 @@ public interface CapturingExtent extends Extent, BlockChangeCollector {
         return false;
     }
 
-
+    @Override
     default boolean tile(int x, int y, int z, FaweCompoundTag tile) {
         return false;
     }
