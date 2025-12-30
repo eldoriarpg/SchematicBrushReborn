@@ -13,7 +13,7 @@ dependencies {
 
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation(libs.jetbrains.annotations)
-    testImplementation("org.mockito", "mockito-core", "5.20.0")
+    testImplementation("org.mockito", "mockito-core", "5.21.0")
     testImplementation(libs.jackson.databind)
     testImplementation(libs.bundles.utilities)
 }
