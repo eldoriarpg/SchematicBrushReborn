@@ -86,7 +86,7 @@ tasks {
         minecraftVersion("1.21.10")
         downloadPlugins {
             url("https://ci.athion.net/job/FastAsyncWorldEdit/1231/artifact/artifacts/FastAsyncWorldEdit-Paper-2.14.3-SNAPSHOT-1231.jar")
-            url("https://download.luckperms.net/1600/bukkit/loader/LuckPerms-Bukkit-5.5.14.jar")
+            url("https://download.luckperms.net/1611/bukkit/loader/LuckPerms-Bukkit-5.5.22.jar")
             url("https://lyna.eldoria.de/api/v1/download/direct/8/18/latest") // Grid Selector
             url("https://lyna.eldoria.de/api/v1/download/direct/6/2/latest") // Tools
             url("https://lyna.eldoria.de/api/v1/download/direct/9/18/latest") // Database

@@ -9,6 +9,8 @@ package de.eldoria.schematicbrush.schematics;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.registry.Registry;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * A registry to register, manage and retrieve a {@link SchematicCache}.
  */
@@ -30,7 +32,7 @@ public interface SchematicRegistry extends Registry<Nameable, SchematicCache> {
     /**
      * Reloads all registered caches.
      */
-    void reload();
+    CompletableFuture<Void> reload();
 
     /**
      * Returns the total amount of registered schematics

@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A cache which provides schematics based on filters or other factors.
@@ -23,13 +24,17 @@ public interface SchematicCache {
 
     /**
      * Init method which will be executed when registered via {@link SchematicRegistry#register(Nameable, Object)}
+     *
+     * @return A future which completes when the cache is ready.
      */
-    void init();
+    CompletableFuture<Void> init();
 
     /**
-     * Reload all schematics of the cache.
+     * Reload the currently loaded schematics. This overrides the cache when the schematics are loaded.
+     *
+     * @return A future which completes when the reload is finished.
      */
-    void reload();
+    CompletableFuture<Void> reload();
 
     /**
      * Get a list of schematics which match a name or regex
@@ -83,6 +88,15 @@ public interface SchematicCache {
      * @return directory count
      */
     int directoryCount();
+
+    /**
+     * Returns whether the cache is ready to be used.
+     * A cache might not be ready to be used if it is still loading, for example.
+     * A cache that is not ready might, however, be used already and can return schematics.
+     *
+     * @return true if the cache is ready
+     */
+    boolean isReady();
 
     /**
      * Called when the plugin gets shutdown and the cache is unregistered.
