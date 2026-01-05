@@ -165,7 +165,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     @Override
-    public void onPluginEnable() {
+    public void onPluginEnable(boolean reload) {
         var localizer = Localizer.builder(this, configuration.general().language())
                                  .setIncludedLocales(LANGUAGES)
                                  .build();
@@ -193,7 +193,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var notifyListener = new NotifyListener(this, configuration);
         renderService = new RenderService(this, configuration);
 
-        reload();
+        if (reload) reload();
 
         MessageBlocker messageBlocker;
         if (ServerVersion.CURRENT_VERSION.isOlder(Version.of(1, 19))) {

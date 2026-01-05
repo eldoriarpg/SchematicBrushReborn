@@ -6,6 +6,7 @@
 
 package de.eldoria.schematicbrush.schematics;
 
+import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.utils.TextUtil;
 import de.eldoria.schematicbrush.SchematicBrushRebornImpl;
 import de.eldoria.schematicbrush.config.Configuration;
@@ -31,6 +32,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -42,26 +45,46 @@ public class SchematicBrushCache implements SchematicCache {
     private static final Logger logger = SchematicBrushRebornImpl.logger();
     private final JavaPlugin plugin;
     private final Configuration configuration;
-    private final Map<String, Set<Schematic>> schematicsCache = new HashMap<>();
-    private final Map<UUID, Map<String, Set<Schematic>>> userCache = new HashMap<>();
+    private final Map<String, Set<Schematic>> schematicsCache = new ConcurrentHashMap<>();
+    private final Map<UUID, Map<String, Set<Schematic>>> userCache = new ConcurrentHashMap<>();
     private SchematicWatchService watchService;
+    private boolean ready;
+    private final MessageSender messageSender;
 
     public SchematicBrushCache(JavaPlugin plugin, Configuration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
+        this.messageSender = MessageSender.getPluginMessageSender(plugin);
     }
 
     @Override
-    public void init() {
-        reload();
+    public CompletableFuture<Void> init() {
         watchService = SchematicWatchService.of(plugin, configuration, this);
+        return reload();
     }
 
-    /**
-     * Reload the current loaded schematics. This overrides the cache, when the schematics are loaded.
-     */
     @Override
-    public void reload() {
+    public CompletableFuture<Void> reload() {
+        return refreshAsync();
+    }
+
+    private void assertReady(Player player) {
+        if (!ready) {
+            messageSender.sendError(player, "error.cacheNotReady");
+        }
+    }
+
+    private CompletableFuture<Void> refreshAsync() {
+        return CompletableFuture.runAsync(this::refreshSync)
+                                .exceptionally(ex -> {
+                                    logger.log(Level.SEVERE, "Failed to reload schematics.", ex);
+                                    return null;
+                                });
+    }
+
+    private void refreshSync() {
+        ready = false;
+
         plugin.getLogger().log(Level.CONFIG, "Reloading schematics.");
 
         var root = plugin.getDataFolder().toPath().getParent().toString();
@@ -82,6 +105,7 @@ public class SchematicBrushCache implements SchematicCache {
             var load = source.isRelative() ? Paths.get(root, path) : Paths.get(path);
             loadSchematics(load, source);
         }
+        ready = true;
     }
 
     private void loadSchematics(Path schematicFolder, SchematicSource source) {
@@ -199,8 +223,8 @@ public class SchematicBrushCache implements SchematicCache {
 
         if (playerUid != null) {
             userCache.computeIfAbsent(playerUid, key -> new HashMap<>())
-                    .computeIfAbsent(cleanKey, key -> new HashSet<>())
-                    .add(schematic);
+                     .computeIfAbsent(cleanKey, key -> new HashSet<>())
+                     .add(schematic);
         } else {
             schematicsCache.computeIfAbsent(cleanKey, key -> new HashSet<>()).add(schematic);
         }
@@ -261,6 +285,7 @@ public class SchematicBrushCache implements SchematicCache {
      */
     @Override
     public Set<Schematic> getSchematicsByDirectory(Player player, String name, String filter) {
+        assertReady(player);
         // if folder name ends with a '*' perform a deep search and return every schematic in folder and sub folders.
         if (name.endsWith("*")) {
             var pureName = name.replace("*", "").toLowerCase();
@@ -346,6 +371,7 @@ public class SchematicBrushCache implements SchematicCache {
      */
     @Override
     public List<String> getMatchingDirectories(Player player, String dir, int count) {
+        assertReady(player);
         Set<String> matches = new HashSet<>();
         var separator = configuration.schematicConfig().pathSeparator().charAt(0);
         var deep = TextUtil.countChars(dir, separator);
@@ -386,6 +412,7 @@ public class SchematicBrushCache implements SchematicCache {
      */
     @Override
     public List<String> getMatchingSchematics(Player player, String name, int count) {
+        assertReady(player);
         List<String> matches = new ArrayList<>();
         for (var entry : schematicsCache.entrySet()) {
             for (var schematic : entry.getValue()) {
@@ -418,6 +445,11 @@ public class SchematicBrushCache implements SchematicCache {
     @Override
     public int directoryCount() {
         return schematicsCache.keySet().size();
+    }
+
+    @Override
+    public boolean isReady() {
+        return ready;
     }
 
     @Override

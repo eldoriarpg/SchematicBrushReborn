@@ -28,7 +28,8 @@ public class ReloadCache extends AdvancedCommand implements ITabExecutor {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String alias, @NotNull Arguments args) {
-        cache.reload();
-        messageSender().sendMessage(sender, "commands.admin.reloadCache.done");
+        messageSender().sendMessage(sender, "commands.admin.reloadCache.start");
+        cache.reload()
+             .thenRun(() -> messageSender().sendMessage(sender, "commands.admin.reloadCache.done"));
     }
 }
