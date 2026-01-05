@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.brush.config.rotation;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
+import de.eldoria.schematicbrush.brush.config.advancedrotation.AdvancedRotation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
