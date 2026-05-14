@@ -56,7 +56,7 @@ public abstract class PlacementProvider extends ModifierProvider {
 
     @Override
     public Mutator<?> defaultSetting() {
-        return new Drop();
+        return drop;
     }
 
     @Override
