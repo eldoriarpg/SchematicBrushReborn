@@ -6,6 +6,12 @@
 
 package de.eldoria.schematicbrush.rendering;
 
+import de.eldoria.eldoutilities.debug.DebugDataProvider;
+import de.eldoria.eldoutilities.debug.HealthCheck;
+import de.eldoria.eldoutilities.debug.data.EntryData;
+import de.eldoria.eldoutilities.debug.data.chart.CategoryChart;
+import de.eldoria.eldoutilities.debug.data.chart.ChartData;
+import de.eldoria.eldoutilities.debug.data.chart.SeriesChart;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
@@ -15,7 +21,6 @@ import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.RollingQueue;
-import de.eldoria.schematicbrush.util.Text;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import io.papermc.paper.event.packet.PlayerChunkUnloadEvent;
@@ -30,11 +35,15 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -50,7 +59,7 @@ import java.util.stream.Collectors;
  * {@code maxRenderMs}. Events that make a client lose preview blocks mark the affected sections, so the next update
  * sends them again. Every {@code previewResync} seconds all previews are sent again completely.
  */
-public class RenderService implements Runnable, Listener {
+public class RenderService implements Runnable, Listener, DebugDataProvider {
     /**
      * The sinks of all active players. A sink does not require any subscribers by default.
      */
@@ -321,28 +330,63 @@ public class RenderService implements Runnable, Listener {
         return timings.values().stream().mapToLong(value -> value).average().orElse(0);
     }
 
-    public String renderInfo() {
-        return """
-                Average Tick Render Time: %s
-                Last Tick Render Times:
-                %s
-                Total Sinks Count: %s
-                Active Sinks Count: %s
-                Active Sinks:
-                %s
-                Active previews:
-                %s
-                """.stripIndent()
-                   .formatted(renderTimeAverage(),
-                           Text.inlineEntries(timings.values(), 20).indent(2),
-                           sinks.size(),
-                           sinks.values().stream().filter(RenderSink::isActive).count(),
-                           sinks.values().stream()
-                                .filter(RenderSink::isActive)
-                                .map(RenderSink::info)
-                                .map(t -> t.indent(2))
-                                .collect(Collectors.joining("\n======")),
-                           players.stream().map(Player::getName).collect(Collectors.joining("\n")).indent(2));
+    @Override
+    public @NotNull EntryData[] getDebugInformations() {
+        var general = configuration.general();
+        var rendering = new LinkedHashMap<String, String>();
+        rendering.put("Active previews", players.stream().map(Player::getName).collect(Collectors.joining(", ")));
+        rendering.put("Sinks", "%d (%d active)".formatted(sinks.size(), sinks.values().stream().filter(RenderSink::isActive).count()));
+        rendering.put("Render time per tick", "%.2f ms of %d ms".formatted(renderTimeAverage(), general.maxRenderMs()));
+        rendering.put("Refresh interval", "%d ticks".formatted(general.previewRefreshInterval()));
+        rendering.put("Resync interval", general.previewResync() > 0 ? "%d s".formatted(general.previewResync()) : "disabled");
+        rendering.put("Blocks sent (recent updates)", String.valueOf(sinks.values().stream().mapToInt(RenderSink::blocksSent).sum()));
+        rendering.put("Section packets sent (recent updates)", String.valueOf(sinks.values().stream().mapToInt(RenderSink::sectionsSent).sum()));
+
+        var entries = new ArrayList<EntryData>();
+        entries.add(new EntryData("Rendering", rendering));
+        sinks.values().stream()
+             .filter(RenderSink::isActive)
+             .map(RenderSink::debugEntries)
+             .forEach(sink -> entries.add(new EntryData("Render sink " + sink.get("Owner"), sink)));
+        return entries.toArray(EntryData[]::new);
+    }
+
+    @Override
+    public @NotNull List<ChartData<?>> getCharts() {
+        var charts = new ArrayList<ChartData<?>>();
+        if (!timings.isEmpty()) {
+            charts.add(SeriesChart.line("Render time per tick")
+                                  .series("render time", timings.values())
+                                  .unit("ms")
+                                  .xLabel("tick")
+                                  .yLabel("ms")
+                                  .mark(configuration.general().maxRenderMs(), "budget"));
+        }
+        var active = sinks.values().stream().filter(RenderSink::isActive).toList();
+        if (active.isEmpty()) return charts;
+        var blocks = SeriesChart.line("Blocks sent per update").unit("blocks").xLabel("update");
+        var sections = SeriesChart.line("Section packets per update").unit("packets").xLabel("update");
+        var sizes = CategoryChart.bar("Preview size").unit("blocks");
+        for (var sink : active) {
+            blocks.series(sink.ownerName(), sink.blocksSentHistory());
+            sections.series(sink.ownerName(), sink.sectionsSentHistory());
+            sizes.value(sink.ownerName(), sink.size());
+        }
+        charts.add(blocks);
+        charts.add(sections);
+        charts.add(sizes);
+        return charts;
+    }
+
+    @Override
+    public @NotNull List<HealthCheck> getHealthChecks() {
+        var budget = configuration.general().maxRenderMs();
+        var average = renderTimeAverage();
+        var message = "Rendering takes %.2f ms of %d ms per tick on average.".formatted(average, budget);
+        if (average > budget * 0.8) {
+            return List.of(HealthCheck.warn("Render budget", message + " Raise maxRenderMs or the refresh interval, or lower maxRenderSize."));
+        }
+        return List.of(HealthCheck.ok("Render budget", message));
     }
 
     /**

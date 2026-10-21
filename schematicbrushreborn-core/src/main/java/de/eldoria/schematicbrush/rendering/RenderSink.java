@@ -9,14 +9,15 @@ package de.eldoria.schematicbrush.rendering;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.util.RollingQueue;
-import de.eldoria.schematicbrush.util.Text;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -227,34 +228,65 @@ public class RenderSink {
         if (sent.blocks != 0) lastSent = System.currentTimeMillis();
     }
 
-    public String info() {
+    /**
+     * Describes the sink for debug reports.
+     *
+     * @return ordered map of label to value
+     */
+    public Map<String, String> debugEntries() {
         var player = Optional.ofNullable(Bukkit.getPlayer(owner));
-        return """
-                Owner: %s
-                Size: %s
-                Subscriber:
-                %s
-                Brush:
-                %s
-                Blocks sent:
-                %s
-                Section packets sent:
-                %s
-                Skipped ticks:
-                %s
-                """.stripIndent()
-                   .formatted(player.map(Player::getName).orElse("none"),
-                           size(),
-                           subscribers.stream()
-                                      .map(Bukkit::getPlayer)
-                                      .filter(Objects::nonNull)
-                                      .map(Player::getName)
-                                      .map("  %s"::formatted)
-                                      .collect(Collectors.joining("\n")),
-                           player.flatMap(WorldEditBrush::getSchematicBrush).map(SchematicBrush::info).orElse("none").indent(2),
-                           Text.inlineEntries(blocksSent.values(), 20).indent(2),
-                           Text.inlineEntries(sectionsSent.values(), 20).indent(2),
-                           Text.inlineEntries(skipped.values(), 20).indent(2));
+        var entries = new LinkedHashMap<String, String>();
+        entries.put("Owner", ownerName());
+        entries.put("Subscribers", subscribers.stream()
+                                              .map(Bukkit::getPlayer)
+                                              .filter(Objects::nonNull)
+                                              .map(Player::getName)
+                                              .collect(Collectors.joining(", ")));
+        entries.put("Preview size", String.valueOf(size()));
+        entries.put("Blocks sent per update", average(blocksSent));
+        entries.put("Section packets per update", average(sectionsSent));
+        entries.put("Skipped ticks", String.valueOf(skipped.values().stream().mapToInt(Integer::intValue).sum()));
+        entries.put("Brush", player.flatMap(WorldEditBrush::getSchematicBrush).map(SchematicBrush::info).orElse("none"));
+        return entries;
+    }
+
+    /**
+     * The name of the owner, or its id while it is offline.
+     *
+     * @return owner name
+     */
+    public String ownerName() {
+        return Optional.ofNullable(Bukkit.getPlayer(owner)).map(Player::getName).orElse(owner.toString());
+    }
+
+    /**
+     * Blocks sent per update, oldest first.
+     *
+     * @return recent updates
+     */
+    Collection<Integer> blocksSentHistory() {
+        return blocksSent.values();
+    }
+
+    /**
+     * Section packets sent per update, oldest first.
+     *
+     * @return recent updates
+     */
+    Collection<Integer> sectionsSentHistory() {
+        return sectionsSent.values();
+    }
+
+    int blocksSent() {
+        return blocksSent.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+    int sectionsSent() {
+        return sectionsSent.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+    private static String average(RollingQueue<Integer> values) {
+        return "%.1f".formatted(values.values().stream().mapToInt(Integer::intValue).average().orElse(0));
     }
 
     /**

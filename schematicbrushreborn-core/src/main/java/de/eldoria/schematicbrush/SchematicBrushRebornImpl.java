@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush;
 
 import de.eldoria.eldoutilities.config.template.PluginBaseConfiguration;
+import de.eldoria.eldoutilities.debug.DebugDataProvider;
 import de.eldoria.eldoutilities.debug.UserData;
 import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.Localizer;
@@ -27,6 +28,9 @@ import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.JacksonConfiguration;
 import de.eldoria.schematicbrush.config.serialization.StorageMappers;
+import de.eldoria.schematicbrush.debug.AddOnDebug;
+import de.eldoria.schematicbrush.debug.SchematicsDebug;
+import de.eldoria.schematicbrush.debug.StorageDebug;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
@@ -55,7 +59,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -250,7 +256,17 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public @NotNull EntryData[] getDebugInformations() {
-        return new EntryData[]{new EntryData("Rendering", Optional.ofNullable(renderService).map(RenderService::renderInfo).orElse("Not running"))};
+        return new EntryData[0];
+    }
+
+    @Override
+    public @NotNull List<DebugDataProvider> getDebugProviders() {
+        var providers = new ArrayList<DebugDataProvider>();
+        Optional.ofNullable(renderService).ifPresent(providers::add);
+        providers.add(new SchematicsDebug(this, schematics, configuration));
+        providers.add(new StorageDebug(storageRegistry, configuration));
+        providers.add(new AddOnDebug(this));
+        return providers;
     }
 
     private void enableMetrics() {
