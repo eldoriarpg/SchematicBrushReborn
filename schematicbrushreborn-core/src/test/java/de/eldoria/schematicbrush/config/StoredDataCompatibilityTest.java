@@ -23,11 +23,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Verifies that files written by 2.7 are read completely and written back in the same format. The main configuration may
- * gain new keys, so for it every 2.7 value has to be preserved.
+ * gain new keys, so for it every 2.7 value has to be preserved, except the keys it retired on purpose.
  * <p>
  * List, random and range mutators store their current value next to their configuration. That value is picked again
  * on load, so it is left out of the comparison.
@@ -36,6 +37,7 @@ class StoredDataCompatibilityTest {
     private static final String FIXTURES = "/storage/2.7/";
     private static final List<String> VALUE_PICKING_SUFFIXES = List.of("List", "Random", "Range");
     private static final Set<String> PICKED_VALUES = Set.of("flip", "rotation", "offset");
+    private static final Set<String> RETIRED = Set.of("/generalConfig/checkUpdates");
 
     private final ObjectMapper mapper = StorageMappers.configure(YAMLMapper.builder(), getClass().getClassLoader(),
             StorageMappers.platformModule(), StorageMappers.schematicBrushModule());
@@ -82,9 +84,32 @@ class StoredDataCompatibilityTest {
         assertEquals(comparable(fixtureTree(file)), comparable(mapper.valueToTree(loaded)));
     }
 
+    @Test
+    void updateSwitchOfOldConfigsStartsTheNotice() throws IOException {
+        var enabled = mapper.readValue("generalConfig:\n  checkUpdates: true\n", MainConfiguration.class);
+        var disabled = mapper.readValue("generalConfig:\n  checkUpdates: false\n", MainConfiguration.class);
+
+        assertTrue(enabled.updates().notice());
+        assertFalse(disabled.updates().notice());
+        assertFalse(disabled.updates().autoUpdate());
+        assertTrue(disabled.updates().askForAutoUpdate());
+    }
+
+    @Test
+    void storedUpdateSettingsWinOverTheOldSwitch() throws IOException {
+        var loaded = mapper.readValue("generalConfig:\n  checkUpdates: false\nupdates:\n  notice: true\n  autoUpdate: true\n", MainConfiguration.class);
+
+        assertTrue(loaded.updates().notice());
+        assertTrue(loaded.updates().autoUpdate());
+    }
+
     private static void assertPreserved(JsonNode expected, JsonNode actual, String path) {
         if (expected instanceof ObjectNode object) {
             for (var name : object.propertyNames()) {
+                if (RETIRED.contains(path + "/" + name)) {
+                    assertFalse(actual.has(name), "still written " + path + "/" + name);
+                    continue;
+                }
                 assertTrue(actual.has(name), "missing " + path + "/" + name);
                 assertPreserved(object.get(name), actual.get(name), path + "/" + name);
             }

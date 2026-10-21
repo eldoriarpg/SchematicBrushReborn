@@ -1,3 +1,4 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
     id("sbr.publishing-conventions")
     alias(libs.plugins.pluginyml.bukkit)
@@ -149,6 +150,10 @@ bukkit {
         }
         register("schematicbrush.admin.migrate") {
             description = "Allows to migrate storage types"
+        }
+        register("schematicbrush.updates") {
+            description = "Hears about new versions on join and may download them"
+            default = BukkitPluginDescription.Permission.Default.OP
         }
     }
 }

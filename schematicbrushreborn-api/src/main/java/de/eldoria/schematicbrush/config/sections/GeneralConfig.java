@@ -22,8 +22,6 @@ public interface GeneralConfig {
      *
      * @return true when update checks should be performed
      */
-    boolean isCheckUpdates();
-
     /**
      * Defines if the preview should be enabled by default.
      *

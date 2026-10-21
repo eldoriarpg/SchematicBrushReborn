@@ -17,6 +17,11 @@ public final class Permissions {
         return String.join(".", perms);
     }
 
+    /**
+     * Hears about new versions on join and may download them or switch automatic updates on.
+     */
+    public static final String UPDATES = perm(BASE, "updates");
+
     public static final class Brush {
         private static final String BRUSH = perm(BASE, "brush");
         public static final String USE = perm(BRUSH, "use");
