@@ -6,12 +6,14 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "CanBeFinal"})
 public class GeneralConfigImpl implements GeneralConfig {
     private String storageType = StorageRegistry.YAML.name();
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean checkUpdates = true;
     private boolean previewDefault = true;
     private boolean showNameDefault = false;
@@ -33,8 +35,12 @@ public class GeneralConfigImpl implements GeneralConfig {
         return Nameable.of(storageType);
     }
 
-    @Override
-    public boolean isCheckUpdates() {
+    /**
+     * The update switch of configs from before the update settings, read once to start them.
+     *
+     * @return whether update checks were on
+     */
+    boolean checkUpdates() {
         return checkUpdates;
     }
 

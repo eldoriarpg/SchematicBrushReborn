@@ -1,3 +1,4 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
     id("sbr.publishing-conventions")
     alias(libs.plugins.pluginyml.bukkit)
@@ -28,7 +29,9 @@ dependencies {
 publishData {
     eldoNexus(internal = true, dev = false)
     component = "shadow"
-    buildData()
+    buildData {
+        put("lynaProduct", "1")
+    }
 }
 
 tasks {
@@ -57,11 +60,10 @@ tasks {
         downloadPlugins {
             modrinth("fastasyncworldedit", "2.16.1")
             modrinth("luckperms", "v5.5.71-bukkit")
-            url("https://lyna.eldoria.de/api/v1/download/direct/8/18/latest") // Grid Selector
-            url("https://lyna.eldoria.de/api/v1/download/direct/6/2/latest") // Tools
-            url("https://lyna.eldoria.de/api/v1/download/direct/9/18/latest") // Database
-            url("https://lyna.eldoria.de/api/v1/download/direct/7/1/latest") // Survival
-
+            url("https://lyna.eldoria.de/api/v1/download/direct/8/6/latest") // Grid Selector
+            url("https://lyna.eldoria.de/api/v1/download/direct/6/6/latest") // Tools
+            url("https://lyna.eldoria.de/api/v1/download/direct/9/6/latest") // Database
+            url("https://lyna.eldoria.de/api/v1/download/direct/7/6/latest") // Survival
         }
 
         jvmArgs("-Dcom.mojang.eula.agree=true")
@@ -149,6 +151,10 @@ bukkit {
         }
         register("schematicbrush.admin.migrate") {
             description = "Allows to migrate storage types"
+        }
+        register("schematicbrush.updates") {
+            description = "Hears about new versions on join and may download them"
+            default = BukkitPluginDescription.Permission.Default.OP
         }
     }
 }
