@@ -24,6 +24,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private int pasteBreak = 20;
     private int previewResync = 10;
     private String language = "en_US";
+    private EditorType editor = EditorType.DIALOG;
 
     public GeneralConfigImpl() {
     }
@@ -95,5 +96,10 @@ public class GeneralConfigImpl implements GeneralConfig {
     @Override
     public String language() {
         return language;
+    }
+
+    @Override
+    public EditorType editor() {
+        return editor;
     }
 }

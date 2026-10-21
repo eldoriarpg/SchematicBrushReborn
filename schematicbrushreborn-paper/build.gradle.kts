@@ -78,6 +78,7 @@ bukkit {
     authors = listOf("RainbowDashLabs", "SirYwell", "LuftigerLuca")
     website = "https://sbr.discord.eldoria.de"
     depend = listOf("FastAsyncWorldEdit")
+    softDepend = listOf("floodgate")
 
     commands {
         register("schematicbrushadmin") {

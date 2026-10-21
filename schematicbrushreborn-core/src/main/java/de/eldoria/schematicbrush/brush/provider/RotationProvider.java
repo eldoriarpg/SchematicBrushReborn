@@ -12,10 +12,13 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.SettingInput;
 import de.eldoria.schematicbrush.brush.config.rotation.ARotation;
 import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import de.eldoria.schematicbrush.brush.config.rotation.RotationFixed;
+import de.eldoria.schematicbrush.brush.config.rotation.RotationList;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +60,12 @@ public abstract class RotationProvider extends ModifierProvider {
         }
 
         @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            var initial = current instanceof RotationFixed fixed ? fixed.value() : Rotation.ROT_ZERO;
+            return List.of(SettingInput.choice("components.input.rotation", List.of(ROTATIONS), String.valueOf(initial.degree())));
+        }
+
+        @Override
         public List<String> complete(Arguments args, Player player) {
             if (args.size() == 1) {
                 return Completion.complete(args.asString(0), ROTATIONS);
@@ -82,6 +91,14 @@ public abstract class RotationProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return arguments;
+        }
+
+        @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            var initial = current instanceof RotationList list
+                    ? list.values().stream().map(rotation -> String.valueOf(rotation.degree())).toList()
+                    : List.of(String.valueOf(Rotation.ROT_ZERO.degree()));
+            return List.of(SettingInput.selection("components.input.rotations", List.of(ROTATIONS), initial));
         }
 
         @Override

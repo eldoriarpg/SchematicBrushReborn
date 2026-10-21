@@ -22,6 +22,15 @@ public class RotationList extends ARotation {
         this.values = values;
         value(values.get(0));
     }
+
+    /**
+     * The values the rotation is chosen from.
+     *
+     * @return the values the rotation is chosen from
+     */
+    public List<Rotation> values() {
+        return List.copyOf(values);
+    }
     @Override
     public Rotation valueProvider() {
         return values.get(ThreadLocalRandom.current().nextInt(values.size()));

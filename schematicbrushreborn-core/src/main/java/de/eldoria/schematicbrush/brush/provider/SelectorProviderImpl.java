@@ -9,6 +9,7 @@ package de.eldoria.schematicbrush.brush.provider;
 import de.eldoria.eldoutilities.commands.command.util.Argument;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.schematicbrush.brush.config.provider.SelectorProvider;
+import de.eldoria.schematicbrush.brush.config.provider.SettingInput;
 import de.eldoria.schematicbrush.brush.config.selector.DirectorySelector;
 import de.eldoria.schematicbrush.brush.config.selector.NameSelector;
 import de.eldoria.schematicbrush.brush.config.selector.RegexSelector;
@@ -16,9 +17,11 @@ import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public abstract class SelectorProviderImpl extends SelectorProvider {
@@ -39,6 +42,13 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 @Override
                 public Argument[] arguments() {
                     return arguments;
+                }
+
+                @Override
+                public List<SettingInput> inputs(@Nullable Selector current) {
+                    var directory = current instanceof DirectorySelector selector ? selector.directory() : "";
+                    var filter = current instanceof DirectorySelector selector ? Objects.requireNonNullElse(selector.term(), "*") : "*";
+                    return List.of(SettingInput.text("components.input.directory", directory).withSuggestions(), SettingInput.text("components.input.nameFilter", filter));
                 }
 
                 @Override
@@ -73,6 +83,11 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 }
 
                 @Override
+                public List<SettingInput> inputs(@Nullable Selector current) {
+                    return List.of(SettingInput.text("components.input.name", current instanceof NameSelector selector ? selector.term() : "").withSuggestions());
+                }
+
+                @Override
                 public List<String> complete(Arguments args, Player player) {
                     if (args.size() == 1) {
                         return registry().get(SchematicCache.STORAGE).getMatchingSchematics(player, args.asString(0), 50);
@@ -96,6 +111,11 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 @Override
                 public Argument[] arguments() {
                     return arguments;
+                }
+
+                @Override
+                public List<SettingInput> inputs(@Nullable Selector current) {
+                    return List.of(SettingInput.text("components.input.regex", current instanceof RegexSelector selector ? selector.term() : ""));
                 }
 
                 @Override
