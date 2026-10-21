@@ -23,9 +23,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifies that files written by 2.7 are read completely and written back in the same format.
+ * Verifies that files written by 2.7 are read completely and written back in the same format. The main configuration may
+ * gain new keys, so for it every 2.7 value has to be preserved.
  * <p>
  * List, random and range mutators store their current value next to their configuration. That value is picked again
  * on load, so it is left out of the comparison.
@@ -50,7 +52,11 @@ class StoredDataCompatibilityTest {
 
     @Test
     void readsAndRewritesMainConfiguration() throws IOException {
-        assertRoundTrip("config.yml", MainConfiguration.class);
+        MainConfiguration loaded;
+        try (var in = fixture("config.yml")) {
+            loaded = mapper.readValue(in, MainConfiguration.class);
+        }
+        assertPreserved(fixtureTree("config.yml"), mapper.valueToTree(loaded), "");
     }
 
     @Test
@@ -65,7 +71,7 @@ class StoredDataCompatibilityTest {
 
     @Test
     void writesMainConfigurationInTheStoredFormat() throws IOException {
-        assertEquals(comparable(fixtureTree("config.yml")), comparable(mapper.valueToTree(new MainConfiguration())));
+        assertPreserved(fixtureTree("config.yml"), mapper.valueToTree(new MainConfiguration()), "");
     }
 
     private void assertRoundTrip(String file, Class<?> type) throws IOException {
@@ -74,6 +80,17 @@ class StoredDataCompatibilityTest {
             loaded = mapper.readValue(in, type);
         }
         assertEquals(comparable(fixtureTree(file)), comparable(mapper.valueToTree(loaded)));
+    }
+
+    private static void assertPreserved(JsonNode expected, JsonNode actual, String path) {
+        if (expected instanceof ObjectNode object) {
+            for (var name : object.propertyNames()) {
+                assertTrue(actual.has(name), "missing " + path + "/" + name);
+                assertPreserved(object.get(name), actual.get(name), path + "/" + name);
+            }
+            return;
+        }
+        assertEquals(expected, actual, path);
     }
 
     private JsonNode fixtureTree(String file) throws IOException {

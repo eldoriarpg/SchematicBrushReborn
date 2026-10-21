@@ -242,6 +242,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
     @Override
     public void onPluginDisable() {
+        if (renderService != null) renderService.shutdown();
         configuration.save();
         schematics.shutdown();
         storageRegistry.shutdown();

@@ -17,10 +17,17 @@ import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.RollingQueue;
 import de.eldoria.schematicbrush.util.Text;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
+import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
+import io.papermc.paper.event.packet.PlayerChunkUnloadEvent;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -36,6 +43,13 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * Renders the brush previews of all players with an enabled preview and keeps their clients in sync.
+ * <p>
+ * Runs every tick on the main thread. Each tick renders as many previews as the refresh interval requires, within
+ * {@code maxRenderMs}. Events that make a client lose preview blocks mark the affected sections, so the next update
+ * sends them again. Every {@code previewResync} seconds all previews are sent again completely.
+ */
 public class RenderService implements Runnable, Listener {
     /**
      * The sinks of all active players. A sink does not require any subscribers by default.
@@ -57,18 +71,13 @@ public class RenderService implements Runnable, Listener {
     private final SchematicBrushReborn plugin;
     private final Configuration configuration;
     private final RollingQueue<Long> timings = new RollingQueue<>(1200);
-    /**
-     * The paket worker which will process packet sending to players
-     */
-    private PacketWorker worker;
-    private double count = 1;
+    private double credit;
+    private long ticks;
 
     public RenderService(SchematicBrushReborn plugin, Configuration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
-        worker = PacketWorker.create(this, plugin);
         messageSender = MessageSender.getPluginMessageSender(plugin);
-
     }
 
     @EventHandler
@@ -82,61 +91,110 @@ public class RenderService implements Runnable, Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
+        var player = event.getPlayer().getUniqueId();
         players.remove(event.getPlayer());
-        Optional.ofNullable(sinks.remove(event.getPlayer().getUniqueId())).ifPresent(RenderSink::unsubscribeAll);
-        getSubscription(event.getPlayer()).ifPresent(sink -> sink.remove(event.getPlayer()));
-        subscription.remove(event.getPlayer().getUniqueId());
-        skip.remove(event.getPlayer().getUniqueId());
+        Optional.ofNullable(sinks.remove(player)).ifPresent(sink -> {
+            sink.forget(player);
+            sink.close();
+        });
+        sinks.values().forEach(sink -> sink.forget(player));
+        subscription.remove(player);
+        skip.remove(player);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrePaste(PrePasteEvent event) {
-        // Skip player if it has no active preview
         if (!players.contains(event.player())) return;
-        // Skip rendering for some time to avoid conflicts
         skip.add(event.player().getUniqueId());
-        // Resolve the last changes
-        resolveBlocked(event.player());
-    }
-
-    /**
-     * Removes a player from rendering by sending the current state of the world and negating all send changes.
-     *
-     * @param player player to resolve
-     */
-    private void resolveBlocked(Player player) {
-        RenderSink playerSink = getSink(player);
-        worker.remove(player);
-        // We push and send empty changes
-        playerSink.pushAndSend(null);
-        //getChanges(player).ifPresent(change -> new PaketWorker.ChangeEntry(player, change, null).sendChanges());
+        getSink(event.player()).hide();
     }
 
     @EventHandler
     public void onPostPaste(PostPasteEvent event) {
+        var world = event.player().getWorld().getUID();
+        sinks.values().forEach(sink -> sink.loseAll(world));
         if (!players.contains(event.player())) return;
 
-        // Remove the player from the block after a second aka 20 ticks by default
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> skip.remove(event.player().getUniqueId()), configuration.general().pasteBreak());
+    }
+
+    @EventHandler
+    public void onChunkLoad(PlayerChunkLoadEvent event) {
+        loseChunk(event.getPlayer(), event.getChunk().getX(), event.getChunk().getZ());
+    }
+
+    @EventHandler
+    public void onChunkUnload(PlayerChunkUnloadEvent event) {
+        loseChunk(event.getPlayer(), event.getChunk().getX(), event.getChunk().getZ());
+    }
+
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        var player = event.getPlayer().getUniqueId();
+        sinks.values().forEach(sink -> sink.viewer(player).ifPresent(ViewerState::forget));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockBreak(BlockBreakEvent event) {
+        loseSection(event.getBlock());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        loseSection(event.getBlock());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInteract(PlayerInteractEvent event) {
+        var block = event.getClickedBlock();
+        if (block == null) return;
+        var player = event.getPlayer().getUniqueId();
+        var clicked = sectionKey(block);
+        var face = sectionKey(block.getRelative(event.getBlockFace()));
+        sinks.values().forEach(sink -> sink.viewer(player).ifPresent(viewer -> {
+            viewer.loseSection(clicked);
+            viewer.loseSection(face);
+        }));
+    }
+
+    private void loseChunk(Player player, int chunkX, int chunkZ) {
+        sinks.values().forEach(sink -> sink.viewer(player.getUniqueId()).ifPresent(viewer -> viewer.loseChunk(chunkX, chunkZ)));
+    }
+
+    private void loseSection(Block block) {
+        var world = block.getWorld().getUID();
+        var section = sectionKey(block);
+        sinks.values().forEach(sink -> sink.loseSection(world, section));
+    }
+
+    private static long sectionKey(Block block) {
+        return BlockKey.section(block.getX(), block.getY(), block.getZ());
     }
 
     @Override
     public void run() {
+        ticks++;
+        resyncIfDue();
         if (players.isEmpty()) return;
         try {
             tick();
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "An error occurred during rendering", e);
         }
+    }
 
+    private void resyncIfDue() {
+        var interval = configuration.general().previewResync() * 20L;
+        if (interval > 0 && ticks % interval == 0) {
+            sinks.values().forEach(RenderSink::loseAll);
+        }
     }
 
     private void tick() {
         var start = System.currentTimeMillis();
-        count += players.size() / (double) configuration.general().previewRefreshInterval();
-        while (count > 0 && !players.isEmpty()
-               && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
-            count--;
+        credit = Math.min(credit + players.size() / (double) configuration.general().previewRefreshInterval(), players.size());
+        while (credit >= 1 && System.currentTimeMillis() - start < configuration.general().maxRenderMs()) {
+            credit--;
             try {
                 handlePlayerTick(nextPlayer());
             } catch (Exception e) {
@@ -147,17 +205,13 @@ public class RenderService implements Runnable, Listener {
     }
 
     private void handlePlayerTick(Player player) {
-        // No need to render dirty sinks or sinks without subscribers.
-        if (getSink(player).isDirty() || !getSink(player).isSubscribed()) {
+        var sink = getSink(player);
+        if (!sink.isSubscribed()) return;
+        if (skip.contains(player.getUniqueId())) {
+            sink.skipped();
             return;
         }
-        if (!skip.contains(player.getUniqueId())) {
-            render(player);
-        } else if (sinks.containsKey(player.getUniqueId())) {
-            resolveBlocked(player);
-        } else {
-            getSink(player).skipped();
-        }
+        render(player);
     }
 
     private Player nextPlayer() {
@@ -168,8 +222,8 @@ public class RenderService implements Runnable, Listener {
 
     private void render(Player player) {
         var optBrush = WorldEditBrush.getSchematicBrush(player);
-        if (optBrush.isEmpty()) {
-            resolveChanges(player);
+        if (optBrush.isEmpty() || optBrush.get().nextPaste() == null) {
+            getSink(player).hide();
             return;
         }
         var brush = optBrush.get();
@@ -180,7 +234,7 @@ public class RenderService implements Runnable, Listener {
                         .toVector()) > Math.pow(general.renderDistance(), 2))
                 .orElse(true);
         if (outOfRange) {
-            resolveChanges(player);
+            getSink(player).hide();
             return;
         }
 
@@ -191,7 +245,7 @@ public class RenderService implements Runnable, Listener {
             messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
                     Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().size())),
                     Replacement.create("max", "%,d".formatted(general.maxRenderSize())));
-            resolveChanges(player);
+            getSink(player).hide();
             return;
         }
 
@@ -199,7 +253,7 @@ public class RenderService implements Runnable, Listener {
             messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
                     Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().effectiveSize())),
                     Replacement.create("max", "%,d".formatted(general.maxRenderSize())));
-            resolveChanges(player);
+            getSink(player).hide();
             return;
         }
 
@@ -207,33 +261,15 @@ public class RenderService implements Runnable, Listener {
             messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
                     Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().effectiveSize())),
                     Replacement.create("max", "%,d".formatted(general.maxEffectiveRenderSize())));
-            resolveChanges(player);
+            getSink(player).hide();
             return;
         }
 
-        var collector = brush.pasteFake();
-
-        if (collector == null) {
-            resolveChanges(player);
-            return;
-        }
-
-        renderChanges(player, collector.changes());
-    }
-
-    private void resolveChanges(Player player) {
-        RenderSink sink = getSink(player);
-        // Push empty changes and queue the sink for sending.
-        sink.pushAndQueue(null);
-    }
-
-    private void renderChanges(Player player, Changes newChanges) {
-        var sink = getSink(player);
-        sink.pushAndQueue(newChanges);
+        getSink(player).show(brush.pasteFake());
     }
 
     private RenderSink getSink(Player player) {
-        return sinks.computeIfAbsent(player.getUniqueId(), k -> new RenderSink(player, worker, configuration));
+        return sinks.computeIfAbsent(player.getUniqueId(), k -> new RenderSink(player, configuration));
     }
 
     public void setState(Player player, boolean state) {
@@ -244,7 +280,7 @@ public class RenderService implements Runnable, Listener {
             players.add(player);
         } else {
             players.remove(player);
-            resolveChanges(player);
+            getSink(player).hide();
         }
     }
 
@@ -262,23 +298,22 @@ public class RenderService implements Runnable, Listener {
         return Optional.ofNullable(subscription.get(player.getUniqueId()));
     }
 
+    /**
+     * Moves a subscriber to the sink of a target player.
+     *
+     * @param target     owner of the preview to watch
+     * @param subscriber player who watches
+     * @return true if the target has an enabled preview
+     */
     public boolean subscribe(Player target, Player subscriber) {
-        // Remove last subscription
         getSubscription(subscriber).ifPresent(sink -> sink.unsubscribe(subscriber));
-        // Schedule new subscription. Leave some time in order to let the sink refresh.
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            getSink(target).subscribe(subscriber);
-            subscription.put(subscriber.getUniqueId(), getSink(target));
-        }, 10);
-        return hasSink(target);
-    }
-
-    private boolean hasSink(Player target) {
-        return sinks.containsKey(target.getUniqueId());
+        var sink = getSink(target);
+        sink.subscribe(subscriber);
+        subscription.put(subscriber.getUniqueId(), sink);
+        return players.contains(target);
     }
 
     public void unsubscribe(Player player) {
-        // subscripe player to its own sink
         subscribe(player, player);
     }
 
@@ -291,23 +326,40 @@ public class RenderService implements Runnable, Listener {
                 Average Tick Render Time: %s
                 Last Tick Render Times:
                 %s
-                Render Worker:
+                Total Sinks Count: %s
+                Active Sinks Count: %s
+                Active Sinks:
                 %s
                 Active previews:
                 %s
                 """.stripIndent()
-                .formatted(renderTimeAverage(),
-                        Text.inlineEntries(timings.values(), 20).indent(2),
-                        worker.info().indent(2),
-                        players.stream().map(Player::getName).collect(Collectors.joining("\n")).indent(2));
+                   .formatted(renderTimeAverage(),
+                           Text.inlineEntries(timings.values(), 20).indent(2),
+                           sinks.size(),
+                           sinks.values().stream().filter(RenderSink::isActive).count(),
+                           sinks.values().stream()
+                                .filter(RenderSink::isActive)
+                                .map(RenderSink::info)
+                                .map(t -> t.indent(2))
+                                .collect(Collectors.joining("\n======")),
+                           players.stream().map(Player::getName).collect(Collectors.joining("\n")).indent(2));
     }
 
+    /**
+     * Resets the previews of every client and drops all sinks.
+     */
     public void restart() {
+        shutdown();
+        timings.clear();
+    }
+
+    /**
+     * Resets the previews of every client and drops all sinks. Used when the plugin is disabled.
+     */
+    public void shutdown() {
+        sinks.values().forEach(RenderSink::close);
         sinks.clear();
         subscription.clear();
-        worker.shutdown();
-        worker = PacketWorker.create(this, plugin);
-        timings.clear();
     }
 
     public Collection<RenderSink> sinks() {

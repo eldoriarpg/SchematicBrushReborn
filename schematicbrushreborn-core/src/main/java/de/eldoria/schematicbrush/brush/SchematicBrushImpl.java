@@ -27,10 +27,9 @@ import de.eldoria.schematicbrush.brush.history.BrushHistory;
 import de.eldoria.schematicbrush.brush.history.BrushHistoryImpl;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
-import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
-import de.eldoria.schematicbrush.rendering.CapturingExtentImpl;
-import de.eldoria.schematicbrush.rendering.FakeWorldImpl;
+import de.eldoria.schematicbrush.rendering.FakeWorld;
+import de.eldoria.schematicbrush.rendering.PreviewSnapshot;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
@@ -102,26 +101,23 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     /**
-     * Paste the brush and capture changes.
+     * Paste the brush into a {@link CapturingExtent} without changing the world.
      *
-     * @return changes which will be made to the world
+     * @return the blocks the next paste would place, or an empty snapshot if no player or brush tool is present
      */
     @Override
-    public BlockChangeCollector pasteFake() {
-        var world = new FakeWorldImpl(brushOwner().getWorld());
-        world.location(new Location(world));
-        CapturingExtent capturingExtent;
-        try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(100000).build()) {
-            var bukkitPlayer = actor();
-            if (bukkitPlayer == null) return new CapturingExtentImpl(editSession, world, settings, new Location(world));
-            var brushTool = getBrushTool();
-            if (brushTool.isEmpty()) return null;
+    public PreviewSnapshot pasteFake() {
+        var bukkitPlayer = actor();
+        if (bukkitPlayer == null) return PreviewSnapshot.empty();
+        var brushTool = getBrushTool();
+        if (brushTool.isEmpty()) return PreviewSnapshot.empty();
+        var world = brushOwner().getWorld();
+        try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(new FakeWorld(world)).maxBlocks(100000).build()) {
             var target = bukkitPlayer.getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask());
-            world.location(target);
-            capturingExtent = new CapturingExtentImpl(editSession, world, settings, target);
+            var capturingExtent = new CapturingExtent(editSession, world, settings, target);
             performPasteFake(editSession, capturingExtent, target.toVector().toBlockPoint());
+            return capturingExtent.snapshot();
         }
-        return capturingExtent;
     }
 
     private Optional<BrushTool> getBrushTool() {

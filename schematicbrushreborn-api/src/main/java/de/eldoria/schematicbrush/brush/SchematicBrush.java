@@ -17,7 +17,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.history.BrushHistory;
-import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
+import de.eldoria.schematicbrush.rendering.PreviewSnapshot;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -46,11 +46,11 @@ public interface SchematicBrush extends Brush {
     void build(EditSession editSession, BlockVector3 position, Pattern pattern, double size);
 
     /**
-     * Paste the brush and capture changes.
+     * Paste the brush without changing the world and capture the blocks it would place.
      *
-     * @return changes which will be made to the world
+     * @return the blocks of the next paste, or an empty snapshot if the brush can not be pasted right now
      */
-    BlockChangeCollector pasteFake();
+    PreviewSnapshot pasteFake();
 
     /**
      * Get the location of the current brush

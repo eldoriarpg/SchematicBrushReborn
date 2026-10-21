@@ -22,6 +22,7 @@ public class GeneralConfigImpl implements GeneralConfig {
     private int maxEffectiveRenderSize = maxRenderSize;
     private int renderDistance = 100;
     private int pasteBreak = 20;
+    private int previewResync = 10;
     private String language = "en_US";
 
     public GeneralConfigImpl() {
@@ -84,6 +85,11 @@ public class GeneralConfigImpl implements GeneralConfig {
     @Override
     public int pasteBreak() {
         return pasteBreak;
+    }
+
+    @Override
+    public int previewResync() {
+        return previewResync;
     }
 
     @Override
