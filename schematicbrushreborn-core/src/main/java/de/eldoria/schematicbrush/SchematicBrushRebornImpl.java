@@ -13,9 +13,6 @@ import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.Localizer;
 import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.eldoutilities.metrics.EldoMetrics;
-import de.eldoria.eldoutilities.updater.Updater;
-import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateChecker;
-import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateData;
 import de.eldoria.jacksonbukkit.JacksonPaper;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
@@ -41,6 +38,7 @@ import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.schematics.SchematicRegistryImpl;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistryImpl;
+import de.eldoria.schematicbrush.updates.Updates;
 import de.eldoria.schematicbrush.storage.YamlStorage;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.util.InternalLogger;
@@ -75,6 +73,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private SchematicRegistryImpl schematics;
     private JacksonConfiguration configuration;
     private RenderService renderService;
+    private Updates updates;
     private StorageRegistryImpl storageRegistry;
     private SimpleModule sbrModule;
 
@@ -178,9 +177,8 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         enableMetrics();
 
-        if (configuration.main().generalConfig().isCheckUpdates()) {
-            LynaUpdateChecker.lyna(LynaUpdateData.builder(this, 1).build()).start();
-        }
+        updates = new Updates(this, () -> configuration.main().updates(), configuration::save, UserData.get(this).isPremium());
+        updates.apply();
 
         getServer().getScheduler().runTaskTimer(this, renderService, 0, 1);
         registerListener(new BrushModifier(), renderService, notifyListener, editorPreferences);
@@ -229,27 +227,17 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         return StorageMappers.configure(builder, getClassLoader(), platformModule(), schematicBrushModule());
     }
 
-    @Override
-    public void onPostStart() throws Throwable {
-        if (configuration.general().isCheckUpdates() && UserData.get(this).isPremium()) {
-            Updater.lyna(LynaUpdateData.builder(this, 1)
-                                       .updateUrl("https://discord.gg/zRW9Vpu")
-                                       .notifyPermission(Permissions.Admin.RELOAD)
-                                       .notifyUpdate(true)
-                                       .build())
-                   .start();
-        }
-    }
-
     public void reload() {
         schematics.reload();
         storageRegistry.reload();
         configuration.reload();
         renderService.restart();
+        if (updates != null) updates.apply();
     }
 
     @Override
     public void onPluginDisable() {
+        if (updates != null) updates.stop();
         if (renderService != null) renderService.shutdown();
         configuration.save();
         schematics.shutdown();
