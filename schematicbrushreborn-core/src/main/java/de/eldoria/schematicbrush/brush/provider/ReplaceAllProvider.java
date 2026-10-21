@@ -12,8 +12,10 @@ import de.eldoria.eldoutilities.commands.command.util.Arguments;
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.SettingInput;
 import de.eldoria.schematicbrush.brush.config.replaceall.ReplaceAll;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +35,11 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return arguments;
+        }
+
+        @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            return List.of(SettingInput.toggle("components.input.enabled", current instanceof ReplaceAll replaceAll && replaceAll.value()));
         }
 
         @Override

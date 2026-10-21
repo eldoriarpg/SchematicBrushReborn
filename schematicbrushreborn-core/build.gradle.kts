@@ -7,6 +7,7 @@ dependencies {
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.log4j.slf4j2)
     compileOnly(libs.log4j.core)
+    compileOnly(libs.floodgate.api)
 
     implementation(libs.bstats)
 

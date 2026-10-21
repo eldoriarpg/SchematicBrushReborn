@@ -16,6 +16,7 @@ eldoutil-jackson = { module = "de.eldoria.util:jackson-configuration", version.r
 eldoutil-metrics = { module = "de.eldoria.util:metrics", version.ref = "utilities" }
 eldoutil-updater = { module = "de.eldoria.util:updater", version.ref = "utilities" }
 ocular = "dev.chojo:ocular:2.3.1"
+floodgate-api = "org.geysermc.floodgate:api:2.2.5-SNAPSHOT"
 
 bstats = "org.bstats:bstats-bukkit:3.2.1"
 jetbrains-annotations = "org.jetbrains:annotations:26.1.0"

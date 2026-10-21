@@ -112,4 +112,11 @@ public interface GeneralConfig {
     int previewResync();
 
     String language();
+
+    /**
+     * Editor shown to players who did not choose one.
+     *
+     * @return editor type
+     */
+    EditorType editor();
 }

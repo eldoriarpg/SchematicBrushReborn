@@ -17,7 +17,9 @@ import de.eldoria.schematicbrush.brush.config.flip.FlipList;
 import de.eldoria.schematicbrush.brush.config.flip.FlipRandom;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.SettingInput;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class FlipProvider extends ModifierProvider {
+    private static final List<String> FLIPS = Arrays.stream(Flip.values()).map(Flip::name).toList();
 
     public static final FlipProvider FIXED = new FlipProvider("Fixed",
             "components.provider.flip.fixed.name",
@@ -39,6 +42,12 @@ public abstract class FlipProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return arguments;
+        }
+
+        @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            var initial = current instanceof FlipFixed fixed ? fixed.value() : Flip.NONE;
+            return List.of(SettingInput.choice("components.input.flip", FLIPS, initial.name()));
         }
 
         @Override
@@ -72,6 +81,12 @@ public abstract class FlipProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return arguments;
+        }
+
+        @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            var initial = current instanceof FlipList list ? list.values().stream().map(Flip::name).toList() : List.of(Flip.NONE.name());
+            return List.of(SettingInput.selection("components.input.flips", FLIPS, initial));
         }
 
         @Override

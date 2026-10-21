@@ -22,6 +22,15 @@ public class OffsetList extends AOffset {
     public OffsetList(@JsonProperty("values") List<Integer> values) {
         this.values = values;
     }
+
+    /**
+     * The values the offset is chosen from.
+     *
+     * @return the values the offset is chosen from
+     */
+    public List<Integer> values() {
+        return List.copyOf(values);
+    }
     @Override
     public Integer valueProvider() {
         return values.get(ThreadLocalRandom.current().nextInt(values.size()));

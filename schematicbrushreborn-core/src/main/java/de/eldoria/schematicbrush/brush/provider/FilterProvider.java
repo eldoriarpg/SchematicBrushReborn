@@ -17,7 +17,9 @@ import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.blockfilter.BlockFilter;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.SettingInput;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -49,6 +51,11 @@ public abstract class FilterProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return new Argument[]{InputArgument.input("mask", true)};
+        }
+
+        @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            return List.of(SettingInput.text("components.input.mask", current instanceof BlockFilter filter ? filter.value() : ""));
         }
 
         @Override

@@ -23,6 +23,15 @@ public class FlipList extends AFlip {
         value(valueProvider());
     }
 
+    /**
+     * The values the flip is chosen from.
+     *
+     * @return the values the flip is chosen from
+     */
+    public List<Flip> values() {
+        return List.copyOf(values);
+    }
+
     @Override
     public Flip valueProvider() {
         return values.get(ThreadLocalRandom.current().nextInt(values.size()));

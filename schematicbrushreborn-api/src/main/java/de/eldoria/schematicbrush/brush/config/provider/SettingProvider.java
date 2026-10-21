@@ -12,7 +12,9 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,6 +77,19 @@ public abstract class SettingProvider<T> {
      */
     public Argument[] arguments() {
         return new Argument[0];
+    }
+
+    /**
+     * The inputs the dialog editor shows to enter the arguments of this setting.
+     * <p>
+     * Defaults to one empty text input per {@link #arguments() argument}. Override it to offer choices, toggles or
+     * numbers instead, and to start from the current value.
+     *
+     * @param current the current setting of the same type, which may come from another provider; null if none is set
+     * @return inputs in argument order
+     */
+    public List<SettingInput> inputs(@Nullable T current) {
+        return Arrays.stream(arguments()).<SettingInput>map(argument -> SettingInput.text(argument.name(), "")).toList();
     }
 
     /**
