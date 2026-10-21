@@ -55,7 +55,7 @@ public class Parse extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var input = String.join(" ", RawArguments.of(args)).strip();
+        var input = String.join(" ", args.raw()).strip();
         LegacyBrush brush;
         try {
             brush = Parser.parse(input);
@@ -108,7 +108,7 @@ public class Parse extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
-        var raw = RawArguments.of(args);
+        var raw = args.raw();
         return completion.complete(player, raw.length == 0 ? "" : raw[raw.length - 1]);
     }
 }
