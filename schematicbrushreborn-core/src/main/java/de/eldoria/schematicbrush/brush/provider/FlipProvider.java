@@ -17,7 +17,6 @@ import de.eldoria.schematicbrush.brush.config.flip.FlipList;
 import de.eldoria.schematicbrush.brush.config.flip.FlipRandom;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -27,8 +26,7 @@ import java.util.List;
 
 public abstract class FlipProvider extends ModifierProvider {
 
-    public static final FlipProvider FIXED = new FlipProvider(FlipFixed.class,
-            "Fixed",
+    public static final FlipProvider FIXED = new FlipProvider("Fixed",
             "components.provider.flip.fixed.name",
             "components.provider.flip.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("flip", true)};
@@ -57,8 +55,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider LIST = new FlipProvider(FlipList.class,
-            "List",
+    public static final FlipProvider LIST = new FlipProvider("List",
             "components.provider.flip.list.name",
             "components.provider.flip.list.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("flip...", true)};
@@ -88,8 +85,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public static final FlipProvider RANDOM = new FlipProvider(FlipRandom.class,
-            "Random",
+    public static final FlipProvider RANDOM = new FlipProvider("Random",
             "components.provider.flip.random.name",
             "components.provider.flip.random.description") {
 
@@ -115,7 +111,7 @@ public abstract class FlipProvider extends ModifierProvider {
         }
     };
 
-    public FlipProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
-        super(clazz, name, localizedName, description);
+    public FlipProvider(String name, String localizedName, String description) {
+        super(name, localizedName, description);
     }
 }

@@ -17,7 +17,6 @@ import de.eldoria.schematicbrush.brush.config.offset.OffsetList;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetRange;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -26,8 +25,7 @@ import java.util.List;
 
 public abstract class OffsetProvider extends ModifierProvider {
 
-    public static final OffsetProvider FIXED = new OffsetProvider(OffsetFixed.class,
-            "Fixed",
+    public static final OffsetProvider FIXED = new OffsetProvider("Fixed",
             "components.provider.offset.fixed.name",
             "components.provider.offset.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset", true)};
@@ -57,8 +55,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public static final OffsetProvider LIST = new OffsetProvider(OffsetList.class,
-            "List",
+    public static final OffsetProvider LIST = new OffsetProvider("List",
             "components.provider.offset.list.name",
             "components.provider.offset.list.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offsets...", true)};
@@ -89,8 +86,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public static final OffsetProvider RANGE = new OffsetProvider(OffsetRange.class,
-            "Range",
+    public static final OffsetProvider RANGE = new OffsetProvider("Range",
             "components.provider.offset.range.name",
             "components.provider.offset.range.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("offset_min", true), Argument.unlocalizedInput("offset_max", true)};
@@ -121,7 +117,7 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
     };
 
-    public OffsetProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
-        super(clazz, name, localizedName, description);
+    public OffsetProvider(String name, String localizedName, String description) {
+        super(name, localizedName, description);
     }
 }

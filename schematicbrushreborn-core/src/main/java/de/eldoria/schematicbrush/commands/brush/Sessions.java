@@ -8,7 +8,6 @@ package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
@@ -32,14 +31,12 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
 public class Sessions {
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
-    private final MessageBlocker messageBlocker;
     private final Map<UUID, BrushBuilder> session = new HashMap<>();
     private final MessageSender messageSender;
 
-    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry, MessageBlocker messageBlocker) {
+    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
         this.registry = registry;
         this.schematicRegistry = schematicRegistry;
-        this.messageBlocker = messageBlocker;
         messageSender = MessageSender.getPluginMessageSender(plugin);
     }
 
@@ -58,7 +55,6 @@ public class Sessions {
     }
 
     public void showBrush(Player player) {
-        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
 
         var selectors = builder.schematicSets().stream().map(set -> BuildUtil.renderProvider(set.selector())).collect(Collectors.joining("\n"));
@@ -112,13 +108,10 @@ public class Sessions {
         }
 
         composer.prependLines(20);
-        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-        messageBlocker.announce(player, "[x]");
         messageSender.sendMessage(player, composer.build());
     }
 
     public void showSet(Player player, int id) {
-        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
         var optSet = builder.getSchematicSet(id);
         if (optSet.isEmpty()) {
@@ -134,13 +127,10 @@ public class Sessions {
                                       .newLine()
                                       .text("<click:run_command:'/sbr showsets'><change>[<i18n:words.back>]</click>");
 
-        messageBlocker.ifEnabled(() -> composer.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-        messageBlocker.announce(player, "[x]");
         messageSender.sendMessage(player, MessageComposer.create().text(composer.build()).prependLines(20).build());
     }
 
     public void showSets(Player player) {
-        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
         var count = new AtomicInteger(0);
 
@@ -169,9 +159,6 @@ public class Sessions {
         }
 
         composer.newLine().text("<click:run_command:'/sbr show'><change>[<i18n:words.back>]</click>");
-
-        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-        messageBlocker.announce(player, "[x]");
 
         messageSender.sendMessage(player, composer.prependLines(20).build());
     }

@@ -20,9 +20,8 @@ dependencies {
         exclude("org.yaml")
     }
 
-    implementation(libs.bundles.jackson) {
-        exclude("org.yaml")
-    }
+    implementation(platform(libs.jackson.bom))
+    implementation(libs.bundles.jackson)
     //bukkitLibrary(libs.adventure.bukkit)
 }
 
@@ -35,8 +34,10 @@ publishData {
 tasks {
     shadowJar {
         relocate("org.bstats", shadebase + "bstats")
-        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         relocate("com.fasterxml", shadebase + "fasterxml")
+        relocate("tools.jackson", shadebase + "jackson")
+        relocate("org.snakeyaml", shadebase + "snakeyaml")
+        relocate("dev.chojo.ocular", shadebase + "ocular")
         relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.eldoutilities", shadebase + "utilities")
         mergeServiceFiles()
@@ -47,9 +48,9 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.10")
+        minecraftVersion("1.21.11")
         downloadPlugins {
-            url("https://ci.athion.net/job/FastAsyncWorldEdit/1231/artifact/artifacts/FastAsyncWorldEdit-Paper-2.14.3-SNAPSHOT-1231.jar")
+            url("https://cdn.modrinth.com/data/z4HZZnLr/versions/A1gBu4MM/FastAsyncWorldEdit-Paper-2.16.1.jar")
             url("https://cdn.modrinth.com/data/Vebnzrzj/versions/b0mk8uS6/LuckPerms-Bukkit-5.5.71.jar")
             url("https://lyna.eldoria.de/api/v1/download/direct/8/18/latest") // Grid Selector
             url("https://lyna.eldoria.de/api/v1/download/direct/6/2/latest") // Tools
@@ -67,12 +68,11 @@ bukkit {
     name = "SchematicBrushReborn"
     version = project.version.toString()
     description = "Use your world edit schematics as a brush!"
-    apiVersion = "1.16"
+    apiVersion = "1.21.11"
     main = "de.eldoria.schematicbrush.SchematicBrushRebornImpl"
     authors = listOf("RainbowDashLabs", "SirYwell", "LuftigerLuca")
     website = "https://sbr.discord.eldoria.de"
-    depend = listOf("WorldEdit")
-    softDepend = listOf("ProtocolLib")
+    depend = listOf("FastAsyncWorldEdit")
 
     commands {
         register("schematicbrushadmin") {

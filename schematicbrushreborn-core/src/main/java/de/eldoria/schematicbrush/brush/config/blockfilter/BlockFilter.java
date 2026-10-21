@@ -13,13 +13,11 @@ import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.mask.Masks;
 import de.eldoria.eldoutilities.localization.ILocalizer;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.logging.Level;
 
 public class BlockFilter implements Mutator<String> {
@@ -68,14 +66,6 @@ public class BlockFilter implements Mutator<String> {
     @Override
     public String valueProvider() {
         return maskString;
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("mask", maskString)
-                .build();
     }
 
     private Mask mask(PasteMutation mutation) {

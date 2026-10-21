@@ -8,17 +8,12 @@ package de.eldoria.schematicbrush.brush.config.offset;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-@SerializableAs("sbrOffsetList")
 public class OffsetList extends AOffset {
 
     private final List<Integer> values;
@@ -27,24 +22,9 @@ public class OffsetList extends AOffset {
     public OffsetList(@JsonProperty("values") List<Integer> values) {
         this.values = values;
     }
-
-    public OffsetList(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        values = map.getValue("values");
-        value(valueProvider());
-    }
-
     @Override
     public Integer valueProvider() {
         return values.get(ThreadLocalRandom.current().nextInt(values.size()));
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("values", values)
-                .build();
     }
 
     @Override

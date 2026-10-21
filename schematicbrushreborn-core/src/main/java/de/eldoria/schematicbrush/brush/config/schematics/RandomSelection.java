@@ -9,32 +9,21 @@ package de.eldoria.schematicbrush.brush.config.schematics;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.BrushPaste;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 
 public class RandomSelection implements SchematicSelection {
 
     public RandomSelection() {
-    }
-
-    /**
-     * Constructor required by {@link ConfigurationSerializable} in order to deserialize the object.
-     */
-    @SuppressWarnings("unused")
-    public RandomSelection(Map<String, Object> objectMap) {
     }
 
     @Override
@@ -103,10 +92,4 @@ public class RandomSelection implements SchematicSelection {
         return randomSchematic;
     }
 
-    @NotNull
-    @Override
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .build();
-    }
 }

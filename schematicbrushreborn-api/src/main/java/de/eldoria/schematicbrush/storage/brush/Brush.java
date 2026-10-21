@@ -9,25 +9,20 @@ package de.eldoria.schematicbrush.storage.brush;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * Class used for serialization and saving of a {@link BrushBuilderSnapshot}/
  */
-@SerializableAs("sbrBrush")
-public class Brush implements ConfigurationSerializable, Comparable<Brush> {
+public class Brush implements Comparable<Brush> {
     private final String name;
 
     protected String description;
@@ -67,32 +62,6 @@ public class Brush implements ConfigurationSerializable, Comparable<Brush> {
      */
     public Brush(String name, BrushBuilderSnapshot snapshot) {
         this(name, "none", snapshot);
-    }
-
-    /**
-     * Constructor required by {@link ConfigurationSerializable} in order to deserialize the object.
-     *
-     * @param objectMap map of the already deserialized object
-     */
-    @SuppressWarnings("unused")
-    public static Brush deserialize(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        String name = map.getValue("name");
-        String description = map.getValue("description");
-        if (description == null) {
-            description = "none";
-        }
-        BrushBuilderSnapshot snapshot = map.getValue("snapshot");
-        return new Brush(name, description, snapshot);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                                .add("name", name)
-                                .add("snapshot", snapshot)
-                                .build();
     }
 
     /**

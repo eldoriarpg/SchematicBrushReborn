@@ -6,16 +6,10 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "CanBeFinal"})
-@SerializableAs("sbrGeneralSettings")
 public class GeneralConfigImpl implements GeneralConfig {
     private String storageType = StorageRegistry.YAML.name();
     private boolean checkUpdates = true;
@@ -32,39 +26,6 @@ public class GeneralConfigImpl implements GeneralConfig {
 
     public GeneralConfigImpl() {
     }
-
-    public GeneralConfigImpl(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        checkUpdates = map.getValueOrDefault("checkUpdates", true);
-        previewDefault = map.getValueOrDefault("previewDefault", true);
-        showNameDefault = map.getValueOrDefault("showNameDefault", false);
-        defaultNameChannel = map.getValueOrDefault("defaultNameChannel", MessageChannel.CHAT, MessageChannel.class);
-        previewRefreshInterval = map.getValueOrDefault("previewRefreshInterval", 1);
-        maxRenderMs = map.getValueOrDefault("maxRenderMs", 25);
-        maxRenderSize = map.getValueOrDefault("maxRenderSize", 2500);
-        maxEffectiveRenderSize = map.getValueOrDefault("maxEffectiveRenderSize", maxRenderSize);
-        renderDistance = map.getValueOrDefault("renderDistance", 100);
-        storageType = map.getValueOrDefault("storageType", StorageRegistry.YAML.name());
-        pasteBreak = map.getValueOrDefault("pasteBreak", pasteBreak);
-    }
-
-    @Override
-    public @NotNull Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("checkUpdates", checkUpdates)
-                .add("previewDefault", previewDefault)
-                .add("showNameDefault", showNameDefault)
-                .add("defaultNameChannel", defaultNameChannel.name())
-                .add("previewRefreshInterval", previewRefreshInterval)
-                .add("maxRenderMs", maxRenderMs)
-                .add("maxRenderSize", maxRenderSize)
-                .add("maxEffectiveRenderSize", maxEffectiveRenderSize)
-                .add("renderDistance", renderDistance)
-                .add("storageType", storageType)
-                .add("pasteBreak", pasteBreak)
-                .build();
-    }
-
     @Override
     public Nameable storageType() {
         return Nameable.of(storageType);

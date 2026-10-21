@@ -19,7 +19,6 @@ import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.brush.exceptions.AlreadyRegisteredException;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -32,8 +31,6 @@ import java.util.Optional;
 public interface BrushSettingsRegistry {
     /**
      * Registers a new selector.
-     * <p>
-     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
      *
      * @param provider provider of the selector
      * @throws AlreadyRegisteredException when a selector with this name is already registered
@@ -41,8 +38,6 @@ public interface BrushSettingsRegistry {
     void registerSelector(SelectorProvider provider);
     /**
      * Registers a new schematic selection.
-     * <p>
-     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
      *
      * @param provider provider of the schematic selection
      * @throws AlreadyRegisteredException when a schematic selection with this name is already registered
@@ -51,8 +46,6 @@ public interface BrushSettingsRegistry {
 
     /**
      * Register a new schematic modifier.
-     * <p>
-     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
      *
      * @param type     type of modifier
      * @param provider provider to add
@@ -62,8 +55,6 @@ public interface BrushSettingsRegistry {
 
     /**
      * Register a new schematic modifier.
-     * <p>
-     * This will also call {@link ConfigurationSerialization#registerClass(Class)}
      *
      * @param type     type of modifier
      * @param provider provider to add

@@ -8,21 +8,15 @@ package de.eldoria.schematicbrush.config.sections.brushes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
 import de.eldoria.schematicbrush.storage.YamlContainerPagedAccess;
-import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.brush.Brush;
 import de.eldoria.schematicbrush.storage.brush.BrushContainer;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -30,18 +24,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@SerializableAs("sbrYamlBrushContainer")
-public class YamlBrushContainer implements BrushContainer, ConfigurationSerializable {
+public class YamlBrushContainer implements BrushContainer {
     private UUID uuid;
     private final Map<String, Brush> brushes;
-
-    public YamlBrushContainer(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        uuid = UUID.fromString(map.getValueOrDefault("uuid", Container.GLOBAL.toString()));
-        List<Brush> brushList = map.getValueOrDefault("brushes", Collections.emptyList());
-        brushes = new HashMap<>();
-        brushList.forEach(p -> brushes.put(p.name().toLowerCase(Locale.ROOT), p));
-    }
 
     public YamlBrushContainer(UUID uuid) {
         brushes = new HashMap<>();
@@ -53,14 +38,6 @@ public class YamlBrushContainer implements BrushContainer, ConfigurationSerializ
                               @JsonProperty("brushes") Map<String, Brush> brushes) {
         this.brushes = brushes;
         this.uuid = uuid;
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("brushes", new ArrayList<>(brushes.values()))
-                .build();
     }
 
     @Override

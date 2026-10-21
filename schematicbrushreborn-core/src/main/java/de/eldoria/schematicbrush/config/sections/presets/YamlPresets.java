@@ -8,30 +8,19 @@ package de.eldoria.schematicbrush.config.sections.presets;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
 import de.eldoria.schematicbrush.storage.preset.Presets;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@SerializableAs("sbrYamlPresets")
-public class YamlPresets implements Presets, ConfigurationSerializable {
+public class YamlPresets implements Presets {
     private final Map<UUID, YamlPresetContainer> playerPresets;
     private final YamlPresetContainer globalPresets;
-
-    public YamlPresets(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        playerPresets = map.getMap("playerPresets", (key, v) -> UUID.fromString(key));
-        globalPresets = map.getValueOrDefault("globalPresets", new YamlPresetContainer(Container.GLOBAL));
-    }
 
     @JsonCreator
     public YamlPresets(@JsonProperty("playerPresets") Map<UUID, YamlPresetContainer> playerPresets,
@@ -43,15 +32,6 @@ public class YamlPresets implements Presets, ConfigurationSerializable {
     public YamlPresets() {
         playerPresets = new HashMap<>();
         globalPresets = new YamlPresetContainer(Container.GLOBAL);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .addMap("playerPresets", playerPresets, (key, v) -> key.toString())
-                .add("globalPresets", globalPresets)
-                .build();
     }
 
     @Override

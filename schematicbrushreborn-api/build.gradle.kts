@@ -4,8 +4,8 @@ plugins {
 
 dependencies {
     compileOnlyApi(libs.bundles.utilities)
+    compileOnlyApi(platform(libs.jackson.bom))
     compileOnlyApi(libs.bundles.jackson)
-    api(libs.messageblocker)
 }
 
 publishData {
@@ -16,7 +16,7 @@ tasks {
     withType<Javadoc> {
         val options = options as StandardJavadocDocletOptions
         options.links(
-                "https://hub.spigotmc.org/javadocs/spigot/",
+                "https://jd.papermc.io/paper/1.21.11/",
                 "https://eldoriarpg.github.io/eldo-util/"
         )
     }

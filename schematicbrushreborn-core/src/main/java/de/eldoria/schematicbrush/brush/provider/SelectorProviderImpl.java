@@ -15,7 +15,6 @@ import de.eldoria.schematicbrush.brush.config.selector.RegexSelector;
 import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -25,8 +24,7 @@ import java.util.function.Function;
 public abstract class SelectorProviderImpl extends SelectorProvider {
 
     public static final Function<SchematicRegistry, SelectorProvider> DIRECTORY = registry ->
-            new SelectorProviderImpl(DirectorySelector.class,
-                    "Directory",
+            new SelectorProviderImpl("Directory",
                     "components.provider.selector.directory.name",
                     "components.provider.selector.directory.description",
                     registry) {
@@ -58,7 +56,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
             };
 
     public static final Function<SchematicRegistry, SelectorProvider> NAME = registry ->
-            new SelectorProviderImpl(NameSelector.class, "Name",
+            new SelectorProviderImpl("Name",
                     "components.provider.selector.name.name",
                     "components.provider.selector.name.description",
                     registry) {
@@ -84,7 +82,7 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
             };
 
     public static final Function<SchematicRegistry, SelectorProvider> REGEX = registry ->
-            new SelectorProviderImpl(RegexSelector.class, "Regex",
+            new SelectorProviderImpl("Regex",
                     "components.provider.selector.regex.name",
                     "components.provider.selector.regex.description",
                     registry) {
@@ -109,8 +107,8 @@ public abstract class SelectorProviderImpl extends SelectorProvider {
                 }
             };
 
-    public SelectorProviderImpl(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description, SchematicRegistry registry) {
-        super(clazz, name, localizedName, description, registry);
+    public SelectorProviderImpl(String name, String localizedName, String description, SchematicRegistry registry) {
+        super(name, localizedName, description, registry);
     }
 
     @Override

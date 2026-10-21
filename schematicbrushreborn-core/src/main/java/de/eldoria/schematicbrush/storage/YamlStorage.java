@@ -7,7 +7,6 @@
 package de.eldoria.schematicbrush.storage;
 
 import de.eldoria.schematicbrush.config.Configuration;
-import de.eldoria.schematicbrush.config.LegacyConfiguration;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import de.eldoria.schematicbrush.storage.preset.Presets;
 

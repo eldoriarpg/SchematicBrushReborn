@@ -8,7 +8,6 @@ package de.eldoria.schematicbrush.commands.preset;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.commands.preset.info.Global;
 import de.eldoria.schematicbrush.commands.preset.info.Private;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
@@ -16,11 +15,11 @@ import org.bukkit.plugin.Plugin;
 
 public class List extends AdvancedCommand {
 
-    public List(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker) {
+    public List(Plugin plugin, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("list")
                 .buildSubCommands((cmds, builder) -> {
-                    var privateList = new Private(plugin, storage, messageBlocker);
-                    var globalList = new Global(plugin, storage, messageBlocker);
+                    var privateList = new Private(plugin, storage);
+                    var globalList = new Global(plugin, storage);
                     builder.withDefaultCommand(privateList);
                     cmds.add(privateList);
                     cmds.add(globalList);

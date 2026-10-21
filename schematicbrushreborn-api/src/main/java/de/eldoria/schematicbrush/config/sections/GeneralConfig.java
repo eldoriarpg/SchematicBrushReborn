@@ -8,15 +8,8 @@ package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
-public interface GeneralConfig extends ConfigurationSerializable {
-    @Override
-    @NotNull Map<String, Object> serialize();
-
+public interface GeneralConfig {
     /**
      * Defined the used storage type.
      *

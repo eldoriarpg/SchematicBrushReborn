@@ -15,9 +15,6 @@ import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.rotation.ARotation;
 import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import de.eldoria.schematicbrush.brush.config.rotation.RotationFixed;
-import de.eldoria.schematicbrush.brush.config.rotation.RotationList;
-import de.eldoria.schematicbrush.brush.config.rotation.RotationRandom;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -25,8 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class RotationProvider extends ModifierProvider {
-    public static final RotationProvider RANDOM = new RotationProvider(RotationRandom.class,
-            "Random",
+    public static final RotationProvider RANDOM = new RotationProvider("Random",
             "components.provider.rotation.random.name",
             "components.provider.rotation.random.description") {
         @Override
@@ -45,8 +41,7 @@ public abstract class RotationProvider extends ModifierProvider {
         }
     };
     private static final String[] ROTATIONS = {"0", "90", "180", "270"};
-    public static final RotationProvider FIXED = new RotationProvider(RotationFixed.class,
-            "Fixed",
+    public static final RotationProvider FIXED = new RotationProvider("Fixed",
             "components.provider.rotation.fixed.name",
             "components.provider.rotation.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("rotation", true)};
@@ -70,8 +65,7 @@ public abstract class RotationProvider extends ModifierProvider {
         }
     };
 
-    public static final RotationProvider LIST = new RotationProvider(RotationList.class,
-            "List",
+    public static final RotationProvider LIST = new RotationProvider("List",
             "components.provider.rotation.list.name",
             "components.provider.rotation.list.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("rotations...", true)};
@@ -96,8 +90,8 @@ public abstract class RotationProvider extends ModifierProvider {
         }
     };
 
-    public RotationProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
-        super(clazz, name, localizedName, description);
+    public RotationProvider(String name, String localizedName, String description) {
+        super(name, localizedName, description);
     }
 
     @Override

@@ -8,17 +8,12 @@ package de.eldoria.schematicbrush.brush.config.rotation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-@SerializableAs("sbrRotationList")
 public class RotationList extends ARotation {
     private final List<Rotation> values;
 
@@ -27,14 +22,6 @@ public class RotationList extends ARotation {
         this.values = values;
         value(values.get(0));
     }
-
-    public RotationList(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        List<Integer> values = map.getValue("values");
-        this.values = values.stream().map(Rotation::valueOf).collect(Collectors.toList());
-        value(valueProvider());
-    }
-
     @Override
     public Rotation valueProvider() {
         return values.get(ThreadLocalRandom.current().nextInt(values.size()));
@@ -55,14 +42,6 @@ public class RotationList extends ARotation {
     @Override
     public boolean shiftable() {
         return true;
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("values", values.stream().map(Rotation::degree).collect(Collectors.toList()))
-                .build();
     }
 
     @Override

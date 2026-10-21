@@ -13,7 +13,8 @@ dependencies {
     testImplementation(project(":schematicbrushreborn-api"))
     testImplementation(libs.jetbrains.annotations)
     testImplementation(libs.mockito)
-    testImplementation(libs.jackson.databind)
+    testImplementation(platform(libs.jackson.bom))
+    testImplementation(libs.bundles.jackson)
     testImplementation(libs.bundles.utilities)
 }
 

@@ -135,11 +135,7 @@ public final class WorldEditBrush {
                 MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, "Can not bind brush on a block.");
                 return false;
             }
-            if (FAWE.isFawe()) {
-                getLocalSession(player).setTool(toItemType(stack).getDefaultState(), brushTool, BukkitAdapter.adapt(player));
-            } else {
-                getLocalSession(player).setTool(toItemType(stack), brushTool);
-            }
+            getLocalSession(player).setTool(toItemType(stack).getDefaultState(), brushTool, BukkitAdapter.adapt(player));
         } catch (InvalidToolBindException e) {
             MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
             return false;
@@ -167,11 +163,7 @@ public final class WorldEditBrush {
      */
     public static boolean removeBrush(Player player, ItemStack stack) {
         try {
-            if (FAWE.isFawe()) {
-                getLocalSession(player).setTool(toItemType(stack).getDefaultState(), null, BukkitAdapter.adapt(player));
-            } else {
-                getLocalSession(player).setTool(toItemType(stack), null);
-            }
+            getLocalSession(player).setTool(toItemType(stack).getDefaultState(), null, BukkitAdapter.adapt(player));
         } catch (InvalidToolBindException e) {
             MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
             return false;

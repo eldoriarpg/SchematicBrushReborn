@@ -1,0 +1,29 @@
+schematicConfig:
+  sources:
+  - path: "SchematicBrushReborn/schematics"
+    prefix: "sbr"
+    relative: true
+    excludedPath: []
+  - path: "FastAsyncWorldEdit/schematics"
+    prefix: "fawe"
+    relative: true
+    excludedPath: []
+  - path: "WorldEdit/schematics"
+    prefix: "we"
+    relative: true
+    excludedPath: []
+  pathSeparator: "/"
+  pathSourceAsPrefix: false
+generalConfig:
+  storageType: "yaml"
+  checkUpdates: true
+  previewDefault: true
+  showNameDefault: false
+  defaultNameChannel: "ACTION_BAR"
+  previewRefreshInterval: 1
+  maxRenderMs: 25
+  maxRenderSize: 2500
+  maxEffectiveRenderSize: 2500
+  renderDistance: 100
+  pasteBreak: 20
+  language: "en_US"

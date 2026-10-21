@@ -16,7 +16,6 @@ import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
@@ -29,16 +28,14 @@ import java.util.List;
 
 public class Info extends AdvancedCommand implements IPlayerTabExecutor {
     private final StorageRegistry storage;
-    private final MessageBlocker messageBlocker;
     private final BrushSettingsRegistry registry;
 
-    public Info(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker, BrushSettingsRegistry settingsRegistry) {
+    public Info(Plugin plugin, StorageRegistry storage, BrushSettingsRegistry settingsRegistry) {
         super(plugin, CommandMeta.builder("info")
                                  .addUnlocalizedArgument("name", true)
                                  .hidden()
                                  .build());
         this.storage = storage;
-        this.messageBlocker = messageBlocker;
         this.registry = settingsRegistry;
     }
 
@@ -59,8 +56,6 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
                                                  .localeCode("words.back")
                                                  .text("]</click>")
                                                  .prependLines(20);
-                   messageBlocker.ifEnabled(composer, comp -> comp.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-                   messageBlocker.announce(player, "[x]");
                    messageSender().sendMessage(player, composer.build());
                }, err -> handleCommandError(player, err)))
                .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));

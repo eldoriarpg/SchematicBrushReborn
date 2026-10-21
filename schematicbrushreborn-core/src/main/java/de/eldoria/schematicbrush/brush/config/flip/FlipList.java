@@ -8,17 +8,12 @@ package de.eldoria.schematicbrush.brush.config.flip;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-@SerializableAs("sbrFlipList")
 public class FlipList extends AFlip {
     private final List<Flip> values;
 
@@ -27,22 +22,6 @@ public class FlipList extends AFlip {
         this.values = values;
         value(valueProvider());
     }
-
-    public FlipList(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        List<String> flips = map.getValue("values");
-        values = flips.stream().map(Flip::valueOf).collect(Collectors.toList());
-        value(valueProvider());
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("values", values.stream().map(Flip::name).collect(Collectors.toList()))
-                .build();
-    }
-
 
     @Override
     public Flip valueProvider() {

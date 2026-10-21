@@ -13,12 +13,11 @@ import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.util.Randomable;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.Optional;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
-public interface SchematicSelection extends Randomable, ConfigurationSerializable {
+public interface SchematicSelection extends Randomable {
     Optional<Pair<SchematicSet, Schematic>> nextSchematic(SchematicBrush brush, boolean force);
 
     default Optional<Pair<SchematicSet, Schematic>> getDefaultSchem(SchematicBrush brush) {

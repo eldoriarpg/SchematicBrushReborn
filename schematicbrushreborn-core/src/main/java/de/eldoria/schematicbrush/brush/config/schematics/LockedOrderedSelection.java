@@ -7,15 +7,11 @@
 package de.eldoria.schematicbrush.brush.config.schematics;
 
 import de.eldoria.eldoutilities.container.Pair;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.BrushPaste;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -24,21 +20,6 @@ import java.util.Optional;
 public class LockedOrderedSelection extends OrderedSelection {
 
     public LockedOrderedSelection() {
-    }
-
-    /**
-     * Constructor required by {@link ConfigurationSerializable} in order to deserialize the object.
-     */
-    @SuppressWarnings("unused")
-    public LockedOrderedSelection(Map<String, Object> objectMap) {
-        super(objectMap);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .build();
     }
 
     @Override

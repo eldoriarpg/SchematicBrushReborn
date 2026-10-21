@@ -6,20 +6,7 @@
 
 package de.eldoria.schematicbrush;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.cfg.MapperBuilder;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import de.eldoria.eldoutilities.config.template.PluginBaseConfiguration;
-import de.eldoria.eldoutilities.crossversion.ServerVersion;
 import de.eldoria.eldoutilities.debug.UserData;
 import de.eldoria.eldoutilities.debug.data.EntryData;
 import de.eldoria.eldoutilities.localization.Localizer;
@@ -28,19 +15,9 @@ import de.eldoria.eldoutilities.metrics.EldoMetrics;
 import de.eldoria.eldoutilities.updater.Updater;
 import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateChecker;
 import de.eldoria.eldoutilities.updater.lynaupdater.LynaUpdateData;
-import de.eldoria.eldoutilities.utils.Version;
-import de.eldoria.jacksonbukkit.JacksonBukkit;
 import de.eldoria.jacksonbukkit.JacksonPaper;
-import de.eldoria.messageblocker.MessageBlockerAPI;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistryImpl;
-import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
-import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl;
-import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
-import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl;
-import de.eldoria.schematicbrush.brush.config.flip.Flip;
-import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.commands.Admin;
 import de.eldoria.schematicbrush.commands.Brush;
@@ -49,20 +26,7 @@ import de.eldoria.schematicbrush.commands.Modify;
 import de.eldoria.schematicbrush.commands.Settings;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.JacksonConfiguration;
-import de.eldoria.schematicbrush.config.LegacyConfiguration;
-import de.eldoria.schematicbrush.config.sections.GeneralConfigImpl;
-import de.eldoria.schematicbrush.config.sections.SchematicConfigImpl;
-import de.eldoria.schematicbrush.config.sections.SchematicSourceImpl;
-import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushContainer;
-import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
-import de.eldoria.schematicbrush.config.sections.presets.YamlPresetContainer;
-import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
-import de.eldoria.schematicbrush.config.serialization.deserilizer.BrushBuilderSnapshotDeserializer;
-import de.eldoria.schematicbrush.config.serialization.deserilizer.FlipDeserializer;
-import de.eldoria.schematicbrush.config.serialization.deserilizer.RotationDeserializer;
-import de.eldoria.schematicbrush.config.serialization.deserilizer.SchematicSetBuilderDeserializer;
-import de.eldoria.schematicbrush.config.serialization.serializer.FlipSerializer;
-import de.eldoria.schematicbrush.config.serialization.serializer.RotationSerializer;
+import de.eldoria.schematicbrush.config.serialization.StorageMappers;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
@@ -81,18 +45,17 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.module.SimpleModule;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -109,11 +72,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private SimpleModule sbrModule;
 
     public SchematicBrushRebornImpl() {
-        configuration = new JacksonConfiguration(this);
-    }
-
-    public SchematicBrushRebornImpl(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description, @NotNull File dataFolder, @NotNull File file) {
-        super(loader, description, dataFolder, file);
         configuration = new JacksonConfiguration(this);
     }
 
@@ -134,13 +92,10 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         PluginBaseConfiguration base = configuration.secondary(PluginBaseConfiguration.KEY);
         if (base.version() == 0) {
-            var legacyConfiguration = new LegacyConfiguration(this);
-            getLogger().log(Level.INFO, "Migrating configuration to jackson.");
-            configuration.main().generalConfig((GeneralConfigImpl) legacyConfiguration.general());
-            configuration.main().schematicConfig((SchematicConfigImpl) legacyConfiguration.schematicConfig());
-            configuration.replace(JacksonConfiguration.BRUSHES, (YamlBrushes) legacyConfiguration.brushes());
-            configuration.replace(JacksonConfiguration.PRESETS, (YamlPresets) legacyConfiguration.presets());
-            base.version(1);
+            if (isPreJacksonInstall()) {
+                throw new IllegalStateException("The configuration was written by a version older than 2.5.0. Update to the latest 2.7 release first, start the server once, then update to this version.");
+            }
+            base.version(2);
             base.lastInstalledVersion(this);
             configuration.save();
         }
@@ -162,6 +117,17 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         var yamlStorage = new YamlStorage(configuration);
         storageRegistry = new StorageRegistryImpl(yamlStorage, configuration);
         storageRegistry.register(StorageRegistry.YAML, yamlStorage);
+    }
+
+    /**
+     * Checks whether the data folder still holds a configuration in the Bukkit serialization format used before 2.5.0.
+     *
+     * @return true if the main configuration contains Bukkit serialization markers
+     * @throws IOException if the configuration file can not be read
+     */
+    private boolean isPreJacksonInstall() throws IOException {
+        var config = getDataFolder().toPath().resolve("config.yml");
+        return Files.exists(config) && Files.readString(config).contains("==:");
     }
 
     @Override
@@ -195,18 +161,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         if (reload) reload();
 
-        MessageBlocker messageBlocker;
-        if (ServerVersion.CURRENT_VERSION.isOlder(Version.of(1, 19))) {
-            messageBlocker = MessageBlockerAPI.builder(this).addWhitelisted("[SB]").build();
-        } else {
-            messageBlocker = MessageBlocker.dummy(this);
-        }
-
-        var brushCommand = new Brush(this, schematics, storageRegistry, settingsRegistry, messageBlocker);
-        var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storageRegistry, messageBlocker);
+        var brushCommand = new Brush(this, schematics, storageRegistry, settingsRegistry);
+        var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storageRegistry);
         var adminCommand = new Admin(this, schematics, storageRegistry);
-        var settingsCommand = new Settings(this, configuration, renderService, notifyListener, messageBlocker);
-        var brushPresetsCommand = new BrushPresets(this, storageRegistry, messageBlocker, settingsRegistry);
+        var settingsCommand = new Settings(this, configuration, renderService, notifyListener);
+        var brushPresetsCommand = new BrushPresets(this, storageRegistry, settingsRegistry);
         var modifyCommand = new Modify(this, settingsRegistry);
 
         enableMetrics();
@@ -227,20 +186,13 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     }
 
     /**
-     * Get the module for the current platform. Either a {@link JacksonBukkit} or {@link JacksonPaper} module.
+     * Get the {@link JacksonPaper} module for the platform.
      *
      * @return new module
      */
     @Override
-    public Module platformModule() {
-        if (!getServer().getName().toLowerCase(Locale.ROOT).contains("spigot")) {
-            return JacksonPaper.builder()
-                               .colorAsHex()
-                               .build();
-        }
-        return JacksonBukkit.builder()
-                            .colorAsHex()
-                            .build();
+    public JacksonModule platformModule() {
+        return StorageMappers.platformModule();
     }
 
     /**
@@ -253,13 +205,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     @Override
     public SimpleModule schematicBrushModule() {
         if (sbrModule == null) {
-            sbrModule = new SimpleModule();
-            sbrModule.addSerializer(Flip.class, new FlipSerializer());
-            sbrModule.addSerializer(Rotation.class, new RotationSerializer());
-            sbrModule.addDeserializer(Flip.class, new FlipDeserializer());
-            sbrModule.addDeserializer(Rotation.class, new RotationDeserializer());
-            sbrModule.addDeserializer(SchematicSetBuilder.class, new SchematicSetBuilderDeserializer());
-            sbrModule.addDeserializer(BrushBuilderSnapshot.class, new BrushBuilderSnapshotDeserializer());
+            sbrModule = StorageMappers.schematicBrushModule();
         }
         return sbrModule;
     }
@@ -268,24 +214,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
      * Configure an {@link ObjectMapper} to work with schematic brush and bukkit objects.
      *
      * @param builder builder
-     * @return same builder instance
+     * @return the mapper built from the configured builder
      */
     @Override
     public ObjectMapper configureMapper(MapperBuilder<?, ?> builder) {
-        builder.addModule(platformModule())
-               .typeFactory(TypeFactory.defaultInstance().withClassLoader(getClassLoader()))
-               .addModule(schematicBrushModule())
-               .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-               .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-        if (builder instanceof YAMLMapper.Builder b) {
-            b.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID)
-             .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-        }
-        return builder
-                .build()
-                .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-                .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
+        return StorageMappers.configure(builder, getClassLoader(), platformModule(), schematicBrushModule());
     }
 
     @Override
@@ -353,9 +286,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         metrics.addCustomChart(new SimplePie("used_storage_type",
                 () -> configuration.general().storageType().name()));
-
-        metrics.addCustomChart(new SimplePie("world_edit_version",
-                () -> getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit") ? "FAWE" : "WorldEdit"));
     }
 
     private String reduceMetricValue(int count, int baseValue, int... steps) {
@@ -366,13 +296,6 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         }
         var reduced = (int) Math.floor(count / (double) baseValue);
         return ">" + reduced * baseValue;
-    }
-
-    @Override
-    public List<Class<? extends ConfigurationSerializable>> getConfigSerialization() {
-        return Arrays.asList(GeneralConfigImpl.class, Preset.class,
-                SchematicConfigImpl.class, SchematicSourceImpl.class, YamlPresetContainer.class, YamlPresets.class, YamlBrushes.class, YamlBrushContainer.class,
-                SchematicSetBuilderImpl.class, de.eldoria.schematicbrush.storage.brush.Brush.class, BrushBuilderSnapshotImpl.class);
     }
 
     @Override

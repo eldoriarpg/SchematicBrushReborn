@@ -6,7 +6,6 @@
 
 package de.eldoria.schematicbrush.rendering;
 
-import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.entity.BaseEntity;
@@ -20,17 +19,13 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
-import com.sk89q.worldedit.world.block.BlockType;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
-import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CapturingExtentImpl implements CapturingExtent {
-    private static final BlockType[] AIR_TYPES = {BlockTypes.AIR, BlockTypes.VOID_AIR, BlockTypes.CAVE_AIR};
     private final ChangesImpl.Builder changes = ChangesImpl.builder();
     private final EditSession session;
     private final FakeWorldImpl fakeWorld;
@@ -97,7 +92,7 @@ public class CapturingExtentImpl implements CapturingExtent {
         if ((boolean) settings.getMutator(PlacementModifier.REPLACE_ALL).value()) {
             changes.add(location, location.getBlock().getBlockData(), data);
         } else {
-            if (ArrayUtils.contains(AIR_TYPES, getBlock(position).getBlockType())) {
+            if (getBlock(position).getBlockType().getMaterial().isAir()) {
                 changes.add(location, location.getBlock().getBlockData(), data);
             }
         }

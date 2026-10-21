@@ -12,15 +12,10 @@ import com.sk89q.worldedit.function.mask.BlockTypeMask;
 import com.sk89q.worldedit.function.mask.Masks;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.eldoutilities.localization.ILocalizer;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
-@SerializableAs("sbrReplaceAll")
 public class ReplaceAll implements Mutator<Boolean> {
     private final boolean value;
 
@@ -28,20 +23,6 @@ public class ReplaceAll implements Mutator<Boolean> {
     public ReplaceAll(@JsonProperty("value") boolean value) {
         this.value = value;
     }
-
-    public ReplaceAll(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        value = map.getValue("value");
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("value", value)
-                .build();
-    }
-
     @Override
     public void invoke(PasteMutation mutation) {
         var preBrushMask = mutation.session().getMask();
@@ -88,7 +69,6 @@ public class ReplaceAll implements Mutator<Boolean> {
     public String localizedName() {
         return ILocalizer.escape("components.modifier.replaceAll.fixed.name");
     }
-
 
     @Override
     public String descriptor() {

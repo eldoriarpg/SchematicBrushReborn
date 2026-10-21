@@ -10,20 +10,13 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import de.eldoria.eldoutilities.localization.ILocalizer;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 public abstract class APlacement implements Mutator<APlacement> {
     public APlacement() {
     }
-
-    public APlacement(Map<String, Object> objectMap) {
-    }
-
     protected static boolean levelNonAir(Clipboard clipboard, BlockVector3 dimensions, int y) {
         for (var x = 0; x < dimensions.x(); x++) {
             for (var z = 0; z < dimensions.z(); z++) {
@@ -36,13 +29,6 @@ public abstract class APlacement implements Mutator<APlacement> {
     }
 
     public abstract int find(Clipboard clipboard);
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .build();
-    }
 
     @Override
     public void invoke(PasteMutation mutation) {

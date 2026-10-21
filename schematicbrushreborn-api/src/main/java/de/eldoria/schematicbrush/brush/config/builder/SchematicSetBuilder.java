@@ -15,9 +15,7 @@ import de.eldoria.schematicbrush.brush.config.util.Copyable;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -26,10 +24,7 @@ import java.util.Set;
  * Builder to build schematic sets.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
-public interface SchematicSetBuilder extends ConfigurationSerializable, Copyable {
-    @Override
-    @NotNull Map<String, Object> serialize();
-
+public interface SchematicSetBuilder extends Copyable {
     /**
      * Set the rotation of the brush.
      *

@@ -6,10 +6,7 @@
 
 package de.eldoria.schematicbrush.rendering;
 
-import com.fastasyncworldedit.core.queue.implementation.packet.ChunkPacket;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import de.eldoria.eldoutilities.container.Pair;
-import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -53,23 +50,7 @@ public class ChangesImpl implements Changes {
     }
 
     private int sendChanges(Player player, Map<Location, BlockData> data) {
-        if (FAWE.isFawe()) {
-            // in an ideal world would be some cool FAWE stuff here. Sadly it isn't.
-            return sendBlocks(player, data);
-        } else {
-            return sendBlocks(player, data);
-        }
-    }
-
-    private void sendChunks(Player player, Map<Location, BlockData> data) {
-        // Time wasted: 2 hours.
-        Map<Pair<Integer, Integer>, ChunkPacket> packetMap = new HashMap<>();
-
-        for (var entry : data.entrySet()) {
-            int x = entry.getKey().getBlockX() << 4;
-            int z = entry.getKey().getBlockZ() << 4;
-            //packetMap.computeIfAbsent(Pair.of(x,z), k -> new ChunkPacket(x,z,() -> ))
-        }
+        return sendBlocks(player, data);
     }
 
     private int sendBlocks(Player player, Map<Location, BlockData> data) {

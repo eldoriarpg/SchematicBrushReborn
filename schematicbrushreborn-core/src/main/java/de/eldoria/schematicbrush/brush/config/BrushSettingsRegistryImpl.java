@@ -33,7 +33,6 @@ import de.eldoria.schematicbrush.brush.provider.RotationProvider;
 import de.eldoria.schematicbrush.brush.provider.SchematicSelectionProviderImpl;
 import de.eldoria.schematicbrush.brush.provider.SelectorProviderImpl;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -55,7 +54,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     @Override
     public void registerSelector(SelectorProvider provider) {
-        ConfigurationSerialization.registerClass(provider.serializationClass());
         if (selector.contains(provider)) {
             throw new AlreadyRegisteredException(provider);
         }
@@ -64,7 +62,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     @Override
     public void registerSchematicSelection(SchematicSelectionProvider provider) {
-        ConfigurationSerialization.registerClass(provider.serializationClass());
         if (schematicSelection.contains(provider)) {
             throw new AlreadyRegisteredException(provider);
         }
@@ -73,7 +70,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     @Override
     public void registerSchematicModifier(SchematicModifier type, ModifierProvider provider) {
-        ConfigurationSerialization.registerClass(provider.serializationClass());
         if (schematicModifier.containsKey(type) && schematicModifier.get(type).contains(provider)) {
             throw new AlreadyRegisteredException(type, provider);
         }
@@ -82,7 +78,6 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     @Override
     public void registerPlacementModifier(PlacementModifier type, ModifierProvider provider) {
-        ConfigurationSerialization.registerClass(provider.serializationClass());
         if (placementModifier.containsKey(type) && placementModifier.get(type).contains(provider)) {
             throw new AlreadyRegisteredException(type, provider);
         }

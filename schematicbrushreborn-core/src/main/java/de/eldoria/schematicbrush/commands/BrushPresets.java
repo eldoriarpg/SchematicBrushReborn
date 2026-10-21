@@ -8,7 +8,6 @@ package de.eldoria.schematicbrush.commands;
 
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.commands.brushpresets.Descr;
 import de.eldoria.schematicbrush.commands.brushpresets.Info;
@@ -23,15 +22,15 @@ import org.bukkit.plugin.Plugin;
  * Brush to create and modify brush presets.
  */
 public class BrushPresets extends AdvancedCommand {
-    public BrushPresets(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker, BrushSettingsRegistry registry) {
+    public BrushPresets(Plugin plugin, StorageRegistry storage, BrushSettingsRegistry registry) {
         super(plugin);
         meta(CommandMeta.builder("sbrbp")
                 .withPermission(Permissions.BrushPreset.USE)
                 .buildSubCommands((cmds, builder) -> {
-                    var list = new List(plugin, storage, messageBlocker, registry);
+                    var list = new List(plugin, storage, registry);
                     builder.withDefaultCommand(list);
                     cmds.add(new Descr(plugin, storage));
-                    cmds.add(new Info(plugin, storage, messageBlocker, registry));
+                    cmds.add(new Info(plugin, storage, registry));
                     cmds.add(list);
                     cmds.add(new Remove(plugin, storage));
                 }).build());

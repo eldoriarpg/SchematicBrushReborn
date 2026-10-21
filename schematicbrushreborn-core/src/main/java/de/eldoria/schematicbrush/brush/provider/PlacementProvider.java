@@ -16,7 +16,6 @@ import de.eldoria.schematicbrush.brush.config.placement.Raise;
 import de.eldoria.schematicbrush.brush.config.placement.Top;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -36,12 +35,12 @@ public abstract class PlacementProvider extends ModifierProvider {
     private static final APlacement top = new Top();
     public static final PlacementProvider TOP = of("Top", top, "components.provider.placement.top.name", "components.provider.placement.top.description");
 
-    public PlacementProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
-        super(clazz, name, localizedName, description);
+    public PlacementProvider(String name, String localizedName, String description) {
+        super(name, localizedName, description);
     }
 
     private static PlacementProvider of(String name, APlacement placement, String localizedName, String description) {
-        return new PlacementProvider(placement.getClass(), name, localizedName, description) {
+        return new PlacementProvider(name, localizedName, description) {
             @Override
             public Mutator<?> parse(Arguments args) {
                 return placement;

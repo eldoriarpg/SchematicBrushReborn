@@ -8,14 +8,11 @@ package de.eldoria.schematicbrush.brush.config.builder;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,33 +20,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@SerializableAs("sbrBrushBuilderSnapshot")
 public class BrushBuilderSnapshotImpl implements BrushBuilderSnapshot {
     private final Map<Nameable, Mutator<?>> placementModifier;
     private final List<SchematicSetBuilder> schematicSets;
-
-    public BrushBuilderSnapshotImpl(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        schematicSets = map.getValue("schematicSets");
-        placementModifier = map.getMap("placementModifier", (key, v) -> Nameable.of(key));
-        placementModifier.entrySet().removeIf(entry -> entry.getValue() == null);
-    }
 
     @JsonCreator
     public BrushBuilderSnapshotImpl(@JsonProperty("placementModifier") Map<Nameable, Mutator<?>> placementModifier,
                                     @JsonProperty("schematicSets") List<SchematicSetBuilder> schematicSets) {
         this.placementModifier = placementModifier;
         this.schematicSets = schematicSets;
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        placementModifier.entrySet().removeIf(entry -> entry.getValue() == null);
-        return SerializationUtil.newBuilder()
-                .addMap("placementModifier", placementModifier, (key, v) -> key.name())
-                .add("schematicSets", schematicSets)
-                .build();
     }
 
     @Override
