@@ -48,8 +48,7 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
                                      .localeCode("commands.brush.bind.bound", Replacement.create("schematics", schematicCount), Replacement.create("sets", setcount))
                                      .text("<change><click:run_command:'/sbr'>[")
                                      .localeCode("words.edit")
-                                     .text("]</click>")
-                                     .build();
+                                     .text("]</click>");
         messageSender().sendMessage(player, message);
     }
 }

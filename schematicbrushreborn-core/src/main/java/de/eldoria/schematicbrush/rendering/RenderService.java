@@ -19,6 +19,7 @@ import de.eldoria.schematicbrush.brush.config.modifier.PlacementModifier;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
+import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.RollingQueue;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
@@ -49,6 +50,9 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -80,6 +84,12 @@ public class RenderService implements Runnable, Listener, DebugDataProvider {
     private final SchematicBrushReborn plugin;
     private final Configuration configuration;
     private final RollingQueue<Long> timings = new RollingQueue<>(1200);
+    private final Set<Schematic> measuring = ConcurrentHashMap.newKeySet();
+    private final ExecutorService measurer = Executors.newSingleThreadExecutor(runnable -> {
+        var thread = new Thread(runnable, "SBR schematic measurement");
+        thread.setDaemon(true);
+        return thread;
+    });
     private double credit;
     private long ticks;
 
@@ -247,34 +257,38 @@ public class RenderService implements Runnable, Listener, DebugDataProvider {
             return;
         }
 
+        var schematic = brush.nextPaste().schematic();
+        if (!schematic.isMeasured()) {
+            measure(schematic);
+            getSink(player).hide();
+            return;
+        }
+
         var includeAir = (boolean) brush.settings().getMutator(PlacementModifier.INCLUDE_AIR).value();
-        var replaceAll = (boolean) brush.settings().getMutator(PlacementModifier.REPLACE_ALL).value();
-
-        if (includeAir && replaceAll && brush.nextPaste().schematic().size() > general.maxRenderSize()) {
+        var pasted = includeAir ? schematic.size() : schematic.effectiveSize();
+        var limit = includeAir ? general.maxRenderSize() : Math.min(general.maxRenderSize(), general.maxEffectiveRenderSize());
+        if (pasted > limit) {
             messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
-                    Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().size())),
-                    Replacement.create("max", "%,d".formatted(general.maxRenderSize())));
-            getSink(player).hide();
-            return;
-        }
-
-        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxRenderSize()) {
-            messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
-                    Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().effectiveSize())),
-                    Replacement.create("max", "%,d".formatted(general.maxRenderSize())));
-            getSink(player).hide();
-            return;
-        }
-
-        if (!includeAir && brush.nextPaste().schematic().effectiveSize() > general.maxEffectiveRenderSize()) {
-            messageSender.sendErrorActionBar(brush.brushOwner(), "service.renderService.error.sizeExceeded",
-                    Replacement.create("actual", "%,d".formatted(brush.nextPaste().schematic().effectiveSize())),
-                    Replacement.create("max", "%,d".formatted(general.maxEffectiveRenderSize())));
+                    Replacement.create("actual", "%,d".formatted(pasted)),
+                    Replacement.create("max", "%,d".formatted(limit)));
             getSink(player).hide();
             return;
         }
 
         getSink(player).show(brush.pasteFake());
+    }
+
+    /**
+     * Computes the sizes of a schematic on the measuring thread. Loading a large schematic takes long, so the preview
+     * stays hidden until its size is known. A schematic that cannot be measured is not tried again.
+     */
+    private void measure(Schematic schematic) {
+        if (!measuring.add(schematic)) return;
+        measurer.execute(() -> {
+            schematic.size();
+            schematic.effectiveSize();
+            if (schematic.isMeasured()) measuring.remove(schematic);
+        });
     }
 
     private RenderSink getSink(Player player) {
@@ -393,14 +407,20 @@ public class RenderService implements Runnable, Listener, DebugDataProvider {
      * Resets the previews of every client and drops all sinks.
      */
     public void restart() {
-        shutdown();
+        closeSinks();
         timings.clear();
     }
 
     /**
-     * Resets the previews of every client and drops all sinks. Used when the plugin is disabled.
+     * Resets the previews of every client, drops all sinks and stops measuring schematics. Used when the plugin is
+     * disabled.
      */
     public void shutdown() {
+        closeSinks();
+        measurer.shutdownNow();
+    }
+
+    private void closeSinks() {
         sinks.values().forEach(RenderSink::close);
         sinks.clear();
         subscription.clear();

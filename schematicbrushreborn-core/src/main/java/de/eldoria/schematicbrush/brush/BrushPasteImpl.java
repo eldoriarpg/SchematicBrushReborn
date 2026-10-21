@@ -51,6 +51,26 @@ public class BrushPasteImpl implements BrushPaste {
     }
 
 
+    private BrushPasteImpl(SchematicBrush brush, BrushSettings settings, SchematicSet schematicSet, Schematic schematic, Clipboard clipboard) {
+        this.brush = brush;
+        this.settings = settings;
+        this.schematicSet = schematicSet;
+        this.schematic = schematic;
+        this.clipboard = clipboard;
+        refresh();
+    }
+
+    /**
+     * The same schematic, already loaded, pasted with new settings.
+     *
+     * @param settings     new settings
+     * @param schematicSet the set of the new settings that contains the schematic
+     * @return paste of the same schematic without loading it again
+     */
+    public BrushPasteImpl withSettings(BrushSettings settings, SchematicSet schematicSet) {
+        return new BrushPasteImpl(brush, settings, schematicSet, schematic, clipboard);
+    }
+
     @Override
     public final void refresh() {
         schematicSet.refreshMutator();
@@ -59,19 +79,16 @@ public class BrushPasteImpl implements BrushPaste {
 
     @Override
     public boolean shiftFlip() {
-        reloadSchematic();
         return shift(schematicSet.getMutator(SchematicModifier.FLIP), settings.getMutator(PlacementModifier.FLIP));
     }
 
     @Override
     public boolean shiftRotation() {
-        reloadSchematic();
         return shift(schematicSet.getMutator(SchematicModifier.ROTATION), settings.getMutator(PlacementModifier.ROTATION));
     }
 
     @Override
     public boolean shiftOffset() {
-        reloadSchematic();
         return shift(schematicSet.getMutator(SchematicModifier.OFFSET), settings.getMutator(PlacementModifier.OFFSET));
     }
 
@@ -95,13 +112,11 @@ public class BrushPasteImpl implements BrushPaste {
 
     @Override
     public Mutator<?> offsetSet() {
-        reloadSchematic();
         return schematicSet.getMutator(SchematicModifier.OFFSET);
     }
 
     @Override
     public Mutator<?> offsetBrush() {
-        reloadSchematic();
         return settings.getMutator(PlacementModifier.OFFSET);
     }
 

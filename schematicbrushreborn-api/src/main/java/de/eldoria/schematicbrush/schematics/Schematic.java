@@ -49,8 +49,8 @@ public class Schematic implements Comparable<Schematic> {
     private final String name;
     private final String effectiveName;
     private final long number;
-    private int effectiveSize = -1;
-    private int size = -1;
+    private volatile int effectiveSize = -1;
+    private volatile int size = -1;
 
     /**
      * Creates a new schematic from a file.
@@ -174,6 +174,15 @@ public class Schematic implements Comparable<Schematic> {
     @Override
     public int hashCode() {
         return Objects.hash(format.getName(), file.getPath(), name);
+    }
+
+    /**
+     * Checks whether the size and the effective size are known, so reading them does not load the schematic.
+     *
+     * @return true if both sizes were computed
+     */
+    public boolean isMeasured() {
+        return size != -1 && effectiveSize != -1;
     }
 
     /**

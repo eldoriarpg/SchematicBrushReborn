@@ -166,7 +166,8 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     /**
-     * Replaces the settings and prepares the next paste with them. Without a matching schematic there is no next paste
+     * Replaces the settings and prepares the next paste with them. The schematic of the next paste is kept while one of
+     * the new sets still contains it, so it is not loaded again. Without a matching schematic there is no next paste
      * until the settings change again.
      *
      * @param settings new settings
@@ -175,6 +176,15 @@ public class SchematicBrushImpl implements SchematicBrush {
     public void settings(BrushSettings settings) {
         this.settings = settings;
         builder = null;
+        if (nextPaste instanceof BrushPasteImpl paste) {
+            var set = settings.schematicSets().stream()
+                              .filter(candidate -> candidate.schematics().contains(paste.schematic()))
+                              .findFirst();
+            if (set.isPresent()) {
+                nextPaste = paste.withSettings(settings, set.get());
+                return;
+            }
+        }
         var previous = nextPaste;
         buildNextPaste();
         if (nextPaste == previous) {

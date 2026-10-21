@@ -137,7 +137,7 @@ public final class WorldEditBrush {
             }
             getLocalSession(player).setTool(toItemType(stack).getDefaultState(), brushTool, BukkitAdapter.adapt(player));
         } catch (InvalidToolBindException e) {
-            MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
+            MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, Escape.text(String.valueOf(e.getMessage())));
             return false;
         }
         return true;
@@ -165,7 +165,7 @@ public final class WorldEditBrush {
         try {
             getLocalSession(player).setTool(toItemType(stack).getDefaultState(), null, BukkitAdapter.adapt(player));
         } catch (InvalidToolBindException e) {
-            MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, e.getMessage());
+            MessageSender.getPluginMessageSender(SchematicBrushReborn.class).sendError(player, Escape.text(String.valueOf(e.getMessage())));
             return false;
         }
         return true;
