@@ -31,6 +31,16 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        bind(player);
+    }
+
+    /**
+     * Binds the brush of the player's session to the item in the main hand and links the session to it.
+     *
+     * @param player player
+     * @throws CommandException if the brush is empty
+     */
+    public void bind(Player player) throws CommandException {
         var session = sessions.getOrCreateSession(player);
 
 

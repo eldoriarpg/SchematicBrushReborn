@@ -169,7 +169,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         if (reload) reload();
 
         var editorPreferences = new EditorPreferences(this, configuration);
-        var brushCommand = new Brush(this, schematics, storageRegistry, settingsRegistry, editorPreferences);
+        var brushCommand = new Brush(this, schematics, storageRegistry, settingsRegistry, editorPreferences, configuration);
         var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storageRegistry);
         var adminCommand = new Admin(this, schematics, storageRegistry);
         var settingsCommand = new Settings(this, configuration, renderService, notifyListener, editorPreferences);

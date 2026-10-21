@@ -57,6 +57,16 @@ public class Sessions {
     }
 
     /**
+     * Starts a new session editing the given brush.
+     *
+     * @param player  player
+     * @param builder brush to edit
+     */
+    public void startSession(Player player, BrushBuilder builder) {
+        sessions.put(player.getUniqueId(), new BrushSession(builder));
+    }
+
+    /**
      * Links the session to the schematic brush bound to the item in the main hand, so further edits apply to it.
      *
      * @param player player
