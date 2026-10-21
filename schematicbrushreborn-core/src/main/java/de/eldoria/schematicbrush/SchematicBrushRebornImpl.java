@@ -272,7 +272,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
     private void enableMetrics() {
         var metrics = new Metrics(this, 7683);
         if (EldoMetrics.isEnabled(this)) {
-            logger().info("§2Metrics enabled. Thank you <3");
+            logger().info("Metrics enabled. Thank you <3");
         }
 
         metrics.addCustomChart(new SimplePie("schematic_count",

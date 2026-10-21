@@ -29,7 +29,7 @@ public class Info extends AdvancedCommand implements ITabExecutor {
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String alias, @NotNull Arguments args) {
         var descr = instance.getDescription();
-        var info = "<heading>Schematic Brush Reborn§r by <value>" + String.join(", ", descr.getAuthors()) + "<default>\n"
+        var info = "<heading>Schematic Brush Reborn<reset> by <value>" + String.join(", ", descr.getAuthors()) + "<default>\n"
                    + "<name>Premium:<value> " + userData.isPremium() + "\n"
                    + "<name>Version:<value> " + descr.getVersion() + "\n"
                    + "<name>Spigot:<value> https://www.spigotmc.org/resources/98499\n"
