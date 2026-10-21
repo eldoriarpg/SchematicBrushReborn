@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.brush.config.SchematicSetImpl;
@@ -20,9 +19,8 @@ import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.SerializableAs;
+import de.eldoria.schematicbrush.util.Escape;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,21 +36,12 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
 /**
  * This class is a builder to build a {@link SchematicSetImpl}.
  */
-@SerializableAs("sbrSchematicSetBuilder")
 public class SchematicSetBuilderImpl implements SchematicSetBuilder {
     private Selector selector;
     private Map<Nameable, Mutator<?>> schematicModifier = new HashMap<>();
     @JsonIgnore
     private Set<Schematic> schematics = Collections.emptySet();
     private int weight = -1;
-
-    public SchematicSetBuilderImpl(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        selector = map.getValue("selector");
-        schematicModifier = map.getMap("modifiers", (key, v) -> Nameable.of(key));
-        weight = map.getValue("weight");
-        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
-    }
 
     public SchematicSetBuilderImpl(Selector selector) {
         this.selector = selector;
@@ -74,17 +63,6 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         this.schematicModifier = schematicModifier;
         this.weight = weight;
         schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        schematicModifier.entrySet().removeIf(entry -> entry.getValue() == null);
-        return SerializationUtil.newBuilder()
-                .add("selector", selector)
-                .addMap("modifiers", schematicModifier, (key, v) -> key.name())
-                .add("weight", weight)
-                .build();
     }
 
     /**
@@ -128,7 +106,9 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
      */
     @Override
     public SchematicSet build() {
-        return new SchematicSetImpl(schematics, selector, schematicModifier, weight);
+        var modifier = new HashMap<Nameable, Mutator<?>>();
+        schematicModifier.forEach((type, mutator) -> modifier.put(type, mutator.copy()));
+        return new SchematicSetImpl(schematics, selector, modifier, weight);
     }
 
     /**
@@ -220,7 +200,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
                         .collect(Collectors.joining(" ")))
                 .newLine()
                 .space(2)
-                .text("<hover:show_text:'%s'>%s</hover>", schematicInfo(), BuildUtil.renderProvider(selector()));
+                .text("<hover:show_text:'%s'>%s</hover>", Escape.argument(schematicInfo()), BuildUtil.renderProvider(selector()));
 
         var mutatorMap = schematicModifier();
         if(!mutatorMap.isEmpty()){
@@ -285,6 +265,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         var showSchematics = schematics.stream()
                 .sorted()
                 .map(Schematic::name)
+                .map(Escape::text)
                 .toList();
 
         if (schematics.size() > 10) {

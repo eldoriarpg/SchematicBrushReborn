@@ -12,7 +12,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.commands.util.BasePageCommand;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -24,10 +23,10 @@ public class Global extends BasePageCommand implements IPlayerTabExecutor {
 
     private final StorageRegistry storage;
 
-    public Global(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker) {
+    public Global(Plugin plugin, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("global")
                 .addUnlocalizedArgument("page", false)
-                .build(), messageBlocker);
+                .build());
         this.storage = storage;
     }
 

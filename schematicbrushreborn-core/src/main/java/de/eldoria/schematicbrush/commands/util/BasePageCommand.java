@@ -9,7 +9,6 @@ package de.eldoria.schematicbrush.commands.util;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -21,11 +20,9 @@ public class BasePageCommand extends AdvancedCommand {
     public final int PAGE_SIZE = 15;
     public final String RIGHT_ARROW = "»»»";
     public final String LEFT_ARROW = "«««";
-    private final MessageBlocker messageBlocker;
 
-    public BasePageCommand(Plugin plugin, CommandMeta meta, MessageBlocker messageBlocker) {
+    public BasePageCommand(Plugin plugin, CommandMeta meta) {
         super(plugin, meta);
-        this.messageBlocker = messageBlocker;
     }
 
     protected void addPageHeader(MessageComposer composer, String title, boolean global) {
@@ -67,9 +64,6 @@ public class BasePageCommand extends AdvancedCommand {
 
     protected void send(MessageComposer composer, Player player) {
         composer.prependLines(20);
-        messageBlocker.blockPlayer(player);
-        messageBlocker.ifEnabled(() -> composer.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-        messageBlocker.announce(player, "[x]");
         messageSender().sendMessage(player, composer.build());
     }
 }

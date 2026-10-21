@@ -1,0 +1,131 @@
+playerBrushes:
+  "5c1f9a4e-2f6b-4c3e-9a71-0d2b8e6f4a10":
+    uuid: "5c1f9a4e-2f6b-4c3e-9a71-0d2b8e6f4a10"
+    brushes:
+      forest:
+        name: "forest"
+        description: "dense trees"
+        snapshot:
+          '@clazz': "de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl"
+          placementModifier:
+            Placement:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.placement.Drop"
+            IncludeAir:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.includeair.IncludeAir"
+              value: false
+            ReplaceAll:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.replaceall.ReplaceAll"
+              value: true
+            Offset:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.offset.OffsetList"
+              values:
+              - 0
+              - 1
+              - 2
+              offset: 0
+            Filter:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.blockfilter.BlockFilter"
+              maskString: "stone,dirt"
+            Flip:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.flip.FlipRandom"
+              flip: "none"
+              values:
+              - "none"
+              - "east"
+              - "north"
+            Rotation:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.rotation.RotationRandom"
+              rotation: 0
+              values:
+              - 0
+              - 90
+              - 180
+              - 270
+          schematicSets:
+          - '@clazz': "de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl"
+            selector:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.selector.NameSelector"
+              term: "tree"
+            schematicModifier:
+              Rotation:
+                '@clazz': "de.eldoria.schematicbrush.brush.config.rotation.RotationList"
+                values:
+                - 0
+                - 90
+                rotation: 0
+              Flip:
+                '@clazz': "de.eldoria.schematicbrush.brush.config.flip.FlipFixed"
+                flip: "east"
+              Offset:
+                '@clazz': "de.eldoria.schematicbrush.brush.config.offset.OffsetRange"
+                min: -2
+                max: 3
+                offset: 0
+            weight: 10
+          - '@clazz': "de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl"
+            selector:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.selector.RegexSelector"
+              term: "^rock_\\d+$"
+            schematicModifier:
+              Rotation:
+                '@clazz': "de.eldoria.schematicbrush.brush.config.rotation.RotationFixed"
+                rotation: 180
+              Offset:
+                '@clazz': "de.eldoria.schematicbrush.brush.config.offset.OffsetFixed"
+                offset: 4
+            weight: -1
+globalBrushes:
+  uuid: "00000000-0000-0000-0000-000000000000"
+  brushes:
+    rocks:
+      name: "rocks"
+      description: "scattered rocks"
+      snapshot:
+        '@clazz': "de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshotImpl"
+        placementModifier:
+          Placement:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.placement.Drop"
+          IncludeAir:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.includeair.IncludeAir"
+            value: false
+          ReplaceAll:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.replaceall.ReplaceAll"
+            value: true
+          Offset:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.offset.OffsetList"
+            values:
+            - 0
+            - 1
+            - 2
+            offset: 0
+          Filter:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.blockfilter.BlockFilter"
+            maskString: "stone,dirt"
+          Flip:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.flip.FlipRandom"
+            flip: "east"
+            values:
+            - "none"
+            - "east"
+            - "north"
+          Rotation:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.rotation.RotationRandom"
+            rotation: 0
+            values:
+            - 0
+            - 90
+            - 180
+            - 270
+        schematicSets:
+        - '@clazz': "de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl"
+          selector:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.selector.RegexSelector"
+            term: "^rock_\\d+$"
+          schematicModifier:
+            Rotation:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.rotation.RotationFixed"
+              rotation: 180
+            Offset:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.offset.OffsetFixed"
+              offset: 4
+          weight: -1

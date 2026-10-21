@@ -6,21 +6,16 @@
 
 package de.eldoria.schematicbrush;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.MapperBuilder;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.eldoria.EldoUtilities;
 import de.eldoria.eldoutilities.plugin.EldoPlugin;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPluginLoader;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * The base of the schematic brush plugin.
@@ -29,11 +24,6 @@ import java.io.File;
 public abstract class SchematicBrushReborn extends EldoPlugin {
 
     public SchematicBrushReborn() {
-        EldoUtilities.forceInstanceOwner(this);
-    }
-
-    public SchematicBrushReborn(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description, @NotNull File dataFolder, @NotNull File file) {
-        super(loader, description, dataFolder, file);
         EldoUtilities.forceInstanceOwner(this);
     }
 
@@ -46,7 +36,7 @@ public abstract class SchematicBrushReborn extends EldoPlugin {
         return (SchematicBrushReborn) getInstance();
     }
 
-    public abstract Module platformModule();
+    public abstract JacksonModule platformModule();
 
     public abstract SimpleModule schematicBrushModule();
 

@@ -36,8 +36,6 @@ public class RemoveBrushModifier extends AdvancedCommand implements IPlayerTabEx
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var session = sessions.getOrCreateSession(player);
-
         var modifier = args.get(0).asString();
 
         var registration = registry.getPlacementModifier(modifier);
@@ -45,7 +43,7 @@ public class RemoveBrushModifier extends AdvancedCommand implements IPlayerTabEx
 
         CommandAssertions.isFalse(registration.get().modifier().required(), "error.modifierRequired");
 
-        session.removePlacementModifier(registration.get().modifier());
+        sessions.edit(player, edited -> edited.removePlacementModifier(registration.get().modifier()));
         sessions.showBrush(player);
     }
 

@@ -6,18 +6,16 @@
 
 package de.eldoria.schematicbrush.config.serialization.deserilizer;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import de.eldoria.schematicbrush.brush.config.flip.Flip;
 import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
-
-public class RotationDeserializer extends JsonDeserializer<Rotation> {
+public class RotationDeserializer extends ValueDeserializer<Rotation> {
     @Override
-    public Rotation deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public Rotation deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
         return Rotation.valueOf(ctxt.readValue(p, Integer.class));
     }
 }

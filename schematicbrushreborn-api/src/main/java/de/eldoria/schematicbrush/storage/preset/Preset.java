@@ -9,20 +9,16 @@ package de.eldoria.schematicbrush.storage.preset;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilder;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
+import de.eldoria.schematicbrush.util.Escape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-@SerializableAs("sbrPreset")
-public class Preset implements ConfigurationSerializable, Comparable<Preset> {
+public class Preset implements Comparable<Preset> {
 
     protected final String name;
     protected final List<SchematicSetBuilder> schematicSets;
@@ -40,27 +36,6 @@ public class Preset implements ConfigurationSerializable, Comparable<Preset> {
         this.schematicSets = schematicSets;
         this.description = description == null ? "none" : description;
     }
-
-    public static Preset deserialize(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        String name = map.getValue("name");
-        String description = map.getValue("description");
-        if (description == null) {
-            description = "none";
-        }
-        List<SchematicSetBuilder> schematicSets = map.getValue("sets");
-        return new Preset(name, description, schematicSets);
-    }
-
-    @Override
-    public @NotNull Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("name", name)
-                .add("description", description)
-                .add("sets", schematicSets)
-                .build();
-    }
-
     /**
      * Name of the preset. This is unique for each preset
      *
@@ -72,12 +47,12 @@ public class Preset implements ConfigurationSerializable, Comparable<Preset> {
 
     public String infoComponent(boolean global, boolean canDelete) {
         var text = MessageComposer.create()
-                .text("<name><hover:show_text:'%s'>%s</hover>", simpleComponent(), name())
+                .text("<name><hover:show_text:'%s'>%s</hover>", Escape.argument(simpleComponent()), Escape.text(name()))
                 .space()
-                .text("<add><click:run_command:'/sbrp info %s'>[Info]</click>", (global ? "g:" : "") + name());
+                .text("<add><click:run_command:'/sbrp info %s'>[Info]</click>", Escape.argument((global ? "g:" : "") + name()));
         if (canDelete) {
             text.space()
-                    .text("<remove><click:run_command:'/sbrp remove %s %s'>[Remove]</click>", name(), (global ? "-g" : ""));
+                    .text("<remove><click:run_command:'/sbrp remove %s %s'>[Remove]</click>", Escape.argument(name()), (global ? "-g" : ""));
         }
 
         return text.build();
@@ -85,19 +60,19 @@ public class Preset implements ConfigurationSerializable, Comparable<Preset> {
 
     public String detailComponent(boolean global) {
         var sets = schematicSets().stream()
-                .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
+                .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", Escape.argument(set.infoComponent()), BuildUtil.renderProvider(set.selector())))
                 .collect(Collectors.toList());
 
         return MessageComposer.create()
                 .text("<heading>")
                 .localeCode("components.preset.information")
-                .text(" <name>%s", name())
+                .text(" <name>%s", Escape.text(name()))
                 .newLine()
                 .text("<name>")
                 .localeCode("words.description")
-                .text(": <value>%s", description())
+                .text(": <value>%s", Escape.text(description()))
                 .space()
-                .text("<click:suggest_command:'/sbrp descr %s '><change>[", (global ? "g:" : "") + name())
+                .text("<click:suggest_command:'/sbrp descr %s '><change>[", Escape.argument((global ? "g:" : "") + name()))
                 .localeCode("words.change")
                 .text("]</click>")
                 .newLine()
@@ -114,7 +89,7 @@ public class Preset implements ConfigurationSerializable, Comparable<Preset> {
                 .map(set -> "  " + BuildUtil.renderProvider(set.selector()))
                 .collect(Collectors.joining("\n"));
 
-        var message = String.format("<value>%s%n", description());
+        var message = String.format("<value>%s%n", Escape.text(description()));
         message += String.format("<name>Schematic Sets:%n%s", sets);
         return message;
     }

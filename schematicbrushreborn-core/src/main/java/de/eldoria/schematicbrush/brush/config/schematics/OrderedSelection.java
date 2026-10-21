@@ -7,18 +7,13 @@
 package de.eldoria.schematicbrush.brush.config.schematics;
 
 import de.eldoria.eldoutilities.container.Pair;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.brush.BrushPaste;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
 
 /**
  * A selection that returns the next schematic in the current set or the first schematic of the next set.
@@ -26,13 +21,6 @@ import java.util.Optional;
 public class OrderedSelection implements SchematicSelection {
 
     public OrderedSelection() {
-    }
-
-    /**
-     * Constructor required by {@link ConfigurationSerializable} in order to deserialize the object.
-     */
-    @SuppressWarnings("unused")
-    public OrderedSelection(Map<String, Object> objectMap) {
     }
 
     @Override
@@ -62,10 +50,4 @@ public class OrderedSelection implements SchematicSelection {
         return Optional.of(Pair.of(nextSet, nextSchematic));
     }
 
-    @NotNull
-    @Override
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .build();
-    }
 }

@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.builder;
 
 import de.eldoria.schematicbrush.brush.SchematicBrush;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import org.bukkit.entity.Player;
@@ -70,6 +71,13 @@ public interface BrushBuilder {
     SchematicBrush build(Plugin plugin, Player owner);
 
     /**
+     * Builds the settings of a brush from the current state. The settings share no mutable state with this builder.
+     *
+     * @return new brush settings
+     */
+    BrushSettings buildSettings();
+
+    /**
      * Add a new schematic set builder
      *
      * @param schematicSetBuilder builder to add
@@ -113,4 +121,11 @@ public interface BrushBuilder {
      * @return snapshot
      */
     BrushBuilderSnapshot snapshot();
+
+    /**
+     * Replaces the placement modifiers and schematic sets with copies of those in the snapshot.
+     *
+     * @param snapshot snapshot to restore
+     */
+    void restore(BrushBuilderSnapshot snapshot);
 }

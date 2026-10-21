@@ -6,15 +6,17 @@
 
 package de.eldoria.schematicbrush.commands.brush;
 
+import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.util.Escape;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
@@ -23,6 +25,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -32,33 +35,99 @@ import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModi
 public class Sessions {
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
-    private final MessageBlocker messageBlocker;
-    private final Map<UUID, BrushBuilder> session = new HashMap<>();
+    private final Map<UUID, BrushSession> sessions = new HashMap<>();
     private final MessageSender messageSender;
 
-    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry, MessageBlocker messageBlocker) {
+    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
         this.registry = registry;
         this.schematicRegistry = schematicRegistry;
-        this.messageBlocker = messageBlocker;
         messageSender = MessageSender.getPluginMessageSender(plugin);
     }
 
     public BrushBuilder getOrCreateSession(Player player) {
-        return session.computeIfAbsent(player.getUniqueId(), key -> getOrCreateBuilder(player));
+        return session(player).builder();
     }
 
+    /**
+     * Starts a new session. If the player holds a schematic brush, the session edits it live.
+     *
+     * @param player player
+     */
     public void startSession(Player player) {
-        session.put(player.getUniqueId(), getOrCreateBuilder(player));
+        sessions.put(player.getUniqueId(), open(player));
     }
 
-    private BrushBuilder getOrCreateBuilder(Player player) {
-        return WorldEditBrush.getSchematicBrush(player)
-                             .map(brush -> brush.toBuilder(registry, schematicRegistry))
-                             .orElse(new BrushBuilderImpl(player, new RandomSelection(), registry, schematicRegistry));
+    /**
+     * Links the session to the schematic brush bound to the item in the main hand, so further edits apply to it.
+     *
+     * @param player player
+     */
+    public void linkHeldBrush(Player player) {
+        var item = player.getInventory().getItemInMainHand().getType();
+        WorldEditBrush.getSchematicBrush(player, item).ifPresent(brush -> session(player).link(item, brush));
+    }
+
+    /**
+     * Changes the session as one undoable step and applies the result to the linked brush.
+     *
+     * @param player player
+     * @param edit   change of the brush builder
+     * @throws CommandException if the change is rejected; nothing is recorded then
+     */
+    public void edit(Player player, Edit edit) throws CommandException {
+        var session = session(player);
+        var before = session.builder().snapshot();
+        edit.apply(session.builder());
+        session.history().record(before);
+        session.applyToLinked(player);
+    }
+
+    /**
+     * Reverts the last edit.
+     *
+     * @param player player
+     * @return true if an edit was reverted
+     */
+    public boolean undo(Player player) {
+        var session = session(player);
+        return restore(player, session, session.history().undo(session.builder().snapshot()));
+    }
+
+    /**
+     * Repeats the last reverted edit.
+     *
+     * @param player player
+     * @return true if an edit was repeated
+     */
+    public boolean redo(Player player) {
+        var session = session(player);
+        return restore(player, session, session.history().redo(session.builder().snapshot()));
+    }
+
+    private boolean restore(Player player, BrushSession session, Optional<BrushBuilderSnapshot> snapshot) {
+        snapshot.ifPresent(state -> {
+            session.builder().restore(state);
+            session.applyToLinked(player);
+        });
+        return snapshot.isPresent();
+    }
+
+    private BrushSession session(Player player) {
+        return sessions.computeIfAbsent(player.getUniqueId(), key -> open(player));
+    }
+
+    private BrushSession open(Player player) {
+        var item = player.getInventory().getItemInMainHand().getType();
+        return WorldEditBrush.getSchematicBrush(player, item)
+                             .map(brush -> {
+                                 var session = new BrushSession(brush.toBuilder(registry, schematicRegistry));
+                                 session.link(item, brush);
+                                 return session;
+                             })
+                             .orElseGet(() -> new BrushSession(new BrushBuilderImpl(player, new RandomSelection(), registry, schematicRegistry)));
     }
 
     public void showBrush(Player player) {
-        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
 
         var selectors = builder.schematicSets().stream().map(set -> BuildUtil.renderProvider(set.selector())).collect(Collectors.joining("\n"));
@@ -71,7 +140,7 @@ public class Sessions {
                                       .text(":")
                                       .space()
                                       .text("<hover:show_text:'%s'><value>%s <i18n:words.sets> </hover><change><click:run_command:'/sbr showsets'>[<i18n:words.change>]</click>",
-                                              selectors, builder.schematicSets().size());
+                                              Escape.argument(selectors), builder.schematicSets().size());
 
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
@@ -100,7 +169,11 @@ public class Sessions {
         composer.newLine()
                 .text("<click:run_command:'/sbr bind'><add>[<i18n:words.bind>]</click>")
                 .space()
-                .text("<click:run_command:'/sbr clear'><remove>[<i18n:words.clear>]</click>");
+                .text("<click:run_command:'/sbr clear'><remove>[<i18n:words.clear>]</click>")
+                .space()
+                .text(historyButton("undo", session(player).history().canUndo()))
+                .space()
+                .text(historyButton("redo", session(player).history().canRedo()));
 
         if (player.hasPermission(Permissions.BrushPreset.USE)) {
             composer.space().text("<click:suggest_command:'/sbr loadbrush '><add>[")
@@ -112,13 +185,10 @@ public class Sessions {
         }
 
         composer.prependLines(20);
-        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-        messageBlocker.announce(player, "[x]");
         messageSender.sendMessage(player, composer.build());
     }
 
     public void showSet(Player player, int id) {
-        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
         var optSet = builder.getSchematicSet(id);
         if (optSet.isEmpty()) {
@@ -134,13 +204,10 @@ public class Sessions {
                                       .newLine()
                                       .text("<click:run_command:'/sbr showsets'><change>[<i18n:words.back>]</click>");
 
-        messageBlocker.ifEnabled(() -> composer.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-        messageBlocker.announce(player, "[x]");
         messageSender.sendMessage(player, MessageComposer.create().text(composer.build()).prependLines(20).build());
     }
 
     public void showSets(Player player) {
-        messageBlocker.blockPlayer(player);
         var builder = getOrCreateSession(player);
         var count = new AtomicInteger(0);
 
@@ -158,7 +225,7 @@ public class Sessions {
 
         var sets = builder.schematicSets().stream()
                           .map(set -> String.format("  <name><hover:show_text:'%s'>%s</hover> <change><click:run_command:'/sbr showSet %s'>[<i18n:words.edit>]</click> <remove><click:run_command:'/sbr removeSet %s'>[<i18n:words.remove>]</click>",
-                                  set.infoComponent(), BuildUtil.renderProvider(set.selector()), count.get(), count.getAndIncrement()))
+                                  Escape.argument(set.infoComponent()), BuildUtil.renderProvider(set.selector()), count.get(), count.getAndIncrement()))
                           .collect(Collectors.joining("\n"));
 
         composer.newLine().text(sets);
@@ -170,13 +237,27 @@ public class Sessions {
 
         composer.newLine().text("<click:run_command:'/sbr show'><change>[<i18n:words.back>]</click>");
 
-        messageBlocker.ifEnabled(composer, mess -> mess.newLine().text("<click:run_command:'/sbrs chatblock false'><remove>[x]</click>"));
-        messageBlocker.announce(player, "[x]");
-
         messageSender.sendMessage(player, composer.prependLines(20).build());
     }
 
-    public void setSession(Player player, BrushBuilder load) {
-        session.put(player.getUniqueId(), load);
+    /**
+     * A change of the brush builder that may be rejected.
+     */
+    @FunctionalInterface
+    public interface Edit {
+        /**
+         * Applies the change.
+         *
+         * @param builder builder of the session
+         * @throws CommandException if the change is rejected
+         */
+        void apply(BrushBuilder builder) throws CommandException;
+    }
+
+    private static String historyButton(String action, boolean available) {
+        if (available) {
+            return "<click:run_command:'/sbr %s'><change>[<i18n:words.%s>]</click>".formatted(action, action);
+        }
+        return "<inactive>[<i18n:words.%s>]".formatted(action);
     }
 }

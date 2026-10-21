@@ -6,16 +6,14 @@
 
 package de.eldoria.schematicbrush.config.serialization.serializer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import de.eldoria.schematicbrush.brush.config.flip.Flip;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-import java.io.IOException;
-
-public class FlipSerializer extends JsonSerializer<Flip> {
+public class FlipSerializer extends ValueSerializer<Flip> {
     @Override
-    public void serialize(Flip value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(Flip value, JsonGenerator gen, SerializationContext context) {
         gen.writeString(value.name());
     }
 }

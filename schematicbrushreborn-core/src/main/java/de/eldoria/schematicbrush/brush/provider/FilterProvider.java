@@ -17,7 +17,6 @@ import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.blockfilter.BlockFilter;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -25,8 +24,7 @@ import java.util.List;
 public abstract class FilterProvider extends ModifierProvider {
     private static final WorldEdit WORLD_EDIT = WorldEdit.getInstance();
 
-    public static final FilterProvider BLOCK_FILTER = new FilterProvider(BlockFilter.class,
-            "BlockFilter",
+    public static final FilterProvider BLOCK_FILTER = new FilterProvider("BlockFilter",
             "components.provider.filter.blockFilter.name",
             "components.provider.filter.blockFilter.description") {
         @Override
@@ -67,10 +65,11 @@ public abstract class FilterProvider extends ModifierProvider {
     /**
      * Default constructor
      *
-     * @param clazz class which is provided
-     * @param name  name of provider
+     * @param name          name of provider
+     * @param localizedName The property key for the name
+     * @param description   A description. Might be a string or a property key
      */
-    public FilterProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
-        super(clazz, name, localizedName, description);
+    public FilterProvider(String name, String localizedName, String description) {
+        super(name, localizedName, description);
     }
 }

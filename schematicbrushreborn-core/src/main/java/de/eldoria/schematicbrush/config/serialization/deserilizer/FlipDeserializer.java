@@ -6,17 +6,15 @@
 
 package de.eldoria.schematicbrush.config.serialization.deserilizer;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import de.eldoria.schematicbrush.brush.config.flip.Flip;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
-
-public class FlipDeserializer extends JsonDeserializer<Flip> {
+public class FlipDeserializer extends ValueDeserializer<Flip> {
     @Override
-    public Flip deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public Flip deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
         return Flip.valueOf(ctxt.readValue(p, String.class));
     }
 }

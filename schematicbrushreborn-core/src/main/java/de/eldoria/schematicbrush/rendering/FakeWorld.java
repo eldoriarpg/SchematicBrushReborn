@@ -14,21 +14,21 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
-public class FakeWorldImpl extends BukkitWorld implements FakeWorld {
-    private final ChangesImpl.Builder changes = ChangesImpl.builder();
-    private Location location;
+/**
+ * World for fake pastes. Reads are delegated to the real world, every write is discarded.
+ */
+public class FakeWorld extends BukkitWorld {
 
     /**
      * Construct the object.
      *
      * @param world the world
      */
-    public FakeWorldImpl(World world) {
+    public FakeWorld(World world) {
         super(world);
     }
 
@@ -38,44 +38,28 @@ public class FakeWorldImpl extends BukkitWorld implements FakeWorld {
     }
 
     @Override
-    public void location(Location location) {
-        this.location = location;
-    }
-
-    @Override
     public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block, boolean notifyAndLight) {
-        var data = BukkitAdapter.adapt(block.toBaseBlock());
-        var location = BukkitAdapter.adapt(getWorld(), position);
-        changes.add(location, location.getBlock().getBlockData(), data);
         return true;
     }
 
     @Override
     public void refreshChunk(int chunkX, int chunkZ) {
-
     }
 
     @Override
     public IChunkGet get(int x, int z) {
-        return BukkitAdapter.adapt(getWorld()).get(x,z);
+        return BukkitAdapter.adapt(getWorld()).get(x, z);
     }
 
     @Override
     public void sendFakeChunk(@Nullable Player player, ChunkPacket packet) {
-
     }
 
     @Override
     public void flush() {
-
     }
 
-    @Override
-    public Changes changes() {
-        return changes.build(location);
-    }
-
-
+    @SuppressWarnings("removal")
     @Override
     public boolean setTile(int x, int y, int z, CompoundTag tile) throws WorldEditException {
         return false;

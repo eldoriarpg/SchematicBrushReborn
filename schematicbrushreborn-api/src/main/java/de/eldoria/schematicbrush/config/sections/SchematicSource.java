@@ -6,22 +6,15 @@
 
 package de.eldoria.schematicbrush.config.sections;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a source where schematics can be drawn from.
  * <p>
  * Provides excludions
  */
-public interface SchematicSource extends ConfigurationSerializable {
-    @Override
-    @NotNull Map<String, Object> serialize();
-
+public interface SchematicSource {
     /**
      * Path of the schematic source.
      *

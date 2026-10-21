@@ -48,7 +48,7 @@ public class AddSetModifier extends AdvancedCommand implements IPlayerTabExecuto
 
         CommandAssertions.isTrue(schematicSet.isPresent(), "error.invalidSetId");
 
-        schematicSet.get().setModifier(registration.get().modifier(), registration.get().mutators().get(0).defaultSetting());
+        sessions.edit(player, edited -> schematicSet.get().setModifier(registration.get().modifier(), registration.get().mutators().get(0).defaultSetting()));
         sessions.showSet(player, setId);
     }
 

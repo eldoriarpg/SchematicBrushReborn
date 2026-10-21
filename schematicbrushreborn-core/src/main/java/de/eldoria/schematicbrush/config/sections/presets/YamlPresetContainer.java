@@ -8,21 +8,15 @@ package de.eldoria.schematicbrush.config.sections.presets;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.storage.ContainerPagedAccess;
 import de.eldoria.schematicbrush.storage.YamlContainerPagedAccess;
-import de.eldoria.schematicbrush.storage.base.Container;
 import de.eldoria.schematicbrush.storage.preset.Preset;
 import de.eldoria.schematicbrush.storage.preset.PresetContainer;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -30,18 +24,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@SerializableAs("sbrYamlPresetContainer")
-public class YamlPresetContainer implements PresetContainer, ConfigurationSerializable {
+public class YamlPresetContainer implements PresetContainer {
     private UUID uuid;
     private final Map<String, Preset> presets;
-
-    public YamlPresetContainer(Map<String, Object> objectMap) {
-        var map = SerializationUtil.mapOf(objectMap);
-        uuid = UUID.fromString(map.getValueOrDefault("uuid", Container.GLOBAL.toString()));
-        List<Preset> presetList = map.getValueOrDefault("presets", Collections.emptyList());
-        presets = new HashMap<>();
-        presetList.forEach(p -> presets.put(p.name().toLowerCase(Locale.ROOT), p));
-    }
 
     @JsonCreator
     public YamlPresetContainer(@JsonProperty("uuid") UUID uuid,
@@ -53,15 +38,6 @@ public class YamlPresetContainer implements PresetContainer, ConfigurationSerial
     public YamlPresetContainer(UUID uuid) {
         this.uuid = uuid;
         presets = new HashMap<>();
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .add("presets", new ArrayList<>(presets.values()))
-                .add("uuid", uuid.toString())
-                .build();
     }
 
     @Override

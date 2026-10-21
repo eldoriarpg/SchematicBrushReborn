@@ -36,14 +36,12 @@ public class AddBrushModifier extends AdvancedCommand implements IPlayerTabExecu
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var session = sessions.getOrCreateSession(player);
-
         var modifier = args.get(0).asString();
 
         var registration = registry.getPlacementModifier(modifier);
         CommandAssertions.isTrue(registration.isPresent(), "error.unknownModifier");
 
-        session.setPlacementModifier(registration.get().modifier(), registration.get().mutators().get(0).defaultSetting());
+        sessions.edit(player, edited -> edited.setPlacementModifier(registration.get().modifier(), registration.get().mutators().get(0).defaultSetting()));
         sessions.showBrush(player);
     }
 

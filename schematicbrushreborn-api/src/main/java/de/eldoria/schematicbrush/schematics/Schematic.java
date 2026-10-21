@@ -6,17 +6,13 @@
 
 package de.eldoria.schematicbrush.schematics;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import de.eldoria.eldoutilities.utils.EMath;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
-import de.eldoria.schematicbrush.util.Clipboards;
-import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +25,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 /**
@@ -54,8 +49,8 @@ public class Schematic implements Comparable<Schematic> {
     private final String name;
     private final String effectiveName;
     private final long number;
-    private int effectiveSize = -1;
-    private int size = -1;
+    private volatile int effectiveSize = -1;
+    private volatile int size = -1;
 
     /**
      * Creates a new schematic from a file.
@@ -182,6 +177,15 @@ public class Schematic implements Comparable<Schematic> {
     }
 
     /**
+     * Checks whether the size and the effective size are known, so reading them does not load the schematic.
+     *
+     * @return true if both sizes were computed
+     */
+    public boolean isMeasured() {
+        return size != -1 && effectiveSize != -1;
+    }
+
+    /**
      * The effective size of the schematic without air.
      *
      * @return effective schematic size
@@ -195,26 +199,12 @@ public class Schematic implements Comparable<Schematic> {
     }
 
     private int calcEffectiveSize() {
-        if (FAWE.isFawe()) {
-            try (var clipboard = loadSchematic()) {
-                var max = clipboard.getMaximumPoint();
-                var min = clipboard.getMinimumPoint();
-                var region = new CuboidRegion(min, max);
-                var air = clipboard.countBlocks(region, SIZE_EXCLUSION);
-                return region.size() - air;
-            } catch (IOException e) {
-                return -1;
-            }
-        }
-        try {
-            var clipboard = loadSchematic();
-            var count = new AtomicInteger();
-            Clipboards.iterate(clipboard).forEachRemaining(pos -> {
-                if (SIZE_EXCLUSION.contains(clipboard.getBlock(pos).toBaseBlock())) {
-                    count.incrementAndGet();
-                }
-            });
-            return size() - count.get();
+        try (var clipboard = loadSchematic()) {
+            var max = clipboard.getMaximumPoint();
+            var min = clipboard.getMinimumPoint();
+            var region = new CuboidRegion(min, max);
+            var air = clipboard.countBlocks(region, SIZE_EXCLUSION);
+            return region.size() - air;
         } catch (IOException e) {
             return -1;
         }
@@ -234,22 +224,10 @@ public class Schematic implements Comparable<Schematic> {
     }
 
     private int calcSize() {
-        if (FAWE.isFawe()) {
-            try (var clipboard = loadSchematic()) {
-                var max = clipboard.getMaximumPoint();
-                var min = clipboard.getMinimumPoint();
-                return new CuboidRegion(min, max).size();
-            } catch (IOException e) {
-                return -1;
-            }
-        }
-        try {
-            var clipboard = loadSchematic();
-            var min = clipboard.getMinimumPoint();
+        try (var clipboard = loadSchematic()) {
             var max = clipboard.getMaximumPoint();
-            return EMath.diff(min.x(), max.x() + 1)
-                   * EMath.diff(min.y(), max.y() + 1)
-                   * EMath.diff(min.z(), max.z() + 1);
+            var min = clipboard.getMinimumPoint();
+            return new CuboidRegion(min, max).size();
         } catch (IOException e) {
             return -1;
         }
@@ -265,25 +243,12 @@ public class Schematic implements Comparable<Schematic> {
             return Collections.unmodifiableMap(materialMap);
         }
 
-        if (FAWE.isFawe()) {
-            try (var clipboard = loadSchematic()) {
-                for (var type : clipboard.getBlockDistribution(clipboard.getRegion())) {
-                    materialMap.put(BukkitAdapter.adapt(type.getID()), type.getAmount());
-                }
-            } catch (IOException e) {
-                return Collections.emptyMap();
+        try (var clipboard = loadSchematic()) {
+            for (var type : clipboard.getBlockDistribution(clipboard.getRegion())) {
+                materialMap.put(BukkitAdapter.adapt(type.getID()), type.getAmount());
             }
-        } else {
-            try {
-                var clipboard = loadSchematic();
-                clipboard.getRegion().iterator()
-                         .forEachRemaining(pos -> {
-                             var mat = BukkitAdapter.adapt(clipboard.getBlock(pos)).getMaterial();
-                             materialMap.compute(mat, (key, v) -> v == null ? 1 : v + 1);
-                         });
-            } catch (IOException e) {
-                return Collections.emptyMap();
-            }
+        } catch (IOException e) {
+            return Collections.emptyMap();
         }
 
         return Collections.unmodifiableMap(materialMap);

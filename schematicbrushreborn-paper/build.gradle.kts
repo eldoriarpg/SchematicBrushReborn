@@ -1,4 +1,5 @@
 plugins {
+    id("sbr.publishing-conventions")
     alias(libs.plugins.pluginyml.bukkit)
     alias(libs.plugins.shadow)
     alias(libs.plugins.runserver)
@@ -19,63 +20,29 @@ dependencies {
         exclude("org.yaml")
     }
 
-    implementation(libs.bundles.jackson) {
-        exclude("org.yaml")
-    }
+    implementation(platform(libs.jackson.bom))
+    implementation(libs.bundles.jackson)
     //bukkitLibrary(libs.adventure.bukkit)
 }
 
 publishData {
-    addBuildData()
-    useInternalEldoNexusRepos()
-    publishTask("shadowJar")
+    eldoNexus(internal = true, dev = false)
+    component = "shadow"
+    buildData()
 }
-publishing {
-    publications.create<MavenPublication>("maven") {
-        publishData.configurePublication(this)
-        pom {
-            url.set("https://github.com/eldoriarpg/schematicbrushreborn")
-            developers {
-                developer {
-                    name.set("Nora Fülling")
-                    organization.set("EldoriaRPG")
-                    organizationUrl.set("https://github.com/eldoriarpg")
-                }
-            }
-            licenses {
-                license {
-                    name.set("GNU Affero General Public License v3.0")
-                    url.set("https://github.com/eldoriarpg/schematicbrushreborn/blob/master/LICENSE.md")
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            authentication {
-                credentials(PasswordCredentials::class) {
-                    username = System.getenv("NEXUS_USERNAME")
-                    password = System.getenv("NEXUS_PASSWORD")
-                }
-            }
-
-            setUrl(publishData.getRepository())
-            name = "EldoNexus"
-        }
-    }
-}
-
 
 tasks {
     shadowJar {
         relocate("org.bstats", shadebase + "bstats")
-        relocate("de.eldoria.messageblocker", shadebase + "messageblocker")
         relocate("com.fasterxml", shadebase + "fasterxml")
+        relocate("tools.jackson", shadebase + "jackson")
+        relocate("org.snakeyaml", shadebase + "snakeyaml")
+        relocate("dev.chojo.ocular", shadebase + "ocular")
         relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.eldoutilities", shadebase + "utilities")
         mergeServiceFiles()
-        archiveVersion.set(rootProject.version as String)
+        addMultiReleaseAttribute = false
+        exclude("META-INF/versions/**")
     }
 
     build {
@@ -83,10 +50,13 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.10")
+        minecraftVersion("26.3")
+        javaLauncher = project.javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
         downloadPlugins {
-            url("https://ci.athion.net/job/FastAsyncWorldEdit/1231/artifact/artifacts/FastAsyncWorldEdit-Paper-2.14.3-SNAPSHOT-1231.jar")
-            url("https://download.luckperms.net/1611/bukkit/loader/LuckPerms-Bukkit-5.5.22.jar")
+            modrinth("fastasyncworldedit", "2.16.1")
+            modrinth("luckperms", "v5.5.71-bukkit")
             url("https://lyna.eldoria.de/api/v1/download/direct/8/18/latest") // Grid Selector
             url("https://lyna.eldoria.de/api/v1/download/direct/6/2/latest") // Tools
             url("https://lyna.eldoria.de/api/v1/download/direct/9/18/latest") // Database
@@ -101,14 +71,13 @@ tasks {
 
 bukkit {
     name = "SchematicBrushReborn"
-    version = publishData.getVersion(true)
+    version = project.version.toString()
     description = "Use your world edit schematics as a brush!"
-    apiVersion = "1.16"
+    apiVersion = "1.21.11"
     main = "de.eldoria.schematicbrush.SchematicBrushRebornImpl"
     authors = listOf("RainbowDashLabs", "SirYwell", "LuftigerLuca")
     website = "https://sbr.discord.eldoria.de"
-    depend = listOf("WorldEdit")
-    softDepend = listOf("ProtocolLib")
+    depend = listOf("FastAsyncWorldEdit")
 
     commands {
         register("schematicbrushadmin") {

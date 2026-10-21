@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.eldoria.schematicbrush.brush.config.util.ComponentProvider;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
@@ -20,7 +19,7 @@ import java.util.Set;
  */
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@clazz")
-public interface Selector extends ConfigurationSerializable, ComponentProvider {
+public interface Selector extends ComponentProvider {
     /**
      * Select matching schematics from a cache in the registry
      *

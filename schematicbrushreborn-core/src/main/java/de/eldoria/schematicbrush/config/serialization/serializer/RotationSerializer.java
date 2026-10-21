@@ -6,16 +6,14 @@
 
 package de.eldoria.schematicbrush.config.serialization.serializer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import de.eldoria.schematicbrush.brush.config.rotation.Rotation;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-import java.io.IOException;
-
-public class RotationSerializer extends JsonSerializer<Rotation> {
+public class RotationSerializer extends ValueSerializer<Rotation> {
     @Override
-    public void serialize(Rotation value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(Rotation value, JsonGenerator gen, SerializationContext context) {
         gen.writeNumber(value.degree());
     }
 }

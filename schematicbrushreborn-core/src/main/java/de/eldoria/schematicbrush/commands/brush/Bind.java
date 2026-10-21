@@ -14,7 +14,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.messages.Replacement;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -22,14 +21,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
-    private final MessageBlocker messageBlocker;
 
-    public Bind(Plugin plugin, Sessions sessions, MessageBlocker messageBlocker) {
+    public Bind(Plugin plugin, Sessions sessions) {
         super(plugin, CommandMeta.builder("bind")
                                  .hidden()
                                  .build());
         this.sessions = sessions;
-        this.messageBlocker = messageBlocker;
     }
 
     @Override
@@ -43,6 +40,7 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
         if (!WorldEditBrush.setBrush(player, brush)) {
             return;
         }
+        sessions.linkHeldBrush(player);
 
         var schematicCount = brush.settings().getSchematicCount();
         var setcount = brush.settings().schematicSets().size();
@@ -50,8 +48,7 @@ public class Bind extends AdvancedCommand implements IPlayerTabExecutor {
                                      .localeCode("commands.brush.bind.bound", Replacement.create("schematics", schematicCount), Replacement.create("sets", setcount))
                                      .text("<change><click:run_command:'/sbr'>[")
                                      .localeCode("words.edit")
-                                     .text("]</click>")
-                                     .build();
-        messageBlocker.unblockPlayer(player).thenRun(() -> messageSender().sendMessage(player, message));
+                                     .text("]</click>");
+        messageSender().sendMessage(player, message);
     }
 }

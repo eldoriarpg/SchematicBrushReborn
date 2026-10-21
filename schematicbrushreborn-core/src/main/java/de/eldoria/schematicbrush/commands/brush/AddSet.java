@@ -9,10 +9,13 @@ package de.eldoria.schematicbrush.commands.brush;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
+import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AddSet extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
@@ -25,8 +28,9 @@ public class AddSet extends AdvancedCommand implements IPlayerTabExecutor {
     }
 
     @Override
-    public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
-        var setId = sessions.getOrCreateSession(player).createSchematicSet();
-        sessions.showSet(player, setId);
+    public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
+        var setId = new AtomicInteger();
+        sessions.edit(player, builder -> setId.set(builder.createSchematicSet()));
+        sessions.showSet(player, setId.get());
     }
 }

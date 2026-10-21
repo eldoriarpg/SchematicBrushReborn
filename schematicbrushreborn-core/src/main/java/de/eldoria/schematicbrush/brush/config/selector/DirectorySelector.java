@@ -8,20 +8,16 @@ package de.eldoria.schematicbrush.brush.config.selector;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import org.bukkit.configuration.serialization.SerializableAs;
+import de.eldoria.schematicbrush.util.Escape;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-@SerializableAs("sbrDirectorySelector")
 public class DirectorySelector extends BaseSelector {
     private final String directory;
 
@@ -31,21 +27,6 @@ public class DirectorySelector extends BaseSelector {
         super(term);
         this.directory = directory;
     }
-
-    public DirectorySelector(Map<String, Object> objectMap) {
-        super(objectMap);
-        var map = SerializationUtil.mapOf(objectMap);
-        directory = map.getValue("directory");
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder(super.serialize())
-                .add("directory", directory)
-                .build();
-    }
-
     @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
         return registry.get(SchematicCache.STORAGE).getSchematicsByDirectory(player, directory, term());
@@ -59,9 +40,9 @@ public class DirectorySelector extends BaseSelector {
     @Override
     public String descriptor() {
         if (term() != null && !term().isBlank()) {
-            return directory + " - " + term();
+            return Escape.text(directory + " - " + term());
         }
-        return directory;
+        return Escape.text(directory);
     }
 
     @Override

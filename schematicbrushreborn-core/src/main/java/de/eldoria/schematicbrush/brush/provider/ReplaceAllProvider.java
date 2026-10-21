@@ -13,7 +13,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
 import de.eldoria.schematicbrush.brush.config.replaceall.ReplaceAll;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -21,8 +20,7 @@ import java.util.List;
 
 public abstract class ReplaceAllProvider extends ModifierProvider {
 
-    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider(ReplaceAll.class,
-            "Fixed",
+    public static final ReplaceAllProvider FIXED = new ReplaceAllProvider("Fixed",
             "components.provider.replaceAll.fixed.name",
             "components.provider.replaceAll.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
@@ -51,7 +49,7 @@ public abstract class ReplaceAllProvider extends ModifierProvider {
         }
     };
 
-    public ReplaceAllProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
-        super(clazz, name, localizedName, description);
+    public ReplaceAllProvider(String name, String localizedName, String description) {
+        super(name, localizedName, description);
     }
 }

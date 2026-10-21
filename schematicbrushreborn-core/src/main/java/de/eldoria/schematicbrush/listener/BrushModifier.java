@@ -30,13 +30,13 @@ public class BrushModifier implements Listener {
         var brush = schematicBrush.get();
         if (event.getPlayer().isSneaking()) {
             if (brush.nextPaste().shiftFlip()) {
-                messageSender.sendActionBar(event.getPlayer(), "§2Changed flip.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Changed flip.");
             } else {
                 messageSender.sendErrorActionBar(event.getPlayer(), "Flip is not shiftable.");
             }
         } else {
             if (brush.nextPaste().shiftRotation()) {
-                messageSender.sendActionBar(event.getPlayer(), "§2Changed rotation.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Changed rotation.");
             } else {
                 messageSender.sendErrorActionBar(event.getPlayer(), "Rotation is not shiftable.");
             }
@@ -52,13 +52,13 @@ public class BrushModifier implements Listener {
         if (schematicBrush.isEmpty()) return;
         if (event.getPlayer().isSneaking()) {
             if (schematicBrush.get().nextPaste().shiftOffset()) {
-                messageSender.sendActionBar(event.getPlayer(), "§2Changed Offset.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Changed offset.");
             } else {
                 messageSender.sendErrorActionBar(event.getPlayer(), "Offset is not shiftable.");
             }
         } else {
             if (schematicBrush.get().nextPaste().nextSchematic()) {
-                messageSender.sendActionBar(event.getPlayer(), "§2Skipped Schematic.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Skipped schematic.");
             } else {
                 messageSender.sendErrorActionBar(event.getPlayer(), "The set only contains 1 schematic");
             }

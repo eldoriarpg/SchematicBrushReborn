@@ -6,9 +6,6 @@
 
 package de.eldoria.schematicbrush.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import de.eldoria.eldoutilities.config.ConfigKey;
 import de.eldoria.eldoutilities.config.JacksonConfig;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.config.sections.GeneralConfig;
@@ -18,13 +15,17 @@ import de.eldoria.schematicbrush.config.sections.brushes.YamlBrushes;
 import de.eldoria.schematicbrush.config.sections.presets.YamlPresets;
 import de.eldoria.schematicbrush.storage.brush.Brushes;
 import de.eldoria.schematicbrush.storage.preset.Presets;
+import dev.chojo.ocular.key.Key;
 import org.jetbrains.annotations.NotNull;
+import tools.jackson.databind.JacksonModule;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JacksonConfiguration extends JacksonConfig<MainConfiguration> implements Configuration {
-    public static final ConfigKey<YamlPresets> PRESETS = ConfigKey.of("Presets", Path.of("presets.yml"), YamlPresets.class, YamlPresets::new);
-    public static final ConfigKey<YamlBrushes> BRUSHES = ConfigKey.of("Brushes", Path.of("brushes.yml"), YamlBrushes.class, YamlBrushes::new);
+    public static final Key<YamlPresets> PRESETS = Key.builder(Path.of("presets.yml"), YamlPresets::new).name("Presets").build();
+    public static final Key<YamlBrushes> BRUSHES = Key.builder(Path.of("brushes.yml"), YamlBrushes::new).name("Brushes").build();
 
     /**
      * Creates a new Jackson Configuration
@@ -32,7 +33,7 @@ public class JacksonConfiguration extends JacksonConfig<MainConfiguration> imple
      * @param plugin plugin owning the configuration
      */
     public JacksonConfiguration(@NotNull SchematicBrushReborn plugin) {
-        super(plugin, ConfigKey.defaultConfig(MainConfiguration.class, MainConfiguration::new));
+        super(plugin, Key.builder(Path.of("config.yml"), MainConfiguration::new).build());
     }
 
     @Override
@@ -56,8 +57,10 @@ public class JacksonConfiguration extends JacksonConfig<MainConfiguration> imple
     }
 
     @Override
-    protected ObjectMapper createMapper() {
-        return ((SchematicBrushReborn) plugin()).configureMapper(YAMLMapper.builder());
+    public List<JacksonModule> additionalModules() {
+        var modules = new ArrayList<>(super.additionalModules());
+        modules.add(((SchematicBrushReborn) plugin()).schematicBrushModule());
+        return modules;
     }
 
     @Override

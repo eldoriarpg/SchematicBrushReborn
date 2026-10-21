@@ -1,0 +1,60 @@
+playerPresets:
+  "5c1f9a4e-2f6b-4c3e-9a71-0d2b8e6f4a10":
+    uuid: "5c1f9a4e-2f6b-4c3e-9a71-0d2b8e6f4a10"
+    presets:
+      trees:
+        name: "trees"
+        description: "all trees"
+        schematicSets:
+        - '@clazz': "de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl"
+          selector:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.selector.NameSelector"
+            term: "tree"
+          schematicModifier:
+            Rotation:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.rotation.RotationList"
+              values:
+              - 0
+              - 90
+              rotation: 0
+            Flip:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.flip.FlipFixed"
+              flip: "east"
+            Offset:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.offset.OffsetRange"
+              min: -2
+              max: 3
+              offset: 0
+          weight: 10
+        - '@clazz': "de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl"
+          selector:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.selector.DirectorySelector"
+            directory: "trees/oak"
+            term: "big"
+          schematicModifier:
+            Flip:
+              '@clazz': "de.eldoria.schematicbrush.brush.config.flip.FlipList"
+              values:
+              - "none"
+              - "up"
+              flip: "up"
+          weight: 3
+globalPresets:
+  uuid: "00000000-0000-0000-0000-000000000000"
+  presets:
+    rocks:
+      name: "rocks"
+      description: "rocks only"
+      schematicSets:
+      - '@clazz': "de.eldoria.schematicbrush.brush.config.builder.SchematicSetBuilderImpl"
+        selector:
+          '@clazz': "de.eldoria.schematicbrush.brush.config.selector.RegexSelector"
+          term: "^rock_\\d+$"
+        schematicModifier:
+          Rotation:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.rotation.RotationFixed"
+            rotation: 180
+          Offset:
+            '@clazz': "de.eldoria.schematicbrush.brush.config.offset.OffsetFixed"
+            offset: 4
+        weight: -1

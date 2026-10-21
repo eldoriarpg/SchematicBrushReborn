@@ -6,35 +6,22 @@
 
 package de.eldoria.schematicbrush.brush.config.schematics;
 
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import de.eldoria.eldoutilities.container.Pair;
 import de.eldoria.eldoutilities.messages.MessageSender;
-import de.eldoria.eldoutilities.serialization.SerializationUtil;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.BrushPaste;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.SchematicSet;
 import de.eldoria.schematicbrush.schematics.Schematic;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 
 public class RandomSelection implements SchematicSelection {
 
     public RandomSelection() {
-    }
-
-    /**
-     * Constructor required by {@link ConfigurationSerializable} in order to deserialize the object.
-     */
-    @SuppressWarnings("unused")
-    public RandomSelection(Map<String, Object> objectMap) {
     }
 
     @Override
@@ -78,35 +65,19 @@ public class RandomSelection implements SchematicSelection {
         return schematicSets.get(schematicSets.size() - 1);
     }
 
+    /**
+     * Picks a random schematic whose file still exists. Missing ones are removed from the set. The schematic is not
+     * loaded here; that happens once, when the paste is prepared.
+     */
     private Schematic getRandomSchematic(SchematicSet set) {
         List<Schematic> schematics = set.schematics();
-        if (schematics.isEmpty()) return null;
-
-        Clipboard clipboard = null;
-
-        Schematic randomSchematic = null;
-        // Search for loadable schematic. Should be likely always the first one.
-        while (clipboard == null && !schematics.isEmpty()) {
-            randomSchematic = schematics.get(randomInt(schematics.size()));
-            try {
-                clipboard = randomSchematic.loadSchematic();
-            } catch (IOException e) {
-                // Silently fail and search for another schematic.
-                SchematicBrushReborn.logger().log(Level.INFO, "Schematic \"" + randomSchematic.path() + "\" does not exist anymore.", e);
-                schematics.remove(randomSchematic);
-            } catch (Exception e) {
-                SchematicBrushReborn.logger().log(Level.SEVERE, "A critical error occured when loading \"" + randomSchematic.path() + "\".", e);
-                schematics.remove(randomSchematic);
-            }
+        while (!schematics.isEmpty()) {
+            var candidate = schematics.get(randomInt(schematics.size()));
+            if (candidate.getFile().isFile()) return candidate;
+            SchematicBrushReborn.logger().log(Level.INFO, "Schematic \"" + candidate.path() + "\" does not exist anymore.");
+            schematics.remove(candidate);
         }
-
-        return randomSchematic;
+        return null;
     }
 
-    @NotNull
-    @Override
-    public Map<String, Object> serialize() {
-        return SerializationUtil.newBuilder()
-                .build();
-    }
 }

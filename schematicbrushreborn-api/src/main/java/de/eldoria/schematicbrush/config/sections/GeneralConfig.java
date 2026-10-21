@@ -8,15 +8,8 @@ package de.eldoria.schematicbrush.config.sections;
 
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
-public interface GeneralConfig extends ConfigurationSerializable {
-    @Override
-    @NotNull Map<String, Object> serialize();
-
+public interface GeneralConfig {
     /**
      * Defined the used storage type.
      *
@@ -89,8 +82,16 @@ public interface GeneralConfig extends ConfigurationSerializable {
      */
     int maxRenderSize();
 
+    /**
+     * Checks whether two locations are too far apart to render a preview. Locations in different worlds are always out of
+     * range.
+     *
+     * @param origin the first location
+     * @param other  the second location
+     * @return true if the locations are in different worlds or further apart than {@link #renderDistance()}
+     */
     default boolean isOutOfRenderRange(Location origin, Location other) {
-        if (origin.getWorld() != other.getWorld()) return false;
+        if (origin.getWorld() != other.getWorld()) return true;
         return origin.distanceSquared(other) > renderDistanceSquared();
     }
 
@@ -102,6 +103,13 @@ public interface GeneralConfig extends ConfigurationSerializable {
     int maxEffectiveRenderSize();
 
     int pasteBreak();
+
+    /**
+     * The interval in which every preview is sent again completely, to repair blocks the client lost without notice.
+     *
+     * @return the interval in seconds, 0 if previews are never resent completely
+     */
+    int previewResync();
 
     String language();
 }

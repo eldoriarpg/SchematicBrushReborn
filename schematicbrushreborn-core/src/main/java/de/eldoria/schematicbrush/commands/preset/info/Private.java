@@ -12,7 +12,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.localization.MessageComposer;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.messageblocker.blocker.MessageBlocker;
 import de.eldoria.schematicbrush.commands.util.BasePageCommand;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
@@ -23,10 +22,10 @@ public class Private extends BasePageCommand implements IPlayerTabExecutor {
 
     private final StorageRegistry storage;
 
-    public Private(Plugin plugin, StorageRegistry storage, MessageBlocker messageBlocker) {
+    public Private(Plugin plugin, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("private")
                 .addUnlocalizedArgument("page", false)
-                .build(), messageBlocker);
+                .build());
         this.storage = storage;
     }
 

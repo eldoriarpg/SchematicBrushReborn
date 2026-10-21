@@ -27,13 +27,11 @@ import de.eldoria.schematicbrush.brush.history.BrushHistory;
 import de.eldoria.schematicbrush.brush.history.BrushHistoryImpl;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.event.PrePasteEvent;
-import de.eldoria.schematicbrush.rendering.BlockChangeCollector;
 import de.eldoria.schematicbrush.rendering.CapturingExtent;
-import de.eldoria.schematicbrush.rendering.CapturingExtentImpl;
-import de.eldoria.schematicbrush.rendering.FakeWorldImpl;
+import de.eldoria.schematicbrush.rendering.FakeWorld;
+import de.eldoria.schematicbrush.rendering.PreviewSnapshot;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import de.eldoria.schematicbrush.util.FAWE;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +45,7 @@ import java.util.UUID;
  */
 public class SchematicBrushImpl implements SchematicBrush {
     private final Plugin plugin;
-    private final BrushSettings settings;
+    private BrushSettings settings;
     private final UUID brushOwner;
     @Nullable
     private BrushPaste nextPaste;
@@ -85,6 +83,10 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     private void paste(EditSession editSession, BlockVector3 position) {
+        if (nextPaste == null) {
+            MessageSender.getPluginMessageSender(plugin).sendError(brushOwner(), "No valid schematic was found for brush");
+            return;
+        }
         var prePasteEvent = new PrePasteEvent(brushOwner(), nextPaste);
         plugin.getServer().getPluginManager().callEvent(prePasteEvent);
         if (prePasteEvent.isCancelled()) {
@@ -103,37 +105,30 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     /**
-     * Paste the brush and capture changes.
+     * Paste the brush into a {@link CapturingExtent} without changing the world.
      *
-     * @return changes which will be made to the world
+     * @return the blocks the next paste would place, or an empty snapshot if no player or brush tool is present
      */
     @Override
-    public BlockChangeCollector pasteFake() {
-        var world = new FakeWorldImpl(brushOwner().getWorld());
-        world.location(new Location(world));
-        CapturingExtent capturingExtent;
-        try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(100000).build()) {
-            var bukkitPlayer = actor();
-            if (bukkitPlayer == null) return new CapturingExtentImpl(editSession, world, settings, new Location(world));
-            var brushTool = getBrushTool();
-            if (brushTool.isEmpty()) return null;
+    public PreviewSnapshot pasteFake() {
+        var bukkitPlayer = actor();
+        if (bukkitPlayer == null) return PreviewSnapshot.empty();
+        var brushTool = getBrushTool();
+        if (brushTool.isEmpty()) return PreviewSnapshot.empty();
+        var world = brushOwner().getWorld();
+        try (var editSession = WorldEdit.getInstance().newEditSessionBuilder().world(new FakeWorld(world)).maxBlocks(100000).build()) {
             var target = bukkitPlayer.getBlockTrace(brushTool.get().getRange(), true, brushTool.get().getTraceMask());
-            world.location(target);
-            capturingExtent = new CapturingExtentImpl(editSession, world, settings, target);
+            var capturingExtent = new CapturingExtent(editSession, world, settings, target);
             performPasteFake(editSession, capturingExtent, target.toVector().toBlockPoint());
+            return capturingExtent.snapshot();
         }
-        return capturingExtent;
     }
 
     private Optional<BrushTool> getBrushTool() {
         var localSession = WorldEdit.getInstance().getSessionManager().get(actor());
         BrushTool brushTool;
         try {
-            if (FAWE.isFawe()) {
-                brushTool = localSession.getBrushTool(actor().getItemInHand(HandSide.MAIN_HAND).getType().getDefaultState(), actor(), false);
-            } else {
-                brushTool = localSession.getBrushTool(actor().getItemInHand(HandSide.MAIN_HAND).getType());
-            }
+            brushTool = localSession.getBrushTool(actor().getItemInHand(HandSide.MAIN_HAND).getType().getDefaultState(), actor(), false);
         } catch (InvalidToolBindException e) {
             return Optional.empty();
         }
@@ -168,6 +163,33 @@ public class SchematicBrushImpl implements SchematicBrush {
     @Override
     public BrushSettings settings() {
         return settings;
+    }
+
+    /**
+     * Replaces the settings and prepares the next paste with them. The schematic of the next paste is kept while one of
+     * the new sets still contains it, so it is not loaded again. Without a matching schematic there is no next paste
+     * until the settings change again.
+     *
+     * @param settings new settings
+     */
+    @Override
+    public void settings(BrushSettings settings) {
+        this.settings = settings;
+        builder = null;
+        if (nextPaste instanceof BrushPasteImpl paste) {
+            var set = settings.schematicSets().stream()
+                              .filter(candidate -> candidate.schematics().contains(paste.schematic()))
+                              .findFirst();
+            if (set.isPresent()) {
+                nextPaste = paste.withSettings(settings, set.get());
+                return;
+            }
+        }
+        var previous = nextPaste;
+        buildNextPaste();
+        if (nextPaste == previous) {
+            nextPaste = null;
+        }
     }
 
     /**

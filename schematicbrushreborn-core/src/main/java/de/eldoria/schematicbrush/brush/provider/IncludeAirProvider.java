@@ -13,15 +13,13 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.includeair.IncludeAir;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
 
 public abstract class IncludeAirProvider extends ModifierProvider {
-    public static final IncludeAirProvider FIXED = new IncludeAirProvider(IncludeAir.class,
-            "Fixed",
+    public static final IncludeAirProvider FIXED = new IncludeAirProvider("Fixed",
             "components.provider.includeAir.fixed.name",
             "components.provider.includeAir.fixed.description") {
         private final Argument[] arguments = {Argument.unlocalizedInput("state", true)};
@@ -50,7 +48,7 @@ public abstract class IncludeAirProvider extends ModifierProvider {
         }
     };
 
-    public IncludeAirProvider(Class<? extends ConfigurationSerializable> clazz, String name, String localizedName, String description) {
-        super(clazz, name, localizedName, description);
+    public IncludeAirProvider(String name, String localizedName, String description) {
+        super(name, localizedName, description);
     }
 }
