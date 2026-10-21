@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     private final StorageRegistry storage;
@@ -39,22 +38,18 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
-        CompletableFuture<Boolean> removal;
-        if (args.flags().has("g")) {
-            CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            removal = storage.activeStorage().brushes().globalContainer().remove(name)
-                    .whenComplete(Futures.whenComplete(
-                            success -> CommandAssertions.isTrue(success, "error.unknownBrush", Replacement.unparsed("name", name)),
-                            err -> handleCommandError(player, err)));
-        } else {
-            removal = storage.activeStorage().brushes().playerContainer(player).remove(name)
-                    .whenComplete(Futures.whenComplete(
-                            success -> CommandAssertions.isTrue(success, "error.unknownBrush", Replacement.unparsed("name", name)),
-                            err -> handleCommandError(player, err)));
-        }
-        removal.whenComplete(Futures.whenComplete(
-                succ -> messageSender().sendMessage(player, "commands.brushPresets.remove.removed", Replacement.unparsed("name", name)),
-                err -> handleCommandError(player, err)));
+        var global = args.flags().has("g");
+        if (global) CommandAssertions.permission(player, false, Permissions.BrushPreset.GLOBAL);
+        var holder = storage.activeStorage().brushes();
+        var container = global ? holder.globalContainer() : holder.playerContainer(player);
+        container.remove(name)
+                 .thenAccept(removed -> {
+                     CommandAssertions.isTrue(removed, "error.unknownBrush", Replacement.unparsed("name", name));
+                     storage.activeStorage().save();
+                 })
+                 .whenComplete(Futures.whenComplete(
+                         done -> messageSender().sendMessage(player, "commands.brushPresets.remove.removed", Replacement.unparsed("name", name)),
+                         err -> handleCommandError(player, err)));
     }
 
     @Override

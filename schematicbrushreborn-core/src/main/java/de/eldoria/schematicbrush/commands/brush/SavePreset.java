@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
 
@@ -47,32 +45,22 @@ public class SavePreset extends AdvancedCommand implements IPlayerTabExecutor {
         var session = sessions.getOrCreateSession(player);
 
         var schematicSets = session.schematicSets().stream().map(SchematicSetBuilder::copy).toList();
-        CommandAssertions.isFalse(schematicSets.isEmpty(), "Brush is empty.");
+        CommandAssertions.isFalse(schematicSets.isEmpty(), "error.emptyBrush");
         var preset = new Preset(args.asString(0), schematicSets);
-        CompletableFuture<Optional<Preset>> addition;
-        if (args.flags().has("g")) {
-            CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
-            addition = storage.activeStorage().presets().globalContainer().get(preset.name())
-                    .whenComplete(Futures.whenComplete(succ -> {
-                        if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "error.presetExists");
-                        }
-                        storage.activeStorage().presets().globalContainer().add(preset).join();
-                    }, err -> handleCommandError(player, err)));
-        } else {
-            addition = storage.activeStorage().presets().playerContainer(player).get(preset.name())
-                    .whenComplete(Futures.whenComplete(succ -> {
-                        if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "error.presetExists");
-                        }
-                        storage.activeStorage().presets().playerContainer(player).add(preset).join();
-                    }, err -> handleCommandError(player, err)));
-        }
-        addition.whenComplete(Futures.whenComplete(res -> {
-            //TODO: Think about storage saving
-            storage.activeStorage().save();
-            messageSender().sendMessage(player, "Preset saved.");
-        }, err -> handleCommandError(player, err)));
+        var global = args.flags().has("g");
+        if (global) CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
+        var force = args.flags().has("f");
+        var holder = storage.activeStorage().presets();
+        var container = global ? holder.globalContainer() : holder.playerContainer(player);
+        container.get(preset.name())
+                 .thenCompose(existing -> {
+                     CommandAssertions.isFalse(existing.isPresent() && !force, "error.presetExists");
+                     return container.add(preset);
+                 })
+                 .thenRun(() -> storage.activeStorage().save())
+                 .whenComplete(Futures.whenComplete(
+                         done -> messageSender().sendMessage(player, "commands.brush.savePreset.saved"),
+                         err -> handleCommandError(player, err)));
     }
 
     @Override

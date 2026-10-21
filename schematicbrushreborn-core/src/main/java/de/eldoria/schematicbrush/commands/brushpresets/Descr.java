@@ -45,13 +45,15 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
         var strippedName = name.replaceAll("^g:", "");
         var container = storage.activeStorage().brushes().containerByName(player, name);
         container.get(strippedName)
-                .whenComplete(Futures.whenComplete(brush -> {
-                    CommandAssertions.isTrue(brush.isPresent(), "error.unknownBrush", Replacement.unparsed("name", name));
-
-                    brush.get().description(args.join(1));
-                    container.add(brush.get());
-                    messageSender().sendMessage(player, "commands.brushPresets.descr.changed", Replacement.unparsed("name", name));
-                }, err -> handleCommandError(player, err)));
+                 .thenCompose(entry -> {
+                     CommandAssertions.isTrue(entry.isPresent(), "error.unknownBrush", Replacement.unparsed("name", name));
+                     entry.get().description(args.join(1));
+                     return container.add(entry.get());
+                 })
+                 .thenRun(() -> storage.activeStorage().save())
+                 .whenComplete(Futures.whenComplete(
+                         done -> messageSender().sendMessage(player, "commands.brushPresets.descr.changed"),
+                         err -> handleCommandError(player, err)));
     }
 
     @Override

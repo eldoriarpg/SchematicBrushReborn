@@ -23,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class SaveBrush extends AdvancedCommand implements IPlayerTabExecutor {
 
@@ -46,29 +44,20 @@ public class SaveBrush extends AdvancedCommand implements IPlayerTabExecutor {
         var session = sessions.getOrCreateSession(player);
 
         var brush = new Brush(args.asString(0), session);
-        CompletableFuture<Optional<Brush>> addition;
-        if (args.flags().has("g")) {
-            CommandAssertions.permission(player, false, Permissions.BrushPreset.GLOBAL);
-            addition = storage.activeStorage().brushes().globalContainer().get(brush.name())
-                    .whenComplete(Futures.whenComplete(succ -> {
-                        if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "error.brushExists");
-                        }
-                        storage.activeStorage().brushes().globalContainer().add(brush).join();
-                    }, err -> handleCommandError(player, err)));
-        } else {
-            addition = storage.activeStorage().brushes().playerContainer(player).get(brush.name())
-                    .whenComplete(Futures.whenComplete(succ -> {
-                        if (succ.isPresent()) {
-                            CommandAssertions.isTrue(args.flags().has("f"), "error.brushExists");
-                        }
-                        storage.activeStorage().brushes().playerContainer(player).add(brush).join();
-                    }, err -> handleCommandError(player, err)));
-        }
-        addition.whenComplete(Futures.whenComplete(res -> {
-            storage.activeStorage().save();
-            messageSender().sendMessage(player, "commands.brush.saveBrush.saved");
-        }, err -> handleCommandError(player, err)));
+        var global = args.flags().has("g");
+        if (global) CommandAssertions.permission(player, false, Permissions.BrushPreset.GLOBAL);
+        var force = args.flags().has("f");
+        var holder = storage.activeStorage().brushes();
+        var container = global ? holder.globalContainer() : holder.playerContainer(player);
+        container.get(brush.name())
+                 .thenCompose(existing -> {
+                     CommandAssertions.isFalse(existing.isPresent() && !force, "error.brushExists");
+                     return container.add(brush);
+                 })
+                 .thenRun(() -> storage.activeStorage().save())
+                 .whenComplete(Futures.whenComplete(
+                         done -> messageSender().sendMessage(player, "commands.brush.saveBrush.saved"),
+                         err -> handleCommandError(player, err)));
     }
 
     @Override
