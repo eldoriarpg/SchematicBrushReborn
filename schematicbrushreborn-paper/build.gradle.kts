@@ -29,7 +29,9 @@ dependencies {
 publishData {
     eldoNexus(internal = true, dev = false)
     component = "shadow"
-    buildData()
+    buildData {
+        put("lynaProduct", "1")
+    }
 }
 
 tasks {

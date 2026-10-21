@@ -27,14 +27,9 @@ import java.util.function.Supplier;
  */
 public final class Updates {
     /**
-     * Lyna's product id of Schematic Brush.
-     */
-    static final int PRODUCT = 1;
-    /**
      * Lyna's download type of the Paper build, since the product also lists Spigot and legacy builds.
      */
     static final int PAPER_STABLE = 4;
-    static final String PREMIUM_DOWNLOAD = "https://discord.gg/zRW9Vpu";
 
     private final Plugin plugin;
     private final Supplier<UpdateSettings> settings;
@@ -83,7 +78,7 @@ public final class Updates {
     }
 
     LynaUpdateData data(UpdateSettings current) {
-        var builder = LynaUpdateData.builder(plugin, PRODUCT)
+        var builder = LynaUpdateData.builder(plugin)
                                     .notifyPermission(Permissions.UPDATES)
                                     .notifyUpdate(current.notice())
                                     .downloadType(PAPER_STABLE);
@@ -91,7 +86,6 @@ public final class Updates {
         return builder.autoUpdate(current.autoUpdate())
                       .askForAutoUpdate(current.askForAutoUpdate())
                       .autoUpdateHook(this::decided)
-                      .updateUrl(PREMIUM_DOWNLOAD)
                       .build();
     }
 
