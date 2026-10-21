@@ -41,6 +41,8 @@ tasks {
         relocate("de.eldoria.jacksonbukkit", shadebase + "jacksonbukkit")
         relocate("de.eldoria.eldoutilities", shadebase + "utilities")
         mergeServiceFiles()
+        addMultiReleaseAttribute = false
+        exclude("META-INF/versions/**")
     }
 
     build {
@@ -48,10 +50,13 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion("26.3")
+        javaLauncher = project.javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
         downloadPlugins {
-            url("https://cdn.modrinth.com/data/z4HZZnLr/versions/A1gBu4MM/FastAsyncWorldEdit-Paper-2.16.1.jar")
-            url("https://cdn.modrinth.com/data/Vebnzrzj/versions/b0mk8uS6/LuckPerms-Bukkit-5.5.71.jar")
+            modrinth("fastasyncworldedit", "2.16.1")
+            modrinth("luckperms", "v5.5.71-bukkit")
             url("https://lyna.eldoria.de/api/v1/download/direct/8/18/latest") // Grid Selector
             url("https://lyna.eldoria.de/api/v1/download/direct/6/2/latest") // Tools
             url("https://lyna.eldoria.de/api/v1/download/direct/9/18/latest") // Database
