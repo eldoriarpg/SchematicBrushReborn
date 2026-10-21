@@ -38,7 +38,6 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var session = sessions.getOrCreateSession(player);
         var name = args.asString(0);
         var strippedName = name.replaceAll("^g:", "");
         storage.activeStorage().presets().containerByName(player, name)
@@ -46,10 +45,15 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
                 .whenComplete(Futures.whenComplete(preset -> {
                     CommandAssertions.isTrue(preset.isPresent(), "error.unknownPreset");
 
-                    for (var builder : preset.get().schematicSetsCopy()) {
-                        session.addSchematicSet(builder.copy());
-                    }
-                    sessions.showSets(player);
+                    var sets = preset.get().schematicSetsCopy();
+                    plugin().getServer().getScheduler().runTask(plugin(), () -> {
+                        try {
+                            sessions.edit(player, builder -> sets.forEach(set -> builder.addSchematicSet(set.copy())));
+                            sessions.showSets(player);
+                        } catch (CommandException e) {
+                            handleCommandError(player, e);
+                        }
+                    });
                 }, err -> handleCommandError(player, err)))
                 .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
     }

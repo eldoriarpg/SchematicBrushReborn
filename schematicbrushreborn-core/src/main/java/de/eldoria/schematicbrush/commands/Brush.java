@@ -19,6 +19,7 @@ import de.eldoria.schematicbrush.commands.brush.Create;
 import de.eldoria.schematicbrush.commands.brush.LoadBrush;
 import de.eldoria.schematicbrush.commands.brush.Modify;
 import de.eldoria.schematicbrush.commands.brush.ModifySet;
+import de.eldoria.schematicbrush.commands.brush.Redo;
 import de.eldoria.schematicbrush.commands.brush.RefreshSchematics;
 import de.eldoria.schematicbrush.commands.brush.RemoveBrushModifier;
 import de.eldoria.schematicbrush.commands.brush.RemoveSet;
@@ -29,6 +30,7 @@ import de.eldoria.schematicbrush.commands.brush.Sessions;
 import de.eldoria.schematicbrush.commands.brush.Show;
 import de.eldoria.schematicbrush.commands.brush.ShowSet;
 import de.eldoria.schematicbrush.commands.brush.ShowSets;
+import de.eldoria.schematicbrush.commands.brush.Undo;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -52,6 +54,8 @@ public class Brush extends AdvancedCommand {
                     cmds.add(new RemoveSetModifier(plugin, sessions, setting));
                     cmds.add(new Bind(plugin, sessions));
                     cmds.add(new Clear(plugin, sessions));
+                    cmds.add(new Undo(plugin, sessions));
+                    cmds.add(new Redo(plugin, sessions));
                     cmds.add(create);
                     cmds.add(new Modify(plugin, sessions, setting));
                     cmds.add(new ModifySet(plugin, sessions, setting, schematics));
@@ -62,7 +66,7 @@ public class Brush extends AdvancedCommand {
                     cmds.add(new AddPreset(plugin, sessions, storage));
                     cmds.add(new SavePreset(plugin, sessions, storage));
                     cmds.add(new RefreshSchematics(plugin, sessions, setting, schematics));
-                    cmds.add(new LoadBrush(plugin, sessions, storage, setting, schematics));
+                    cmds.add(new LoadBrush(plugin, sessions, storage));
                     cmds.add(new SaveBrush(plugin, sessions, storage));
                 })
                 .build());

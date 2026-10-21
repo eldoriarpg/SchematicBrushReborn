@@ -45,7 +45,7 @@ import java.util.UUID;
  */
 public class SchematicBrushImpl implements SchematicBrush {
     private final Plugin plugin;
-    private final BrushSettings settings;
+    private BrushSettings settings;
     private final UUID brushOwner;
     @Nullable
     private BrushPaste nextPaste;
@@ -83,6 +83,10 @@ public class SchematicBrushImpl implements SchematicBrush {
     }
 
     private void paste(EditSession editSession, BlockVector3 position) {
+        if (nextPaste == null) {
+            MessageSender.getPluginMessageSender(plugin).sendError(brushOwner(), "No valid schematic was found for brush");
+            return;
+        }
         var prePasteEvent = new PrePasteEvent(brushOwner(), nextPaste);
         plugin.getServer().getPluginManager().callEvent(prePasteEvent);
         if (prePasteEvent.isCancelled()) {
@@ -159,6 +163,23 @@ public class SchematicBrushImpl implements SchematicBrush {
     @Override
     public BrushSettings settings() {
         return settings;
+    }
+
+    /**
+     * Replaces the settings and prepares the next paste with them. Without a matching schematic there is no next paste
+     * until the settings change again.
+     *
+     * @param settings new settings
+     */
+    @Override
+    public void settings(BrushSettings settings) {
+        this.settings = settings;
+        builder = null;
+        var previous = nextPaste;
+        buildNextPaste();
+        if (nextPaste == previous) {
+            nextPaste = null;
+        }
     }
 
     /**

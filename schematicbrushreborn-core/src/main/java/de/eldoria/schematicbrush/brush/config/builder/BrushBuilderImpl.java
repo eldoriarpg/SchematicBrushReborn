@@ -8,6 +8,7 @@ package de.eldoria.schematicbrush.brush.config.builder;
 
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.SchematicBrushImpl;
+import de.eldoria.schematicbrush.brush.config.BrushSettings;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsImpl;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
@@ -115,9 +116,15 @@ public final class BrushBuilderImpl implements BrushBuilder {
      */
     @Override
     public SchematicBrush build(Plugin plugin, Player owner) {
+        return new SchematicBrushImpl(plugin, owner, buildSettings());
+    }
+
+    @Override
+    public BrushSettings buildSettings() {
         var sets = schematicSets.stream().map(SchematicSetBuilder::build).collect(Collectors.toList());
-        var settings = new BrushSettingsImpl(schematicSelection, sets, placementModifier);
-        return new SchematicBrushImpl(plugin, owner, settings);
+        var modifier = new HashMap<Nameable, Mutator<?>>();
+        placementModifier.forEach((type, mutator) -> modifier.put(type, mutator.copy()));
+        return new BrushSettingsImpl(schematicSelection, sets, modifier);
     }
 
     /**
@@ -193,6 +200,14 @@ public final class BrushBuilderImpl implements BrushBuilder {
                 .map(SchematicSetBuilder::copy)
                 .collect(Collectors.toCollection(ArrayList::new));
         return new BrushBuilderSnapshotImpl(placementModifier, schematicSets);
+    }
+
+    @Override
+    public void restore(BrushBuilderSnapshot snapshot) {
+        placementModifier.clear();
+        snapshot.placementModifier().forEach((type, mutator) -> setPlacementModifier(type, mutator.copy()));
+        schematicSets.clear();
+        snapshot.schematicSets().forEach(set -> addSchematicSet(set.copy()));
     }
 
 }

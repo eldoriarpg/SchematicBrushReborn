@@ -35,9 +35,8 @@ public class Modify extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var session = sessions.getOrCreateSession(player);
         var mutatorPair = registry.parsePlacementModifier(args);
-        session.setPlacementModifier(mutatorPair.first, mutatorPair.second);
+        sessions.edit(player, edited -> edited.setPlacementModifier(mutatorPair.first, mutatorPair.second));
         sessions.showBrush(player);
     }
 

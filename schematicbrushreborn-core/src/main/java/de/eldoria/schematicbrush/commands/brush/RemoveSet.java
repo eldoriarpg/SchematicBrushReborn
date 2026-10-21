@@ -33,9 +33,11 @@ public class RemoveSet extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
-        var success = sessions.getOrCreateSession(player).removeSchematicSet(args.asInt(0));
-        if (!success) {
+        var id = args.asInt(0);
+        if (sessions.getOrCreateSession(player).getSchematicSet(id).isEmpty()) {
             messageSender().sendErrorActionBar(player, "error.invalidSetId");
+        } else {
+            sessions.edit(player, builder -> builder.removeSchematicSet(id));
         }
         sessions.showSets(player);
     }

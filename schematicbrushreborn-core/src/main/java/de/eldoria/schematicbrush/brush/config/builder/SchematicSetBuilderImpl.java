@@ -106,7 +106,9 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
      */
     @Override
     public SchematicSet build() {
-        return new SchematicSetImpl(schematics, selector, schematicModifier, weight);
+        var modifier = new HashMap<Nameable, Mutator<?>>();
+        schematicModifier.forEach((type, mutator) -> modifier.put(type, mutator.copy()));
+        return new SchematicSetImpl(schematics, selector, modifier, weight);
     }
 
     /**

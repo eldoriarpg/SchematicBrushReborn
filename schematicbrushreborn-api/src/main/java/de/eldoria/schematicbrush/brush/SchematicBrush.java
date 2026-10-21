@@ -67,6 +67,13 @@ public interface SchematicBrush extends Brush {
     BrushSettings settings();
 
     /**
+     * Replaces the settings of the brush and prepares the next paste with them. The schematic history is kept.
+     *
+     * @param settings new settings
+     */
+    void settings(BrushSettings settings);
+
+    /**
      * Get the next paste which will be executed
      *
      * @return next paste

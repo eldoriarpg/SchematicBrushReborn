@@ -13,6 +13,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.schematicbrush.brush.SchematicBrush;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
+import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
@@ -59,9 +60,8 @@ public class RefreshSchematics extends AdvancedCommand implements IPlayerTabExec
         }
     }
 
-    private void refreshSession(@NotNull Player player) {
-        var builder = sessions.getOrCreateSession(player);
-        builder.refresh();
+    private void refreshSession(@NotNull Player player) throws CommandException {
+        sessions.edit(player, BrushBuilder::refresh);
         sessions.showSets(player);
         messageSender().sendMessage(player, "commands.brush.refresh.refreshSession");
     }

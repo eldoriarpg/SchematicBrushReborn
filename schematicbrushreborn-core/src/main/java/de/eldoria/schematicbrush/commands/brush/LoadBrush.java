@@ -14,8 +14,6 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
-import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
-import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -28,17 +26,13 @@ import java.util.List;
 public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
     private final Sessions sessions;
     private final StorageRegistry storage;
-    private final BrushSettingsRegistry settingsRegistry;
-    private final SchematicRegistry schematicRegistry;
 
-    public LoadBrush(Plugin plugin, Sessions sessions, StorageRegistry storage, BrushSettingsRegistry settingsRegistry, SchematicRegistry schematicRegistry) {
+    public LoadBrush(Plugin plugin, Sessions sessions, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("loadbrush")
                 .addUnlocalizedArgument("name", true)
                 .build());
         this.sessions = sessions;
         this.storage = storage;
-        this.settingsRegistry = settingsRegistry;
-        this.schematicRegistry = schematicRegistry;
     }
 
     @Override
@@ -50,8 +44,15 @@ public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
                 .whenComplete(Futures.whenComplete(brush -> {
                     CommandAssertions.isTrue(brush.isPresent(), "error.unknownBrush");
 
-                    sessions.setSession(player, brush.get().snapshot().load(player, settingsRegistry, schematicRegistry));
-                    sessions.showBrush(player);
+                    var snapshot = brush.get().snapshot();
+                    plugin().getServer().getScheduler().runTask(plugin(), () -> {
+                        try {
+                            sessions.edit(player, builder -> builder.restore(snapshot));
+                            sessions.showBrush(player);
+                        } catch (CommandException e) {
+                            handleCommandError(player, e);
+                        }
+                    });
                 }, err -> handleCommandError(player, err)))
                 .whenComplete(Futures.whenComplete(Consumers.emptyConsumer(), err -> handleCommandError(player, err)));
     }
