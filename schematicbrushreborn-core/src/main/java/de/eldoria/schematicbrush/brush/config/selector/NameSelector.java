@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicCache;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.util.Escape;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
@@ -33,6 +34,6 @@ public class NameSelector extends BaseSelector {
 
     @Override
     public String descriptor() {
-        return term();
+        return Escape.text(term());
     }
 }

@@ -10,6 +10,7 @@ import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.sections.MessageChannel;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
+import de.eldoria.schematicbrush.util.Escape;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,7 +55,7 @@ public class NotifyListener implements Listener {
     public void onPaste(PostPasteEvent event) {
         if (!players.containsKey(event.player().getUniqueId())) return;
         var builder = new StringBuilder()
-                .append("<dark_green>Pasted <green>%s <dark_green>from set <green>%s".formatted(event.schematic().name(), event.schematicSet().selector().descriptor()));
+                .append("<dark_green>Pasted <green>%s <dark_green>from set <green>%s".formatted(Escape.text(event.schematic().name()), event.schematicSet().selector().descriptor()));
         var joiner = new StringJoiner(", ", "(", ")");
         if (event.paste().flip() != null) {
             joiner.add("Flip: %s".formatted(event.paste().flip().value()));

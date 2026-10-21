@@ -44,16 +44,16 @@ public class Remove extends AdvancedCommand implements IPlayerTabExecutor {
             CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
             removal = storage.activeStorage().brushes().globalContainer().remove(name)
                     .whenComplete(Futures.whenComplete(
-                            success -> CommandAssertions.isTrue(success, "error.unknownBrush", Replacement.create("name", name)),
+                            success -> CommandAssertions.isTrue(success, "error.unknownBrush", Replacement.unparsed("name", name)),
                             err -> handleCommandError(player, err)));
         } else {
             removal = storage.activeStorage().brushes().playerContainer(player).remove(name)
                     .whenComplete(Futures.whenComplete(
-                            success -> CommandAssertions.isTrue(success, "error.unknownBrush", Replacement.create("name", name)),
+                            success -> CommandAssertions.isTrue(success, "error.unknownBrush", Replacement.unparsed("name", name)),
                             err -> handleCommandError(player, err)));
         }
         removal.whenComplete(Futures.whenComplete(
-                succ -> messageSender().sendMessage(player, "commands.brushPresets.remove.removed", Replacement.create("name", name)),
+                succ -> messageSender().sendMessage(player, "commands.brushPresets.remove.removed", Replacement.unparsed("name", name)),
                 err -> handleCommandError(player, err)));
     }
 

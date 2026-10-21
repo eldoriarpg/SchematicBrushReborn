@@ -7,6 +7,7 @@
 package de.eldoria.schematicbrush.brush.config.selector;
 
 import de.eldoria.eldoutilities.localization.ILocalizer;
+import de.eldoria.schematicbrush.util.Escape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -24,7 +25,7 @@ public abstract class BaseSelector implements Selector {
 
     @Override
     public String descriptor() {
-        return term;
+        return Escape.text(term);
     }
 
     @Override

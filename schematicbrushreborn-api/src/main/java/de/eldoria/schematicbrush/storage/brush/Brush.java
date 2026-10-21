@@ -13,6 +13,7 @@ import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
+import de.eldoria.schematicbrush.util.Escape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -116,7 +117,7 @@ public class Brush implements Comparable<Brush> {
                            .map(set -> "  " + BuildUtil.renderProvider(set.selector()))
                            .toList();
         return MessageComposer.create()
-                              .text("<value>%s", description())
+                              .text("<value>%s", Escape.text(description()))
                               .newLine()
                               .text("<name>")
                               .localeCode("words.schematicSets")
@@ -130,13 +131,13 @@ public class Brush implements Comparable<Brush> {
 
     public String infoComponent(boolean global, boolean canDelete, BrushSettingsRegistry registry) {
         var text = MessageComposer.create()
-                                  .text("<name><hover:show_text:'%s'>%s</hover>", simpleComponent(registry), name())
+                                  .text("<name><hover:show_text:'%s'>%s</hover>", Escape.argument(simpleComponent(registry)), Escape.text(name()))
                                   .space()
-                                  .text("<add><click:run_command:'/sbrbp info %s'>[Info]</click>", (global ? "g:" : "") + name())
+                                  .text("<add><click:run_command:'/sbrbp info %s'>[Info]</click>", Escape.argument((global ? "g:" : "") + name()))
                                   .space()
-                                  .text("<add><click:run_command:'/sbr loadbrush %s'>[Load]</click>", (global ? "g:" : "") + name());
+                                  .text("<add><click:run_command:'/sbr loadbrush %s'>[Load]</click>", Escape.argument((global ? "g:" : "") + name()));
         if (canDelete) {
-            text.space().text("<remove><click:run_command:'/sbrbp remove %s %s'>[Remove]</click>", name(), global ? "-g" : "");
+            text.space().text("<remove><click:run_command:'/sbrbp remove %s %s'>[Remove]</click>", Escape.argument(name()), global ? "-g" : "");
         }
 
         return text.build();
@@ -154,7 +155,7 @@ public class Brush implements Comparable<Brush> {
 
     public String detailComponent(boolean global, BrushSettingsRegistry registry) {
         var sets = snapshot.schematicSets().stream()
-                           .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", set.infoComponent(), BuildUtil.renderProvider(set.selector())))
+                           .map(set -> String.format("  <hover:show_text:'%s'>%s</hover>", Escape.argument(set.infoComponent()), BuildUtil.renderProvider(set.selector())))
                            .collect(Collectors.toList());
 
         var modifier = simpleModifier(registry);
@@ -162,15 +163,15 @@ public class Brush implements Comparable<Brush> {
         return MessageComposer.create()
                               .text("<heading>").localeCode("components.brush.information")
                               .space()
-                              .text(name())
+                              .text(Escape.text(name()))
                               .newLine()
                               .text("<name>")
                               .localeCode("words.description")
                               .text(": <value>")
-                              .text(description())
+                              .text(Escape.text(description()))
                               .space()
                               .text("<click:suggest_command:'/sbrbp descr ")
-                              .text((global ? "g:" : "") + name())
+                              .text(Escape.argument((global ? "g:" : "") + name()))
                               .text(" '><change>[")
                               .localeCode("words.change")
                               .text("]</click>")

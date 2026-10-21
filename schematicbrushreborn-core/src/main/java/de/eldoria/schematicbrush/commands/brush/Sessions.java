@@ -14,6 +14,7 @@ import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.util.Escape;
 import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
@@ -67,7 +68,7 @@ public class Sessions {
                                       .text(":")
                                       .space()
                                       .text("<hover:show_text:'%s'><value>%s <i18n:words.sets> </hover><change><click:run_command:'/sbr showsets'>[<i18n:words.change>]</click>",
-                                              selectors, builder.schematicSets().size());
+                                              Escape.argument(selectors), builder.schematicSets().size());
 
         var mutatorMap = builder.placementModifier();
         var modifierStrings = new ArrayList<String>();
@@ -148,7 +149,7 @@ public class Sessions {
 
         var sets = builder.schematicSets().stream()
                           .map(set -> String.format("  <name><hover:show_text:'%s'>%s</hover> <change><click:run_command:'/sbr showSet %s'>[<i18n:words.edit>]</click> <remove><click:run_command:'/sbr removeSet %s'>[<i18n:words.remove>]</click>",
-                                  set.infoComponent(), BuildUtil.renderProvider(set.selector()), count.get(), count.getAndIncrement()))
+                                  Escape.argument(set.infoComponent()), BuildUtil.renderProvider(set.selector()), count.get(), count.getAndIncrement()))
                           .collect(Collectors.joining("\n"));
 
         composer.newLine().text(sets);

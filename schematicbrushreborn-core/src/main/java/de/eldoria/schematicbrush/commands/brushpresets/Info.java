@@ -45,7 +45,7 @@ public class Info extends AdvancedCommand implements IPlayerTabExecutor {
         var strippedName = name.replaceAll("^g:", "");
         storage.activeStorage().brushes().containerByName(player, name).get(strippedName)
                .whenComplete(Futures.whenComplete(res -> {
-                   CommandAssertions.isTrue(res.isPresent(), "error.unknownBrush", Replacement.create("name", strippedName));
+                   CommandAssertions.isTrue(res.isPresent(), "error.unknownBrush", Replacement.unparsed("name", strippedName));
                    var preset = res.get();
 
                    var global = name.startsWith("g:");

@@ -46,7 +46,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
         var container = storage.activeStorage().presets().containerByName(player, name);
         container.get(strippedName)
                 .whenComplete(Futures.whenComplete(preset -> {
-                    CommandAssertions.isTrue(preset.isPresent(), "error.unknownPreset", Replacement.create("name", name));
+                    CommandAssertions.isTrue(preset.isPresent(), "error.unknownPreset", Replacement.unparsed("name", name));
 
                     preset.get().description(args.join(1));
                     container.add(preset.get());

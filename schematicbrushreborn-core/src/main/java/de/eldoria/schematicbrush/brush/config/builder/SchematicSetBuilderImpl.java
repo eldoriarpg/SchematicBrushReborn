@@ -19,6 +19,7 @@ import de.eldoria.schematicbrush.brush.config.selector.Selector;
 import de.eldoria.schematicbrush.brush.config.util.Nameable;
 import de.eldoria.schematicbrush.schematics.Schematic;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
+import de.eldoria.schematicbrush.util.Escape;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -197,7 +198,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
                         .collect(Collectors.joining(" ")))
                 .newLine()
                 .space(2)
-                .text("<hover:show_text:'%s'>%s</hover>", schematicInfo(), BuildUtil.renderProvider(selector()));
+                .text("<hover:show_text:'%s'>%s</hover>", Escape.argument(schematicInfo()), BuildUtil.renderProvider(selector()));
 
         var mutatorMap = schematicModifier();
         if(!mutatorMap.isEmpty()){
@@ -262,6 +263,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         var showSchematics = schematics.stream()
                 .sorted()
                 .map(Schematic::name)
+                .map(Escape::text)
                 .toList();
 
         if (schematics.size() > 10) {

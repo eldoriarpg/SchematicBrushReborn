@@ -16,6 +16,7 @@ import de.eldoria.eldoutilities.localization.ILocalizer;
 import de.eldoria.schematicbrush.SchematicBrushReborn;
 import de.eldoria.schematicbrush.brush.PasteMutation;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.util.Escape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
@@ -46,7 +47,7 @@ public class BlockFilter implements Mutator<String> {
 
     @Override
     public String descriptor() {
-        return maskString.isBlank() ? "<i18n:words.none>" : maskString;
+        return maskString.isBlank() ? "<i18n:words.none>" : Escape.text(maskString);
     }
 
     @Override
