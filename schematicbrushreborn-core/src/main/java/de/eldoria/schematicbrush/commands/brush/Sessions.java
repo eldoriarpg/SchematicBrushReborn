@@ -7,41 +7,40 @@
 package de.eldoria.schematicbrush.commands.brush;
 
 import de.eldoria.eldoutilities.commands.exceptions.CommandException;
-import de.eldoria.eldoutilities.localization.MessageComposer;
-import de.eldoria.eldoutilities.messages.MessageSender;
 import de.eldoria.schematicbrush.brush.config.BrushSettingsRegistry;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilder;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderImpl;
 import de.eldoria.schematicbrush.brush.config.builder.BrushBuilderSnapshot;
-import de.eldoria.schematicbrush.brush.config.builder.BuildUtil;
 import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
+import de.eldoria.schematicbrush.config.sections.EditorType;
+import de.eldoria.schematicbrush.editor.ChatEditor;
+import de.eldoria.schematicbrush.editor.DialogEditor;
+import de.eldoria.schematicbrush.editor.EditorPreferences;
+import de.eldoria.schematicbrush.editor.EditorView;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
-import de.eldoria.schematicbrush.util.Escape;
-import de.eldoria.schematicbrush.util.Permissions;
 import de.eldoria.schematicbrush.util.WorldEditBrush;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import static de.eldoria.schematicbrush.brush.config.builder.BuildUtil.buildModifier;
 
 public class Sessions {
     private final BrushSettingsRegistry registry;
     private final SchematicRegistry schematicRegistry;
     private final Map<UUID, BrushSession> sessions = new HashMap<>();
-    private final MessageSender messageSender;
+    private final EditorPreferences preferences;
+    private final EditorView chat;
+    private final EditorView dialog;
 
-    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry) {
+    public Sessions(Plugin plugin, BrushSettingsRegistry registry, SchematicRegistry schematicRegistry, EditorPreferences preferences) {
         this.registry = registry;
         this.schematicRegistry = schematicRegistry;
-        messageSender = MessageSender.getPluginMessageSender(plugin);
+        this.preferences = preferences;
+        chat = new ChatEditor(plugin, this, registry);
+        dialog = new DialogEditor(plugin, this, registry, schematicRegistry);
     }
 
     public BrushBuilder getOrCreateSession(Player player) {
@@ -127,117 +126,56 @@ public class Sessions {
                              .orElseGet(() -> new BrushSession(new BrushBuilderImpl(player, new RandomSelection(), registry, schematicRegistry)));
     }
 
+    /**
+     * Shows the brush in the editor the player uses.
+     *
+     * @param player player
+     */
     public void showBrush(Player player) {
-        var builder = getOrCreateSession(player);
-
-        var selectors = builder.schematicSets().stream().map(set -> BuildUtil.renderProvider(set.selector())).collect(Collectors.joining("\n"));
-        var composer = MessageComposer.create()
-                                      .text("<heading>")
-                                      .localeCode("commands.brush.sessions.menu")
-                                      .newLine()
-                                      .text("<heading>")
-                                      .localeCode("words.schematicSets")
-                                      .text(":")
-                                      .space()
-                                      .text("<hover:show_text:'%s'><value>%s <i18n:words.sets> </hover><change><click:run_command:'/sbr showsets'>[<i18n:words.change>]</click>",
-                                              Escape.argument(selectors), builder.schematicSets().size());
-
-        var mutatorMap = builder.placementModifier();
-        var modifierStrings = new ArrayList<String>();
-        for (var entry : mutatorMap.entrySet()) {
-            var registration = registry.getPlacementModifier(entry.getKey()).get();
-            modifierStrings.add(buildModifier(player, "/sbr modify", "/sbr removebrushmodifier",
-                    registration.modifier(), registration.mutators(), mutatorMap.get(entry.getKey())));
-        }
-
-        composer.newLine()
-                .text(modifierStrings);
-
-        var missing = registry.placementModifier().keySet().stream().filter(providers -> !mutatorMap.containsKey(providers))
-                              .map(provider -> String.format("<click:run_command:'/sbr addbrushmodifier %s'><hover:show_text:'<neutral>%s'><change>[%s]</click>",
-                                      provider.name(), provider.description(), provider.getLocalizedName()))
-                              .toList();
-
-        if (!missing.isEmpty()) {
-            composer.newLine()
-                    .text("<heading>")
-                    .localeCode("commands.brush.sessions.addModifiers")
-                    .text(": ")
-                    .text(missing, " ");
-        }
-
-        composer.newLine()
-                .text("<click:run_command:'/sbr bind'><add>[<i18n:words.bind>]</click>")
-                .space()
-                .text("<click:run_command:'/sbr clear'><remove>[<i18n:words.clear>]</click>")
-                .space()
-                .text(historyButton("undo", session(player).history().canUndo()))
-                .space()
-                .text(historyButton("redo", session(player).history().canRedo()));
-
-        if (player.hasPermission(Permissions.BrushPreset.USE)) {
-            composer.space().text("<click:suggest_command:'/sbr loadbrush '><add>[")
-                    .localeCode("commands.brush.sessions.loadBrush")
-                    .text("]</click>")
-                    .space().text("<click:suggest_command:'/sbr savebrush '><change>[")
-                    .localeCode("commands.brush.sessions.saveBrush")
-                    .text("]</click>");
-        }
-
-        composer.prependLines(20);
-        messageSender.sendMessage(player, composer.build());
+        view(player).showBrush(player);
     }
 
-    public void showSet(Player player, int id) {
-        var builder = getOrCreateSession(player);
-        var optSet = builder.getSchematicSet(id);
-        if (optSet.isEmpty()) {
-            messageSender.sendError(player, "error.invalidSetId");
-            return;
-        }
-
-        var set = optSet.get();
-        var interactComponent = set.interactComponent(player, registry, id);
-
-        var composer = MessageComposer.create()
-                                      .text(interactComponent)
-                                      .newLine()
-                                      .text("<click:run_command:'/sbr showsets'><change>[<i18n:words.back>]</click>");
-
-        messageSender.sendMessage(player, MessageComposer.create().text(composer.build()).prependLines(20).build());
-    }
-
+    /**
+     * Shows the schematic sets in the editor the player uses.
+     *
+     * @param player player
+     */
     public void showSets(Player player) {
-        var builder = getOrCreateSession(player);
-        var count = new AtomicInteger(0);
+        view(player).showSets(player);
+    }
 
-        var composer = MessageComposer.create()
-                                      .text("<heading>Schematic Sets: <click:run_command:'/sbr addSet'><add>[<i18n:words.add>]</click>")
-                                      .space().text("<click:run_command:'/sbr refreshSchematics session'><add>[")
-                                      .localeCode("commands.brush.sessions.refreshSchematics")
-                                      .text("]</click>");
+    /**
+     * Shows a schematic set in the editor the player uses.
+     *
+     * @param player player
+     * @param id     index of the set
+     */
+    public void showSet(Player player, int id) {
+        view(player).showSet(player, id);
+    }
 
-        if (player.hasPermission(Permissions.Preset.USE)) {
-            composer.space().text("<click:suggest_command:'/sbr addpreset '><add>[")
-                    .localeCode("commands.brush.sessions.addPreset")
-                    .text("]</click>");
-        }
+    /**
+     * Checks whether the player has an edit to revert.
+     *
+     * @param player player
+     * @return true if {@link #undo(Player)} would revert an edit
+     */
+    public boolean canUndo(Player player) {
+        return session(player).history().canUndo();
+    }
 
-        var sets = builder.schematicSets().stream()
-                          .map(set -> String.format("  <name><hover:show_text:'%s'>%s</hover> <change><click:run_command:'/sbr showSet %s'>[<i18n:words.edit>]</click> <remove><click:run_command:'/sbr removeSet %s'>[<i18n:words.remove>]</click>",
-                                  Escape.argument(set.infoComponent()), BuildUtil.renderProvider(set.selector()), count.get(), count.getAndIncrement()))
-                          .collect(Collectors.joining("\n"));
+    /**
+     * Checks whether the player has a reverted edit to repeat.
+     *
+     * @param player player
+     * @return true if {@link #redo(Player)} would repeat an edit
+     */
+    public boolean canRedo(Player player) {
+        return session(player).history().canRedo();
+    }
 
-        composer.newLine().text(sets);
-
-        if (player.hasPermission(Permissions.Preset.USE)) {
-            composer.newLine().text("<click:suggest_command:'/sbr savepreset '><change>[").localeCode("commands.brush.sessions.savePreset")
-                    .text("]</click>");
-        }
-
-        composer.newLine().text("<click:run_command:'/sbr show'><change>[<i18n:words.back>]</click>");
-
-        messageSender.sendMessage(player, composer.prependLines(20).build());
+    private EditorView view(Player player) {
+        return preferences.editor(player) == EditorType.DIALOG ? dialog : chat;
     }
 
     /**
@@ -252,12 +190,5 @@ public class Sessions {
          * @throws CommandException if the change is rejected
          */
         void apply(BrushBuilder builder) throws CommandException;
-    }
-
-    private static String historyButton(String action, boolean available) {
-        if (available) {
-            return "<click:run_command:'/sbr %s'><change>[<i18n:words.%s>]</click>".formatted(action, action);
-        }
-        return "<inactive>[<i18n:words.%s>]".formatted(action);
     }
 }

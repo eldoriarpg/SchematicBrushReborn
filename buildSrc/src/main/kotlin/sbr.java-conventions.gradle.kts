@@ -10,6 +10,9 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://eldonexus.de/repository/maven-public/")
     maven("https://eldonexus.de/repository/maven-proxies/")
+    maven("https://repo.opencollab.dev/main/") {
+        content { includeGroupAndSubgroups("org.geysermc") }
+    }
 }
 
 java {

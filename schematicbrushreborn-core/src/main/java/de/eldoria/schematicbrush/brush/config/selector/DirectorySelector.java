@@ -27,6 +27,15 @@ public class DirectorySelector extends BaseSelector {
         super(term);
         this.directory = directory;
     }
+
+    /**
+     * Directory the schematics are taken from.
+     *
+     * @return directory the schematics are taken from
+     */
+    public String directory() {
+        return directory;
+    }
     @Override
     public Set<Schematic> select(Player player, SchematicRegistry registry) {
         return registry.get(SchematicCache.STORAGE).getSchematicsByDirectory(player, directory, term());

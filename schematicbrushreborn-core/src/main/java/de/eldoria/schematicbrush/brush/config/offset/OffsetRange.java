@@ -22,6 +22,24 @@ public class OffsetRange extends AOffset {
         this.min = Math.min(min, max);
         this.max = Math.max(min, max);
     }
+
+    /**
+     * Lowest offset.
+     *
+     * @return lowest offset
+     */
+    public int min() {
+        return min;
+    }
+
+    /**
+     * Highest offset.
+     *
+     * @return highest offset
+     */
+    public int max() {
+        return max;
+    }
     @Override
     public boolean shiftable() {
         return true;

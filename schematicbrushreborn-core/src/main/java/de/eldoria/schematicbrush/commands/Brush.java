@@ -31,6 +31,7 @@ import de.eldoria.schematicbrush.commands.brush.Show;
 import de.eldoria.schematicbrush.commands.brush.ShowSet;
 import de.eldoria.schematicbrush.commands.brush.ShowSets;
 import de.eldoria.schematicbrush.commands.brush.Undo;
+import de.eldoria.schematicbrush.editor.EditorPreferences;
 import de.eldoria.schematicbrush.schematics.SchematicRegistry;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
 import de.eldoria.schematicbrush.util.Permissions;
@@ -40,11 +41,11 @@ import org.bukkit.plugin.Plugin;
  * Command which is used to create a new brush. Rewrite of old schbr command.
  */
 public class Brush extends AdvancedCommand {
-    public Brush(Plugin plugin, SchematicRegistry schematics, StorageRegistry storage, BrushSettingsRegistry setting) {
+    public Brush(Plugin plugin, SchematicRegistry schematics, StorageRegistry storage, BrushSettingsRegistry setting, EditorPreferences preferences) {
         super(plugin, CommandMeta.builder("sbr")
                 .withPermission(Permissions.Brush.USE)
                 .buildSubCommands((cmds, self) -> {
-                    var sessions = new Sessions(plugin, setting, schematics);
+                    var sessions = new Sessions(plugin, setting, schematics, preferences);
                     var create = new Create(plugin, sessions);
                     self.withDefaultCommand(create);
                     cmds.add(new AddSet(plugin, sessions));

@@ -31,6 +31,7 @@ import de.eldoria.schematicbrush.config.serialization.StorageMappers;
 import de.eldoria.schematicbrush.debug.AddOnDebug;
 import de.eldoria.schematicbrush.debug.SchematicsDebug;
 import de.eldoria.schematicbrush.debug.StorageDebug;
+import de.eldoria.schematicbrush.editor.EditorPreferences;
 import de.eldoria.schematicbrush.listener.BrushModifier;
 import de.eldoria.schematicbrush.listener.NotifyListener;
 import de.eldoria.schematicbrush.rendering.RenderService;
@@ -167,10 +168,11 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
 
         if (reload) reload();
 
-        var brushCommand = new Brush(this, schematics, storageRegistry, settingsRegistry);
+        var editorPreferences = new EditorPreferences(this, configuration);
+        var brushCommand = new Brush(this, schematics, storageRegistry, settingsRegistry, editorPreferences);
         var presetCommand = new de.eldoria.schematicbrush.commands.Preset(this, storageRegistry);
         var adminCommand = new Admin(this, schematics, storageRegistry);
-        var settingsCommand = new Settings(this, configuration, renderService, notifyListener);
+        var settingsCommand = new Settings(this, configuration, renderService, notifyListener, editorPreferences);
         var brushPresetsCommand = new BrushPresets(this, storageRegistry, settingsRegistry);
         var modifyCommand = new Modify(this, settingsRegistry);
 
@@ -181,7 +183,7 @@ public class SchematicBrushRebornImpl extends SchematicBrushReborn {
         }
 
         getServer().getScheduler().runTaskTimer(this, renderService, 0, 1);
-        registerListener(new BrushModifier(), renderService, notifyListener);
+        registerListener(new BrushModifier(), renderService, notifyListener, editorPreferences);
 
         registerCommand(brushCommand);
         registerCommand(presetCommand);

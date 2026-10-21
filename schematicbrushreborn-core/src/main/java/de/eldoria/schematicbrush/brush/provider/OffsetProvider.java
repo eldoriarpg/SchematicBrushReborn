@@ -17,11 +17,14 @@ import de.eldoria.schematicbrush.brush.config.offset.OffsetList;
 import de.eldoria.schematicbrush.brush.config.offset.OffsetRange;
 import de.eldoria.schematicbrush.brush.config.provider.ModifierProvider;
 import de.eldoria.schematicbrush.brush.config.provider.Mutator;
+import de.eldoria.schematicbrush.brush.config.provider.SettingInput;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class OffsetProvider extends ModifierProvider {
 
@@ -39,6 +42,12 @@ public abstract class OffsetProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return arguments;
+        }
+
+        @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            var initial = current instanceof OffsetFixed fixed ? fixed.value() : 0;
+            return List.of(SettingInput.numeric("components.input.offset", -100, 100, initial));
         }
 
         @Override
@@ -76,6 +85,14 @@ public abstract class OffsetProvider extends ModifierProvider {
         }
 
         @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            var initial = current instanceof OffsetList list
+                    ? list.values().stream().map(String::valueOf).collect(Collectors.joining(" "))
+                    : "0";
+            return List.of(SettingInput.text("components.input.offsets", initial));
+        }
+
+        @Override
         public List<String> complete(Arguments args, Player player) throws CommandException {
             return Completion.completeInt(args.asString(-1), -100, 100);
         }
@@ -101,6 +118,14 @@ public abstract class OffsetProvider extends ModifierProvider {
         @Override
         public Argument[] arguments() {
             return arguments;
+        }
+
+        @Override
+        public List<SettingInput> inputs(@Nullable Mutator<?> current) {
+            var min = current instanceof OffsetRange range ? range.min() : 0;
+            var max = current instanceof OffsetRange range ? range.max() : 0;
+            return List.of(SettingInput.numeric("components.input.offsetMin", -100, 100, min),
+                    SettingInput.numeric("components.input.offsetMax", -100, 100, max));
         }
 
         @Override
