@@ -59,13 +59,23 @@ public class SchematicBrushCache implements SchematicCache {
 
     @Override
     public CompletableFuture<Void> init() {
-        watchService = SchematicWatchService.of(plugin, configuration, this);
         return reload();
     }
 
+    /**
+     * Watches the currently configured sources and reads all schematics from them again.
+     *
+     * @return a future that completes once all schematics are loaded
+     */
     @Override
     public CompletableFuture<Void> reload() {
+        restartWatchService();
         return refreshAsync();
+    }
+
+    private void restartWatchService() {
+        if (watchService != null) watchService.shutdown();
+        watchService = SchematicWatchService.of(plugin, configuration, this);
     }
 
     private void assertReady(Player player) {

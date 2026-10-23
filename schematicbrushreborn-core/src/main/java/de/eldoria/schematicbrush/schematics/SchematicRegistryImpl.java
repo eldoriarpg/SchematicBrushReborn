@@ -17,10 +17,13 @@ import java.util.concurrent.CompletableFuture;
 public class SchematicRegistryImpl extends BaseRegistry<Nameable, SchematicCache> implements SchematicRegistry {
     private CompletableFuture<Void> runningReload = CompletableFuture.completedFuture(null);
 
+    /**
+     * Registers the cache and starts its initial load. A reload requested while that load runs waits for it.
+     */
     @Override
-    public void register(Nameable key, SchematicCache entry) {
+    public synchronized void register(Nameable key, SchematicCache entry) {
         super.register(key, entry);
-        entry.init();
+        runningReload = CompletableFuture.allOf(runningReload, entry.init());
     }
 
     /**
