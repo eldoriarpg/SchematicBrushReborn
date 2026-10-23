@@ -15,8 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
 public class SchematicRegistryImpl extends BaseRegistry<Nameable, SchematicCache> implements SchematicRegistry {
-    boolean reload = false;
-
+    private CompletableFuture<Void> runningReload = CompletableFuture.completedFuture(null);
 
     @Override
     public void register(Nameable key, SchematicCache entry) {
@@ -26,12 +25,15 @@ public class SchematicRegistryImpl extends BaseRegistry<Nameable, SchematicCache
 
     /**
      * Reloads all registered caches.
+     * <p>
+     * While a reload is running, further calls return that reload instead of starting another one.
      */
     @Override
-    public CompletableFuture<Void> reload() {
-        if (reload) {return CompletableFuture.completedFuture(null);}
+    public synchronized CompletableFuture<Void> reload() {
+        if (!runningReload.isDone()) return runningReload;
         var reloads = registry().values().stream().map(SchematicCache::reload).toArray(CompletableFuture[]::new);
-        return CompletableFuture.allOf(reloads).thenRun(() -> reload = true);
+        runningReload = CompletableFuture.allOf(reloads);
+        return runningReload;
     }
 
     /**
