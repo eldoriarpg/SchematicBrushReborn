@@ -46,8 +46,9 @@ public class OffsetList extends AOffset {
         var index = values.indexOf(value());
         if (index + 1 == values.size()) {
             value(values.get(0));
+        } else {
+            value(values.get(index + 1));
         }
-        value(values.get(index + 1));
     }
 
     @Override
