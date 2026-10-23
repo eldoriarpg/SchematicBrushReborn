@@ -45,7 +45,7 @@ Version 3.0 runs on Paper and needs FastAsyncWorldEdit. Spigot and plain WorldEd
 
 ## Add-ons
 
-Three add-ons extend Schematic Brush Reborn. Each one has its own section in these docs.
+Four add-ons extend Schematic Brush Reborn. Each one has its own section in these docs.
 
 - **[Schematic Brush Database](/schematic-brush-reborn/database)** stores presets and brush presets in a MariaDB,
   MySQL or PostgreSQL database instead of files, so several servers can share them.
@@ -53,6 +53,8 @@ Three add-ons extend Schematic Brush Reborn. Each one has its own section in the
   their own permission and an optional usage limit.
 - **[Survival Schematic Brush](/schematic-brush-reborn/survival)** takes the blocks for each paste from the player,
   so the brush can be used in survival.
+- **[Grid Selector](/schematic-brush-reborn/grid-selector)** turns builds on a grid of plots into the schematics of a
+  brush. The add-on lays out the plots, or uses the plots of a PlotSquared world.
 
 ## Where to go next
 
