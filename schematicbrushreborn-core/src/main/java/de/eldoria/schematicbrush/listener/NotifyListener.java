@@ -7,10 +7,12 @@
 package de.eldoria.schematicbrush.listener;
 
 import de.eldoria.eldoutilities.messages.MessageSender;
+import de.eldoria.eldoutilities.messages.Replacement;
 import de.eldoria.schematicbrush.config.Configuration;
 import de.eldoria.schematicbrush.config.sections.MessageChannel;
 import de.eldoria.schematicbrush.event.PostPasteEvent;
 import de.eldoria.schematicbrush.util.Escape;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -54,29 +57,34 @@ public class NotifyListener implements Listener {
     @EventHandler
     public void onPaste(PostPasteEvent event) {
         if (!players.containsKey(event.player().getUniqueId())) return;
-        var builder = new StringBuilder()
-                .append("<dark_green>Pasted <green>%s <dark_green>from set <green>%s".formatted(Escape.text(event.schematic().name()), event.schematicSet().selector().descriptor()));
-        var joiner = new StringJoiner(", ", "(", ")");
+        var replacements = new ArrayList<TagResolver>();
+        replacements.add(Replacement.create("schematic", Escape.text(event.schematic().name())));
+        replacements.add(Replacement.create("set", event.schematicSet().selector().descriptor()));
+        var details = new StringJoiner(", ", "(", ")");
         if (event.paste().flip() != null) {
-            joiner.add("Flip: %s".formatted(event.paste().flip().value()));
+            details.add("<i18n:listener.notify.flip>");
+            replacements.add(Replacement.create("flip", event.paste().flip().value()));
         }
         if (event.paste().rotation() != null) {
-            joiner.add("Rotation: %s".formatted(event.paste().rotation().value()));
+            details.add("<i18n:listener.notify.rotation>");
+            replacements.add(Replacement.create("rotation", event.paste().rotation().value()));
         }
         if (event.paste().offsetSet() != null) {
-            joiner.add("Set Offset: %s".formatted(event.paste().offsetSet().value()));
+            details.add("<i18n:listener.notify.setOffset>");
+            replacements.add(Replacement.create("set_offset", event.paste().offsetSet().value()));
         }
         if (event.paste().offsetBrush() != null) {
-            joiner.add("Brush Offset: %s".formatted(event.paste().offsetBrush().value()));
+            details.add("<i18n:listener.notify.brushOffset>");
+            replacements.add(Replacement.create("brush_offset", event.paste().offsetBrush().value()));
         }
+        var message = "<i18n:listener.notify.pasted> " + details;
+        var tags = replacements.toArray(TagResolver[]::new);
+        var times = Title.Times.times(Duration.ZERO, Duration.ofSeconds(15), Duration.ZERO);
         switch (players.get(event.player().getUniqueId())) {
-            case ACTION_BAR ->
-                    messageSender.sendActionBar(event.player(), builder.append(" ").append(joiner).toString());
-            case CHAT -> messageSender.sendMessage(event.player(), builder.append(" ").append(joiner).toString());
-            case TITLE ->
-                    messageSender.sendTitle(event.player(), builder.append(" ").append(joiner).toString(), "", Title.Times.times(Duration.ZERO, Duration.ofSeconds(15), Duration.ZERO));
-            case SUB_TITLE ->
-                    messageSender.sendTitle(event.player(), "", builder.append(" ").append(joiner).toString(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(15), Duration.ZERO));
+            case ACTION_BAR -> messageSender.sendActionBar(event.player(), message, tags);
+            case CHAT -> messageSender.sendMessage(event.player(), message, tags);
+            case TITLE -> messageSender.sendTitle(event.player(), message, "", times, tags);
+            case SUB_TITLE -> messageSender.sendTitle(event.player(), "", message, times, tags);
         }
     }
 }
