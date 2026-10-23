@@ -88,7 +88,7 @@ public interface BrushSettingsRegistry {
      *
      * @param args arguments to parse
      * @return the parsed selector
-     * @throws CommandException if the arguments could not be parsed
+     * @throws CommandException if the arguments could not be parsed or the sender lacks the provider's permission
      */
     Selector parseSelector(Arguments args) throws CommandException;
 
@@ -97,7 +97,7 @@ public interface BrushSettingsRegistry {
      *
      * @param args arguments to parse
      * @return the parsed selector
-     * @throws CommandException if the arguments could not be parsed
+     * @throws CommandException if the arguments could not be parsed or the sender lacks the provider's permission
      */
     SchematicSelection parseSchematicSelection(Arguments args) throws CommandException;
 
@@ -106,7 +106,7 @@ public interface BrushSettingsRegistry {
      *
      * @param args arguments to parse
      * @return a pair containing the type and the parsed modifier
-     * @throws CommandException if the arguments could not be parsed
+     * @throws CommandException if the arguments could not be parsed or the sender lacks the provider's permission
      */
     Pair<SchematicModifier, Mutator<?>> parseSchematicModifier(Arguments args) throws CommandException;
 
@@ -115,7 +115,7 @@ public interface BrushSettingsRegistry {
      *
      * @param args arguments to parse
      * @return a pair containing the type and the parsed modifier
-     * @throws CommandException if the arguments could not be parsed
+     * @throws CommandException if the arguments could not be parsed or the sender lacks the provider's permission
      */
     Pair<PlacementModifier, Mutator<?>> parsePlacementModifier(Arguments args) throws CommandException;
 
