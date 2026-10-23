@@ -39,7 +39,7 @@ public class InternalLogger {
         // Create a new RollingFileAppender
         RollingFileAppender appender = RollingFileAppender.newBuilder()
                 .withFileName(logfile.toString())
-                .withFilePattern("logs/log-%d{yyyy-MM-dd}.log.gz")
+                .withFilePattern(logfile.resolveSibling("log-%d{yyyy-MM-dd}.log.gz").toString())
                 .withPolicy(TimeBasedTriggeringPolicy.newBuilder().withInterval(1).withModulate(true).build())
                 .withStrategy(DefaultRolloverStrategy.newBuilder().withMin("1").withCompressionLevelStr(String.valueOf(Deflater.DEFAULT_COMPRESSION)).build())
                 .setLayout(PatternLayout.newBuilder().withPattern("[%d{HH:mm:ss]}[%p{length=4}][%logger] %msg%ex%n").build())
