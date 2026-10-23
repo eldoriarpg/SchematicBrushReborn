@@ -113,14 +113,14 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
 
     @Override
     public Selector parseSelector(Arguments args) throws CommandException {
-        var provider = getSettingProvider(args, selector);
+        var provider = permitted(args, getSettingProvider(args, selector));
         CommandAssertions.invalidArguments(args.subArguments(), provider.arguments());
         return provider.parse(args.subArguments());
     }
 
     @Override
     public SchematicSelection parseSchematicSelection(Arguments args) throws CommandException {
-        var provider = getSettingProvider(args, schematicSelection);
+        var provider = permitted(args, getSettingProvider(args, schematicSelection));
         CommandAssertions.invalidArguments(args.subArguments(), provider.arguments());
         return provider.parse(args.subArguments());
     }
@@ -128,6 +128,7 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     @Override
     public Pair<SchematicModifier, Mutator<?>> parseSchematicModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, schematicModifier);
+        permitted(args, provider.second);
         var subArguments = args.subArguments().subArguments();
         CommandAssertions.invalidArguments(subArguments, provider.second.arguments());
         return Pair.of(provider.first, provider.second.parse(subArguments));
@@ -136,6 +137,7 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     @Override
     public Pair<PlacementModifier, Mutator<?>> parsePlacementModifier(Arguments args) throws CommandException {
         var provider = getProvider(args, placementModifier);
+        permitted(args, provider.second);
         var subArguments = args.subArguments().subArguments();
         CommandAssertions.invalidArguments(subArguments, provider.second.arguments());
         return Pair.of(provider.first, provider.second.parse(subArguments));
@@ -178,7 +180,7 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     @Override
     public List<String> completeSelector(Arguments args, Player player) throws CommandException {
         if (args.size() == 1) {
-            return Completion.complete(args.asString(0), selector.stream().map(SettingProvider::name));
+            return completeProvider(args, selector);
         }
         return getSettingProvider(args, selector).complete(args.subArguments(), player);
     }
@@ -186,7 +188,7 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     @Override
     public List<String> completeSchematicSelection(Arguments args, Player player) throws CommandException {
         if (args.size() == 1) {
-            return Completion.complete(args.asString(0), schematicSelection.stream().map(SettingProvider::name));
+            return completeProvider(args, schematicSelection);
         }
         return getSettingProvider(args, schematicSelection).complete(args.subArguments(), player);
     }
@@ -236,7 +238,24 @@ public class BrushSettingsRegistryImpl implements BrushSettingsRegistry {
     }
 
     private <T extends SettingProvider<?>> List<String> completeProvider(Arguments args, List<T> provider) {
-        return Completion.complete(args.asString(0), provider.stream().map(p -> p.name()));
+        return Completion.complete(args.asString(0), provider.stream()
+                .filter(p -> p.hasPermission(args.sender()))
+                .map(SettingProvider::name));
+    }
+
+    /**
+     * Ensures that the sender of the arguments may use the provider.
+     *
+     * @param args     arguments holding the sender
+     * @param provider provider to check
+     * @return the provider
+     * @throws CommandException if the provider requires a permission the sender lacks
+     */
+    private static <T extends SettingProvider<?>> T permitted(Arguments args, T provider) throws CommandException {
+        if (provider.hasPermission()) {
+            CommandAssertions.permission(args.sender(), false, provider.permission());
+        }
+        return provider;
     }
 
     public void registerDefaults(SchematicRegistry schematics) {

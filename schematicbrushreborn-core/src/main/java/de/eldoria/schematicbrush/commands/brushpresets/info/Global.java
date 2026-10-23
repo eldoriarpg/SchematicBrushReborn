@@ -38,7 +38,7 @@ public class Global extends BasePageCommand implements IPlayerTabExecutor {
         int index = args.asInt(0, 0);
         storage.activeStorage().brushes().globalContainer().paged().whenComplete(Futures.whenComplete(paged -> {
             paged.page(index, PAGE_SIZE).whenComplete(Futures.whenComplete(entries -> {
-                boolean delete = player.hasPermission(Permissions.Preset.GLOBAL);
+                boolean delete = player.hasPermission(Permissions.BrushPreset.GLOBAL);
                 var composer = MessageComposer.create();
                 addPageHeader(composer, "words.brushPreset", true);
                 addEntries(composer, entries, e -> e.infoComponent(true, delete, registry));

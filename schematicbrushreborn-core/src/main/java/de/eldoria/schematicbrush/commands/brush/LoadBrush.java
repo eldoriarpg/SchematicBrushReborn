@@ -15,6 +15,7 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ public class LoadBrush extends AdvancedCommand implements IPlayerTabExecutor {
     public LoadBrush(Plugin plugin, Sessions sessions, StorageRegistry storage) {
         super(plugin, CommandMeta.builder("loadbrush")
                 .addUnlocalizedArgument("name", true)
+                .withPermission(Permissions.BrushPreset.USE)
                 .build());
         this.sessions = sessions;
         this.storage = storage;

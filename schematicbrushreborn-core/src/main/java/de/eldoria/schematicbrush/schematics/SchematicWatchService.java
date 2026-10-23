@@ -11,6 +11,7 @@ import de.eldoria.schematicbrush.config.Configuration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -55,15 +56,18 @@ public class SchematicWatchService implements Runnable {
         return watchService;
     }
 
-    @SuppressWarnings({"InfiniteLoopStatement", "CatchMayIgnoreException"})
+    /**
+     * Handles file system events until the service is shut down.
+     */
+    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run() {
-        while (true) {
-            try {
+        try {
+            while (true) {
                 waitAndHandleEvent();
-            } catch (InterruptedException e) {
-
             }
+        } catch (InterruptedException | ClosedWatchServiceException e) {
+            logger.log(Level.CONFIG, "Watch service stopped.");
         }
     }
 
@@ -121,9 +125,18 @@ public class SchematicWatchService implements Runnable {
         logger.log(Level.CONFIG, "Registered watch service on: " + path);
     }
 
+    /**
+     * Stops watching the sources and closes the underlying watch service.
+     */
     public void shutdown() {
         executorService.shutdown();
-        watchThread.interrupt();
+        if (watchThread != null) watchThread.interrupt();
+        if (watchService == null) return;
+        try {
+            watchService.close();
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Could not close watch service.", e);
+        }
     }
 
     private void init() {
@@ -150,6 +163,7 @@ public class SchematicWatchService implements Runnable {
 
     private void start() {
         init();
+        if (watchService == null) return;
         watchThread = new Thread(this);
         watchThread.setName("Schematic Brush Watch Service.");
         watchThread.setDaemon(true);

@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 
 public class SchematicSourceImpl implements SchematicSource {
     private final String path;
@@ -50,15 +51,31 @@ public class SchematicSourceImpl implements SchematicSource {
         return excludedPath;
     }
 
+    /**
+     * Checks whether the directory is excluded. An entry ending with {@code *} excludes every directory whose path
+     * starts with the text before it, so {@code old*} excludes {@code old} and everything below it, while
+     * {@code old/*} excludes only the directories below {@code old}. Matching ignores case.
+     *
+     * @param path path
+     * @return true if excluded
+     */
     @Override
     public boolean isExcluded(Path path) {
-        var internal = internalPath(path);
+        var internal = normalize(internalPath(path).toString());
 
         for (var excluded : excludedPath) {
-            if (excluded.equalsIgnoreCase(internal.toString())) return true;
-            if (excluded.endsWith("*") && internal.startsWith(excluded)) return true;
+            var entry = normalize(excluded);
+            if (entry.endsWith("*")) {
+                if (internal.startsWith(entry.substring(0, entry.length() - 1))) return true;
+            } else if (entry.equals(internal)) {
+                return true;
+            }
         }
         return false;
+    }
+
+    private static String normalize(String path) {
+        return path.replace("\\", "/").toLowerCase(Locale.ROOT);
     }
 
     @Override

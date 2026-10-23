@@ -195,6 +195,7 @@ public class SchematicSetBuilderImpl implements SchematicSetBuilder {
         var composer = MessageComposer.create();
         composer.text("<heading><i18n:words.selector>: <change>")
                 .text(registry.selector().stream()
+                        .filter(sel -> sel.hasPermission(player))
                         .map(sel -> String.format("<click:%s:'/sbr modifyset %s selector %s '><hover:show_text:'<neutral>%s'>[%s]</click>",
                                 sel.commandType(), id, sel.name(), sel.localizedDescription(), sel.localizedName()))
                         .collect(Collectors.joining(" ")))

@@ -15,6 +15,7 @@ import de.eldoria.eldoutilities.commands.executor.IPlayerTabExecutor;
 import de.eldoria.eldoutilities.utils.Consumers;
 import de.eldoria.eldoutilities.utils.Futures;
 import de.eldoria.schematicbrush.storage.StorageRegistry;
+import de.eldoria.schematicbrush.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ public class AddPreset extends AdvancedCommand implements IPlayerTabExecutor {
         super(plugin, CommandMeta.builder("addpreset")
                 .addUnlocalizedArgument("name", true)
                 .hidden()
+                .withPermission(Permissions.Preset.USE)
                 .build());
         this.sessions = sessions;
         this.storage = storage;

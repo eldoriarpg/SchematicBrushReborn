@@ -11,6 +11,7 @@ import de.eldoria.eldoutilities.commands.exceptions.CommandException;
 import de.eldoria.schematicbrush.brush.config.provider.SchematicSelectionProvider;
 import de.eldoria.schematicbrush.brush.config.schematics.LockedOrderedSelection;
 import de.eldoria.schematicbrush.brush.config.schematics.LockedRandomSelection;
+import de.eldoria.schematicbrush.brush.config.schematics.OrderedSelection;
 import de.eldoria.schematicbrush.brush.config.schematics.RandomSelection;
 import de.eldoria.schematicbrush.brush.config.schematics.SchematicSelection;
 import org.bukkit.entity.Player;
@@ -60,7 +61,7 @@ public abstract class SchematicSelectionProviderImpl extends SchematicSelectionP
             "components.provider.selection.random.description") {
         @Override
         public SchematicSelection parse(Arguments args) throws CommandException {
-            return new RandomSelection();
+            return new OrderedSelection();
         }
 
         @Override
@@ -70,7 +71,7 @@ public abstract class SchematicSelectionProviderImpl extends SchematicSelectionP
 
         @Override
         public SchematicSelection defaultSetting() {
-            return new RandomSelection();
+            return new OrderedSelection();
         }
     };
     public static final SchematicSelectionProvider ORDERED_SELECTION = new SchematicSelectionProviderImpl("ordered",
@@ -78,7 +79,7 @@ public abstract class SchematicSelectionProviderImpl extends SchematicSelectionP
             "components.provider.selection.ordered.description") {
         @Override
         public SchematicSelection parse(Arguments args) throws CommandException {
-            return new RandomSelection();
+            return new OrderedSelection();
         }
 
         @Override
@@ -88,7 +89,7 @@ public abstract class SchematicSelectionProviderImpl extends SchematicSelectionP
 
         @Override
         public SchematicSelection defaultSetting() {
-            return new RandomSelection();
+            return new OrderedSelection();
         }
     };
 

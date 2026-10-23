@@ -45,7 +45,7 @@ public class ModifySet extends AdvancedCommand implements IPlayerTabExecutor {
         var builder = sessions.getOrCreateSession(player);
         var set = builder.getSchematicSet(args.asInt(0));
         if (set.isEmpty()) {
-            messageSender().sendErrorActionBar(player, "Invalid set");
+            messageSender().sendErrorActionBar(player, "error.invalidSetId");
             return;
         }
 

@@ -118,6 +118,20 @@ bukkit {
     permissions {
         register("schematicbrush.*") {
             description = "Allows full access to all schematic brush commands"
+            children = listOf(
+                "schematicbrush.brush.use",
+                "schematicbrush.brush.preview",
+                "schematicbrush.preset.use",
+                "schematicbrush.preset.global",
+                "schematicbrush.brushpreset.use",
+                "schematicbrush.brushpreset.global",
+                "schematicbrush.admin.reload",
+                "schematicbrush.admin.restartrendering",
+                "schematicbrush.admin.reloadcache",
+                "schematicbrush.admin.debug",
+                "schematicbrush.admin.migrate",
+                "schematicbrush.updates"
+            )
         }
         register("schematicbrush.brush.use") {
             description = "Allows to use the schematic brush"
@@ -139,6 +153,9 @@ bukkit {
         }
         register("schematicbrush.admin.reload") {
             description = "Allows to reload the plugin. This might break add on integrations."
+        }
+        register("schematicbrush.admin.restartrendering") {
+            description = "Allows to restart the preview rendering"
         }
         register("schematicbrush.admin.reloadcache") {
             description = "Access to schematic cache reloading"

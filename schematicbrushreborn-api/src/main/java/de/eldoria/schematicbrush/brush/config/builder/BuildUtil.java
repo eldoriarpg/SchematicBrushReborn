@@ -32,9 +32,11 @@ public final class BuildUtil {
                     .map(p -> String.format("<click:%s:'%s %s %s '><hover:show_text:'<neutral>%s'>[%s]</hover></click>",
                             p.commandType(), baseCommand, type.name(), p.name(), p.localizedDescription(), p.localizedName()))
                     .collect(Collectors.joining(" "));
-        } else {
+        } else if (filteredProvider.size() == 1) {
             types = String.format("<click:%s:'%s %s %s '>[<i18n:words.change>]</click>",
                     filteredProvider.get(0).commandType(), baseCommand, type.name(), filteredProvider.get(0).name());
+        } else {
+            types = "";
         }
 
         var remove = "";

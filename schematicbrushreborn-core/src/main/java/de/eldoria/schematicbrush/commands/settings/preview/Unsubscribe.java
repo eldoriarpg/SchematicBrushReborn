@@ -6,7 +6,6 @@
 
 package de.eldoria.schematicbrush.commands.settings.preview;
 
-import de.eldoria.eldoutilities.commands.Completion;
 import de.eldoria.eldoutilities.commands.command.AdvancedCommand;
 import de.eldoria.eldoutilities.commands.command.CommandMeta;
 import de.eldoria.eldoutilities.commands.command.util.Arguments;
@@ -18,6 +17,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Unsubscribe extends AdvancedCommand implements IPlayerTabExecutor {
@@ -37,6 +37,6 @@ public class Unsubscribe extends AdvancedCommand implements IPlayerTabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) {
-        return Completion.completeBoolean(args.asString(0));
+        return Collections.emptyList();
     }
 }

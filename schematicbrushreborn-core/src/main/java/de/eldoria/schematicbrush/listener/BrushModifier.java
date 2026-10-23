@@ -30,15 +30,15 @@ public class BrushModifier implements Listener {
         var brush = schematicBrush.get();
         if (event.getPlayer().isSneaking()) {
             if (brush.nextPaste().shiftFlip()) {
-                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Changed flip.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green><i18n:listener.brushModifier.flipChanged>");
             } else {
-                messageSender.sendErrorActionBar(event.getPlayer(), "Flip is not shiftable.");
+                messageSender.sendErrorActionBar(event.getPlayer(), "listener.brushModifier.flipNotShiftable");
             }
         } else {
             if (brush.nextPaste().shiftRotation()) {
-                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Changed rotation.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green><i18n:listener.brushModifier.rotationChanged>");
             } else {
-                messageSender.sendErrorActionBar(event.getPlayer(), "Rotation is not shiftable.");
+                messageSender.sendErrorActionBar(event.getPlayer(), "listener.brushModifier.rotationNotShiftable");
             }
         }
         event.setCancelled(true);
@@ -52,15 +52,15 @@ public class BrushModifier implements Listener {
         if (schematicBrush.isEmpty()) return;
         if (event.getPlayer().isSneaking()) {
             if (schematicBrush.get().nextPaste().shiftOffset()) {
-                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Changed offset.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green><i18n:listener.brushModifier.offsetChanged>");
             } else {
-                messageSender.sendErrorActionBar(event.getPlayer(), "Offset is not shiftable.");
+                messageSender.sendErrorActionBar(event.getPlayer(), "listener.brushModifier.offsetNotShiftable");
             }
         } else {
             if (schematicBrush.get().nextPaste().nextSchematic()) {
-                messageSender.sendActionBar(event.getPlayer(), "<dark_green>Skipped schematic.");
+                messageSender.sendActionBar(event.getPlayer(), "<dark_green><i18n:listener.brushModifier.schematicSkipped>");
             } else {
-                messageSender.sendErrorActionBar(event.getPlayer(), "The set only contains 1 schematic");
+                messageSender.sendErrorActionBar(event.getPlayer(), "listener.brushModifier.singleSchematic");
             }
         }
         event.setCancelled(true);
