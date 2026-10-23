@@ -17,7 +17,7 @@ tasks {
         val options = options as StandardJavadocDocletOptions
         options.links(
                 "https://jd.papermc.io/paper/1.21.11/",
-                "https://eldoriarpg.github.io/eldo-util/"
+                "https://docs.eldoria.de/eldo-util/javadoc/"
         )
     }
 }
