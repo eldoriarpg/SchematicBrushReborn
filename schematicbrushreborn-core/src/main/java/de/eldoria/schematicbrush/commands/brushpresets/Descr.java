@@ -40,7 +40,7 @@ public class Descr extends AdvancedCommand implements IPlayerTabExecutor {
     public void onCommand(@NotNull Player player, @NotNull String alias, @NotNull Arguments args) throws CommandException {
         var name = args.asString(0);
 
-        if (name.startsWith("g:")) CommandAssertions.permission(player, false, Permissions.Preset.GLOBAL);
+        if (name.startsWith("g:")) CommandAssertions.permission(player, false, Permissions.BrushPreset.GLOBAL);
 
         var strippedName = name.replaceAll("^g:", "");
         var container = storage.activeStorage().brushes().containerByName(player, name);
