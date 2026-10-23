@@ -43,14 +43,10 @@ public class Migrate extends AdvancedCommand implements ITabExecutor {
         var sourceNameable = Nameable.of(args.asString(0));
         var targetNameable = Nameable.of(args.asString(1));
 
-        var source = storageRegistry.get(sourceNameable);
-        var target = storageRegistry.get(targetNameable);
-
-        CommandAssertions.isFalse(source == null, "commands.admin.migrate.sourceTypeInvalid",
+        CommandAssertions.isTrue(storageRegistry.isRegistered(sourceNameable), "commands.admin.migrate.sourceTypeInvalid",
                 Replacement.create("type", sourceNameable.name()));
-        CommandAssertions.isFalse(target == null, "commands.admin.migrate.targetTypeInvalid",
+        CommandAssertions.isTrue(storageRegistry.isRegistered(targetNameable), "commands.admin.migrate.targetTypeInvalid",
                 Replacement.create("type", targetNameable.name()));
-
 
         messageSender().sendMessage(sender, "commands.admin.migrate.migrationStarted");
         storageRegistry.migrate(sourceNameable, targetNameable)
