@@ -1,9 +1,5 @@
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/eldoriarpg/SchematicBrushReborn/verify.yml?branch=master&style=for-the-badge&label=Building)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/eldoriarpg/SchematicBrushReborn/publish_to_nexus.yml?branch=master&style=for-the-badge&label=Publishing) \
-![Sonatype Nexus (Releases)](https://img.shields.io/nexus/maven-releases/de.eldoria/schematicbrushreborn-api?label=Release&logo=Release&server=https%3A%2F%2Feldonexus.de&style=for-the-badge)
-![Sonatype Nexus (Development)](https://img.shields.io/nexus/maven-dev/de.eldoria/schematicbrushreborn-api?label=DEV&logo=Release&server=https%3A%2F%2Feldonexus.de&style=for-the-badge)
-![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/de.eldoria/schematicbrushreborn-api?color=orange&label=Snapshot&server=https%3A%2F%2Feldonexus.de&style=for-the-badge) \
-[![wakatime](https://wakatime.com/badge/github/eldoriarpg/SchematicBrushReborn.svg)](https://wakatime.com/badge/github/eldoriarpg/SchematicBrushReborn)
+[![Release](https://img.shields.io/nexus/maven-releases/de.eldoria/schematicbrushreborn-api?label=Release&logo=Release&server=https%3A%2F%2Feldonexus.de&style=for-the-badge)][release]
+[![Snapshot](https://img.shields.io/nexus/s/de.eldoria/schematicbrushreborn-api?color=orange&label=Snapshot&server=https%3A%2F%2Feldonexus.de&style=for-the-badge)][snapshot]
 
 ![](https://imgur.com/4t8efNZ.png "Schematic Brush Reborn")
 Schematic Brush Reborn is a revive of the old [Schematic Brush](https://github.com/mikeprimm/SchematicBrush).
@@ -70,3 +66,6 @@ dependencies {
     <version>version</version>
 </dependency>
 ```
+
+[release]: https://eldonexus.de/#browse/browse:maven-releases:de%2Feldoria%2Fschematicbrushreborn-api
+[snapshot]: https://eldonexus.de/#browse/browse:maven-snapshots:de%2Feldoria%2Fschematicbrushreborn-api

@@ -12,7 +12,7 @@ Schematic Brush Reborn has an API for your own plugins. With it you can:
 - react to pastes with [events](./events.md),
 - read and bind brushes from code.
 
-The Javadocs of the API are at [eldoriarpg.github.io/SchematicBrushReborn](https://eldoriarpg.github.io/SchematicBrushReborn/).
+The [Javadoc of the API](pathname:///schematic-brush-reborn/javadoc/) is served with these docs.
 
 ## Add the dependency
 

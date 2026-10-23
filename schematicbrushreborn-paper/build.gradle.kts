@@ -1,6 +1,7 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
     id("sbr.publishing-conventions")
+    id("de.chojo.publishdata.manifest")
     alias(libs.plugins.pluginyml.bukkit)
     alias(libs.plugins.shadow)
     alias(libs.plugins.runserver)
@@ -67,6 +68,17 @@ tasks {
     }
 }
 
+
+pluginManifest {
+    platforms("paper")
+    requires("FastAsyncWorldEdit") {
+        modrinth("fastasyncworldedit")
+        hangar("IntellectualSites/FastAsyncWorldEdit")
+    }
+    optional("floodgate") {
+        link("https://geysermc.org/download#floodgate")
+    }
+}
 
 bukkit {
     name = "SchematicBrushReborn"

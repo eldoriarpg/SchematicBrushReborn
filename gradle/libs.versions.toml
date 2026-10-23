@@ -34,7 +34,7 @@ mockbukkit = "org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.116.3"
 mockito = "org.mockito:mockito-core:5.24.0"
 
 gradle-spotless = "com.diffplug.spotless:spotless-plugin-gradle:8.10.4"
-gradle-publishdata = "de.chojo:publishdata:2.0.0"
+gradle-publishdata = "de.chojo:publishdata:2.1.0"
 
 [bundles]
 jackson = ["jackson-databind", "jackson-annotations", "jackson-yaml"]

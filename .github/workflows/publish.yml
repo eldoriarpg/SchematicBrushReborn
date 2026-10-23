@@ -1,0 +1,39 @@
+name: Publish
+
+on:
+  push:
+    branches: [master]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  JAVA_VERSION: 25
+
+jobs:
+  verify:
+    uses: ./.github/workflows/verify.yml
+
+  publish:
+    name: Publish to EldoNexus
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: build
+    steps:
+      - uses: actions/checkout@v6
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew publishChannel -x test
+        env:
+          ORG_GRADLE_PROJECT_EldoNexusUsername: ${{ secrets.NEXUS_USERNAME }}
+          ORG_GRADLE_PROJECT_EldoNexusPassword: ${{ secrets.NEXUS_PASSWORD }}
