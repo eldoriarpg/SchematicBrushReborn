@@ -64,6 +64,15 @@ such a folder are skipped. Folders below it are still read, so list them too if 
     - "old/unused"
 ```
 
+An entry ending with `*` skips every folder whose path starts with the text before it. Upper and lower case do not
+matter.
+
+| Entry | Skips |
+|---|---|
+| `old` | `old` only |
+| `old*` | `old` and every folder below it, but also a folder named `old_trees` |
+| `old/*` | every folder below `old`, but not `old` itself |
+
 ## Folder names in selectors
 
 The [Directory selector](./brushes/selectors.md#directory) picks schematics by folder. Folder paths are written
@@ -93,7 +102,8 @@ Schematic Brush Reborn watches the source folders while the server runs:
 Brushes and schematic sets keep the schematics their selectors found. To pick up new files in a brush, use
 **Refresh Schematics** in the editor or `/sbr refreshSchematics` while you hold it.
 
-After you change the sources in `config.yml`, restart the server.
+After you change the sources in `config.yml`, run `/sbra reload`. It reads the configuration again and then loads the
+schematics from the new sources. `/sbra reloadCache` only reads the schematics again from the sources already loaded.
 
 ## Checking what was loaded
 

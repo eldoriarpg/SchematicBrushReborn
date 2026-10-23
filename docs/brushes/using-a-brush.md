@@ -65,10 +65,6 @@ Within a set, the order is alphabetical, with numbers at the end of a name sorte
 
 The selection mode belongs to the bound brush. It is not stored in brush presets.
 
-:::warning
-In version 3.0.0, `ordered` still picks at random, like `random`. `locked_ordered` does keep the order when you skip.
-:::
-
 ## Show the name of each paste
 
 `/sbrs showNames true` shows the name of each pasted schematic, its set and the values used.

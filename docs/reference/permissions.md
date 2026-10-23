@@ -34,17 +34,14 @@ A good start for builders is `schematicbrush.brush.use`, `schematicbrush.brush.p
 
 `/sbra info` needs no permission.
 
-`schematicbrush.admin.restartrendering` is not listed in the plugin's `plugin.yml`. It still works, and operators
-have it by default.
-
 ## Wildcard
 
-`schematicbrush.*` is listed in `plugin.yml` without child permissions. It only grants everything if your
-permission plugin resolves wildcards itself.
+`schematicbrush.*` grants every permission on this page.
 
 ## Permissions of add-ons
 
-Selectors and modifiers from add-ons can have their own permission. The dialog editor hides those you may not use.
+Selectors and modifiers from add-ons can have their own permission. The dialog editor and tab completion hide those
+you may not use, and setting one without the permission fails in every editor and command.
 See the add-on pages for their permissions:
 
 - [Schematic Brush Database](/schematic-brush-reborn/database)

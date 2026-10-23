@@ -167,9 +167,9 @@ To copy everything from one storage into another, use `/sbra migrate <source> <t
 
 ## Reloading
 
-`/sbra reload` reads the configuration again, restarts the preview and applies the update settings. Some changes
-still need a restart: the language, message files and the schematic sources. Reloading can also upset add-ons, so a
-restart is the safer choice.
+`/sbra reload` reads the configuration again, loads the schematics from the configured sources, restarts the preview
+and applies the update settings. The language and message files still need a restart. Reloading can also upset
+add-ons, so a restart is the safer choice.
 
 ## Metrics
 
