@@ -311,7 +311,7 @@ public String permission() {
 }
 ```
 
-The dialog editor and tab completion hide providers the player may not use. The permission is checked whenever a
+Both editors and tab completion hide providers the player may not use. The permission is checked whenever a
 value is parsed, so `/sbr modify`, `/sbr modifyset`, the chat editor and the dialog editor all enforce it.
 
 ## How settings are stored

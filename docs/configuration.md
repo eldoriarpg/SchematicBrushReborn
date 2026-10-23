@@ -135,10 +135,6 @@ logLevel: "INFO"
 Other accepted log levels are `OFF`, `SEVERE`, `WARNING`, `FINE`, `FINER`, `FINEST` and `ALL`. Unknown values count as
 `INFO`.
 
-:::warning
-`DEBUG` does not survive a restart at the moment. It is read back as `INFO`, so set it again after each start while you debug.
-:::
-
 ## Messages
 
 The `messages` folder holds one file per language: `messages_en_US.properties`, `messages_de_DE.properties` and

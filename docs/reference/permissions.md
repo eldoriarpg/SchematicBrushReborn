@@ -40,8 +40,8 @@ A good start for builders is `schematicbrush.brush.use`, `schematicbrush.brush.p
 
 ## Permissions of add-ons
 
-Selectors and modifiers from add-ons can have their own permission. The dialog editor and tab completion hide those
-you may not use, and setting one without the permission fails in every editor and command.
+Selectors and modifiers from add-ons can have their own permission. Both editors and tab completion hide those you
+may not use, and setting one without the permission fails in every command.
 See the add-on pages for their permissions:
 
 - [Schematic Brush Database](/schematic-brush-reborn/database)
