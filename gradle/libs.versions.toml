@@ -1,8 +1,8 @@
 [versions]
 jackson = "3.2.4"
-utilities = "3.5.4"
+utilities = "3.7.0"
 paper = "1.21.11-R0.1-SNAPSHOT"
-fawe = "2.16.1"
+fawe = "2.16.2"
 junit = "6.1.3"
 
 [libraries]
@@ -34,7 +34,7 @@ mockbukkit = "org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.116.3"
 mockito = "org.mockito:mockito-core:5.24.0"
 
 gradle-spotless = "com.diffplug.spotless:spotless-plugin-gradle:8.10.4"
-gradle-publishdata = "de.chojo:publishdata:2.1.0"
+gradle-publishdata = "de.chojo:publishdata:2.3.0"
 
 [bundles]
 jackson = ["jackson-databind", "jackson-annotations", "jackson-yaml"]
